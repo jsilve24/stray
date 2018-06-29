@@ -49,6 +49,8 @@ List optimMMTC(const Eigen::ArrayXXd Y,
     
     if (iter>0){
       // Laplace Approximation
+      // 
+      // Eigenvalue Decomposition 
       Eigen::SelfAdjointEigenSolver<MatrixXd> eh(-hess); // negative hessian
       VectorXd evalinv(eh.eigenvalues().array().inverse().matrix());
       int excess=0;
@@ -74,12 +76,15 @@ List optimMMTC(const Eigen::ArrayXXd Y,
       MatrixXd hesssqrt(N*(D-1), pos);
       hesssqrt = eh.eigenvectors().rightCols(pos)*
         evalinv.tail(pos).cwiseSqrt().asDiagonal(); //V*D^{-1/2}
-      //now generate random numbers...
+      // now generate random numbers...
       NumericVector r(iter*pos);
       r = rnorm(iter*pos, 0, 1); // using vectorization from Rcpp sugar
       Map<VectorXd> rvec(as<Map<VectorXd> >(r));
       Map<MatrixXd> rmat(rvec.data(), pos, iter);
       MatrixXd samp(pos, iter);
+      samp = hesssqrt*rmat;
+
+      //Cholesky 
       // Eigen::LLT<MatrixXd> hesssqrt;
       // hesssqrt.compute(hess);
       // if (hesssqrt.info() != 1){
@@ -91,7 +96,8 @@ List optimMMTC(const Eigen::ArrayXXd Y,
       // Map<MatrixXd> rmat(rvec.data(), N*(D-1), iter);
       // MatrixXd samp(N*(D-1), iter);
       // samp = hesssqrt.matrixL().solve(rmat);  // calculate errors of approximation
-      samp = hesssqrt*rmat;
+      // 
+      // Shared
       samp.colwise() += eta; // add mean of approximation
       IntegerVector d = IntegerVector::create(D-1, N, iter);
       NumericVector samples = wrap(samp);

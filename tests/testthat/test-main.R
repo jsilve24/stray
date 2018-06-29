@@ -3,7 +3,7 @@ library(driver)
 library(tidyverse)
 
 test_that("optim and uncollapse correctnesss", {
-  D <- 30
+  D <- 60
   Q <- 2
   N <- 50
   
@@ -37,7 +37,8 @@ test_that("optim and uncollapse correctnesss", {
   safe_optimMMTC <- safely(optimMMTC)
   for (i in 1:tries){
     #init <- random_init(Y)
-    init <- matrix(rnorm(N*(D-1)), D-1, N)
+    #init <- matrix(rnorm(N*(D-1)), D-1, N)
+    init <- Eta
     fit <- safe_optimMMTC(Y, upsilon, Theta%*%X, K, A, init, iter=2000, 
                           numexcessthresh=0, calcGradHess = FALSE)
     if (!is.null(fit$result)){

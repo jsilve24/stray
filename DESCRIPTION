@@ -1,0 +1,17 @@
+Package: mongrel
+Type: Package
+Title: Bayesian Multinomial Logistic Normal Regression
+Version: 1.0
+Date: 2018-06-26
+Author: Justin Silverman
+Authors@R: c(person("Justin", "Silverman", role=c("aut", "cre"),
+                     email = "jsilve24@gmail.com"))
+Maintainer: Justin Silverman
+    <Justin.Silverman@duke.edu>
+Description: More about what it does (maybe more than one line)
+License: What license is it under?
+Imports: Rcpp (>= 0.12.17), RcppEigen (>= 0.3.3.4.0)
+LinkingTo: Rcpp, RcppEigen, RcppNumerical
+RoxygenNote: 6.0.1
+Suggests: 
+    testthat

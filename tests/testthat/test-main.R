@@ -3,9 +3,9 @@ library(driver)
 library(tidyverse)
 
 test_that("optim and uncollapse correctnesss", {
-  D <- 60
+  D <- 10
   Q <- 2
-  N <- 50
+  N <- 30
   
   # Simulate Data
   Sigma <- diag(sample(1:8, D-1, replace=TRUE))
@@ -21,9 +21,10 @@ test_that("optim and uncollapse correctnesss", {
   for (i in 1:N) Y[,i] <- rmultinom(1, sample(5000:10000), prob = Pi[,i])
   
   # Priors
+  #upsilon <- D
   #Xi <- diag(D-1)
   upsilon <- D+10
-  Xi <- Sigma*(N-D-2);
+  Xi <- Sigma*(upsilon-D-2);
   
   # Precompute
   K <- solve(Xi)
@@ -36,9 +37,9 @@ test_that("optim and uncollapse correctnesss", {
   tries <- 1
   safe_optimMMTC <- safely(optimMMTC)
   for (i in 1:tries){
-    #init <- random_init(Y)
+    init <- random_init(Y)
     #init <- matrix(rnorm(N*(D-1)), D-1, N)
-    init <- Eta
+    #init <- Eta
     fit <- safe_optimMMTC(Y, upsilon, Theta%*%X, K, A, init, iter=2000, 
                           numexcessthresh=0, calcGradHess = FALSE)
     if (!is.null(fit$result)){

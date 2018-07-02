@@ -7,6 +7,24 @@ optimMMTC <- function(Y, upsilon, ThetaX, K, A, etainit, iter = 2000L, eigvalthr
     .Call('_mongrel_optimMMTC', PACKAGE = 'mongrel', Y, upsilon, ThetaX, K, A, etainit, iter, eigvalthresh, numexcessthresh, calcGradHess)
 }
 
+#'  Function to return loglikelihood
+#' @export
+loglikMMTC <- function(Y, upsilon, ThetaX, K, A, etainit) {
+    .Call('_mongrel_loglikMMTC', PACKAGE = 'mongrel', Y, upsilon, ThetaX, K, A, etainit)
+}
+
+#'  Function to return gradient
+#' @export
+gradMMTC <- function(Y, upsilon, ThetaX, K, A, etainit) {
+    .Call('_mongrel_gradMMTC', PACKAGE = 'mongrel', Y, upsilon, ThetaX, K, A, etainit)
+}
+
+#'  Function to return hessian
+#' @export
+hessMMTC <- function(Y, upsilon, ThetaX, K, A, etainit) {
+    .Call('_mongrel_hessMMTC', PACKAGE = 'mongrel', Y, upsilon, ThetaX, K, A, etainit)
+}
+
 #' @export
 uncollapseMMTC <- function(eta, X, Theta, Gamma, Xi, upsilon) {
     .Call('_mongrel_uncollapseMMTC', PACKAGE = 'mongrel', eta, X, Theta, Gamma, Xi, upsilon)

@@ -1,6 +1,7 @@
 #include <MatrixAlgebra.h>
 #include <MultimMatTCollapsed.h>
 #include <AdamOptim.h>
+#include <AdamOptimPerturb.h>
 // [[Rcpp::depends(RcppNumerical)]]
 // [[Rcpp::depends(RcppEigen)]]
 
@@ -32,7 +33,8 @@ List optimMMTC(const Eigen::ArrayXXd Y,
   out.names() = CharacterVector::create("LogLik", "Gradient", "Hessian",
             "Pars", "Samples");
   //int status = Numer::optim_lbfgs(cm, eta, nllopt);
-  int status = adam::optim_adam(cm, eta, nllopt);
+  int status = adam::optim_adam(cm, eta, nllopt); // appears to be best option
+  //int status = adamperturb::optim_adam(cm, eta, nllopt);
   if (status<0)
     Rcpp::stop("failed to converge");
   Map<MatrixXd> etamat(eta.data(), D-1, N);
@@ -60,8 +62,9 @@ List optimMMTC(const Eigen::ArrayXXd Y,
         }
       }
       if (excess > numexcessthresh){
-        Rcout << evalinv.head(10).transpose() << std::endl;
-        Rcpp::stop("To many eigenvalues are below minimum threshold");
+        Rcout << evalinv.transpose() << std::endl;
+        Rcpp::warning("To many eigenvalues are below minimum threshold");
+        return out;
       }
       int pos = 0;
       for (int i = N*(D-1)-1; i>=0; i--){
@@ -69,7 +72,7 @@ List optimMMTC(const Eigen::ArrayXXd Y,
           pos++;
       }
       if (pos < N*(D-1)) {
-        warning("Some small negative eigenvalues are being chopped");
+        Rcpp::warning("Some small negative eigenvalues are being chopped");
         Rcout << N*(D-1)-pos << " out of " << N*(D-1) <<
           " passed eigenvalue threshold"<< std::endl;
       }
@@ -106,4 +109,55 @@ List optimMMTC(const Eigen::ArrayXXd Y,
     }
   }
   return out;
+}
+
+
+
+
+//'  Function to return loglikelihood
+//' @export
+// [[Rcpp::export]]
+double loglikMMTC(const Eigen::ArrayXXd Y, 
+               const double upsilon, 
+               const Eigen::MatrixXd ThetaX, 
+               const Eigen::MatrixXd K, 
+               const Eigen::MatrixXd A, 
+               Eigen::MatrixXd etainit){
+  MultimMatTCollapsed cm(Y, upsilon, ThetaX, K, A);
+  Map<VectorXd> eta(etainit.data(), etainit.size());
+  cm.updateWithEtaLL(eta);
+  return cm.calcLogLik(eta);
+}
+
+
+//'  Function to return gradient
+//' @export
+// [[Rcpp::export]]
+Eigen::MatrixXd gradMMTC(const Eigen::ArrayXXd Y, 
+                         const double upsilon, 
+                         const Eigen::MatrixXd ThetaX, 
+                         const Eigen::MatrixXd K, 
+                         const Eigen::MatrixXd A, 
+                         Eigen::MatrixXd etainit){
+  MultimMatTCollapsed cm(Y, upsilon, ThetaX, K, A);
+  Map<VectorXd> eta(etainit.data(), etainit.size());
+  cm.updateWithEtaLL(eta);
+  cm.updateWithEtaGH();
+  return cm.calcGrad();
+}
+
+//'  Function to return hessian
+//' @export
+// [[Rcpp::export]]
+Eigen::MatrixXd hessMMTC(const Eigen::ArrayXXd Y, 
+                  const double upsilon, 
+                  const Eigen::MatrixXd ThetaX, 
+                  const Eigen::MatrixXd K, 
+                  const Eigen::MatrixXd A, 
+                  Eigen::MatrixXd etainit){
+  MultimMatTCollapsed cm(Y, upsilon, ThetaX, K, A);
+  Map<VectorXd> eta(etainit.data(), etainit.size());
+  cm.updateWithEtaLL(eta);
+  cm.updateWithEtaGH();
+  return cm.calcHess();
 }

@@ -112,14 +112,24 @@ class MultimMatTCollapsed : public Numer::MFuncGrad
       Map<VectorXd> grad(g.data(), g.size()); 
       
       // add noise
+      // NumericVector gnoise(N*(D-1));
+      //double ss= sigma/pow(1+t, gamma);
+      // gnoise = ss*rnorm(N*(D-1), 0, 1);
+      // t++;
+      // Rcout << t << " ss: " << ss << std::endl;
+      // Rcout << "grad norm: " <<grad.norm() << std::endl;
+      // Map<VectorXd> noise(as<Map<VectorXd> >(gnoise));
+      // Rcout << "noise norm: " << noise.norm() << std::endl;
+      // return grad+noise; // not transposing (leaving as vector)
+      
+      // add noise as fraction of gradient
       NumericVector gnoise(N*(D-1));
-      double ss= sigma/pow(1+t, gamma);
-      gnoise = ss*rnorm(N*(D-1), 0, 1);
+      gnoise = rnorm(N*(D-1), 0, 1);
+      //double ss= sigma/pow(1+t, gamma);
+      double ss = pow(sigma, gamma*(1+t));
       t++;
-      //Rcout << t << " " << ss << std::endl;
-      //Rcout << grad.head(20).transpose() << std::endl;
-      Map<VectorXd> noise(as<Map<VectorXd> >(gnoise));
-      return grad+noise; // not transposing (leaving as vector)
+      Map<Eigen::ArrayXd> noise(as<Map<Eigen::ArrayXd> >(gnoise));
+      return grad+(ss*grad.array().abs()*noise).matrix(); // not transposing (leaving as vector)
     }
     
     // Must have called updateWithEtaLL and then updateWithEtaGH first 
@@ -153,7 +163,7 @@ class MultimMatTCollapsed : public Numer::MFuncGrad
       updateWithEtaLL(eta);    // precompute things needed for LogLik
       updateWithEtaGH();       // precompute things needed for gradient and hessian
       grad = -calcGrad();      // negative because wraper minimizes
-      //grad = -calcGrad_wnoise(1, 1.1);
+      //grad = -calcGrad_wnoise(.3, 1.001);
       return -calcLogLik(eta); // negative because wraper minimizes
     }
 };

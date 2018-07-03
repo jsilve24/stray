@@ -12,8 +12,9 @@ using Eigen::Ref;
 
 namespace adam{
 
-  // Parallel to LBFGSFun 
+  // Parallel structure to LBFGSFun 
   // https://github.com/yixuan/RcppNumerical/blob/master/inst/include/optimization/wrapper.h
+  // This class is a Functor to calculate gradient for ADAM optimizer
   class ADAMFun
   {
   private:
@@ -22,11 +23,11 @@ namespace adam{
     ADAMFun(Numer::MFuncGrad& f_) : f(f_) {}
     inline double operator()(const Eigen::VectorXd& x, Eigen::VectorXd& grad)
     {
-      //Rcout << "ADAMFun x" << x.head(10).transpose() << std::endl;
       return f.f_grad(x, grad);
     }
   };
 
+  // Class for Adam Optimizer
   class ADAMOptim
   {
     private:
@@ -50,10 +51,27 @@ namespace adam{
       double eps_g;
       double max_iter;
       
+      // verbose behavior
+      bool verbose;
+      int verbose_rate;
+      
     public:
+      // Main constructor 
+      //   fun_ : ADAMFun object (functor)
+      //   thetainit : initial parameter estimates
+      //   b1 : 1st moment decay parameter (recomend 0.9) "aka momentum"
+      //   b2 : 2nd moment decay parameter (recommend 0.99 or 0.999)
+      //   eta : step size (recomend 0.001)
+      //   epsilon : parameter to avoid divide by zero in adam
+      //   eps_f : normalized funtion improvement for stopping
+      //   eps_g : normalized gradient magnitute for stopping
+      //   max_iter : maximum number of iterations before stopping
+      //   verbose : if true will print stats for stopping criteria and iter no.
+      //   verbose_rate : rate to print verbose stats to screen
       ADAMOptim(ADAMFun& fun_, Numer::Refvec& thetainit, 
                 double b1, double b2, double eta, double epsilon, 
-                double eps_f, double eps_g, int max_iter) : fun(fun_){
+                double eps_f, double eps_g, int max_iter, 
+                bool verbose, int verbose_rate) : fun(fun_){
         p = thetainit.size();
         thetat = thetainit;
         mt = ArrayXd::Zero(p);
@@ -69,31 +87,33 @@ namespace adam{
         this -> eps_g = eps_g; 
         this -> max_iter = max_iter;
         t = 1;
-        val =0;
-        Rcout << "ADAMOptim thetainit" << thetainit.head(10).transpose() << std::endl;
+        val=0;
+        this -> verbose = verbose;
+        this -> verbose_rate = verbose_rate;
       }
       
       int step(){
         R_CheckUserInterrupt();
         double val2 = fun(thetat, gt); // update gradient and value based on init
-        //Rcout << "step gt" << gt.head(10).transpose() << std::endl;
-        //Rcout << "step thetat" << thetat.head(10).transpose() << std::endl;
         double gnorm = gt.norm();
         double xnorm = thetat.norm();
         
         // eval stopping criteria
-        if (t % 10 == 0){
-          Rcout << "iter : " << t << std::endl;
-          Rcout << "-Log Like: " << val2 << std::endl;
-          Rcout << "rel improvement: " << ((val2 - val)/val2) << std::endl;
-          Rcout << "gnorm, xnorm " << gnorm << "," << eps_g*std::max(xnorm, 1.0) 
-            << std::endl;  
+        if (verbose){
+          if (t % verbose_rate == 0){
+            Rcout << "iter : " << t << std::endl;
+            Rcout << "-Log Like: " << val2 << std::endl;
+            Rcout << "normalized rel improvement: " << ((val2 - val)/val2) 
+                  << std::endl;
+            Rcout << "gnorm, gradient threshold " << gnorm << "," 
+                  << eps_g*std::max(xnorm, 1.0) << std::endl;
+          }
         }
         if (gnorm <= eps_g*std::max(xnorm, 1.0)){
-          return 1;
+          return 1; // gradient below threshold
         }
         if ((((val2 - val)/val2) > -eps_f) && (((val2 - val)/val2) != 1)){
-          return 2;
+          return 2; // function value improvement below threshold
         }
         if (t > max_iter){
           return -1;    // max iter warning is -1
@@ -105,14 +125,9 @@ namespace adam{
         mt += (1-b1)*gt.array();
         vt *= b2;
         vt += (1-b2)*gt.array().square();
-        //Rcout << "mt step" << mt.head(10).transpose() << std::endl;
-        //Rcout << "vt step" << vt.head(10).transpose() << std::endl;
         mthat = mt/(1-pow(b1,t));
         vthat = vt/(1-pow(b2,t));
-        //Rcout << "mthat step" << mthat.head(10).transpose() << std::endl;
-        //Rcout << "vthat step" << vthat.head(10).transpose() << std::endl;
         ArrayXd tmp(eta/(vthat.sqrt()+epsilon) * mthat);
-        //Rcout << "step tmp : " << tmp.head(10).transpose() << std::endl;
         thetat -= tmp.matrix();
         t++;
         return 0;
@@ -122,6 +137,18 @@ namespace adam{
       VectorXd getTheta(){return thetat;} // get optimal parameter
   };
 
+  // Main Function to Call from other C++ functions 
+  //   fun_ : ADAMFun object (functor)
+  //   thetainit : initial parameter estimates
+  //   b1 : 1st moment decay parameter (recomend 0.9) "aka momentum"
+  //   b2 : 2nd moment decay parameter (recommend 0.99 or 0.999)
+  //   eta : step size (recomend 0.001)
+  //   epsilon : parameter to avoid divide by zero in adam
+  //   eps_f : normalized funtion improvement for stopping
+  //   eps_g : normalized gradient magnitute for stopping
+  //   max_iter : maximum number of iterations before stopping
+  //   verbose : if true will print stats for stopping criteria and iter no.
+  //   verbose_rate : rate to print verbose stats to screen
   inline int optim_adam(Numer::MFuncGrad& f, 
                         Numer::Refvec theta, // initial value and thing returned 
                         double& fx_opt, 
@@ -131,14 +158,16 @@ namespace adam{
                         double epsilon=10e-7, // had been at 10e-6
                         double eps_f= 1e-8, 
                         double eps_g= 1e-5, 
-                        int max_iter= 10000){
+                        int max_iter= 10000, 
+                        bool verbose=false, 
+                        int verbose_rate=10){
     
     // create functor
     ADAMFun fun(f);
     
     // Solver
     ADAMOptim optim(fun, theta, b1, b2, eta, epsilon, 
-                    eps_f, eps_g, max_iter);
+                    eps_f, eps_g, max_iter, verbose, verbose_rate);
     
     int status =0; 
     while (status==0){
@@ -146,10 +175,10 @@ namespace adam{
     }
     if (status == -1){
       Rcpp::warning("Max iterations hit, may not be at optima");
-    } else if (status == 1){
+    } else if ((status == 1) && verbose){
       Rcout << "Optimization terminated: change in gradient below threshold" 
             << std::endl;
-    } else if (status ==2){
+    } else if ((status ==2) && verbose){
       Rcout << "Optimization terminated: change in function value below threshold" 
             << std::endl;
     }
@@ -157,7 +186,6 @@ namespace adam{
     theta = optim.getTheta();
     return status;
   }
-
   
 }
 

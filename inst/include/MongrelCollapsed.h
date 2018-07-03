@@ -10,10 +10,20 @@ using Eigen::ArrayXXd;
 using Eigen::VectorXd;
 using Eigen::Ref;
 
-/* Add documentation
+/* Class implementing LogLik, Gradient, and Hessian calculations
+ *  for the Multinomial Matrix-T collapsed model. 
+ *  
+ *  Notation: Let Z_j denote the J-th row of a matrix Z.
+ *  
+ *  Model:
+ *    Y_j ~ Multinomial(Pi_j)
+ *    Pi_j = Phi^{-1}(Eta_j)   // Phi^{-1} is ALRInv_D transform
+ *    Eta ~ T_{D-1, N}(upsilon, Theta*X, K^{-1}, A^{-1})
  *
+ *  Where A = (I_N + X*Gamma*X')^{-1}, K^{-1} =Xi is a D-1xD-1 covariance 
+ *  matrix, and Gamma is a Q x Q covariance matrix
  */
-class MultimMatTCollapsed : public Numer::MFuncGrad
+class MongrelCollapsed : public Numer::MFuncGrad
 {
   private:
     const ArrayXXd Y;
@@ -42,7 +52,7 @@ class MultimMatTCollapsed : public Numer::MFuncGrad
     
     
   public:
-    MultimMatTCollapsed(const ArrayXXd Y_,          // constructor
+    MongrelCollapsed(const ArrayXXd Y_,          // constructor
                         const double upsilon_,
                         const MatrixXd ThetaX_,
                         const MatrixXd K_,
@@ -57,7 +67,7 @@ class MultimMatTCollapsed : public Numer::MFuncGrad
       // temporary or testing
       t = 0;
     }
-    ~MultimMatTCollapsed(){}                      // destructor
+    ~MongrelCollapsed(){}                      // destructor
     
     // Update with Eta when it comes in as a vector
     void updateWithEtaLL(const Ref<const VectorXd>& etavec){
@@ -95,8 +105,6 @@ class MultimMatTCollapsed : public Numer::MFuncGrad
     VectorXd calcGrad(){
       // For Multinomial
       MatrixXd g = (Y - (rhomat.array().rowwise()*n.array())).matrix();
-      //Rcout << "rowmat row 1:" << rhomat.row(1) << std::endl;
-      //Rcout << "grad row 1:" << g.row(1) << std::endl;
       // For MatrixVariate T
       g += -delta*(R + R.transpose())*C.transpose();
       Map<VectorXd> grad(g.data(), g.size()); 
@@ -157,13 +165,12 @@ class MultimMatTCollapsed : public Numer::MFuncGrad
       return H;
     }
     
-    // function for use by RcppNumerical lbfgs wrapper
+    // function for use by ADAMOptimizer wrapper (and for RcppNumeric L-BFGS)
     virtual double f_grad(Numer::Constvec& eta, Numer::Refvec grad){
-      //Rcout << "eta head" << eta.head(10).transpose() << std::endl;
       updateWithEtaLL(eta);    // precompute things needed for LogLik
       updateWithEtaGH();       // precompute things needed for gradient and hessian
       grad = -calcGrad();      // negative because wraper minimizes
-      //grad = -calcGrad_wnoise(.3, 1.001);
+      //grad = -calcGrad_wnoise(.3, 1.001); // optional but not very useful
       return -calcLogLik(eta); // negative because wraper minimizes
     }
 };

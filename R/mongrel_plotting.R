@@ -40,22 +40,20 @@ plot.mongrelfit <- function(m, par="Lambda", focus.cov=NULL, focus.coord=NULL,
 
 
 #' currently iter must be <= m$iter
-ppc <- function(m, par="Y", iter=50){
+ppc <- function(m, iter=50){
   
-  if (par=="Y"){
-    pp <- predict(m, response="Y")
-    pp <- pp[,,sample(1:m$iter, iter)]
-    pp <- matrix(pp, m$D*m$N, iter) 
-    pp <- gather_array(pp, val) 
-    tr <- data.frame(dim_1 = 1:(m$N*m$D), 
-                     dim_2 = NA, 
-                     val = c(m$Y))
-    p <- ggplot(pp, aes(x = dim_1, y = val)) +
-      geom_line(aes(group=dim_2), color="black", alpha=0.4) +
-      geom_line(data=tr, color="green", alpha=0.6)
-  }
+  pp <- predict(m, response="Y")
+  pp <- pp[,,sample(1:m$iter, iter)]
+  pp <- matrix(pp, m$D*m$N, iter) 
+  pp <- gather_array(pp, val) 
+  tr <- data.frame(dim_1 = 1:(m$N*m$D), 
+                   dim_2 = NA, 
+                   val = c(m$Y))
+  p <- ggplot(pp, aes(x = dim_1, y = val)) +
+    geom_line(aes(group=dim_2), color="black", alpha=0.4) +
+    geom_line(data=tr, color="green", alpha=0.6)
+
+  p <- p + theme_minimal()
   
-  p <- p+
-    theme_minimal()
   return(p)
 }

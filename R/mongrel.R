@@ -116,27 +116,13 @@ mongrel <- function(Y, X, upsilon=NULL, Theta=NULL, Gamma=NULL, Xi=NULL,
   out$names_categories <- rownames(Y)
   out$names_samples <- colnames(Y)
   out$names_covariates <- rownames(X)
-  out$coord_system <- "default"
+  out$coord_system <- "alr"
+  out$alr_base <- D
   out$summary <- NULL
   
-  ## Optionally Add back in Dimension Names ##
-  dimnames(out$Eta) <- list(NULL, NULL, NULL)
-  dimnames(out$Lambda) <-  list(NULL, NULL, NULL)
-  dimnames(out$Sigma) <-  list(NULL, NULL, NULL)
-  dimnames(out$init) <- list(NULL, NULL)
-  dimnames(out$Theta) <- list(NULL,NULL)
-  dimnames(out$Xi) <- list(NULL, NULL)
-  
-  if (!is.null(out$names_samples)) {
-    dimnames(out$Eta)[[2]] <- out$names_samples
-    dimnames(out$init)[[2]] <- out$names_samples
-  }
-  if (!is.null(out$names_covariates)){
-    dimnames(out$Lambda)[[2]] <- out$names_covariates
-    dimnames(out$Theta)[[2]] <- out$names_covariates
-  }
-  
   attr(out, "class") <- c("mongrelfit")
+  # add names if present 
+  out <- apply_names_mongrel(out)
   
   return(out)
 }

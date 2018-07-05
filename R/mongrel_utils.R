@@ -52,3 +52,67 @@ check_dims <- function(x, d, par){
   }
 }
 
+# function to help with assignment of category naming conventions for different
+# coordinate systems. 
+assign_cat_names <- function(m){
+  if (m$coord_system=="proportions") return(paste0("prop_", m$names_categories))
+  else if (m$coord_system=="clr") return(paste0("clr_", m$names_categories))
+  else if (m$coord_system=="alr"){
+    n1 <- m$names_categories[-m$alr_base]
+    n2 <- m$names_categories[m$alr_base]
+    n <- paste0("log(",n1, "/", n2,")")
+    return(n)
+  } else if (m$coord_system=="ilr") return(colnames(m$ilr_base))
+  else stop("not a recognized coordinate system to name")
+}
+
+apply_names <- function(X, m, dimvars){
+  n <- list()
+  for (i in seq_along(dimvars)){
+    if (identical(dimvars[[i]], "sam")) n[[i]] <- m$names_samples
+    else if (identical(dimvars[[i]], "cov")) n[[i]] <- m$names_covariates
+    else if (identical(dimvars[[i]], "cat")) n[[i]] <- assign_cat_names(m)
+    else if (is.vector(dimvars[[i]])) n[[i]] <- dimvars[[i]]
+    else n[[i]] <- NULL
+  }
+  if (!is.null(names(dimvars))) names(n) <- names(dimvars)
+  return(n)
+}
+
+# dimvars = cat, sam, cov or NULL - list
+# or can pass vector as element of the list 
+apply_names_array <- function(X, m, dimvars){
+  n <- apply_names(X, m, dimvars)
+  dimnames(X) <- n
+  return(X)
+}
+
+# same as apply_names array but dimvars list must be 
+# named with colnames of X to replace/use 
+apply_names_tidy <- function(X, m, dimvars){
+  if (is.null(names(dimvars))) stop("list element of dimvars must be named")
+  n <- apply_names(X, m, dimvars)
+  for (i in seq_along(dimvars)){
+    d <- names(dimvars)[i]
+    if (!is.null(n[[i]])) X[[d]] <- n[[i]][X[[d]]]
+  }
+  return(X)
+}
+
+# apply names to mongrel object
+apply_names_mongrel <- function(m){
+  m$Eta <- apply_names_array(m$Eta, m, list("cat", "sam", NULL))
+  m$Lambda <- apply_names_array(m$Lambda, m, list("cat", "cov", NULL))
+  if (!is.null(m$Sigma)){
+    m$Sigma <- apply_names_array(m$Sigma, m, list("cat", "cat", NULL))
+    m$Xi <- apply_names_array(m$Xi, m, list("cat", "cat"))
+  } else {
+    m$Sigma_default <- apply_names_array(m$Sigma_default, m,
+                                         list("cat", "cat", NULL))
+    m$Xi_default <- apply_names_array(m$Xi_default, m, list("cat", "cat"))
+  }
+  m$Theta <- apply_names_array(m$Theta, m, list("cat", "cov"))
+  m$Gamma <- apply_names_array(m$Gamma, m, list("cov", "cov"))
+  m$init <- apply_names_array(m$init, m, list("cat", "sam"))
+  return(m)
+}

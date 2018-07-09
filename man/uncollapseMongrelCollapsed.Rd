@@ -62,14 +62,14 @@ the collapsed model.
 }
 \examples{
 sim <- mongrel_sim()
-attach(sim)
 
 # Fit model for eta
-fit <- optimMongrelCollapsed(Y, upsilon, Theta\%*\%X, K, A, 
-                             random_mongrel_init(Y))  
+fit <- optimMongrelCollapsed(sim$Y, sim$upsilon, sim$Theta\%*\%sim$X, sim$K, 
+                             sim$A, random_mongrel_init(sim$Y))  
 
 # Finally obtain samples from Lambda and Sigma
-fit2 <- uncollapseMongrelCollapsed(fit$Samples, X, Theta, Gamma, Xi)
+fit2 <- uncollapseMongrelCollapsed(fit$Samples, sim$X, sim$Theta, 
+                                   sim$Gamma, sim$Xi, sim$upsilon)
 }
 \seealso{
 \code{\link{optimMongrelCollapsed}}

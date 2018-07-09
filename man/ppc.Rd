@@ -20,7 +20,7 @@ Visualization of Posterior Predictive Check of fit model
 }
 \examples{
 \dontrun{
-fit <- fit_mongrel(Y, X)
+fit <- mongrel(Y, X)
 ppc(fit)
 }
 }

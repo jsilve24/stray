@@ -15,7 +15,7 @@
 #' @importFrom dplyr filter
 #' @examples
 #' \dontrun{
-#' fit <- fit_mongrel(Y, X)
+#' fit <- mongrel(Y, X)
 #' plot(fit, par="Lambda")
 #' plot(fit, par="Sigma")
 #' plot(fit, par="Sigma", focus.coord=c("s1", "s2", "s3"))
@@ -101,7 +101,7 @@ plot_mf_sigma <- function(m, focus.coord=NULL, use_names=TRUE){
 #' @importFrom driver gather_array
 #' @examples 
 #' \dontrun{
-#' fit <- fit_mongrel(Y, X)
+#' fit <- mongrel(Y, X)
 #' ppc(fit)
 #' }
 ppc <- function(m, iter=50){

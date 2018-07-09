@@ -30,7 +30,7 @@ Plot Summaries of Posterior Distribution of Mongrelfit Parameters
 }
 \examples{
 \dontrun{
-fit <- fit_mongrel(Y, X)
+fit <- mongrel(Y, X)
 plot(fit, par="Lambda")
 plot(fit, par="Sigma")
 plot(fit, par="Sigma", focus.coord=c("s1", "s2", "s3"))

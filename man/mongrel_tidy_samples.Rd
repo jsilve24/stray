@@ -22,8 +22,7 @@ column headers. Primarily designed to be used by
 }
 \examples{
 sim <- mongrel_sim()
-attach(sim)
-fit <- fit_mongrel(Y, X)
+fit <- mongrel(sim$Y, sim$X)
 fit_tidy <- mongrel_tidy_samples(fit, use_names=TRUE)
 head(fit_tidy)
 }

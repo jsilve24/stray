@@ -40,10 +40,10 @@
 #'  model if laplace approximation is not preformed. 
 #' @return an object of class mongrelfit
 #' @md
+#' @export
 #' @examples 
 #' sim <- mongrel_sim()
-#' attach(sim)
-#' fit <- fit_mongrel(Y, X)
+#' fit <- mongrel(sim$Y, sim$X)
 #' @seealso \code{\link{mongrel_transforms}} provide convenience methods for 
 #'  transforming the representation of mongrelfit objects (e.g., conversion to 
 #'  proportions, alr, clr, or ilr coordinates.)
@@ -53,13 +53,13 @@
 #'   
 #' Generic functions including \code{\link[=summary.mongrelfit]{summary}},  
 #' \code{\link[=print.mongrelfit]{print}}, 
-#'  \code{\link[=coefficients.mongrelfit]{coeficients}},  
+#'  \code{\link[=coef.mongrelfit]{coef}},  
 #'  \code{\link[=as.list.mongrelfit]{as.list}}, and  
 #'  \code{\link[=predict.mongrelfit]{predict}}
 #' 
 #' Plotting functions provided by \code{\link{plot}} and \code{\link{ppc}} 
 #' (posterior predictive checks)
-fit_mongrel <- function(Y, X, upsilon=NULL, Theta=NULL, Gamma=NULL, Xi=NULL,
+mongrel <- function(Y, X, upsilon=NULL, Theta=NULL, Gamma=NULL, Xi=NULL,
                     init=random_mongrel_init(Y), 
                     pars=c("Eta", "Lambda", "Sigma"),
                     ...){

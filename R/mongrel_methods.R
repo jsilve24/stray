@@ -14,8 +14,7 @@
 #' @return tibble
 #' @examples 
 #' sim <- mongrel_sim()
-#' attach(sim)
-#' fit <- fit_mongrel(Y, X)
+#' fit <- mongrel(sim$Y, sim$X)
 #' fit_tidy <- mongrel_tidy_samples(fit, use_names=TRUE)
 #' head(fit_tidy)
 mongrel_tidy_samples<- function(m, use_names=FALSE){
@@ -62,7 +61,7 @@ summary_check_precomputed <- function(m, pars){
 #' @param m an object of class mongrelfit 
 #' @param pars character vector (default: c("Eta", "Lambda", "Sigma"))
 #' @param use_names should summary replace dimension indicies with mongrelfit 
-#'   names if names Y and X were named in call to \code{\link{fit_mongrel}}
+#'   names if names Y and X were named in call to \code{\link{mongrel}}
 #' @param gather_prob if TRUE then prints quantiles in long format rather than 
 #'  wide (useful for some plotting functions)
 #' @param ... other expressions to pass to summarise (using name 'val' unquoted is 
@@ -74,7 +73,7 @@ summary_check_precomputed <- function(m, pars){
 #' @importFrom dplyr group_by select ungroup
 #' @examples 
 #' \dontrun{
-#' fit <- fit_mongrel(Y, X)
+#' fit <- mongrel(Y, X)
 #' summary(fit, pars="Eta", median = median(val))
 #' 
 #' # Some later functions make use of precomputation
@@ -120,7 +119,7 @@ summary.mongrelfit <- function(m, pars=NULL, use_names=TRUE, gather_prob=FALSE,
 #' @export
 #' @examples 
 #' \dontrun{
-#' fit <- fit_mongrel(Y, X)
+#' fit <- mongrel(Y, X)
 #' print(fit)
 #' }
 #' @seealso \code{\link{summary.mongrelfit}} summarizes posterior intervals 
@@ -154,14 +153,14 @@ print.mongrelfit <- function(m){
 #' 
 #' @param m an object of class mongrelfit
 #' @param use_names if column and row names were passed for Y and X in 
-#' call to \code{\link{fit_mongrel}}, should these names be applied to output 
+#' call to \code{\link{mongrel}}, should these names be applied to output 
 #' array. 
 #' @return Array of dimension (D-1) x Q x iter
 #' 
 #' @export
 #' @examples 
 #' \dontrun{
-#' fit <- fit_mongrel(Y, X)
+#' fit <- mongrel(Y, X)
 #' coef(fit)
 #' }
 coef.mongrelfit <- function(m, use_names=TRUE){
@@ -178,7 +177,7 @@ coef.mongrelfit <- function(m, use_names=TRUE){
 #' @export
 #' @examples 
 #' \dontrun{
-#' fit <- fit_mongrel(Y, X)
+#' fit <- mongrel(Y, X)
 #' as.list(fit)
 #' }
 as.list.mongrelfit <- function(m){
@@ -209,8 +208,7 @@ as.list.mongrelfit <- function(m){
 #' @importFrom stats median predict runif
 #' @examples 
 #' sim <- mongrel_sim()
-#' attach(sim)
-#' fit <- fit_mongrel(Y, X)
+#' fit <- mongrel(sim$Y, sim$X)
 #' predict(fit)
 predict.mongrelfit <- function(m, newdata=NULL, response="LambdaX", size=NULL, 
                                use_names=TRUE, summary=FALSE, ...){
@@ -309,7 +307,7 @@ predict.mongrelfit <- function(m, newdata=NULL, response="LambdaX", size=NULL,
 #' @name access_dims
 #' @examples 
 #' \dontrun{
-#' m <- fit_mongrel(Y, X)
+#' m <- mongrel(Y, X)
 #' ncategories(m)
 #' nsamples(m)
 #' ncovariates(m)

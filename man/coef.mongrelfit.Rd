@@ -10,7 +10,7 @@
 \item{m}{an object of class mongrelfit}
 
 \item{use_names}{if column and row names were passed for Y and X in 
-call to \code{\link{fit_mongrel}}, should these names be applied to output 
+call to \code{\link{mongrel}}, should these names be applied to output 
 array.}
 }
 \value{
@@ -21,7 +21,7 @@ Returned as array of dimension (D-1) x Q x iter.
 }
 \examples{
 \dontrun{
-fit <- fit_mongrel(Y, X)
+fit <- mongrel(Y, X)
 coef(fit)
 }
 }

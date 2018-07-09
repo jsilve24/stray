@@ -14,7 +14,7 @@ Print dimensions and coordinate system information for mongrelfit object.
 }
 \examples{
 \dontrun{
-fit <- fit_mongrel(Y, X)
+fit <- mongrel(Y, X)
 print(fit)
 }
 }

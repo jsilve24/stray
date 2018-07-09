@@ -14,7 +14,7 @@ Convert object of class mongrelfit to a list
 }
 \examples{
 \dontrun{
-fit <- fit_mongrel(Y, X)
+fit <- mongrel(Y, X)
 as.list(fit)
 }
 }

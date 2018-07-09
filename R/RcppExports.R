@@ -141,11 +141,10 @@ hessMongrelCollapsed <- function(Y, upsilon, ThetaX, K, A, eta) {
 #' @seealso \code{\link{uncollapseMongrelCollapsed}}
 #' @examples
 #' sim <- mongrel_sim()
-#' attach(sim)
 #' 
 #' # Fit model for eta
-#' fit <- optimMongrelCollapsed(Y, upsilon, Theta%*%X, K, A, 
-#'                              random_mongrel_init(Y))  
+#' fit <- optimMongrelCollapsed(sim$Y, sim$upsilon, sim$Theta%*%sim$X, sim$K, 
+#'                              sim$A, random_mongrel_init(sim$Y))  
 optimMongrelCollapsed <- function(Y, upsilon, ThetaX, K, A, etainit, n_samples = 2000L, calcGradHess = TRUE, b1 = 0.9, b2 = 0.99, step_size = 0.003, epsilon = 10e-7, eps_f = 1e-8, eps_g = 1e-5, max_iter = 10000L, verbose = FALSE, verbose_rate = 10L, decomp_method = "eigen", eigvalthresh = 0, no_error = FALSE) {
     .Call('_mongrel_optimMongrelCollapsed', PACKAGE = 'mongrel', Y, upsilon, ThetaX, K, A, etainit, n_samples, calcGradHess, b1, b2, step_size, epsilon, eps_f, eps_g, max_iter, verbose, verbose_rate, decomp_method, eigvalthresh, no_error)
 }
@@ -196,14 +195,14 @@ optimMongrelCollapsed <- function(Y, upsilon, ThetaX, K, A, etainit, n_samples =
 #' @seealso \code{\link{optimMongrelCollapsed}}
 #' @examples
 #' sim <- mongrel_sim()
-#' attach(sim)
 #' 
 #' # Fit model for eta
-#' fit <- optimMongrelCollapsed(Y, upsilon, Theta%*%X, K, A, 
-#'                              random_mongrel_init(Y))  
+#' fit <- optimMongrelCollapsed(sim$Y, sim$upsilon, sim$Theta%*%sim$X, sim$K, 
+#'                              sim$A, random_mongrel_init(sim$Y))  
 #' 
 #' # Finally obtain samples from Lambda and Sigma
-#' fit2 <- uncollapseMongrelCollapsed(fit$Samples, X, Theta, Gamma, Xi)
+#' fit2 <- uncollapseMongrelCollapsed(fit$Samples, sim$X, sim$Theta, 
+#'                                    sim$Gamma, sim$Xi, sim$upsilon)
 uncollapseMongrelCollapsed <- function(eta, X, Theta, Gamma, Xi, upsilon, ret_mean = FALSE) {
     .Call('_mongrel_uncollapseMongrelCollapsed', PACKAGE = 'mongrel', eta, X, Theta, Gamma, Xi, upsilon, ret_mean)
 }

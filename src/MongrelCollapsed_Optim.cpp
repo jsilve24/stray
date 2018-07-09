@@ -85,11 +85,10 @@ using Eigen::VectorXd;
 //' @seealso \code{\link{uncollapseMongrelCollapsed}}
 //' @examples
 //' sim <- mongrel_sim()
-//' attach(sim)
 //' 
 //' # Fit model for eta
-//' fit <- optimMongrelCollapsed(Y, upsilon, Theta%*%X, K, A, 
-//'                              random_mongrel_init(Y))  
+//' fit <- optimMongrelCollapsed(sim$Y, sim$upsilon, sim$Theta%*%sim$X, sim$K, 
+//'                              sim$A, random_mongrel_init(sim$Y))  
 // [[Rcpp::export]]
 List optimMongrelCollapsed(const Eigen::ArrayXXd Y, 
                const double upsilon, 

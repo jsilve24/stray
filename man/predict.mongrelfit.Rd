@@ -36,7 +36,6 @@ currently only implmented for mongrelfit objects in coord_system "default"
 }
 \examples{
 sim <- mongrel_sim()
-attach(sim)
-fit <- fit_mongrel(Y, X)
+fit <- mongrel(sim$Y, sim$X)
 predict(fit)
 }

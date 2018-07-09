@@ -107,11 +107,10 @@ D)
 }
 \examples{
 sim <- mongrel_sim()
-attach(sim)
 
 # Fit model for eta
-fit <- optimMongrelCollapsed(Y, upsilon, Theta\%*\%X, K, A, 
-                             random_mongrel_init(Y))  
+fit <- optimMongrelCollapsed(sim$Y, sim$upsilon, sim$Theta\%*\%sim$X, sim$K, 
+                             sim$A, random_mongrel_init(sim$Y))  
 }
 \references{
 S. Ruder (2016) \emph{An overview of gradient descent

@@ -19,7 +19,7 @@
 #' @import driver 
 #' @examples
 #' \dontrun{
-#' m <- fit_mongrel(Y, X)
+#' m <- mongrel(Y, X)
 #' m.prop <- mongrel_to_proportions(m)
 #' # convert back to default coordinates (alr with D-th part as reference)
 #' m <- mongrel_to_alr(m.prop, ncategories(m))

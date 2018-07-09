@@ -31,7 +31,7 @@ An alternative approach to accessing these dimensions is to
 }
 \examples{
 \dontrun{
-m <- fit_mongrel(Y, X)
+m <- mongrel(Y, X)
 ncategories(m)
 nsamples(m)
 ncovariates(m)

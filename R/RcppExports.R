@@ -83,7 +83,7 @@ hessMongrelCollapsed <- function(Y, upsilon, ThetaX, K, A, eta) {
 #' @param etainit D-1 x N matrix of initial guess for eta used for optimization
 #' @param n_samples number of samples for Laplace Approximation (=0 very fast
 #'    as no inversion or decomposition of Hessian is required)
-#' @param calcGradHessian if n_samples=0 should Gradient and Hessian 
+#' @param calcGradHess if n_samples=0 should Gradient and Hessian 
 #'   still be calculated using closed form solutions?
 #' @param b1 (ADAM) 1st moment decay parameter (recomend 0.9) "aka momentum"
 #' @param b2 (ADAM) 2nd moment decay parameter (recommend 0.99 or 0.999)
@@ -113,7 +113,7 @@ hessMongrelCollapsed <- function(Y, upsilon, ThetaX, K, A, eta) {
 #' 
 #' Gradient and Hessian calculations are fast as they are computed using closed
 #' form solutions. That said, the Hessian matrix can be quite large 
-#' [N*(D-1) x N*(D-1)] and storage may be an issue. 
+#' \[N*(D-1) x N*(D-1)\] and storage may be an issue. 
 #' 
 #' Note: Warnings about large negative eigenvalues can either signal 
 #' that the optimizer did not reach an optima or (more commonly in my experience)
@@ -140,39 +140,12 @@ hessMongrelCollapsed <- function(Y, upsilon, ThetaX, K, A, eta) {
 #' optimization algorithms}. arXiv 1609.04747
 #' @seealso \code{\link{uncollapseMongrelCollapsed}}
 #' @examples
-#' D <- 10
-#' Q <- 2
-#' N <- 30
+#' sim <- mongrel_sim()
+#' attach(sim)
 #' 
-#' # Simulate Data
-#' Sigma <- diag(sample(1:8, D-1, replace=TRUE))
-#' Sigma[2, 3] <- Sigma[3,2] <- -1
-#' Gamma <- diag(sqrt(rnorm(Q)^2))
-#' Theta <- matrix(0, D-1, Q)
-#' Phi <-  Theta + t(chol(Sigma))%*%matrix(rnorm(Q*(D-1)), nrow=D-1)%*%chol(Gamma)
-#' X <- matrix(rnorm(N*(Q-1)), Q-1, N)
-#' X <- rbind(1, X)
-#' Eta <- Phi%*%X + t(chol(Sigma))%*%matrix(rnorm(N*(D-1)), nrow=D-1)
-#' Pi <- t(driver::alrInv(t(Eta)))
-#' Y <- matrix(0, D, N)
-#' for (i in 1:N) Y[,i] <- rmultinom(1, sample(5000:10000), prob = Pi[,i])
-#' 
-#' # Priors
-#' upsilon <- D+10
-#' Xi <- Sigma*(upsilon-D-2)
-#' 
-#' # Precompute
-#' K <- solve(Xi)
-#' A <- solve(diag(N)+ t(X)%*%Gamma%*%X)
-#' ThetaX <- Theta%*%X
-#' 
-#' # Function for random initialization based on random pseudocounts  
-#' random_init <- function(Y){
-#'  t(driver::alr(t(Y)+runif(N*D)))
-#' }
-#' 
-#' # Finally fit model for eta
-#' fit <- optimMongrelCollapsed(Y, upsilon, ThetaX, K, A, random_init(Y))  
+#' # Fit model for eta
+#' fit <- optimMongrelCollapsed(Y, upsilon, Theta%*%X, K, A, 
+#'                              random_mongrel_init(Y))  
 optimMongrelCollapsed <- function(Y, upsilon, ThetaX, K, A, etainit, n_samples = 2000L, calcGradHess = TRUE, b1 = 0.9, b2 = 0.99, step_size = 0.003, epsilon = 10e-7, eps_f = 1e-8, eps_g = 1e-5, max_iter = 10000L, verbose = FALSE, verbose_rate = 10L, decomp_method = "eigen", eigvalthresh = 0, no_error = FALSE) {
     .Call('_mongrel_optimMongrelCollapsed', PACKAGE = 'mongrel', Y, upsilon, ThetaX, K, A, etainit, n_samples, calcGradHess, b1, b2, step_size, epsilon, eps_f, eps_g, max_iter, verbose, verbose_rate, decomp_method, eigvalthresh, no_error)
 }
@@ -222,39 +195,12 @@ optimMongrelCollapsed <- function(Y, upsilon, ThetaX, K, A, etainit, n_samples =
 #' @md
 #' @seealso \code{\link{optimMongrelCollapsed}}
 #' @examples
-#' D <- 10
-#' Q <- 2
-#' N <- 30
-#' 
-#' # Simulate Data
-#' Sigma <- diag(sample(1:8, D-1, replace=TRUE))
-#' Sigma[2, 3] <- Sigma[3,2] <- -1
-#' Gamma <- diag(sqrt(rnorm(Q)^2))
-#' Theta <- matrix(0, D-1, Q)
-#' Phi <-  Theta + t(chol(Sigma))%*%matrix(rnorm(Q*(D-1)), nrow=D-1)%*%chol(Gamma)
-#' X <- matrix(rnorm(N*(Q-1)), Q-1, N)
-#' X <- rbind(1, X)
-#' Eta <- Phi%*%X + t(chol(Sigma))%*%matrix(rnorm(N*(D-1)), nrow=D-1)
-#' Pi <- t(driver::alrInv(t(Eta)))
-#' Y <- matrix(0, D, N)
-#' for (i in 1:N) Y[,i] <- rmultinom(1, sample(5000:10000), prob = Pi[,i])
-#' 
-#' # Priors
-#' upsilon <- D+10
-#' Xi <- Sigma*(upsilon-D-2)
-#' 
-#' # Precompute
-#' K <- solve(Xi)
-#' A <- solve(diag(N)+ t(X)%*%Gamma%*%X)
-#' ThetaX <- Theta%*%X
-#' 
-#' # Function for random initialization based on random pseudocounts  
-#' random_init <- function(Y){
-#'  t(driver::alr(t(Y)+runif(N*D)))
-#' }
+#' sim <- mongrel_sim()
+#' attach(sim)
 #' 
 #' # Fit model for eta
-#' fit <- optimMongrelCollapsed(Y, upsilon, ThetaX, K, A, random_init(Y))  
+#' fit <- optimMongrelCollapsed(Y, upsilon, Theta%*%X, K, A, 
+#'                              random_mongrel_init(Y))  
 #' 
 #' # Finally obtain samples from Lambda and Sigma
 #' fit2 <- uncollapseMongrelCollapsed(fit$Samples, X, Theta, Gamma, Xi)

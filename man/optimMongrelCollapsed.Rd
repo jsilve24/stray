@@ -27,6 +27,9 @@ for regression coefficients)}
 \item{n_samples}{number of samples for Laplace Approximation (=0 very fast
 as no inversion or decomposition of Hessian is required)}
 
+\item{calcGradHess}{if n_samples=0 should Gradient and Hessian
+still be calculated using closed form solutions?}
+
 \item{b1}{(ADAM) 1st moment decay parameter (recomend 0.9) "aka momentum"}
 
 \item{b2}{(ADAM) 2nd moment decay parameter (recommend 0.99 or 0.999)}
@@ -54,9 +57,6 @@ decomposition of negative inverse hessian (should be <=0)}
 
 \item{no_error}{if true will throw hessian warning rather than error if
 not positive definite.}
-
-\item{calcGradHessian}{if n_samples=0 should Gradient and Hessian
-still be calculated using closed form solutions?}
 }
 \value{
 List containing (all with respect to found optima)
@@ -87,7 +87,7 @@ transform.
 
 Gradient and Hessian calculations are fast as they are computed using closed
 form solutions. That said, the Hessian matrix can be quite large
-\link{N*(D-1) x N*(D-1)} and storage may be an issue.
+[N*(D-1) x N*(D-1)] and storage may be an issue.
 
 Note: Warnings about large negative eigenvalues can either signal
 that the optimizer did not reach an optima or (more commonly in my experience)
@@ -102,41 +102,16 @@ in optimizer
 to consider decrasing parameter \code{upsilon} closer to a minimum value of
 D)
 }
+
+[N*(D-1) x N*(D-1)]: R:N*(D-1)%20x%20N*(D-1)%5C
 }
 \examples{
-D <- 10
-Q <- 2
-N <- 30
+sim <- mongrel_sim()
+attach(sim)
 
-# Simulate Data
-Sigma <- diag(sample(1:8, D-1, replace=TRUE))
-Sigma[2, 3] <- Sigma[3,2] <- -1
-Gamma <- diag(sqrt(rnorm(Q)^2))
-Theta <- matrix(0, D-1, Q)
-Phi <-  Theta + t(chol(Sigma))\%*\%matrix(rnorm(Q*(D-1)), nrow=D-1)\%*\%chol(Gamma)
-X <- matrix(rnorm(N*(Q-1)), Q-1, N)
-X <- rbind(1, X)
-Eta <- Phi\%*\%X + t(chol(Sigma))\%*\%matrix(rnorm(N*(D-1)), nrow=D-1)
-Pi <- t(driver::alrInv(t(Eta)))
-Y <- matrix(0, D, N)
-for (i in 1:N) Y[,i] <- rmultinom(1, sample(5000:10000), prob = Pi[,i])
-
-# Priors
-upsilon <- D+10
-Xi <- Sigma*(upsilon-D-2)
-
-# Precompute
-K <- solve(Xi)
-A <- solve(diag(N)+ t(X)\%*\%Gamma\%*\%X)
-ThetaX <- Theta\%*\%X
-
-# Function for random initialization based on random pseudocounts  
-random_init <- function(Y){
- t(driver::alr(t(Y)+runif(N*D)))
-}
-
-# Finally fit model for eta
-fit <- optimMongrelCollapsed(Y, upsilon, ThetaX, K, A, random_init(Y))  
+# Fit model for eta
+fit <- optimMongrelCollapsed(Y, upsilon, Theta\%*\%X, K, A, 
+                             random_mongrel_init(Y))  
 }
 \references{
 S. Ruder (2016) \emph{An overview of gradient descent

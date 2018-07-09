@@ -1,25 +1,53 @@
-# convert mongrel samples of Eta Lambda and Sigma to tidy format
+#' Convert mongrel samples of Eta Lambda and Sigma to tidy format
+#' 
+#' Combines them all into a single tibble, see example for formating and 
+#' column headers. Primarily designed to be used by 
+#' \code{\link{summary.mongrelfit}}. 
+#' 
+#' @param m an object of class mongrelfit
+#' @param use_names should dimension indicies be replaced by
+#'   dimension names if provided in data used to fit mongrel model.  
+#' 
 #' @importFrom driver gather_array
-#' @importFrom dplyr bind_rows
+#' @importFrom dplyr bind_rows group_by 
+#' @export
+#' @return tibble
+#' @examples 
+#' sim <- mongrel_sim()
+#' attach(sim)
+#' fit <- fit_mongrel(Y, X)
+#' fit_tidy <- mongrel_tidy_samples(fit, use_names=TRUE)
+#' head(fit_tidy)
 mongrel_tidy_samples<- function(m, use_names=FALSE){
   l <- list()
-  l$Eta <- gather_array(m$Eta, val, coord, sample, iter)
-  l$Lambda <- gather_array(m$Lambda, val, coord, covariate, iter)
-  if (m$coord_system != "proportions"){
-    l$Sigma <- gather_array(m$Sigma, val, coord, coord2, iter) 
-  } 
+  if (!is.null(m$Eta)) l$Eta <- driver::gather_array(m$Eta, val, coord, sample, iter)
+  if (!is.null(m$Lambda)) l$Lambda <- driver::gather_array(m$Lambda, val, coord, covariate, iter)
+  if (!is.null(m$Sigma)) l$Sigma <- driver::gather_array(m$Sigma, val, coord, coord2, iter) 
+
   l <- dplyr::bind_rows(l, .id="Parameter")
   
-  # a bunch of crazziness to deal with possible names given 
-  l <- apply_names_tidy(l, m, list("sample" = "sam", 
-                                   "covariate" = "cov", 
-                                   "coord" = "cat"))
-  if (m$coord_system != "proportions"){
-    l <- apply_names_tidy(l, m, list("coord2" = "cat"))
+  if (!use_names) return(l)
+  # Deal with names (first create conversion list)
+  cl <- list()
+  if (!is.null(m$Eta)) {
+    cl[["sample"]] = "sam"
+    cl[["coord"]] = "cat"
   }
+  if (!is.null(m$Lambda)){
+    cl[["covariate"]] = "cov"
+    cl[["coord"]] = "cat"
+  }
+  if (!is.null(m$Sigma)){
+    cl[["coord"]] = "cat"
+    cl[["coord2"]] = "cat"
+  }
+
+  l <- apply_names_tidy(l, m, cl)
+  
   return(l)
 }
 
+# Internal function to check if summary has already been precomputed. 
 summary_check_precomputed <- function(m, pars){
   if (!is.null(m$summary)){
     if (all(!is.null(m$summary[pars]))) return(TRUE)
@@ -27,55 +55,87 @@ summary_check_precomputed <- function(m, pars){
   return(FALSE)
 }
 
-
+#' Summarise mongrelfit object and print posterior quantiles
+#' 
+#' Default calculates median, mean, 50% and 95% credible interval
+#' 
+#' @param m an object of class mongrelfit 
+#' @param pars character vector (default: c("Eta", "Lambda", "Sigma"))
+#' @param use_names should summary replace dimension indicies with mongrelfit 
+#'   names if names Y and X were named in call to \code{\link{fit_mongrel}}
+#' @param gather_prob if TRUE then prints quantiles in long format rather than 
+#'  wide (useful for some plotting functions)
 #' @param ... other expressions to pass to summarise (using name 'val' unquoted is 
 #'   probably what you want)
 #' @import dplyr
 #' @importFrom driver summarise_posterior
 #' @importFrom purrr map
 #' @importFrom tidybayes mean_qi
+#' @importFrom dplyr group_by select ungroup
 #' @examples 
-#' ... what is fit ... # TODO
+#' \dontrun{
+#' fit <- fit_mongrel(Y, X)
 #' summary(fit, pars="Eta", median = median(val))
-#' ... note allows precomputation as 
-#' fit$summary <- summary(fit) to save time for future functions. 
+#' 
+#' # Some later functions make use of precomputation
+#' fit$summary <- summary(fit)
+#' }
 summary.mongrelfit <- function(m, pars=NULL, use_names=TRUE, gather_prob=FALSE,
                                ...){
-  if (is.null(pars)) pars <- c("Eta", "Lambda", "Sigma")
+  if (is.null(pars)) {
+    pars <- c("Eta", "Lambda", "Sigma")
+    pars <- pars[pars %in% names(m)] # only for the ones that are present 
+  }
+  
   
   # if already calculated
   if (summary_check_precomputed(m, pars)) return(m$summary[pars])
   
   mtidy <- dplyr::filter(mongrel_tidy_samples(m, use_names), Parameter %in% pars)
   if (m$coord_system != "proportions") {
-    mtidy <- group_by(mtidy, Parameter, coord, coord2, sample, covariate) 
+    mtidy <- dplyr::group_by(mtidy, Parameter, coord, coord2, sample, covariate) 
   } else {
-    mtidy <- group_by(mtidy, Parameter, coord, sample, covariate)
+    mtidy <- dplyr::group_by(mtidy, Parameter, coord, sample, covariate)
   }
   if (!gather_prob){
     mtidy <- mtidy %>% 
-      summarise_posterior(val, ...) %>%
-      ungroup() %>%
+      driver::summarise_posterior(val, ...) %>%
+      dplyr::ungroup() %>%
       split(.$Parameter) %>% 
-      map(~dplyr::select_if(.x, ~!all(is.na(.x))))  
+      purrr::map(~dplyr::select_if(.x, ~!all(is.na(.x))))  
   } else if (gather_prob){
     mtidy <- mtidy %>% 
-      select(-iter) %>% 
+      dplyr::select(-iter) %>% 
       tidybayes::mean_qi(.prob=c(.5, .8, .95, .99)) %>% 
-      ungroup() %>% 
+      dplyr::ungroup() %>% 
       split(.$Parameter) %>% 
-      map(~dplyr::select_if(.x, ~!all(is.na(.x))))  
+      purrr::map(~dplyr::select_if(.x, ~!all(is.na(.x))))  
   }
   return(mtidy)
 }
 
-
+#' Print dimensions and coordinate system information for mongrelfit object. 
+#'
+#' @param m an object of class mongrelfit
+#' @export
+#' @examples 
+#' \dontrun{
+#' fit <- fit_mongrel(Y, X)
+#' print(fit)
+#' }
+#' @seealso \code{\link{summary.mongrelfit}} summarizes posterior intervals 
 print.mongrelfit <- function(m){
   cat("Mongrelfit Object: \n" )
   cat(paste("  Number of Samples:\t\t", m$N, "\n"))
   cat(paste("  Number of Categories:\t\t", m$D, "\n"))
   cat(paste("  Number of Covariates:\t\t", m$Q, "\n"))
   cat(paste("  Number of Posterior Samples:\t", m$iter, "\n"))
+  
+  pars <- c("Eta", "Lambda", "Sigma")
+  pars <- pars[pars %in% names(m)]
+  pars <- paste(pars, collapse = "  ")
+  cat(paste("  Contains Samples of Parameters:", pars, "\n"))
+  
   if (m$coord_system=="alr"){
     cs <- m$alr_base
     nm <- m$names_categories
@@ -88,23 +148,45 @@ print.mongrelfit <- function(m){
 }
 
 
-coef.mongrelfit <- function(m, use.names=TRUE){
+#' Return regression coefficients of mongrelfit object
+#' 
+#' Returned as array of dimension (D-1) x Q x iter.
+#' 
+#' @param m an object of class mongrelfit
+#' @param use_names if column and row names were passed for Y and X in 
+#' call to \code{\link{fit_mongrel}}, should these names be applied to output 
+#' array. 
+#' @return Array of dimension (D-1) x Q x iter
+#' 
+#' @export
+#' @examples 
+#' \dontrun{
+#' fit <- fit_mongrel(Y, X)
+#' coef(fit)
+#' }
+coef.mongrelfit <- function(m, use_names=TRUE){
+  if (is.null(m$Lambda)) stop("mongrelfit object does not contain samples of Lambda")
   x <- m$Lambda
-  if (use.names) return(apply_names_array(x, m, list("cat", "cov", NULL)))
+  if (use_names) return(apply_names_array(x, m, list("cat", "cov", NULL)))
   return(x)
 }
 
-coefficients.mongrelfit <- function(m, use_names=TRUE){
-  coef.mongrelfit(m, use_names=TRUE)
-}
-
+#' Convert object of class mongrelfit to a list
+#' 
+#' @param m an object of class mongrelfit
+#' 
+#' @export
+#' @examples 
+#' \dontrun{
+#' fit <- fit_mongrel(Y, X)
+#' as.list(fit)
+#' }
 as.list.mongrelfit <- function(m){
   attr(m, "class") <- "list"
   return(m)
 }
 
 #' Predict response from new data
-#' 
 #' 
 #' 
 #' @param m An object of class mongrelfit
@@ -123,12 +205,20 @@ as.list.mongrelfit <- function(m){
 #' @details currently only implmented for mongrelfit objects in coord_system "default"
 #' "alr", or "ilr". 
 #' 
-#' 
+#' @export
+#' @importFrom stats median predict runif
+#' @examples 
+#' sim <- mongrel_sim()
+#' attach(sim)
+#' fit <- fit_mongrel(Y, X)
+#' predict(fit)
 predict.mongrelfit <- function(m, newdata=NULL, response="LambdaX", size=NULL, 
                                use_names=TRUE, summary=FALSE, ...){
+  
   if (!(m$coord_system %in% c("alr", "ilr"))){
-    stop("currently only accepts mongrelfit objects in coord_system default, alr, or ilr")
+    stop("currently only accepts mongrelfit objects in coord_system alr, or ilr")
   }
+
   if (is.null(newdata)) {
     newdata <- m$X
     if (response=="Y") size <-colSums(m$Y)
@@ -145,6 +235,7 @@ predict.mongrelfit <- function(m, newdata=NULL, response="LambdaX", size=NULL,
   nnew <- ncol(newdata)
   
   # Draw LambdaX
+  if (is.null(m$Lambda)) stop("mongrelfit object does not contain samples of Lambda")
   LambdaX <- array(0, dim = c(m$D-1, nnew, m$iter))
   for (i in 1:m$iter){
     LambdaX[,,i] <- m$Lambda[,,i] %*% newdata
@@ -180,7 +271,10 @@ predict.mongrelfit <- function(m, newdata=NULL, response="LambdaX", size=NULL,
   if (response=="Eta") return(Eta)
   
   # Draw Y
-  Pi <- mongrel_to_proportions(m)$Eta
+  if (is.null(m$Eta)) stop("mongrelfit object does not contain samples of Eta")
+  
+  com <- names(m)[!(names(m) %in% c("Lambda", "Sigma"))] # to save computation
+  Pi <- mongrel_to_proportions(m[com])$Eta
   Ypred <- array(0, dim=c(m$D, nnew, m$iter))
   for (i in 1:m$iter){
     for (j in 1:nnew){
@@ -201,5 +295,37 @@ predict.mongrelfit <- function(m, newdata=NULL, response="LambdaX", size=NULL,
   if (response=="Y") return(Ypred)
   stop("response parameter not recognized")
 }
+
+
+#' Simple helper functions to access mongrel fit dimensions
+#'
+#' @param m An object of class mongrelfit 
+#' @details An alternative approach to accessing these dimensions is to 
+#'   access them directly from the mongrelfit object using list indexing. 
+#' * \code{ncategories} is equivalent to \code{m$D}
+#' * \code{nsamples} is equivalent to \code{m$N}
+#' * \code{ncovariates} is equivalent to \code{m$Q}
+#' @return integer 
+#' @name access_dims
+#' @examples 
+#' \dontrun{
+#' m <- fit_mongrel(Y, X)
+#' ncategories(m)
+#' nsamples(m)
+#' ncovariates(m)
+#' }
+NULL
+
+#' @rdname access_dims
+#' @export
+ncategories <- function(m){ m$D }
+
+#' @rdname access_dims
+#' @export
+nsamples <- function(m){ m$N }
+
+#' @rdname access_dims
+#' @export
+ncovariates <- function(m){ m$Q }
 
 

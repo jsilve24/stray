@@ -2,43 +2,16 @@ context("test-main.R")
 library(driver)
 library(tidyverse)
 
-D <- 10
-Q <- 2
-N <- 30
 
-# Simulate Data
-Sigma <- diag(sample(1:8, D-1, replace=TRUE))
-Sigma[2, 3] <- Sigma[3,2] <- -1
-Gamma <- diag(sqrt(rnorm(Q)^2))
-Theta <- matrix(0, D-1, Q)
-Phi <-  Theta + t(chol(Sigma))%*%matrix(rnorm(Q*(D-1)), nrow=D-1)%*%chol(Gamma)
-X <- matrix(rnorm(N*(Q-1)), Q-1, N)
-X <- rbind(1, X)
-Eta <- Phi%*%X + t(chol(Sigma))%*%matrix(rnorm(N*(D-1)), nrow=D-1)
-Pi <- t(alrInv(t(Eta)))
-Y <- matrix(0, D, N)
-for (i in 1:N) Y[,i] <- rmultinom(1, sample(5000:10000), prob = Pi[,i])
-colnames(X) <- colnames(Y) <- paste0("s", 1:N)
-rownames(Y) <- paste0("c", 1:D)
-rownames(X) <- paste0("x", 1:Q)
-
-
-# Priors
-#upsilon <- D
-#Xi <- diag(D-1)
-upsilon <- D+10
-Xi <- Sigma*(upsilon-D-2)
-
-# Precompute
-K <- solve(Xi)
-A <- solve(diag(N)+ t(X)%*%Gamma%*%X)
+sim <- mongrel_sim(true_priors=TRUE)
+attach(sim)
 
 
 test_that("optim and uncollapse correctnesss", {
  
   init <- random_mongrel_init(Y)
   fit <- optimMongrelCollapsed(Y, upsilon, Theta%*%X, K, A, init,
-                               iter=2000, numexcessthresh=0,
+                               n_samples=2000,
                                calcGradHess = FALSE)
   
   # check closeness of MAP
@@ -65,7 +38,7 @@ test_that("optim and uncollapse correctnesss", {
 
 
 test_that("mongrel wrapper correctness", {
-  fit <- mongrel(Y, X)
+  fit <- fit_mongrel(Y, X)
   
   # Laplace approximation contains true value # given the true value
   p0.25 <- apply(fit$Eta, c(1,2), function(x) quantile(x, probs=0.0025))
@@ -82,3 +55,4 @@ test_that("mongrel wrapper correctness", {
   # -- not implemented yet - correct results for Lambda imply correct results
   # -- for Sigma due to dependency structure. 
 })
+

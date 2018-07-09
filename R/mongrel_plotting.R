@@ -1,15 +1,43 @@
-#' #' Just to tie into tidybayes
-#' predicted_samples.mongrelfit <- function(...){
-#'   predict(...)
-#' }
-
+#' Plot Summaries of Posterior Distribution of Mongrelfit Parameters
+#' 
+#' @param m an object of class mongrelfit
+#' @param par parameter to plot (options: Lambda, Eta, and Sigma) 
+#'   (default="Lambda")
+#' @param focus.cov vector of covariates to include in plot (plots all if NULL)
+#' @param focus.coord vector of coordinates to include in plot (plots all if NULL)
+#' @param focus.sample vector of samples to include in plot (plots all if NULL)
+#' @param use_names if TRUE, uses dimension names found in data as plot labels
+#'   rather than using dimension integer indicies. 
+#' 
+#' @return ggplot object
 #' @import tidybayes
 #' @import ggplot2
+#' @importFrom dplyr filter
+#' @examples
+#' \dontrun{
+#' fit <- fit_mongrel(Y, X)
+#' plot(fit, par="Lambda")
+#' plot(fit, par="Sigma")
+#' plot(fit, par="Sigma", focus.coord=c("s1", "s2", "s3"))
+#' }
 plot.mongrelfit <- function(m, par="Lambda", focus.cov=NULL, focus.coord=NULL, 
                             focus.sample=NULL, use_names=TRUE){
+ if (is.null(m[[par]])) stop("mongrelfit object does not contain samples for specified parameter")
+ if (par %in% c("Lambda", "Eta")) {
+   return(plot_mf_lambdaeta(m, par, focus.cov, focus.coord, 
+                            focus.sample, use_names))
+ } else if (par=="Sigma"){
+   return(plot_mf_sigma(m, focus.coord, use_names))
+ } else {
+   stop("only parameters Lambda, Sigma, and Eta are recognized by plot.mongrelfit")
+ }
+}
+
+plot_mf_lambdaeta <- function(m, par, focus.cov=NULL, focus.coord=NULL, 
+                              focus.sample=NULL, use_names=TRUE){
   data <- summary.mongrelfit(m, pars=par, use_names=use_names, gather_prob=TRUE)
   data <- data[[par]]
-
+  
   
   # some code to handle numeric focuses
   
@@ -35,11 +63,47 @@ plot.mongrelfit <- function(m, par="Lambda", focus.cov=NULL, focus.coord=NULL,
   p <- p+
     theme_minimal() +
     scale_color_brewer()
+    guides(color=guide_legend(title="Credible Interval"))
+  return(p)
+}
+
+plot_mf_sigma <- function(m, focus.coord=NULL, use_names=TRUE){
+  data <- mongrel_tidy_samples(m, use_names)
+  if (!is.null(focus.coord)) data <- filter(data, 
+                                            coord %in% focus.coord, 
+                                            coord2 %in% focus.coord)
+  data <-  group_by(data, coord, coord2) %>% 
+    mutate(medval = median(val)) %>% 
+    ungroup() 
+  p <- data %>% 
+    ggplot(aes(x = val)) +
+    geom_rect(data = filter(data, iter==1), 
+              aes(fill=medval), xmin=-Inf, xmax=Inf, ymin=-Inf, ymax=Inf) +
+    geom_density(fill="lightgrey") +
+    facet_grid(coord~coord2) +
+    theme_minimal() +
+    theme(strip.text.y = element_text(angle=0)) +
+    scale_fill_distiller(name="Median Value", palette = "Blues") +
+    xlab("Value") +
+    ylab("Density")
   return(p)
 }
 
 
-#' currently iter must be <= m$iter
+
+#' Visualization of Posterior Predictive Check of fit model
+#' 
+#' @param m an object of class mongrelfit
+#' @param iter number of samples from posterior predictive distribution to plot
+#'   (currently must be <= m$iter)
+#' @return ggplot object
+#' @import ggplot2
+#' @importFrom driver gather_array
+#' @examples 
+#' \dontrun{
+#' fit <- fit_mongrel(Y, X)
+#' ppc(fit)
+#' }
 ppc <- function(m, iter=50){
   
   pp <- predict(m, response="Y")

@@ -12,11 +12,21 @@
 #' @details Note: that there is a degeneracy of representations for a covariance 
 #' matrix represented in terms of proportions. As such the function 
 #' \code{mongrel_to_proportions} does not attempt to transform parameters Sigma
-#' or prior Xi and instead just remove them from the mongrelfit object returned. 
+#' or prior Xi and instead just removes them from the mongrelfit object returned. 
 #' 
 #' @return mongrelfit object
-#' @export
 #' @name mongrel_transforms
+#' @import driver 
+#' @examples
+#' \dontrun{
+#' m <- fit_mongrel(Y, X)
+#' m.prop <- mongrel_to_proportions(m)
+#' # convert back to default coordinates (alr with D-th part as reference)
+#' m <- mongrel_to_alr(m.prop, ncategories(m))
+#' V <- driver::create_default_ilr_base(ncategories(m))
+#' m.ilr <- mongrel_to_ilr(m, V)
+#' m.clr <- mongrel_to_clr(m)
+#' }
 NULL
 
 
@@ -24,16 +34,17 @@ NULL
 #' @export
 mongrel_to_proportions <- function(m){
   if (m$coord_system == "alr"){
-    m$Eta <- alrInv_array(m$Eta, m$alr_base, 1)
-    m$Lambda <- alrInv_array(m$Lambda, m$alr_base, 1)
-    if (m$alr_base != m$D){
-      for (i in 1:m$iter){
-        m$Sigma[,,i] <- alrvar2alrvar(m$Sigma[,,i], m$alr_base, m$D)
+    if (!is.null(m$Eta)) m$Eta <- alrInv_array(m$Eta, m$alr_base, 1)
+    if (!is.null(m$Lambda)) m$Lambda <- alrInv_array(m$Lambda, m$alr_base, 1)
+    if (!is.null(m$Sigma)){
+      if (m$alr_base != m$D){
+        for (i in 1:m$iter){
+          m$Sigma[,,i] <- alrvar2alrvar(m$Sigma[,,i], m$alr_base, m$D)
+        }
       }
+      m$Sigma_default <- m$Sigma
+      m$Sigma <- NULL
     }
-    m$Sigma_default <- m$Sigma
-    m$Sigma <- NULL
-    
     # Transform Priors as well 
     if (m$alr_base != m$D){
       m$Xi <- alrvar2alrvar(m$Xi, m$alr_base, m$D)
@@ -43,13 +54,15 @@ mongrel_to_proportions <- function(m){
     m$Theta <- alrInv_array(m$Theta, m$alr_base, 1)
   }
   if (m$coord_system == "ilr"){
-    m$Eta <- ilrInv_array(m$Eta, m$ilr_base, 1)
-    m$Lambda <- ilrInv_array(m$Lambda, m$ilr_base, 1)
-    for (i in 1:m$iter){
-      m$Sigma[,,i] <- ilrvar2alrvar(m$Sigma[,,i], m$ilr_base, m$D)
+    if (!is.null(m$Eta)) m$Eta <- ilrInv_array(m$Eta, m$ilr_base, 1)
+    if (!is.null(m$Lambda)) m$Lambda <- ilrInv_array(m$Lambda, m$ilr_base, 1)
+    if (!is.null(m$Sigma)){
+      for (i in 1:m$iter){
+        m$Sigma[,,i] <- ilrvar2alrvar(m$Sigma[,,i], m$ilr_base, m$D)
+      }
+      m$Sigma_default <- m$Sigma
+      m$Sigma <- NULL
     }
-    m$Sigma_default <- m$Sigma
-    m$Sigma <- NULL
     
     # Transform priors as well 
     m$Xi <- ilrvar2alrvar(m$Xi, m$ilr_base, m$D)
@@ -58,15 +71,16 @@ mongrel_to_proportions <- function(m){
     m$Theta <- ilrInv_array(m$Theta, m$ilr_base, 1)
   }
   if (m$coord_system == "clr"){
-    m$Eta <- clrInv_array(m$Eta, 1)
-    m$Lambda <- clrInv_array(m$Lambda, 1)
-    Sigma_default <- array(0, dim=c(m$D-1, m$D-1, m$iter))
-    for (i in 1:m$iter){
-      Sigma_default[,,i] <- clrvar2alrvar(m$Sigma[,,i], m$D)
+    if (!is.null(m$Eta)) m$Eta <- clrInv_array(m$Eta, 1)
+    if (!is.null(m$Lambda)) m$Lambda <- clrInv_array(m$Lambda, 1)
+    if (!is.null(m$Sigma)){
+      Sigma_default <- array(0, dim=c(m$D-1, m$D-1, m$iter))
+      for (i in 1:m$iter){
+        Sigma_default[,,i] <- clrvar2alrvar(m$Sigma[,,i], m$D)
+      }
+      m$Sigma <- NULL
+      m$Sigma_default <- Sigma_default
     }
-    m$Sigma <- NULL
-    m$Sigma_default <- Sigma_default
-    
     # Transform priors as well
     m$Xi_default <- clrvar2alrvar(m$Xi, m$D)
     m$Xi <- NULL
@@ -90,13 +104,15 @@ mongrel_to_proportions <- function(m){
 mongrel_to_alr <- function(m, d){
   m <- mongrel_to_proportions(m)
   
-  m$Eta <- alr_array(m$Eta, d, 1)
-  m$Lambda <- alr_array(m$Lambda, d, 1)
-  m$Sigma <- array(0, dim=dim(m$Sigma_default))
-  for (i in 1:m$iter){
-    m$Sigma[,,i] <- alrvar2alrvar(m$Sigma_default[,,i], m$D, d)
+  if (!is.null(m$Eta)) m$Eta <- alr_array(m$Eta, d, 1)
+  if (!is.null(m$Lambda)) m$Lambda <- alr_array(m$Lambda, d, 1)
+  if (!is.null(m$Sigma)){
+    m$Sigma <- array(0, dim=dim(m$Sigma_default))
+    for (i in 1:m$iter){
+      m$Sigma[,,i] <- alrvar2alrvar(m$Sigma_default[,,i], m$D, d)
+    }
+    m$Sigma_default <- NULL
   }
-  m$Sigma_default <- NULL
   # Transform priors as well 
   m$Xi <- alrvar2alrvar(m$Xi_default, m$D, d)
   m$Xi_default <- NULL
@@ -114,13 +130,15 @@ mongrel_to_ilr <- function(m, V=NULL){
   if (is.null(V)) V <- driver::create_default_ilr_base(m$D)
   m <- mongrel_to_proportions(m)
   
-  m$Eta <- ilr_array(m$Eta, V, 1)
-  m$Lambda <- ilr_array(m$Lambda, V, 1)
-  m$Sigma <- array(0, dim=dim(m$Sigma_default))
-  for (i in 1:m$iter){
-    m$Sigma[,,i] <- alrvar2ilrvar(m$Sigma_default[,,i], m$D, V)
+  if (!is.null(m$Eta)) m$Eta <- ilr_array(m$Eta, V, 1)
+  if (!is.null(m$Lambda)) m$Lambda <- ilr_array(m$Lambda, V, 1)
+  if (!is.null(m$Sigma)){
+    m$Sigma <- array(0, dim=dim(m$Sigma_default))
+    for (i in 1:m$iter){
+      m$Sigma[,,i] <- alrvar2ilrvar(m$Sigma_default[,,i], m$D, V)
+    }
+    m$Sigma_default <- NULL
   }
-  m$Sigma_default <- NULL
   # Transform priors as well 
   m$Xi <- alrvar2ilrvar(m$Xi_default, m$D, V)
   m$Xi_default <- NULL
@@ -137,15 +155,15 @@ mongrel_to_ilr <- function(m, V=NULL){
 mongrel_to_clr <- function(m){
   m <- mongrel_to_proportions(m)
 
-  m$Eta <- clr_array(m$Eta, 1)
-  m$Lambda <- clr_array(m$Lambda, 1)
-  
-  m$Sigma <- array(0, dim=c(m$D, m$D, m$iter))
-  for (i in 1:m$iter){
-    m$Sigma[,,i] <- alrvar2clrvar(m$Sigma_default[,,i], m$D)
+  if (!is.null(m$Eta)) m$Eta <- clr_array(m$Eta, 1)
+  if (!is.null(m$Lambda)) m$Lambda <- clr_array(m$Lambda, 1)
+  if (!is.null(m$Sigma)){
+    m$Sigma <- array(0, dim=c(m$D, m$D, m$iter))
+    for (i in 1:m$iter){
+      m$Sigma[,,i] <- alrvar2clrvar(m$Sigma_default[,,i], m$D)
+    }
+    m$Sigma_default <- NULL
   }
-  m$Sigma_default <- NULL
-  
   # Transform priors as well 
   m$Xi <- alrvar2clrvar(m$Xi_default, m$D)
   m$Xi_default <- NULL

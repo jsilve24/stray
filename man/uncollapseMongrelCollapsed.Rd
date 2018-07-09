@@ -61,39 +61,12 @@ This function provides a means of sampling from the posterior distribution of
 the collapsed model.
 }
 \examples{
-D <- 10
-Q <- 2
-N <- 30
-
-# Simulate Data
-Sigma <- diag(sample(1:8, D-1, replace=TRUE))
-Sigma[2, 3] <- Sigma[3,2] <- -1
-Gamma <- diag(sqrt(rnorm(Q)^2))
-Theta <- matrix(0, D-1, Q)
-Phi <-  Theta + t(chol(Sigma))\%*\%matrix(rnorm(Q*(D-1)), nrow=D-1)\%*\%chol(Gamma)
-X <- matrix(rnorm(N*(Q-1)), Q-1, N)
-X <- rbind(1, X)
-Eta <- Phi\%*\%X + t(chol(Sigma))\%*\%matrix(rnorm(N*(D-1)), nrow=D-1)
-Pi <- t(driver::alrInv(t(Eta)))
-Y <- matrix(0, D, N)
-for (i in 1:N) Y[,i] <- rmultinom(1, sample(5000:10000), prob = Pi[,i])
-
-# Priors
-upsilon <- D+10
-Xi <- Sigma*(upsilon-D-2)
-
-# Precompute
-K <- solve(Xi)
-A <- solve(diag(N)+ t(X)\%*\%Gamma\%*\%X)
-ThetaX <- Theta\%*\%X
-
-# Function for random initialization based on random pseudocounts  
-random_init <- function(Y){
- t(driver::alr(t(Y)+runif(N*D)))
-}
+sim <- mongrel_sim()
+attach(sim)
 
 # Fit model for eta
-fit <- optimMongrelCollapsed(Y, upsilon, ThetaX, K, A, random_init(Y))  
+fit <- optimMongrelCollapsed(Y, upsilon, Theta\%*\%X, K, A, 
+                             random_mongrel_init(Y))  
 
 # Finally obtain samples from Lambda and Sigma
 fit2 <- uncollapseMongrelCollapsed(fit$Samples, X, Theta, Gamma, Xi)

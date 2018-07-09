@@ -57,8 +57,8 @@
 #'  \code{\link[=as.list.mongrelfit]{as.list}}, and  
 #'  \code{\link[=predict.mongrelfit]{predict}}
 #' 
-#' Plotting functions provided by \code{\link{plot}} and \code{\link{ppc}} 
-#' (posterior predictive checks)
+#' Plotting functions provided by \code{\link[=plot.mongrelfit]{plot}} 
+#' and \code{\link{ppc}} (posterior predictive checks)
 mongrel <- function(Y, X, upsilon=NULL, Theta=NULL, Gamma=NULL, Xi=NULL,
                     init=random_mongrel_init(Y), 
                     pars=c("Eta", "Lambda", "Sigma"),

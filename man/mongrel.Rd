@@ -79,6 +79,6 @@ Generic functions including \code{\link[=summary.mongrelfit]{summary}},
 \code{\link[=as.list.mongrelfit]{as.list}}, and
 \code{\link[=predict.mongrelfit]{predict}}
 
-Plotting functions provided by \code{\link{plot}} and \code{\link{ppc}}
-(posterior predictive checks)
+Plotting functions provided by \code{\link[=plot.mongrelfit]{plot}}
+and \code{\link{ppc}} (posterior predictive checks)
 }

@@ -5,7 +5,7 @@ Version: 0.1
 Date: 2018-06-26
 Author: Justin Silverman
 Authors@R: c(person("Justin", "Silverman", role=c("aut", "cre"),
-                     email = "jsilve24@gmail.com"))
+                     email = "Justin.Silverman@duke.edu"))
 Maintainer: Justin Silverman
     <Justin.Silverman@duke.edu>
 Description: Provides methods for fitting and inspection of Bayesian Multinomial 

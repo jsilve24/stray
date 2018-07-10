@@ -177,10 +177,9 @@ mongrel <- function(Y, X, upsilon=NULL, Theta=NULL, Gamma=NULL, Xi=NULL,
   out$coord_system <- "alr"
   out$alr_base <- D
   out$summary <- NULL
-  
   attr(out, "class") <- c("mongrelfit")
   # add names if present 
   out <- apply_names_mongrel(out)
-  
+  verify(out) # verify the mongrelfit object
   return(out)
 }

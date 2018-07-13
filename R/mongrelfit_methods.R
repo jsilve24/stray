@@ -115,7 +115,8 @@ summary.mongrelfit <- function(m, pars=NULL, use_names=TRUE, gather_prob=FALSE,
 
 #' Print dimensions and coordinate system information for mongrelfit object. 
 #'
-#' @param m an object of class mongrelfit
+#' @param x an object of class mongrelfit
+#' @param ... currently unused
 #' @export
 #' @examples 
 #' \dontrun{
@@ -123,25 +124,25 @@ summary.mongrelfit <- function(m, pars=NULL, use_names=TRUE, gather_prob=FALSE,
 #' print(fit)
 #' }
 #' @seealso \code{\link{summary.mongrelfit}} summarizes posterior intervals 
-print.mongrelfit <- function(m){
+print.mongrelfit <- function(x, ...){
   cat("Mongrelfit Object: \n" )
-  cat(paste("  Number of Samples:\t\t", m$N, "\n"))
-  cat(paste("  Number of Categories:\t\t", m$D, "\n"))
-  cat(paste("  Number of Covariates:\t\t", m$Q, "\n"))
-  cat(paste("  Number of Posterior Samples:\t", m$iter, "\n"))
+  cat(paste("  Number of Samples:\t\t", x$N, "\n"))
+  cat(paste("  Number of Categories:\t\t", x$D, "\n"))
+  cat(paste("  Number of Covariates:\t\t", x$Q, "\n"))
+  cat(paste("  Number of Posterior Samples:\t", x$iter, "\n"))
   
   pars <- c("Eta", "Lambda", "Sigma")
-  pars <- pars[pars %in% names(m)]
+  pars <- pars[pars %in% names(x)]
   pars <- paste(pars, collapse = "  ")
   cat(paste("  Contains Samples of Parameters:", pars, "\n"))
   
-  if (m$coord_system=="alr"){
-    cs <- m$alr_base
-    nm <- m$names_categories
-    if (!is.null(nm)) cs <- paste0(cs, " [", nm[m$alr_base], "]")
+  if (x$coord_system=="alr"){
+    cs <- x$alr_base
+    nm <- x$names_categories
+    if (!is.null(nm)) cs <- paste0(cs, " [", nm[x$alr_base], "]")
     cs <- paste("alr, reference category: ", cs)
   } else {
-    cs <- m$coord_system
+    cs <- x$coord_system
   }
   cat(paste("  Coordinate System:\t\t", cs))
 }
@@ -151,7 +152,7 @@ print.mongrelfit <- function(m){
 #' 
 #' Returned as array of dimension (D-1) x Q x iter.
 #' 
-#' @param m an object of class mongrelfit
+#' @param object an object of class mongrelfit
 #' @param use_names if column and row names were passed for Y and X in 
 #' call to \code{\link{mongrel}}, should these names be applied to output 
 #' array. 
@@ -163,16 +164,17 @@ print.mongrelfit <- function(m){
 #' fit <- mongrel(Y, X)
 #' coef(fit)
 #' }
-coef.mongrelfit <- function(m, use_names=TRUE){
-  if (is.null(m$Lambda)) stop("mongrelfit object does not contain samples of Lambda")
-  x <- m$Lambda
-  if (use_names) return(apply_names_array(x, m, list("cat", "cov", NULL)))
+coef.mongrelfit <- function(object, use_names=TRUE){
+  if (is.null(object$Lambda)) stop("mongrelfit object does not contain samples of Lambda")
+  x <- object$Lambda
+  if (use_names) return(apply_names_array(x, object, list("cat", "cov", NULL)))
   return(x)
 }
 
 #' Convert object of class mongrelfit to a list
 #' 
-#' @param m an object of class mongrelfit
+#' @param x an object of class mongrelfit
+#' @param ... currently unused
 #' 
 #' @export
 #' @examples 
@@ -180,15 +182,15 @@ coef.mongrelfit <- function(m, use_names=TRUE){
 #' fit <- mongrel(Y, X)
 #' as.list(fit)
 #' }
-as.list.mongrelfit <- function(m){
-  attr(m, "class") <- "list"
-  return(m)
+as.list.mongrelfit <- function(x,...){
+  attr(x, "class") <- "list"
+  return(x)
 }
 
 #' Predict response from new data
 #' 
 #' 
-#' @param m An object of class mongrelfit
+#' @param object An object of class mongrelfit
 #' @param newdata An optional matrix for which to evaluate predictions. If NULL
 #'   (default), the original data of the model is used. 
 #' @param response Options = "LambdaX":Mean of regression, "Eta", "Y": counts
@@ -210,35 +212,35 @@ as.list.mongrelfit <- function(m){
 #' sim <- mongrel_sim()
 #' fit <- mongrel(sim$Y, sim$X)
 #' predict(fit)
-predict.mongrelfit <- function(m, newdata=NULL, response="LambdaX", size=NULL, 
+predict.mongrelfit <- function(object, newdata=NULL, response="LambdaX", size=NULL, 
                                use_names=TRUE, summary=FALSE, ...){
   
-  if (!(m$coord_system %in% c("alr", "ilr"))){
+  if (!(object$coord_system %in% c("alr", "ilr"))){
     stop("currently only accepts mongrelfit objects in coord_system alr, or ilr")
   }
 
   if (is.null(newdata)) {
-    newdata <- m$X
-    if (response=="Y") size <-colSums(m$Y)
+    newdata <- object$X
+    if (response=="Y") size <-colSums(object$Y)
   } else {
-    if ((response=="Y")&&(is.null(size))) size <- median(colSums(m$Y))
+    if ((response=="Y")&&(is.null(size))) size <- median(colSums(object$Y))
   }
   if ((response=="Y") && is.vector(size)){
-    size <- replicate(m$iter, size)
+    size <- replicate(object$iter, size)
   }
   
   # Try to match rownames of newdata to avoid possible errors...
-  if (!is.null(rownames(newdata))) newdata <- newdata[m$names_covariates,]
+  if (!is.null(rownames(newdata))) newdata <- newdata[object$names_covariates,]
   
   nnew <- ncol(newdata)
   
   # Draw LambdaX
-  if (is.null(m$Lambda)) stop("mongrelfit object does not contain samples of Lambda")
-  LambdaX <- array(0, dim = c(m$D-1, nnew, m$iter))
-  for (i in 1:m$iter){
-    LambdaX[,,i] <- m$Lambda[,,i] %*% newdata
+  if (is.null(object$Lambda)) stop("mongrelfit object does not contain samples of Lambda")
+  LambdaX <- array(0, dim = c(object$D-1, nnew, object$iter))
+  for (i in 1:object$iter){
+    LambdaX[,,i] <- object$Lambda[,,i] %*% newdata
   }
-  if (use_names) LambdaX <- apply_names_array(LambdaX, m,
+  if (use_names) LambdaX <- apply_names_array(LambdaX, object,
                                               list("cat", colnames(newdata), 
                                                    NULL))
   if ((response == "LambdaX") && summary) {
@@ -246,48 +248,48 @@ predict.mongrelfit <- function(m, newdata=NULL, response="LambdaX", size=NULL,
       group_by(coord, sample) %>% 
       summarise_posterior(val, ...) %>% 
       ungroup() %>% 
-      apply_names_tidy(m, list("coord" = "cat", "sample"=colnames(newdata)))
+      apply_names_tidy(object, list("coord" = "cat", "sample"=colnames(newdata)))
     return(LambdaX)
   }
   if (response == "LambdaX") return(LambdaX)
   
   # Draw Eta
   Eta <- array(0, dim=dim(LambdaX))
-  zEta <- array(rnorm((m$D-1)*nnew*m$iter), dim = dim(Eta))
-  for (i in 1:m$iter){
-    Eta[,,i] <- LambdaX[,,i] + t(chol(m$Sigma[,,i]))%*%zEta[,,i]
+  zEta <- array(rnorm((object$D-1)*nnew*object$iter), dim = dim(Eta))
+  for (i in 1:object$iter){
+    Eta[,,i] <- LambdaX[,,i] + t(chol(object$Sigma[,,i]))%*%zEta[,,i]
   }
-  if (use_names) Eta <- apply_names_array(Eta, m, list("cat", colnames(newdata), 
+  if (use_names) Eta <- apply_names_array(Eta, object, list("cat", colnames(newdata), 
                                                  NULL))
   if ((response=="Eta") && summary) {
     Eta <- gather_array(Eta, val, coord, sample, iter) %>% 
       group_by(coord, sample) %>% 
       summarise_posterior(val, ...) %>% 
       ungroup() %>% 
-      apply_names_tidy(m, list("coord" = "cat", "sample"=colnames(newdata)))
+      apply_names_tidy(object, list("coord" = "cat", "sample"=colnames(newdata)))
   }
   if (response=="Eta") return(Eta)
   
   # Draw Y
-  if (is.null(m$Eta)) stop("mongrelfit object does not contain samples of Eta")
+  if (is.null(object$Eta)) stop("mongrelfit object does not contain samples of Eta")
   
-  com <- names(m)[!(names(m) %in% c("Lambda", "Sigma"))] # to save computation
-  Pi <- mongrel_to_proportions(m[com])$Eta
-  Ypred <- array(0, dim=c(m$D, nnew, m$iter))
-  for (i in 1:m$iter){
+  com <- names(object)[!(names(object) %in% c("Lambda", "Sigma"))] # to save computation
+  Pi <- mongrel_to_proportions(object[com])$Eta
+  Ypred <- array(0, dim=c(object$D, nnew, object$iter))
+  for (i in 1:object$iter){
     for (j in 1:nnew){
       Ypred[,j,i] <- rmultinom(1, size=size[j,i], prob=Pi[,j,i])
     }
   }
-  if (use_names) apply_names_array(Ypred, m, 
-                                   list(m$names_categories, colnames(newdata), 
+  if (use_names) apply_names_array(Ypred, object, 
+                                   list(object$names_categories, colnames(newdata), 
                                         NULL))
   if ((response == "Y") && summary) {
     Ypred <- gather_array(Ypred, val, coord, sample, iter) %>% 
       group_by(coord, sample) %>% 
       summarise_posterior(val, ...) %>% 
       ungroup() %>% 
-      apply_names_tidy(m, list("coord" = m$names_categories, 
+      apply_names_tidy(object, list("coord" = object$names_categories, 
                                "sample"= colnames(newdata)))
   }
   if (response=="Y") return(Ypred)

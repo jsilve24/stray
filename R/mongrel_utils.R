@@ -36,7 +36,7 @@ random_mongrel_init <- function(Y){
 #' y <- c(1,3,4)
 #' check_dims(y, 3, "y")
 check_dims <- function(x, d, par){
-  if (is.vector(x)){
+  if (is.vector(x) | is.factor(x)){
     dc <- length(x)
   } else {
     dc <- dim(x)

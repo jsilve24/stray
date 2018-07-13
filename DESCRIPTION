@@ -19,3 +19,6 @@ LinkingTo: Rcpp, RcppEigen, RcppNumerical
 RoxygenNote: 6.0.1
 Suggests: 
     testthat
+Remotes:
+    jsilve24/driver,
+    mjskay/tidybayes

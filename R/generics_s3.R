@@ -21,8 +21,19 @@ verify <- function(m, ...){
 #' @return throws error if required element is not present 
 #' @export 
 req <- function(m, r){
-  present <- sapply(m[r], is.null)
-  if(any(present)){
-    stop("object does not contain required components:", r[present])
-  }
+  UseMethod("req", m)
+}
+
+
+#' Generic method for applying names to an object
+#' 
+#' Intended to be called internally by package
+#' 
+#' @param m object
+#' @param ... other arguments to be passed 
+#' 
+#' @return object of same class but with names applied to dimensions 
+#' @export
+name <- function(m, ...){
+  UseMethod("name", m)
 }

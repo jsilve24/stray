@@ -4,7 +4,7 @@
 \alias{req.mongrelfit}
 \title{require elements to be non-null in mongrelfit or throw error}
 \usage{
-req.mongrelfit(m, r)
+\method{req}{mongrelfit}(m, r)
 }
 \arguments{
 \item{m}{object}

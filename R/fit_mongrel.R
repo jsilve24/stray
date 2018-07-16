@@ -179,7 +179,7 @@ mongrel <- function(Y, X, upsilon=NULL, Theta=NULL, Gamma=NULL, Xi=NULL,
   out$summary <- NULL
   attr(out, "class") <- c("mongrelfit")
   # add names if present 
-  out <- apply_names_mongrel(out)
+  out <- name(out)
   verify(out) # verify the mongrelfit object
   return(out)
 }

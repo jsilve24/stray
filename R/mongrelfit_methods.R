@@ -41,7 +41,7 @@ mongrel_tidy_samples<- function(m, use_names=FALSE){
     cl[["coord2"]] = "cat"
   }
 
-  l <- apply_names_tidy(l, m, cl)
+  l <- name_tidy(l, m, cl)
   
   return(l)
 }
@@ -167,7 +167,7 @@ print.mongrelfit <- function(x, ...){
 coef.mongrelfit <- function(object, use_names=TRUE){
   if (is.null(object$Lambda)) stop("mongrelfit object does not contain samples of Lambda")
   x <- object$Lambda
-  if (use_names) return(apply_names_array(x, object, list("cat", "cov", NULL)))
+  if (use_names) return(name_array(x, object, list("cat", "cov", NULL)))
   return(x)
 }
 
@@ -240,7 +240,7 @@ predict.mongrelfit <- function(object, newdata=NULL, response="LambdaX", size=NU
   for (i in 1:object$iter){
     LambdaX[,,i] <- object$Lambda[,,i] %*% newdata
   }
-  if (use_names) LambdaX <- apply_names_array(LambdaX, object,
+  if (use_names) LambdaX <- name_array(LambdaX, object,
                                               list("cat", colnames(newdata), 
                                                    NULL))
   if ((response == "LambdaX") && summary) {
@@ -248,7 +248,7 @@ predict.mongrelfit <- function(object, newdata=NULL, response="LambdaX", size=NU
       group_by(coord, sample) %>% 
       summarise_posterior(val, ...) %>% 
       ungroup() %>% 
-      apply_names_tidy(object, list("coord" = "cat", "sample"=colnames(newdata)))
+      name_tidy(object, list("coord" = "cat", "sample"=colnames(newdata)))
     return(LambdaX)
   }
   if (response == "LambdaX") return(LambdaX)
@@ -259,14 +259,14 @@ predict.mongrelfit <- function(object, newdata=NULL, response="LambdaX", size=NU
   for (i in 1:object$iter){
     Eta[,,i] <- LambdaX[,,i] + t(chol(object$Sigma[,,i]))%*%zEta[,,i]
   }
-  if (use_names) Eta <- apply_names_array(Eta, object, list("cat", colnames(newdata), 
+  if (use_names) Eta <- name_array(Eta, object, list("cat", colnames(newdata), 
                                                  NULL))
   if ((response=="Eta") && summary) {
     Eta <- gather_array(Eta, val, coord, sample, iter) %>% 
       group_by(coord, sample) %>% 
       summarise_posterior(val, ...) %>% 
       ungroup() %>% 
-      apply_names_tidy(object, list("coord" = "cat", "sample"=colnames(newdata)))
+      name_tidy(object, list("coord" = "cat", "sample"=colnames(newdata)))
   }
   if (response=="Eta") return(Eta)
   
@@ -281,7 +281,7 @@ predict.mongrelfit <- function(object, newdata=NULL, response="LambdaX", size=NU
       Ypred[,j,i] <- rmultinom(1, size=size[j,i], prob=Pi[,j,i])
     }
   }
-  if (use_names) apply_names_array(Ypred, object, 
+  if (use_names) name_array(Ypred, object, 
                                    list(object$names_categories, colnames(newdata), 
                                         NULL))
   if ((response == "Y") && summary) {
@@ -289,7 +289,7 @@ predict.mongrelfit <- function(object, newdata=NULL, response="LambdaX", size=NU
       group_by(coord, sample) %>% 
       summarise_posterior(val, ...) %>% 
       ungroup() %>% 
-      apply_names_tidy(object, list("coord" = object$names_categories, 
+      name_tidy(object, list("coord" = object$names_categories, 
                                "sample"= colnames(newdata)))
   }
   if (response=="Y") return(Ypred)

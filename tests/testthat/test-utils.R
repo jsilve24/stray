@@ -23,6 +23,13 @@ test_that("apply_names correct on unnamed imput", {
   sim$X <- unname(sim$X)
   attach(sim)
   fit <- mongrel(Y, X)
+  
+  
+  
+  # When not all parameters are present
+  fit$Eta <- NULL
+  apply_names_mongrel(fit)
+  
   detach(sim)
   expect_true(TRUE) # so that above does not give error
 })

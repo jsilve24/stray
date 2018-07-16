@@ -107,18 +107,32 @@ apply_names_tidy <- function(X, m, dimvars){
 
 # apply names to mongrel object
 apply_names_mongrel <- function(m){
-  m$Eta <- apply_names_array(m$Eta, m, list("cat", "sam", NULL))
-  m$Lambda <- apply_names_array(m$Lambda, m, list("cat", "cov", NULL))
+  if (!is.null(m$Eta)) {
+    m$Eta <- apply_names_array(m$Eta, m, list("cat", "sam", NULL))
+  }
+  if (!is.null(m$Lambda)){
+    m$Lambda <- apply_names_array(m$Lambda, m, list("cat", "cov", NULL))    
+  }
   if (!is.null(m$Sigma)){
     m$Sigma <- apply_names_array(m$Sigma, m, list("cat", "cat", NULL))
-    m$Xi <- apply_names_array(m$Xi, m, list("cat", "cat"))
-  } else {
+  } else if (!is.null(m$Sigma_default)) {
     m$Sigma_default <- apply_names_array(m$Sigma_default, m,
                                          list("cat", "cat", NULL))
+  }
+  if (!is.null(m$Xi)){
+    m$Xi <- apply_names_array(m$Xi, m, list("cat", "cat"))
+  } else if (!is.null(m$Xi_default)) { 
     m$Xi_default <- apply_names_array(m$Xi_default, m, list("cat", "cat"))
   }
-  m$Theta <- apply_names_array(m$Theta, m, list("cat", "cov"))
-  m$Gamma <- apply_names_array(m$Gamma, m, list("cov", "cov"))
-  m$init <- apply_names_array(m$init, m, list("cat", "sam"))
+  if (!is.null(m$Theta)) {
+    m$Theta <- apply_names_array(m$Theta, m, list("cat", "cov"))
+  }
+  if (!is.null(m$Gamma)){
+    m$Gamma <- apply_names_array(m$Gamma, m, list("cov", "cov"))
+    
+  }
+  if (!is.null(m$init)){
+    m$init <- apply_names_array(m$init, m, list("cat", "sam"))
+  }
   return(m)
 }

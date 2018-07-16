@@ -332,7 +332,7 @@ ncovariates <- function(m){ m$Q }
 
 # sample_prior ------------------------------------------------------------
 
-#' S3 object for mongrelfit object to sample from prior
+#' Sample from the prior distribution of mongrelfit object
 #' 
 #' Note this can be used to sample from prior and then predict can
 #' be called to get counts or LambdaX (\code{\link{predict.mongrelfit}})
@@ -341,10 +341,23 @@ ncovariates <- function(m){ m$Q }
 #' @param n_sample number of samples to produce
 #' @param pars parameters to sample
 #' @param use_names should names be used if available
+#' @export
 #' 
 #' @details Could be greatly speed up in the future if needed by sampling
 #' directly from cholesky form of inverse wishart (currently implemented as 
 #' header in this library - see MatDist.h).  
+#' @examples 
+#' # Sample prior of already fitted  mongrelfit object
+#' sim <- mongrel_sim()
+#' attach(sim)
+#' fit <- mongrel(Y, X)
+#' sample_prior(fit)
+#' 
+#' # Sample prior as part of model fitting
+#' m <- mongrelfit(N=N, D=D, Q=Q, iter=2000, upsilon=upsilon, 
+#'                 Xi=Xi, Gamma=Gamma, Theta=Theta, X=X)
+#' m <- sample_prior(mongrelfit)
+#' plot(m) # plot prior distribution (defaults to parameter Lambda) 
 sample_prior.mongrelfit <- function(m, n_sample=2000, 
                                     pars=c("Eta", "Lambda", "Sigma"), 
                                     use_names=TRUE){

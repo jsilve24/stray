@@ -37,3 +37,16 @@ req <- function(m, r){
 name <- function(m, ...){
   UseMethod("name", m)
 }
+
+
+#' Generic method for sampling from prior distribution of object
+#' 
+#' @param m object
+#' @param n_samples number of samples to produce
+#' @param ... other arguments to be passed
+#' 
+#' @export
+#' @return object of the same class 
+sample_prior <- function(m, n_sample=2000, ...){
+  UseMethod("sample_prior", m)
+}

@@ -139,3 +139,10 @@ name.mongrelfit <- function(m, ...){
   }
   return(m)
 }
+
+
+# ifelse that can handle vector/matrix/dataframe/array output - inline but not 
+# vectorized
+mifelse <- function(b, y, n){
+  if (b) return(y) else return(n)
+}

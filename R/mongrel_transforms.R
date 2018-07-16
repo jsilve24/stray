@@ -102,6 +102,9 @@ mongrel_to_proportions <- function(m){
 #' @rdname mongrel_transforms
 #' @export
 mongrel_to_alr <- function(m, d){
+  if (m$coord_system=="alr"){
+    if (m$alr_base == d) return(m)
+  }
   m <- mongrel_to_proportions(m)
   
   if (!is.null(m$Eta)) m$Eta <- alr_array(m$Eta, d, 1)
@@ -127,6 +130,9 @@ mongrel_to_alr <- function(m, d){
 #' @rdname mongrel_transforms
 #' @export
 mongrel_to_ilr <- function(m, V=NULL){
+  if (m$coord_system=="ilr"){
+    if (all.equal(m$ilr_base, V)) return(m)
+  }
   if (is.null(V)) V <- driver::create_default_ilr_base(m$D)
   m <- mongrel_to_proportions(m)
   
@@ -153,6 +159,7 @@ mongrel_to_ilr <- function(m, V=NULL){
 #' @rdname mongrel_transforms
 #' @export
 mongrel_to_clr <- function(m){
+  if (m$coord_system=="clr") return(m)
   m <- mongrel_to_proportions(m)
 
   if (!is.null(m$Eta)) m$Eta <- clr_array(m$Eta, 1)
@@ -174,4 +181,40 @@ mongrel_to_clr <- function(m){
   return(m)
 }
 
+#' Holds information on coordinates system to later be reapplied
+#' 
+#' \code{store_coord} stores coordinate information for mongrelfit object
+#' and can be reapplied with function \code{reapply_coord}. Some coordinate
+#' systems are not useful for computation and this makes it simple keep 
+#' returned object from computations in the same coordinate system as the input. 
+#' (Likely most useful inside of a package)
+#' 
+#' 
+#' @param m object of class mongrelfit
+#' @param l object returned by function \code{store_coord}
+#' @name store_coord
+#' @return \code{store_coord} list with important information to identify c
+#'  coordinate system of mongrelfit object. \code{reapply_coord} mongrelfit object
+#'  in coordinate system previously stored. 
+NULL
 
+
+#' @rdname store_coord
+#' @export
+store_coord <- function(m){
+  l <- list()
+  l$coord_system <- m$coord_system
+  l$alr_base <- m$alr_base
+  l$ilr_base <- m$ilr_base
+  return(l)
+}
+
+#' @rdname store_coord
+#' @export
+reapply_coord <- function(m, l){
+  if (l$coord_system == "proportions") return(mongrel_to_proportions(m))
+  if (l$coord_system == "clr") return(mongrel_to_clr(m))
+  if (l$coord_system == "alr") return(mongrel_to_alr(m, l$alr_base))
+  if (l$coord_system == "ilr") return(mongrel_to_ilr(m, l$ilr_base))
+  stop("not a recognized coordinate system")
+}

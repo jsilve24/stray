@@ -330,3 +330,76 @@ nsamples <- function(m){ m$N }
 ncovariates <- function(m){ m$Q }
 
 
+# sample_prior ------------------------------------------------------------
+
+#' S3 object for mongrelfit object to sample from prior
+#' 
+#' Note this can be used to sample from prior and then predict can
+#' be called to get counts or LambdaX (\code{\link{predict.mongrelfit}})
+#' 
+#' @param m object of class mongrelfit
+#' @param n_sample number of samples to produce
+#' @param pars parameters to sample
+#' @param use_names should names be used if available
+#' 
+#' @details Could be greatly speed up in the future if needed by sampling
+#' directly from cholesky form of inverse wishart (currently implemented as 
+#' header in this library - see MatDist.h).  
+sample_prior.mongrelfit <- function(m, n_sample=2000, 
+                                    pars=c("Eta", "Lambda", "Sigma"), 
+                                    use_names=TRUE){
+  req(m, c("upsilon", "Theta", "Gamma", "Xi"))
+  
+  # Convert to default ALR for computation
+  l <- store_coord(m)
+  m <- mongrel_to_alr(m, m$D)
+  
+  # Sample Priors - Sigma
+  LSigmaInv <- rWishart(n_sample, m$upsilon, solve(m$Xi))
+  for (i in 1:n_sample) LSigmaInv[,,i] <- t(chol(LSigmaInv[,,i]))
+  
+  # Sample Priors - Lambda
+  if (any(c("Eta", "Lambda") %in% pars)){
+    Lambda <- array(rnorm((m$D-1)*m$Q*n_sample), dim=c(m$D-1, m$Q, n_sample)) 
+    UGamma <- chol(m$Gamma)
+    for (i in 1:n_sample){
+      Lambda[,,i] <- m$Theta + forwardsolve(LSigmaInv[,,i], Lambda[,,i]) %*% UGamma 
+    }  
+  }
+  
+  # Sample Priors - Eta 
+  if ("Eta" %in% pars){
+    req(m, "X")
+    Eta <- array(rnorm((m$D-1)*m$N*n_sample), dim=c(m$D-1, m$N, n_sample))
+    for (i in 1:n_sample) {
+      Eta[,,i] <- Lambda[,,i] %*% m$X + forwardsolve(LSigmaInv[,,i], Eta[,,i])
+    }
+  }
+  
+  # Solve for Sigma if requested
+  Sigma <- LSigmaInv
+  if ("Sigma" %in% pars){
+    for (i in 1:n_sample) Sigma[,,i] <- crossprod(chol2inv(t(Sigma[,,i])))
+  }
+  
+  # Convert to object of class mongrelfit
+  out <- mongrelfit(m$D, m$N, m$Q, iter=as.integer(n_sample),
+                    coord_system="alr", 
+                    alr_base=m$D, 
+                    Eta = mifelse("Eta" %in% pars, Eta, NULL), 
+                    Sigma = mifelse("Sigma" %in% pars, Sigma, NULL), 
+                    Lambda = mifelse("Lambda" %in% pars, Lambda, NULL), 
+                    Xi = m$Xi, 
+                    upsilon=m$upsilon, 
+                    Theta = m$Theta, 
+                    X = mifelse("Sigma" %in% pars, m$X, NULL), 
+                    Gamma=m$Gamma, 
+                    names_covariates=m$names_covariates, 
+                    names_samples = m$names_samples, 
+                    names_categories = m$names_categories)
+  
+  # Convert back to original afterwards
+  out <- reapply_coord(out, l)
+  if (use_names) out <- name(out)
+  return(out)
+}

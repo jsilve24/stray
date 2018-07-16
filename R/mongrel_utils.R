@@ -108,7 +108,7 @@ name_tidy <- function(X, m, dimvars){
 #' S3 for mongrelfit apply names to mongrel object
 #' @param m object of class mongrelfit
 #' @param ... currently ignored
-#' @return object of class mongrelfit 
+#' @return object of class mongrelfit
 name.mongrelfit <- function(m, ...){
   if (!is.null(m$Eta)) {
     m$Eta <- name_array(m$Eta, m, list("cat", "sam", NULL))

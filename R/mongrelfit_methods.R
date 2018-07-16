@@ -71,6 +71,7 @@ summary_check_precomputed <- function(m, pars){
 #' @importFrom purrr map
 #' @importFrom tidybayes mean_qi
 #' @importFrom dplyr group_by select ungroup
+#' @export
 #' @examples 
 #' \dontrun{
 #' fit <- mongrel(Y, X)

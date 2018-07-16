@@ -69,11 +69,17 @@ assign_cat_names <- function(m){
 apply_names <- function(X, m, dimvars){
   n <- list()
   for (i in seq_along(dimvars)){
-    if (identical(dimvars[[i]], "sam")) n[[i]] <- m$names_samples
-    else if (identical(dimvars[[i]], "cov")) n[[i]] <- m$names_covariates
-    else if (identical(dimvars[[i]], "cat")) n[[i]] <- assign_cat_names(m)
-    else if (is.vector(dimvars[[i]])) n[[i]] <- dimvars[[i]]
-    else n[[i]] <- NULL
+    if (identical(dimvars[[i]], "sam") & !is.null(m$names_samples)){
+      n[[i]] <- m$names_samples
+    } else if (identical(dimvars[[i]], "cov") & !is.null(m$names_covariates)) {
+      n[[i]] <- m$names_covariates
+    } else if (identical(dimvars[[i]], "cat") & !is.null(m$names_categories)) {
+      n[[i]] <- assign_cat_names(m)
+    } else if (length(dimvars[[i]]) == dim(X)[i]) {
+      n[[i]] <- dimvars[[i]]
+    } else {
+      n[i] <- list(NULL)
+    }
   }
   if (!is.null(names(dimvars))) names(n) <- names(dimvars)
   return(n)

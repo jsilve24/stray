@@ -32,14 +32,14 @@
 #'
 #' @export 
 #' @seealso \code{\link{mongrel}}
-mongrelfit <- function(D, N, Q, iter, coord_system, 
+mongrelfit <- function(D, N, Q, coord_system, iter=NULL,  
                        alr_base=NULL, ilr_base=NULL,
                        Eta=NULL, Lambda=NULL, Sigma=NULL, Sigma_default=NULL, 
                        Y=NULL, X=NULL, upsilon=NULL, 
                        Theta=NULL, Xi=NULL,Xi_default=NULL, Gamma=NULL, 
                        init=NULL, names_categories=NULL, names_samples=NULL, 
                        names_covariates=NULL){
-  m <- new_mongrelfit(D, N, Q, iter, coord_system, alr_base, ilr_base,
+  m <- new_mongrelfit(D, N, Q, coord_system, iter, alr_base, ilr_base,
                       Eta, Lambda, Sigma, Sigma_default, 
                       Y, X, upsilon, Theta, Xi,Xi_default, Gamma, 
                       init, names_categories, names_samples, 
@@ -49,13 +49,14 @@ mongrelfit <- function(D, N, Q, iter, coord_system,
 }
 
 
-new_mongrelfit <- function(D, N, Q, iter, coord_system, 
+new_mongrelfit <- function(D, N, Q, coord_system, iter=NULL, 
                            alr_base=NULL, ilr_base=NULL,
                            Eta=NULL, Lambda=NULL,Sigma=NULL, Sigma_default=NULL, 
                            Y=NULL, X=NULL, upsilon=NULL, 
                            Theta=NULL, Xi=NULL,Xi_default=NULL, Gamma=NULL, 
                            init=NULL, names_categories=NULL, names_samples=NULL, 
                            names_covariates=NULL){
+
   structure(
     list(
       # Basic Dimensions
@@ -94,7 +95,7 @@ ifnotnull <- function(x, y){
 verify.mongrelfit <- function(m,...){
   # check basic dimensions that must always be present
   stopifnot(is.integer(m$N), is.integer(m$Q),
-            is.integer(m$D), is.integer(m$iter))
+            is.integer(m$D))
   stopifnot(is.character(m$coord_system))
   if (m$coord_system == "ilr") stopifnot(!is.null(m$ilr_base))
   if (m$coord_system == "alr") stopifnot(!is.null(m$alr_base))
@@ -104,6 +105,10 @@ verify.mongrelfit <- function(m,...){
   N <- m$N; D <- m$D; Q <- m$Q; iter <- m$iter
   Dm1 <- ifelse (m$coord_system %in% c("ilr", "alr"), D-1, D)
   
+  # throw error if iter is null but Eta, Sigma, and Lambda are not. 
+  if (is.null(m$iter)) stopifnot(is.null(m$Eta), is.null(m$Lambda), 
+                                 is.null(m$Sigma), is.null(m$Sigma_default))
+  ifnotnull(m$iter, stopifnot(is.integer(m$iter)))
   ifnotnull(m$Eta,check_dims(m$Eta, c(Dm1, N, iter), "mongrelfit param Eta"))
   ifnotnull(m$Lambda,check_dims(m$Lambda, c(Dm1, Q, iter), "mongrelfit param Lambda"))
   ifnotnull(m$Sigma,check_dims(m$Sigma, c(Dm1, Dm1, iter), "mongrelfit param Sigma"))

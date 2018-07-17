@@ -7,10 +7,11 @@
 #'  Notation: \code{N} is number of samples,
 #'  \code{D} is number of multinomial categories, \code{Q} is number
 #'  of covariates, \code{iter} is the number of samples of \code{eta} (e.g.,
-#'  the parameter \code{n_samples} in the function 
+#'  the parameter \code{n_sample} in the function 
 #'  \code{\link{optimMongrelCollapsed}})
-#' @param Y D x N matrix of counts
-#' @param X Q x N matrix of covariates (design matrix)
+#' @param Y D x N matrix of counts (if NULL uses priors only)
+#' @param X Q x N matrix of covariates (design matrix) (if NULL uses priors only, must
+#' be present to sample Eta)
 #' @param upsilon dof for inverse wishart prior (numeric must be > D) 
 #'   (default: D+3)
 #' @param Theta (D-1) x Q matrix of prior mean for regression parameters
@@ -23,6 +24,7 @@
 #' @param init (D-1) x Q initialization for regression parameters for 
 #'   optimization
 #' @param pars character vector of posterior parameters to return
+#' @param m object of class mongrelfit 
 #' @param ... argumenst passed to \code{\link{optimMongrelCollapsed}} and 
 #'   \code{\link{uncollapseMongrelCollapsed}}
 #' 
@@ -40,7 +42,7 @@
 #'  model if laplace approximation is not preformed. 
 #' @return an object of class mongrelfit
 #' @md
-#' @export
+#' @name mongrel_fit
 #' @examples 
 #' sim <- mongrel_sim()
 #' fit <- mongrel(sim$Y, sim$X)
@@ -59,17 +61,28 @@
 #' 
 #' Plotting functions provided by \code{\link[=plot.mongrelfit]{plot}} 
 #' and \code{\link{ppc}} (posterior predictive checks)
-mongrel <- function(Y, X, upsilon=NULL, Theta=NULL, Gamma=NULL, Xi=NULL,
-                    init=random_mongrel_init(Y), 
+NULL
+
+#' @rdname mongrel_fit
+#' @export
+mongrel <- function(Y=NULL, X=NULL, upsilon=NULL, Theta=NULL, Gamma=NULL, Xi=NULL,
+                    init=NULL, 
                     pars=c("Eta", "Lambda", "Sigma"),
                     ...){
   args <- list(...)
   
-  N <- ncol(Y)
-  D <- nrow(Y)
-  Q <- nrow(X)
-  if (ncol(X) != N) stop("X must have same number of columns as Y")
-
+  # x is vector
+  try_set_dims <- function(x){
+    stopifnot(length(x) > 0)
+    if (all(x[1]==x)) return(as.integer(x[1])) else stop("Dimension missmatch in arguments")
+  }
+    
+  N <- try_set_dims(c(ncol(Y), ncol(X), ncol(Theta), args[["N"]]))
+  D <- try_set_dims(c(nrow(Y), nrow(Theta)+1, nrow(Xi), ncol(Xi), args[["D"]]))
+  Q <- try_set_dims(c(nrow(X), ncol(Theta), nrow(Gamma), ncol(Gamma), args[["Q"]]))
+  if (any(c(N, D, Q) <=0)) stop("N, D, and Q must all be greater than 0 (D must be greater than 1)")
+  if (D <= 1) stop("D must be greater than 1")
+  
   ## construct default values ##
   # for priors
   if (is.null(upsilon)) upsilon <- D+3  # default is minimal information 
@@ -90,15 +103,39 @@ mongrel <- function(Y, X, upsilon=NULL, Theta=NULL, Gamma=NULL, Xi=NULL,
   check_dims(Theta, c(D-1, Q), "Theta")
   check_dims(Gamma, c(Q, Q), "Gamma")
   check_dims(Xi, c(D-1, D-1), "Xi")
-
+  
+  
   # inline to make default checking of extra arguments easier
   args_null <- function(par, argl, default){
     if (is.null(argl[[par]])) return(default)
     return(argl[[par]])
   }
   
+  # set number of iterations 
+  n_sample <- args_null("n_sample", args, 2000)
+  use_names <- args_null("use_names", args, TRUE)
+  
+  # This is the signal to sample the prior only
+  if (is.null(Y)){
+    if (("Eta" %in% pars) & (is.null(X))) stop("X must be given if Eta is to be sampled")
+    # create mongrelfit object and pass to sample_prior then return
+    out <- mongrelfit(N=N, D=D, Q=Q, coord_system="alr", alr_base=D, 
+                      upsilon=upsilon, Theta=Theta, 
+                      Gamma=Gamma, Xi=Xi, 
+                      names_categories=rownames(Y), 
+                      names_samples=colnames(Y), 
+                      names_covariates=colnames(X), 
+                      X=X)
+    out <- sample_prior(out, n_sample=n_sample, pars=pars, use_names=use_names)
+    return(out)
+  } else {
+    if (is.null(X)) stop("X must be given to fit model")
+    if(is.null(init)) init <- random_mongrel_init(Y)   # initialize init 
+  }
+
+
+  
   # for optimization and laplace approximation
-  n_samples <- args_null("n_samples", args, 2000)
   calcGradHess <- args_null("calcGradHess", args, TRUE)
   b1 <- args_null("b1", args, 0.9)
   b2 <- args_null("b2", args, 0.99)
@@ -119,22 +156,22 @@ mongrel <- function(Y, X, upsilon=NULL, Theta=NULL, Gamma=NULL, Xi=NULL,
   A <- solve(diag(N) + t(X) %*% Gamma %*% X)
 
   ## fit collapsed model ##
-  fitc <- optimMongrelCollapsed(Y, upsilon, Theta%*%X, K, A, init, n_samples, 
+  fitc <- optimMongrelCollapsed(Y, upsilon, Theta%*%X, K, A, init, n_sample, 
                                 calcGradHess, b1, b2, step_size, epsilon, eps_f, 
                                 eps_g, max_iter, verbose, verbose_rate, 
                                 decomp_method, eigvalthresh, no_error=TRUE)
-  # if n_samples=0 or if hessian fails, then use MAP eta estimate for 
+  # if n_sample=0 or if hessian fails, then use MAP eta estimate for 
   # uncollapsing and unless otherwise specified against, use only the 
   # posterior mean for Lambda and Sigma 
   if (is.null(fitc$Samples)) {
     fitc$Samples <- fitc$pars
     ret_mean <- args_null("ret_mean", args, TRUE)
-    if (ret_mean && n_samples>0){
+    if (ret_mean && n_sample>0){
       warning("Laplace Approximation Failed, using MAP estimate of eta", 
               "to obtain Posterior mean of Lambda and Sigma", 
               "i.e., not sampling from posterior distribution of Lambda or Sigma")
     }
-    if (!ret_mean && n_samples > 0){
+    if (!ret_mean && n_sample > 0){
       warning("Laplace Approximation Failed, using MAP estimate of eta", 
               "but ret_mean was manually specified as FALSE so sampling", 
               "from posterior of Lambda and Sigma rather than using posterior mean")
@@ -179,7 +216,33 @@ mongrel <- function(Y, X, upsilon=NULL, Theta=NULL, Gamma=NULL, Xi=NULL,
   out$summary <- NULL
   attr(out, "class") <- c("mongrelfit")
   # add names if present 
-  out <- name(out)
+  if (use_names) out <- name(out)
   verify(out) # verify the mongrelfit object
   return(out)
+}
+
+#' @rdname mongrel_fit
+#' @export
+refit.mongrelfit <- function(m, pars=c("Eta", "Lambda", "Sigma"), ...){
+  # Store coordinates and tranfsorm to cannonical representation
+  l <- store_coord(m)
+  m <- mongrel_to_alr(m, m$D)
+  
+  # Concatenate parameters to pass to mongrel function
+  argl <- list(...)
+  argl$pars <- pars
+  ml <- as.list(m)
+  argl <- c(ml, argl)
+  
+  # Need to handle iter as part of m but no n_sample passed
+  # in this situation should pull iter from m and pass as n_sample to mongrel 
+  if (is.null(argl[["n_sample"]]) & !is.null(m$iter)) argl[["n_sample"]] <- m$iter 
+  
+  # pass to mongrel function
+  m <- do.call(mongrel, argl)
+  
+  # Reapply original coordinates
+  m <- reapply_coord(m, l)
+  verify(m)
+  return(m)
 }

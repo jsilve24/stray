@@ -4,11 +4,11 @@
 \alias{summary.mongrelfit}
 \title{Summarise mongrelfit object and print posterior quantiles}
 \usage{
-\method{summary}{mongrelfit}(m, pars = NULL, use_names = TRUE,
+\method{summary}{mongrelfit}(object, pars = NULL, use_names = TRUE,
   gather_prob = FALSE, ...)
 }
 \arguments{
-\item{m}{an object of class mongrelfit}
+\item{object}{an object of class mongrelfit}
 
 \item{pars}{character vector (default: c("Eta", "Lambda", "Sigma"))}
 

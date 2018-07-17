@@ -27,6 +27,10 @@ than samples}
 
 \item{...}{other arguments passed to summarise_posterior}
 }
+\value{
+(if summary==FALSE) array D x N x iter; (if summary==TRUE) 
+tibble with calculated posterior summaries
+}
 \description{
 Predict response from new data
 }

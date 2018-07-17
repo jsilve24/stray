@@ -4,11 +4,12 @@
 \alias{mongrelfit}
 \title{Create mongrelfit object}
 \usage{
-mongrelfit(D, N, Q, iter, coord_system, alr_base = NULL, ilr_base = NULL,
-  Eta = NULL, Lambda = NULL, Sigma = NULL, Sigma_default = NULL,
-  Y = NULL, X = NULL, upsilon = NULL, Theta = NULL, Xi = NULL,
-  Xi_default = NULL, Gamma = NULL, init = NULL, names_categories = NULL,
-  names_samples = NULL, names_covariates = NULL)
+mongrelfit(D, N, Q, coord_system, iter = NULL, alr_base = NULL,
+  ilr_base = NULL, Eta = NULL, Lambda = NULL, Sigma = NULL,
+  Sigma_default = NULL, Y = NULL, X = NULL, upsilon = NULL,
+  Theta = NULL, Xi = NULL, Xi_default = NULL, Gamma = NULL,
+  init = NULL, names_categories = NULL, names_samples = NULL,
+  names_covariates = NULL)
 }
 \arguments{
 \item{D}{number of multinomial categories}
@@ -17,10 +18,10 @@ mongrelfit(D, N, Q, iter, coord_system, alr_base = NULL, ilr_base = NULL,
 
 \item{Q}{number of covariates}
 
-\item{iter}{number of posterior samples}
-
 \item{coord_system}{coordinate system objects are represented in (options 
 include "alr", "clr", "ilr", and "proportions")}
+
+\item{iter}{number of posterior samples}
 
 \item{alr_base}{integer category used as reference 
 (required if coord_system=="alr")}

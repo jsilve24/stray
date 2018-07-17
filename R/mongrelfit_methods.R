@@ -58,7 +58,7 @@ summary_check_precomputed <- function(m, pars){
 #' 
 #' Default calculates median, mean, 50% and 95% credible interval
 #' 
-#' @param m an object of class mongrelfit 
+#' @param object an object of class mongrelfit 
 #' @param pars character vector (default: c("Eta", "Lambda", "Sigma"))
 #' @param use_names should summary replace dimension indicies with mongrelfit 
 #'   names if names Y and X were named in call to \code{\link{mongrel}}
@@ -80,19 +80,19 @@ summary_check_precomputed <- function(m, pars){
 #' # Some later functions make use of precomputation
 #' fit$summary <- summary(fit)
 #' }
-summary.mongrelfit <- function(m, pars=NULL, use_names=TRUE, gather_prob=FALSE,
+summary.mongrelfit <- function(object, pars=NULL, use_names=TRUE, gather_prob=FALSE,
                                ...){
   if (is.null(pars)) {
     pars <- c("Eta", "Lambda", "Sigma")
-    pars <- pars[pars %in% names(m)] # only for the ones that are present 
+    pars <- pars[pars %in% names(object)] # only for the ones that are present 
   }
   
   
   # if already calculated
-  if (summary_check_precomputed(m, pars)) return(m$summary[pars])
+  if (summary_check_precomputed(object, pars)) return(object$summary[pars])
   
-  mtidy <- dplyr::filter(mongrel_tidy_samples(m, use_names), Parameter %in% pars)
-  if (m$coord_system != "proportions") {
+  mtidy <- dplyr::filter(mongrel_tidy_samples(object, use_names), Parameter %in% pars)
+  if (object$coord_system != "proportions") {
     mtidy <- dplyr::group_by(mtidy, Parameter, coord, coord2, sample, covariate) 
   } else {
     mtidy <- dplyr::group_by(mtidy, Parameter, coord, sample, covariate)
@@ -106,7 +106,7 @@ summary.mongrelfit <- function(m, pars=NULL, use_names=TRUE, gather_prob=FALSE,
   } else if (gather_prob){
     mtidy <- mtidy %>% 
       dplyr::select(-iter) %>% 
-      tidybayes::mean_qi(.prob=c(.5, .8, .95, .99)) %>% 
+      tidybayes::mean_qi(val, .prob=c(.5, .8, .95, .99)) %>% 
       dplyr::ungroup() %>% 
       split(.$Parameter) %>% 
       purrr::map(~dplyr::select_if(.x, ~!all(is.na(.x))))  
@@ -206,6 +206,9 @@ as.list.mongrelfit <- function(x,...){
 #' 
 #' @details currently only implmented for mongrelfit objects in coord_system "default"
 #' "alr", or "ilr". 
+#' 
+#' @return (if summary==FALSE) array D x N x iter; (if summary==TRUE) 
+#' tibble with calculated posterior summaries 
 #' 
 #' @export
 #' @importFrom stats median predict runif
@@ -342,6 +345,7 @@ ncovariates <- function(m){ m$Q }
 #' @param pars parameters to sample
 #' @param use_names should names be used if available
 #' @export
+#' @importFrom stats rWishart
 #' 
 #' @details Could be greatly speed up in the future if needed by sampling
 #' directly from cholesky form of inverse wishart (currently implemented as 
@@ -355,7 +359,8 @@ ncovariates <- function(m){ m$Q }
 #' 
 #' # Sample prior as part of model fitting
 #' m <- mongrelfit(N=N, D=D, Q=Q, iter=2000, upsilon=upsilon, 
-#'                 Xi=Xi, Gamma=Gamma, Theta=Theta, X=X)
+#'                 Xi=Xi, Gamma=Gamma, Theta=Theta, X=X, 
+#'                 coord_system="alr", alr_base=D)
 #' m <- sample_prior(mongrelfit)
 #' plot(m) # plot prior distribution (defaults to parameter Lambda) 
 sample_prior.mongrelfit <- function(m, n_sample=2000, 
@@ -414,5 +419,6 @@ sample_prior.mongrelfit <- function(m, n_sample=2000,
   # Convert back to original afterwards
   out <- reapply_coord(out, l)
   if (use_names) out <- name(out)
+  verify(out)
   return(out)
 }

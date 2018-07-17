@@ -50,3 +50,14 @@ name <- function(m, ...){
 sample_prior <- function(m, n_sample=2000, ...){
   UseMethod("sample_prior", m)
 }
+
+#' Generic method for fitting model from passed model fit objet
+#' 
+#' @param m object
+#' @param ... other arguments passed that control fitting
+#' 
+#' @export
+#' @return object of the same class as \code{m}
+refit <- function(m, ...){
+  UseMethod("refit", m)
+}

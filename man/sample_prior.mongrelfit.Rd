@@ -34,7 +34,8 @@ sample_prior(fit)
 
 # Sample prior as part of model fitting
 m <- mongrelfit(N=N, D=D, Q=Q, iter=2000, upsilon=upsilon, 
-                Xi=Xi, Gamma=Gamma, Theta=Theta, X=X)
+                Xi=Xi, Gamma=Gamma, Theta=Theta, X=X, 
+                coord_system="alr", alr_base=D)
 m <- sample_prior(mongrelfit)
 plot(m) # plot prior distribution (defaults to parameter Lambda) 
 }

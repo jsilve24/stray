@@ -66,6 +66,7 @@ refit <- function(m, ...){
 #' Generic method for visualizing posterior predictive checks
 #' @param m object
 #' @param ... other arguments passed that control visualization
+#' @export
 ppc <- function(m, ...){
   UseMethod("ppc", m)
 }

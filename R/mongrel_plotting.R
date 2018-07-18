@@ -104,7 +104,7 @@ plot_mf_sigma <- function(m, focus.coord=NULL, use_names=TRUE){
 #' fit <- mongrel(Y, X)
 #' ppc(fit)
 #' }
-ppc <- function(m, iter=50){
+ppc.mongrelfit <- function(m, iter=50){
   
   pp <- predict(m, response="Y")
   pp <- pp[,,sample(1:m$iter, iter)]

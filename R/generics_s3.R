@@ -61,3 +61,11 @@ sample_prior <- function(m, n_sample=2000, ...){
 refit <- function(m, ...){
   UseMethod("refit", m)
 }
+
+
+#' Generic method for visualizing posterior predictive checks
+#' @param m object
+#' @param ... other arguments passed that control visualization
+ppc <- function(m, ...){
+  UseMethod("ppc", m)
+}

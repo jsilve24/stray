@@ -77,7 +77,7 @@ mongrel <- function(Y=NULL, X=NULL, upsilon=NULL, Theta=NULL, Gamma=NULL, Xi=NUL
     if (all(x[1]==x)) return(as.integer(x[1])) else stop("Dimension missmatch in arguments")
   }
     
-  N <- try_set_dims(c(ncol(Y), ncol(X), ncol(Theta), args[["N"]]))
+  N <- try_set_dims(c(ncol(Y), ncol(X), args[["N"]]))
   D <- try_set_dims(c(nrow(Y), nrow(Theta)+1, nrow(Xi), ncol(Xi), args[["D"]]))
   Q <- try_set_dims(c(nrow(X), ncol(Theta), nrow(Gamma), ncol(Gamma), args[["Q"]]))
   if (any(c(N, D, Q) <=0)) stop("N, D, and Q must all be greater than 0 (D must be greater than 1)")

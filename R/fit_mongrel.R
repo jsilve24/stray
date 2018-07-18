@@ -78,7 +78,7 @@ mongrel <- function(Y=NULL, X=NULL, upsilon=NULL, Theta=NULL, Gamma=NULL, Xi=NUL
   }
     
   N <- try_set_dims(c(ncol(Y), ncol(X), args[["N"]]))
-  D <- try_set_dims(c(nrow(Y), nrow(Theta)+1, nrow(Xi), ncol(Xi), args[["D"]]))
+  D <- try_set_dims(c(nrow(Y), nrow(Theta)+1, nrow(Xi)+1, ncol(Xi)+1, args[["D"]]))
   Q <- try_set_dims(c(nrow(X), ncol(Theta), nrow(Gamma), ncol(Gamma), args[["Q"]]))
   if (any(c(N, D, Q) <=0)) stop("N, D, and Q must all be greater than 0 (D must be greater than 1)")
   if (D <= 1) stop("D must be greater than 1")

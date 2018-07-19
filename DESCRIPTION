@@ -17,8 +17,8 @@ Imports: Rcpp (>= 0.12.17), RcppEigen (>= 0.3.3.4.0), driver, dplyr, ggplot2,
   purrr, tidybayes
 LinkingTo: Rcpp, RcppEigen, RcppNumerical
 RoxygenNote: 6.0.1
-Suggests: 
-    testthat
+Suggests: testthat, knitr, rmarkdown, phyloseq
 Remotes:
     jsilve24/driver,
     mjskay/tidybayes
+VignetteBuilder: knitr

@@ -1,0 +1,103 @@
+---
+title: "Introduction to Mongrel"
+author: "Justin Silverman"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteEncoding{UTF-8}
+  %\VignetteEngine{knitr::rmarkdown}
+editor_options: 
+  chunk_output_type: console
+bibliography: bibliography.bib
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+# An introduction to *mongrel*
+*mongrel* is a loose accronym for **"(Bayesian) Multinomial Logistic-Normal Linear Model"**. 
+It is a model that is closely related to the MALLARD framework for time-series 
+anaysis of sequence count data [@silverman2018]. In particular the development of 
+*mongrel* stems from the need for fast inference for time-invariant MALLARD models. 
+*mongrel* is very fast! It uses closed form solutions for model gradients and hessian written
+in C++ to preform [MAP estimation](https://en.wikipedia.org/wiki/Maximum_a_posteriori_estimation)
+in combination with parameter uncertainty estimation using a [Laplace Approximation](http://www.sumsar.net/blog/2013/11/easy-laplace-approximation/). 
+
+So what is the *mongrel* model exactly? First let me give the broad description
+from 10,000ft up: Basically its a model for multinomial count
+data (e.g., each sample contains the counts of $D$ "types of things")^[If
+you know exactly what that means then skip ahead to the next sub-section;
+otherwise the next paragraph and a half may be of help.]. Importantly, 
+unlike more common Poisson count models the multinomial models a "competition to
+be counted" (i.e., cases in which counting more of one type of thing means 
+that I have less resourceses available to count other types of things). 
+
+This may seem vague so let me give an example. Pretend there is a ballpit with 
+red, green, and blue balls. Pretend that the ballpit is very large and I don't know 
+the total number of balls in the ballpit yet I want to say something about
+the relative number of red, blue, and green balls in the pit. One way I may 
+choose to measure the ballpit is by grabbing an armful of balls and counting 
+the number of balls of each color (e.g., in one armful I may collect
+5 red, 3 blue, and 6 green). My arms can only contain so many balls (in this example
+about 14) and so if I were to have (randomly) gotten another green ball in my armful 
+(making 7 total) I would likely not have been able to measure one of the red or blue balls;
+hense the "competition to be counted". It turns out that this type of sampling
+occurs all the time in many situations (Wikipedia has an example with [political 
+polling](https://en.wikipedia.org/wiki/Multinomial_distribution#Example)). 
+Perhaps one of the most notable examples of this type of count data occurs
+with modern high-throughput sequencing studies such as 16s rRNA studies to 
+profile microbial communities or bulk/single-cell RNA-seq studies to study 
+expression profiles of cells. In all cases, transcripts are sequenced 
+and the number of different types of transcripts are counted. The important part
+is that sequencing only samples a small portion of the total genetic material 
+available and leads to similar competition to be counted. 
+
+## The *mongrel* model
+Let $Y$ denote an $D\times N$ matrix of counts. Let us denote the $j$-th 
+column of $Y$ as $Y_j$. Thus each "sample" in the dataset is a measurement
+of the relative amount of $D$ "types of things" (see above). Suppose we also 
+have have covariate information in the form of a $Q\times N$ matrix $X$. Also
+let $n_j$ denote the total number of counts in sample $j$ 
+(i.e., $n_j=\sum_i Y_{ij}$). 
+
+The following is the mongrel model including likelihood and priors:
+$$
+\begin{align}
+Y_j & \sim \text{Multinomial}\left(\pi_j, n_j\right)  \\
+\pi_j & = \phi^{-1}(\eta_j) \\
+\eta_j &\sim N(\Lambda X_j, \Sigma) \\
+\Lambda &\sim  MN_{(D-1) \times Q}(\Theta, \Sigma, \Gamma) \\
+\Sigma &\sim W^{-1}(\Xi, \upsilon) 
+\end{align}
+$$
+Here $MN_{(D-1) \times Q}$ denotes a [Matrix Normal distribution](https://en.wikipedia.org/wiki/Matrix_normal_distribution)
+for a matrix $\Lambda$ of regression coefficients of dimension $(D-1)\times Q$. 
+Essentially you can think of the Matrix normal as having two covariance matricies
+one describing the covariation between the rows of $\Lambda$ ($\Sigma$) and another
+describing the covariation of the columns of $\Lambda$ ($\Gamma$). 
+and $W^{-1}$ refers to the [Inverse Wishart distribution](https://en.wikipedia.org/wiki/Inverse-Wishart_distribution).
+The line $\pi_j = \phi^{-1}(\eta_j)$ represents a transformation between
+the parameters $\pi_j$ which exist on a simplex (e.g., $\pi_j$ must sum to 1) and
+the transformed parameters $\eta_j$ that exist in real space. In particular 
+we define $\phi^{-1}$ to be the [inverse additive log ratio transform](http://www.sediment.uni-goettingen.de/staff/tolosana/extra/CoDaNutshell.pdf) (which conversely
+imples that $\eta_j = ALR(\pi_j)$) also known as the identified softmax transform
+(as it is more commonly known in the Machine Learning community). While 
+I will say more on this later in this tutorial, one thing to know is that
+I simply have the model implemented using the ALR transform as it is computationally
+simple and fast; the results of the model can be viewed as if any number of 
+transforms had been used including the isometric log-ratio transform, the 
+centered log-ratio transform or the identity transformation (e.g., modeling $\pi$ 
+directly). 
+
+... Notes on how to view the model and what it can do... more on that later though...
+
+## A few notes on model inference and parameter collapsing
+
+# Example analysis of microbiome data
+
+# References

@@ -5,7 +5,7 @@
 \title{Sample from the prior distribution of mongrelfit object}
 \usage{
 \method{sample_prior}{mongrelfit}(m, n_sample = 2000, pars = c("Eta",
-  "Lambda", "Sigma"), use_names = TRUE)
+  "Lambda", "Sigma"), use_names = TRUE, ...)
 }
 \arguments{
 \item{m}{object of class mongrelfit}
@@ -15,6 +15,8 @@
 \item{pars}{parameters to sample}
 
 \item{use_names}{should names be used if available}
+
+\item{...}{currently ignored}
 }
 \description{
 Note this can be used to sample from prior and then predict can

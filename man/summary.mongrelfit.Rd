@@ -22,7 +22,7 @@ wide (useful for some plotting functions)}
 probably what you want)}
 }
 \description{
-Default calculates median, mean, 50% and 95% credible interval
+Default calculates median, mean, 50\% and 95\% credible interval
 }
 \examples{
 \dontrun{

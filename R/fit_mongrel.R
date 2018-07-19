@@ -56,11 +56,14 @@
 #' Generic functions including \code{\link[=summary.mongrelfit]{summary}},  
 #' \code{\link[=print.mongrelfit]{print}}, 
 #'  \code{\link[=coef.mongrelfit]{coef}},  
-#'  \code{\link[=as.list.mongrelfit]{as.list}}, and  
-#'  \code{\link[=predict.mongrelfit]{predict}}
+#'  \code{\link[=as.list.mongrelfit]{as.list}},  
+#'  \code{\link[=predict.mongrelfit]{predict}}, 
+#'  \code{\link[=model.matrix.mongrelfit]{model.matrix}},
+#'  \code{\link[=name.mongrelfit]{name}}, and
+#'  \code{\link[=sample_prior.mongrelfit]{sample_prior}}
 #' 
 #' Plotting functions provided by \code{\link[=plot.mongrelfit]{plot}} 
-#' and \code{\link{ppc}} (posterior predictive checks)
+#' and \code{\link[=ppc.mongrelfit]{ppc}} (posterior predictive checks)
 NULL
 
 #' @rdname mongrel_fit
@@ -122,9 +125,9 @@ mongrel <- function(Y=NULL, X=NULL, upsilon=NULL, Theta=NULL, Gamma=NULL, Xi=NUL
     out <- mongrelfit(N=N, D=D, Q=Q, coord_system="alr", alr_base=D, 
                       upsilon=upsilon, Theta=Theta, 
                       Gamma=Gamma, Xi=Xi, 
-                      names_categories=rownames(Y), 
-                      names_samples=colnames(Y), 
-                      names_covariates=colnames(X), 
+                      # names_categories=rownames(Y), # these won't be present... 
+                      # names_samples=colnames(Y), 
+                      # names_covariates=colnames(X), 
                       X=X)
     out <- sample_prior(out, n_sample=n_sample, pars=pars, use_names=use_names)
     return(out)

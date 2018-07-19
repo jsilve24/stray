@@ -13,6 +13,7 @@
 #' @import tidybayes
 #' @import ggplot2
 #' @importFrom dplyr filter
+#' @export
 #' @examples
 #' \dontrun{
 #' fit <- mongrel(Y, X)
@@ -99,6 +100,7 @@ plot_mf_sigma <- function(m, focus.coord=NULL, use_names=TRUE){
 #' @return ggplot object
 #' @import ggplot2
 #' @importFrom driver gather_array
+#' @export
 #' @examples 
 #' \dontrun{
 #' fit <- mongrel(Y, X)

@@ -56,7 +56,7 @@ summary_check_precomputed <- function(m, pars){
 
 #' Summarise mongrelfit object and print posterior quantiles
 #' 
-#' Default calculates median, mean, 50% and 95% credible interval
+#' Default calculates median, mean, 50\% and 95\% credible interval
 #' 
 #' @param object an object of class mongrelfit 
 #' @param pars character vector (default: c("Eta", "Lambda", "Sigma"))
@@ -233,9 +233,10 @@ predict.mongrelfit <- function(object, newdata=NULL, response="LambdaX", size=NU
     size <- replicate(object$iter, size)
   }
   
-  # Try to match rownames of newdata to avoid possible errors...
-  if (!is.null(rownames(newdata))) newdata <- newdata[object$names_covariates,]
-  
+  # # Try to match rownames of newdata to avoid possible errors...
+  # if (!is.null(rownames(newdata))) newdata <- newdata[object$names_covariates,]
+  # would have error if names_covariates is NULL
+
   nnew <- ncol(newdata)
   
   # Draw LambdaX
@@ -344,6 +345,7 @@ ncovariates <- function(m){ m$Q }
 #' @param n_sample number of samples to produce
 #' @param pars parameters to sample
 #' @param use_names should names be used if available
+#' @param ... currently ignored
 #' @export
 #' @importFrom stats rWishart
 #' 
@@ -365,7 +367,7 @@ ncovariates <- function(m){ m$Q }
 #' plot(m) # plot prior distribution (defaults to parameter Lambda) 
 sample_prior.mongrelfit <- function(m, n_sample=2000, 
                                     pars=c("Eta", "Lambda", "Sigma"), 
-                                    use_names=TRUE){
+                                    use_names=TRUE, ...){
   req(m, c("upsilon", "Theta", "Gamma", "Xi"))
   
   # Convert to default ALR for computation
@@ -395,9 +397,9 @@ sample_prior.mongrelfit <- function(m, n_sample=2000,
   }
   
   # Solve for Sigma if requested
-  Sigma <- LSigmaInv
   if ("Sigma" %in% pars){
-    for (i in 1:n_sample) Sigma[,,i] <- crossprod(chol2inv(t(Sigma[,,i])))
+    Sigma <- LSigmaInv # to make code more readable at memory expense
+    for (i in 1:n_sample) Sigma[,,i] <- chol2inv(t(Sigma[,,i]))
   }
   
   # Convert to object of class mongrelfit

@@ -75,7 +75,13 @@ apply_names <- function(X, m, dimvars){
       n[[i]] <- m$names_covariates
     } else if (identical(dimvars[[i]], "cat") & !is.null(m$names_categories)) {
       n[[i]] <- assign_cat_names(m)
-    } else if (length(dimvars[[i]]) == dim(X)[i]) {
+    } else if (is.data.frame(X)){
+      if (max(X[,names(dimvars)[i]], na.rm=TRUE) == length(dimvars[[i]])) {
+        n[[i]] <- dimvars[[i]]
+      } else {
+        n[i] <- list(NULL)
+      }
+    } else if (length(dimvars[[i]]) == dim(X)[i]){
       n[[i]] <- dimvars[[i]]
     } else {
       n[i] <- list(NULL)
@@ -84,6 +90,7 @@ apply_names <- function(X, m, dimvars){
   if (!is.null(names(dimvars))) names(n) <- names(dimvars)
   return(n)
 }
+
 
 # dimvars = cat, sam, cov or NULL - list
 # or can pass vector as element of the list 

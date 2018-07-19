@@ -84,9 +84,12 @@ dimensions of mongrelfit object
 Generic functions including \code{\link[=summary.mongrelfit]{summary}},
 \code{\link[=print.mongrelfit]{print}},
 \code{\link[=coef.mongrelfit]{coef}},
-\code{\link[=as.list.mongrelfit]{as.list}}, and
-\code{\link[=predict.mongrelfit]{predict}}
+\code{\link[=as.list.mongrelfit]{as.list}},
+\code{\link[=predict.mongrelfit]{predict}},
+\code{\link[=model.matrix.mongrelfit]{model.matrix}},
+\code{\link[=name.mongrelfit]{name}}, and
+\code{\link[=sample_prior.mongrelfit]{sample_prior}}
 
 Plotting functions provided by \code{\link[=plot.mongrelfit]{plot}}
-and \code{\link{ppc}} (posterior predictive checks)
+and \code{\link[=ppc.mongrelfit]{ppc}} (posterior predictive checks)
 }

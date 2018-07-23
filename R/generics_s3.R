@@ -109,3 +109,54 @@ ncovariates <- function(m){
   UseMethod("ncovariates", m)
 }
 
+
+#' Generic method for getting and setting dimension names of fit object
+#' 
+#' @param m object
+#' @param names character vector (or NULL)
+#' @name name_dims
+NULL
+
+#' @rdname name_dims
+#' @export
+names_covariates <- function(m){
+  UseMethod("names_covariates", m)
+}
+
+#' @rdname name_dims
+#' @export
+names_samples <- function(m){
+  UseMethod("names_samples", m)
+}
+
+
+#' @rdname name_dims
+#' @export
+names_categories <- function(m){
+  UseMethod("names_categories", m)
+}
+
+
+#' @rdname name_dims
+#' @export
+`names_covariates<-` <- function(m, value){
+  UseMethod("names_covariates<-", m)
+}
+
+#' @rdname name_dims
+#' @export
+`names_samples<-` <- function(m, value){
+  UseMethod("names_samples<-", m)
+}
+
+
+#' @rdname name_dims
+#' @export
+`names_categories<-` <- function(m, value){
+  UseMethod("names_categories<-", m)
+}
+
+
+
+
+

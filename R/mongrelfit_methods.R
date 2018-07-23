@@ -302,6 +302,9 @@ predict.mongrelfit <- function(object, newdata=NULL, response="LambdaX", size=NU
 }
 
 
+# access_dims -------------------------------------------------------------
+
+
 #' @rdname access_dims
 #' @export
 ncategories.mongrelfit <- function(m){ m$D }
@@ -313,6 +316,60 @@ nsamples.mongrelfit <- function(m){ m$N }
 #' @rdname access_dims
 #' @export
 ncovariates.mongrelfit <- function(m){ m$Q }
+
+
+
+# name_dims ---------------------------------------------------------------
+
+#' @rdname name_dims
+#' @export
+names_covariates.mongrelfit <- function(m){
+  return(m$names_covariates)
+}
+
+#' @rdname name_dims
+#' @export
+names_samples.mongrelfit <- function(m){
+  return(m$names_samples)
+  
+}
+
+
+#' @rdname name_dims
+#' @export
+names_categories.mongrelfit <- function(m){
+  return(m$names_categories)
+  
+}
+
+
+#' @rdname name_dims
+#' @export
+`names_covariates<-.mongrelfit` <- function(m, value){
+  if (!is.null(value)) stopifnot(m$Q == length(value))
+  m$names_covariates <- value
+  m <- name(m)
+  return(m)
+}
+
+#' @rdname name_dims
+#' @export
+`names_samples<-.mongrelfit` <- function(m, value){
+  if (!is.null(value)) stopifnot(m$N == length(value))
+  m$names_samples <- value
+  m <- name(m)
+  return(m)
+}
+
+
+#' @rdname name_dims
+#' @export
+`names_categories<-.mongrelfit` <- function(m, value){
+  if (!is.null(value)) stopifnot(m$D == length(value))
+  m$names_categories <- value
+  m <- name(m)
+  return(m)
+}
 
 
 # sample_prior ------------------------------------------------------------

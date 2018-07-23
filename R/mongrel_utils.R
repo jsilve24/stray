@@ -39,9 +39,9 @@ check_dims <- function(x, d, par){
   if (is.vector(x) | is.factor(x)){
     dc <- length(x)
   } else {
-    dc <- dim(x)
+    dc <- unname(dim(x))
   }
-  d <- as.integer(d)
+  d <- unname(as.integer(d))
   
   if (!identical(dc, d)){
     s1 <- paste(d, collapse = " x ")

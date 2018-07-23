@@ -63,7 +63,7 @@ plot_mf_lambdaeta <- function(m, par, focus.cov=NULL, focus.coord=NULL,
   }
   p <- p+
     theme_minimal() +
-    scale_color_brewer()
+    scale_color_brewer() +
     guides(color=guide_legend(title="Credible Interval"))
   return(p)
 }
@@ -108,13 +108,16 @@ plot_mf_sigma <- function(m, focus.coord=NULL, use_names=TRUE){
 #' }
 ppc.mongrelfit <- function(m, iter=50){
   
+  if (!is.null(Y)) o <- order(m$Y, decreasing=TRUE) else o <- 1:(m$N*m$D)
+  
   pp <- predict(m, response="Y")
-  pp <- pp[,,sample(1:m$iter, iter)]
+  pp <- pp[,,sample(1:m$iter, iter), drop=F]
   pp <- matrix(pp, m$D*m$N, iter) 
+  pp <- pp[o,]
   pp <- gather_array(pp, val) 
   tr <- data.frame(dim_1 = 1:(m$N*m$D), 
                    dim_2 = NA, 
-                   val = c(m$Y))
+                   val = c(m$Y)[o])
   p <- ggplot(pp, aes(x = dim_1, y = val)) +
     geom_line(aes(group=dim_2), color="black", alpha=0.4) +
     geom_line(data=tr, color="green", alpha=0.6)

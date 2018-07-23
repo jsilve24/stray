@@ -70,3 +70,42 @@ refit <- function(m, ...){
 ppc <- function(m, ...){
   UseMethod("ppc", m)
 }
+
+
+#' Generic method for accessing model fit dimensions
+#'
+#' @param m An object of class mongrelfit 
+#' @details An alternative approach to accessing these dimensions is to 
+#'   access them directly from the mongrelfit object using list indexing. 
+#' * \code{ncategories} is equivalent to \code{m$D}
+#' * \code{nsamples} is equivalent to \code{m$N}
+#' * \code{ncovariates} is equivalent to \code{m$Q}
+#' @return integer 
+#' @name access_dims
+#' @examples 
+#' \dontrun{
+#' m <- mongrel(Y, X)
+#' ncategories(m)
+#' nsamples(m)
+#' ncovariates(m)
+#' }
+NULL
+
+#' @rdname access_dims
+#' @export
+ncategories <- function(m){
+  UseMethod("ncategories", m)
+}
+
+#' @rdname access_dims
+#' @export
+nsamples <- function(m){
+  UseMethod("nsamples", m)
+}
+
+#' @rdname access_dims
+#' @export
+ncovariates <- function(m){
+  UseMethod("ncovariates", m)
+}
+

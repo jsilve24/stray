@@ -2,6 +2,9 @@
 
 S3method(as.list,mongrelfit)
 S3method(coef,mongrelfit)
+S3method(ncategories,mongrelfit)
+S3method(ncovariates,mongrelfit)
+S3method(nsamples,mongrelfit)
 S3method(plot,mongrelfit)
 S3method(ppc,mongrelfit)
 S3method(predict,mongrelfit)

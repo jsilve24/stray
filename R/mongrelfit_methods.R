@@ -302,36 +302,17 @@ predict.mongrelfit <- function(object, newdata=NULL, response="LambdaX", size=NU
 }
 
 
-#' Simple helper functions to access mongrel fit dimensions
-#'
-#' @param m An object of class mongrelfit 
-#' @details An alternative approach to accessing these dimensions is to 
-#'   access them directly from the mongrelfit object using list indexing. 
-#' * \code{ncategories} is equivalent to \code{m$D}
-#' * \code{nsamples} is equivalent to \code{m$N}
-#' * \code{ncovariates} is equivalent to \code{m$Q}
-#' @return integer 
-#' @name access_dims
-#' @examples 
-#' \dontrun{
-#' m <- mongrel(Y, X)
-#' ncategories(m)
-#' nsamples(m)
-#' ncovariates(m)
-#' }
-NULL
+#' @rdname access_dims
+#' @export
+ncategories.mongrelfit <- function(m){ m$D }
 
 #' @rdname access_dims
 #' @export
-ncategories <- function(m){ m$D }
+nsamples.mongrelfit <- function(m){ m$N }
 
 #' @rdname access_dims
 #' @export
-nsamples <- function(m){ m$N }
-
-#' @rdname access_dims
-#' @export
-ncovariates <- function(m){ m$Q }
+ncovariates.mongrelfit <- function(m){ m$Q }
 
 
 # sample_prior ------------------------------------------------------------

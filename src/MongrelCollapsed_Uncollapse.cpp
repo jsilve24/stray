@@ -21,11 +21,11 @@ using Eigen::Lower;
 //' 
 //' @param eta array of dimension (D-1) x N x iter (e.g., \code{Pars} output of 
 //'   function optimMongrelCollapsed)
-//' @param X matrix of covariates of dimention Q x N
+//' @param X matrix of covariates of dimension Q x N
 //' @param Theta matrix of prior mean of dimension (D-1) x Q
 //' @param Gamma covariance matrix of dimension Q x Q
 //' @param Xi covariance matrix of dimension (D-1) x (D-1)
-//' @param upsilon scalar (must be > D) degrees of freedom for InvWishart Prio
+//' @param upsilon scalar (must be > D) degrees of freedom for InvWishart prior
 //' @param ret_mean if true then uses posterior mean of Lambda and Sigma 
 //'   corresponding to each sample of eta rather than sampling from 
 //'   posterior of Lambda and Sigma (useful if Laplace approximation

@@ -25,7 +25,7 @@
 #'   optimization
 #' @param pars character vector of posterior parameters to return
 #' @param m object of class mongrelfit 
-#' @param ... argumenst passed to \code{\link{optimMongrelCollapsed}} and 
+#' @param ... arguments passed to \code{\link{optimMongrelCollapsed}} and 
 #'   \code{\link{uncollapseMongrelCollapsed}}
 #' 
 #' @details the full model is given by:

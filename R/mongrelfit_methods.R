@@ -1,11 +1,11 @@
 #' Convert mongrel samples of Eta Lambda and Sigma to tidy format
 #' 
-#' Combines them all into a single tibble, see example for formating and 
+#' Combines them all into a single tibble, see example for formatting and 
 #' column headers. Primarily designed to be used by 
 #' \code{\link{summary.mongrelfit}}. 
 #' 
 #' @param m an object of class mongrelfit
-#' @param use_names should dimension indicies be replaced by
+#' @param use_names should dimension indices be replaced by
 #'   dimension names if provided in data used to fit mongrel model.  
 #' 
 #' @importFrom driver gather_array
@@ -60,7 +60,7 @@ summary_check_precomputed <- function(m, pars){
 #' 
 #' @param object an object of class mongrelfit 
 #' @param pars character vector (default: c("Eta", "Lambda", "Sigma"))
-#' @param use_names should summary replace dimension indicies with mongrelfit 
+#' @param use_names should summary replace dimension indices with mongrelfit 
 #'   names if names Y and X were named in call to \code{\link{mongrel}}
 #' @param gather_prob if TRUE then prints quantiles in long format rather than 
 #'  wide (useful for some plotting functions)
@@ -204,7 +204,7 @@ as.list.mongrelfit <- function(x,...){
 #'   than samples
 #' @param ... other arguments passed to summarise_posterior
 #' 
-#' @details currently only implmented for mongrelfit objects in coord_system "default"
+#' @details currently only implemented for mongrelfit objects in coord_system "default"
 #' "alr", or "ilr". 
 #' 
 #' @return (if summary==FALSE) array D x N x iter; (if summary==TRUE) 

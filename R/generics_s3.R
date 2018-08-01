@@ -51,7 +51,7 @@ sample_prior <- function(m, n_sample=2000, ...){
   UseMethod("sample_prior", m)
 }
 
-#' Generic method for fitting model from passed model fit objet
+#' Generic method for fitting model from passed model fit object
 #' 
 #' @param m object
 #' @param ... other arguments passed that control fitting

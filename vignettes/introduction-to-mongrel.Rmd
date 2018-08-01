@@ -28,18 +28,16 @@ anaysis of sequence count data [@silverman2018]. In particular the development o
 in C++ to preform [MAP estimation](https://en.wikipedia.org/wiki/Maximum_a_posteriori_estimation)
 in combination with parameter uncertainty estimation using a [Laplace Approximation](http://www.sumsar.net/blog/2013/11/easy-laplace-approximation/). 
 
-So what is the *mongrel* model exactly? First let me give the broad description
+**So what is a *mongrel* model exactly?** First let me give the broad description
 from 10,000ft up: Basically its a model for multinomial count
-data (e.g., each sample contains the counts of $D$ "types of things")^[If
-you know exactly what that means then skip ahead to the next sub-section;
-otherwise the next paragraph and a half may be of help.]. Importantly, 
-unlike more common Poisson count models the multinomial models a "competition to
+data (e.g., each sample contains the counts of $D$ "types of things"). Importantly, 
+unlike the more common Poisson count models, the multinomial models a "competition to
 be counted" (i.e., cases in which counting more of one type of thing means 
-that I have less resourceses available to count other types of things). 
+that I have less resources available to count other types of things). 
 
 This may seem vague so let me give an example. Pretend there is a ballpit with 
 red, green, and blue balls. Pretend that the ballpit is very large and I don't know 
-the total number of balls in the ballpit yet I want to say something about
+the total number of balls in the ballpit, yet I want to say something about
 the relative number of red, blue, and green balls in the pit. One way I may 
 choose to measure the ballpit is by grabbing an armful of balls and counting 
 the number of balls of each color (e.g., in one armful I may collect
@@ -80,7 +78,8 @@ for a matrix $\Lambda$ of regression coefficients of dimension $(D-1)\times Q$.
 Essentially you can think of the Matrix normal as having two covariance matricies
 one describing the covariation between the rows of $\Lambda$ ($\Sigma$) and another
 describing the covariation of the columns of $\Lambda$ ($\Gamma$). 
-and $W^{-1}$ refers to the [Inverse Wishart distribution](https://en.wikipedia.org/wiki/Inverse-Wishart_distribution).
+and $W^{-1}$ refers to the [Inverse Wishart distribution](https://en.wikipedia.org/wiki/Inverse-Wishart_distribution) 
+(which is a common distribution over covariance matricies).
 The line $\pi_j = \phi^{-1}(\eta_j)$ represents a transformation between
 the parameters $\pi_j$ which exist on a simplex (e.g., $\pi_j$ must sum to 1) and
 the transformed parameters $\eta_j$ that exist in real space. In particular 
@@ -90,13 +89,65 @@ imples that $\eta_j = ALR(\pi_j)$) also known as the identified softmax transfor
 I will say more on this later in this tutorial, one thing to know is that
 I simply have the model implemented using the ALR transform as it is computationally
 simple and fast; the results of the model can be viewed as if any number of 
-transforms had been used including the isometric log-ratio transform, the 
+transforms had been used (instead of the ALR) including the isometric log-ratio transform, the 
 centered log-ratio transform or the identity transformation (e.g., modeling $\pi$ 
 directly). 
 
-... Notes on how to view the model and what it can do... more on that later though...
+
+Before moving on, I would like to give **a more intuitive description of *mongrel***.
+Essentially the main modeling component of *mongrel* is the third equation above 
+($\eta_j \sim N(\Lambda X_j, \Sigma)$) which is just a multivariate linear model. 
+That is, $X$ are your covariates (which can be continuous, discrete, binary, etc...), 
+and $\Sigma$ is the covariance matrix for the regression residuals.  
 
 ## A few notes on model inference and parameter collapsing
+
+Along with some algorithmic speed-ups enabled by the C++ Eigen library *mongrel* uses conjugate priors for the regression component of the model allowing the last three lines of the model to be
+collapsed into 1 line. Afer this the last three lines of the model can be reexanded using fully conjugate sampling schemes
+that do not require optimization or MCMC (only matrix operations). 
+
+**Here are the details:** The collapsed model is given by 
+$$
+\begin{align}
+Y_j & \sim \text{Multinomial}\left(\pi_j, n_j\right)  \\
+\pi_j & = \phi^{-1}(\eta_j) \\
+\eta_j &\sim T_{(D-1)\times N}(\upsilon, \Theta X, \Xi, A)
+\end{align}
+$$
+where $A=(I_N + X^T \Gamma, X)^{-1}$ and $T_{(D-1)\times N}$ refers to the Matrix T-distribution the $(D-1)\times N$ matrix $\eta$ with log density given by 
+$$\log T_{(D-1)\times N}(\eta | \upsilon, \Theta X, \Xi, A) \propto -\frac{\upsilon+N-D-2}{2}\log | I_{D-1}+\Xi^{-1}(\eta-\Theta X)A(\eta-\Theta X)^T |.$$
+Rather than using MCMC to sample $\eta$ mongrel uses MAP estimation (using a custom C++ Eigen based implmentation of the ADAM optimizer and closed form solutions for gradient and hessian of the collapsed model)^[Which we found preformed substantially better than L-BFGS, which we also tried.]. Additionally, *mongrel* allows quantification of uncertainty in MAP estimates using a Laplace approximation. We found that in practice this MAP based Laplace approximation produced 
+comparable results to a full MCMC sampler but with tremendous improvements in compute time. 
+
+Once samples of $\eta$ are produced using the Laplace approximation closed form 
+solutions for the conditional density of $\Lambda$ and $\Sigma$ given $\eta$ are 
+used to "uncollapse" the collapsed model and produce posterior samples from the target 
+model. This uncollapsing is fast and given by the following matrix equations:
+
+$$
+\begin{align}
+\upsilon_N &= \upsilon+N \\
+\Gamma_N &= (XX^T+\Gamma^{-1})^{-1} \\
+\Theta_N &= (\eta X^T+\Theta\Gamma^{-1})\Gamma_N \\
+\Xi_N &= \Xi + (\eta - \Theta_N X)(\eta - \Theta_N X)^T + (\Theta_N - \Theta)\Gamma(\Theta_N- \Theta)^T \\
+p(\Sigma | \eta, X) &= W^{-1}(\Xi_N, \upsilon_N)\\
+p(\Lambda | \Sigma, \eta, X) &= MN_{(D-1)\times Q}(\Lambda_N, \Sigma, \Gamma_N).
+\end{align}
+$$
+If Laplace approximation is too slow, unstable (see below) or simply not needed, 
+the default behavior of *mongrel* is to preform the above matrix calcualtions and
+produce a single point estimate of $\Sigma$ and $\Lambda$ based on the posterior
+means of $p(\Sigma | \eta, X)$ and $(\Lambda | \Sigma, \eta, X)$. 
+
+
+## A Note on the Laplace Approximation and Hessian warnings/errors
+By default *mongrel* tries to approximate the posterior distribution using a Laplace approximation. This Laplace approximation is typically the most computationally intensive component of the entire model as it requires inversion of the hessian matrix calculated at the MAP estimate^[Acctually it doesn't require inversion exactly, for numerical stability it uses a decomposition to calculate the matrix square root and then backsubstitution to produce samples from the Laplace Approximation.]. Through many many hours of pain-staking matrix calculus I have calculated closed form solutions for the hessian of the collapsed model so this part is quite fast; it is the matrix inversion that is slow and by default uses an eigen decomposition for numerical accuracy and stability (although a somewhat less safe but much faster Cholesky LLT decomposition is also available). Despite these safety measures, for large datasets (e.g., where $N\times D > 50,000$) the (negative) inverse hessian may not be possitive definite. This can result from a few causes. 
+
+1. The optimization failed to find a local optima and instead terminated at a saddle point. 
+2. Numerical precision errors in combination with a poorly conditioned hessian at the MAP estiamte leads to a non-positive definite matrix. 
+
+In practice we find that (typically) issues with non-positive definite hessians result from poorly chosen priors for $\Sigma$. In particular, note that the prior $\Sigma \sim W^{-1}(\upsilon, \Xi)$ ...with independence is not independent... 
+
 
 # Example analysis of microbiome data
 

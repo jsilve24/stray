@@ -1,7 +1,7 @@
 #' Transform Fit Mongrel Parameters to other representations
 #' 
 #' These are a collection of convenience functions for transforming
-#' mongrel fit objects to a number of different representations includeing
+#' mongrel fit objects to a number of different representations including
 #' ILR bases, CLR coordinates, ALR coordinates, and proportions. 
 #'
 #' @param m object of class mongrelfit (e.g., output of \code{\link{mongrel}})

@@ -156,7 +156,7 @@ image(Xi)
 Theta <- matrix(0, ntaxa(dat)-1, nrow(X))
 Gamma <- diag(nrow(X))
 
-fit <- mongrel(Y, X, upsilon, Theta, Gamma, Xi, verbose=FALSE)
+fit <- mongrel(Y, X, upsilon, Theta, Gamma, Xi)
 
 # Name taxa by family
 names_categories(fit) <- tax_table(dat)[,"Family"]

@@ -45,6 +45,8 @@ using Eigen::VectorXd;
 //'   decomposition of negative inverse hessian (should be <=0)
 //' @param no_error if true will throw hessian warning rather than error if 
 //'   not positive definite. 
+//' @param jitter (default: 0) if >0 then adds that factor to diagonal of Hessian 
+//' before decomposition (to improve matrix conditioning)
 //'   
 //' @details Notation: Let Z_j denote the J-th row of a matrix Z.
 //' Model:
@@ -109,7 +111,8 @@ List optimMongrelCollapsed(const Eigen::ArrayXXd Y,
                int verbose_rate=10,
                String decomp_method="eigen",
                double eigvalthresh=0, 
-               bool no_error=false){  
+               bool no_error=false, 
+               double jitter=0){  
   int N = Y.cols();
   int D = Y.rows();
   MongrelCollapsed cm(Y, upsilon, ThetaX, K, A);
@@ -137,6 +140,8 @@ List optimMongrelCollapsed(const Eigen::ArrayXXd Y,
     VectorXd grad(N*(D-1));
     grad = cm.calcGrad(); // should have eta at optima already
     hess = cm.calcHess(); // should have eta at optima already
+    if (jitter > 0)       // potentially add jitter to improve conditioning
+      hess.diagonal().array() += -jitter;
     out[1] = grad;
     out[2] = hess;
     

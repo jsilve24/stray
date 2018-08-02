@@ -55,8 +55,8 @@ BEGIN_RCPP
 END_RCPP
 }
 // optimMongrelCollapsed
-List optimMongrelCollapsed(const Eigen::ArrayXXd Y, const double upsilon, const Eigen::MatrixXd ThetaX, const Eigen::MatrixXd K, const Eigen::MatrixXd A, Eigen::MatrixXd etainit, int n_samples, bool calcGradHess, double b1, double b2, double step_size, double epsilon, double eps_f, double eps_g, int max_iter, bool verbose, int verbose_rate, String decomp_method, double eigvalthresh, bool no_error);
-RcppExport SEXP _mongrel_optimMongrelCollapsed(SEXP YSEXP, SEXP upsilonSEXP, SEXP ThetaXSEXP, SEXP KSEXP, SEXP ASEXP, SEXP etainitSEXP, SEXP n_samplesSEXP, SEXP calcGradHessSEXP, SEXP b1SEXP, SEXP b2SEXP, SEXP step_sizeSEXP, SEXP epsilonSEXP, SEXP eps_fSEXP, SEXP eps_gSEXP, SEXP max_iterSEXP, SEXP verboseSEXP, SEXP verbose_rateSEXP, SEXP decomp_methodSEXP, SEXP eigvalthreshSEXP, SEXP no_errorSEXP) {
+List optimMongrelCollapsed(const Eigen::ArrayXXd Y, const double upsilon, const Eigen::MatrixXd ThetaX, const Eigen::MatrixXd K, const Eigen::MatrixXd A, Eigen::MatrixXd etainit, int n_samples, bool calcGradHess, double b1, double b2, double step_size, double epsilon, double eps_f, double eps_g, int max_iter, bool verbose, int verbose_rate, String decomp_method, double eigvalthresh, bool no_error, double jitter);
+RcppExport SEXP _mongrel_optimMongrelCollapsed(SEXP YSEXP, SEXP upsilonSEXP, SEXP ThetaXSEXP, SEXP KSEXP, SEXP ASEXP, SEXP etainitSEXP, SEXP n_samplesSEXP, SEXP calcGradHessSEXP, SEXP b1SEXP, SEXP b2SEXP, SEXP step_sizeSEXP, SEXP epsilonSEXP, SEXP eps_fSEXP, SEXP eps_gSEXP, SEXP max_iterSEXP, SEXP verboseSEXP, SEXP verbose_rateSEXP, SEXP decomp_methodSEXP, SEXP eigvalthreshSEXP, SEXP no_errorSEXP, SEXP jitterSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -80,7 +80,8 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< String >::type decomp_method(decomp_methodSEXP);
     Rcpp::traits::input_parameter< double >::type eigvalthresh(eigvalthreshSEXP);
     Rcpp::traits::input_parameter< bool >::type no_error(no_errorSEXP);
-    rcpp_result_gen = Rcpp::wrap(optimMongrelCollapsed(Y, upsilon, ThetaX, K, A, etainit, n_samples, calcGradHess, b1, b2, step_size, epsilon, eps_f, eps_g, max_iter, verbose, verbose_rate, decomp_method, eigvalthresh, no_error));
+    Rcpp::traits::input_parameter< double >::type jitter(jitterSEXP);
+    rcpp_result_gen = Rcpp::wrap(optimMongrelCollapsed(Y, upsilon, ThetaX, K, A, etainit, n_samples, calcGradHess, b1, b2, step_size, epsilon, eps_f, eps_g, max_iter, verbose, verbose_rate, decomp_method, eigvalthresh, no_error, jitter));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -143,7 +144,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_mongrel_loglikMongrelCollapsed", (DL_FUNC) &_mongrel_loglikMongrelCollapsed, 6},
     {"_mongrel_gradMongrelCollapsed", (DL_FUNC) &_mongrel_gradMongrelCollapsed, 6},
     {"_mongrel_hessMongrelCollapsed", (DL_FUNC) &_mongrel_hessMongrelCollapsed, 6},
-    {"_mongrel_optimMongrelCollapsed", (DL_FUNC) &_mongrel_optimMongrelCollapsed, 20},
+    {"_mongrel_optimMongrelCollapsed", (DL_FUNC) &_mongrel_optimMongrelCollapsed, 21},
     {"_mongrel_uncollapseMongrelCollapsed", (DL_FUNC) &_mongrel_uncollapseMongrelCollapsed, 7},
     {"_mongrel_rMatNormalCholesky_test", (DL_FUNC) &_mongrel_rMatNormalCholesky_test, 3},
     {"_mongrel_rInvWishCholesky_test", (DL_FUNC) &_mongrel_rInvWishCholesky_test, 2},

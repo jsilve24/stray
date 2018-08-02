@@ -109,6 +109,12 @@ ncovariates <- function(m){
   UseMethod("ncovariates", m)
 }
 
+#' @rdname access_dims
+#' @export
+niter <- function(m){
+  UseMethod("niter", m)
+}
+
 
 #' Generic method for getting and setting dimension names of fit object
 #' 

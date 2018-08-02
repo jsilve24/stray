@@ -153,3 +153,28 @@ name.mongrelfit <- function(m, ...){
 mifelse <- function(b, y, n){
   if (b) return(y) else return(n)
 }
+
+
+#' Add 1 dimension to array
+#'
+#' @param a array object
+#' @param d dimension to add (<= length(dim(a))+1)
+#'
+#' @return array
+#' @export
+#'
+#' @examples
+#' x <- matrix(1:6, 3, 2)
+#' add_array_dim(a, 1)
+add_array_dim <- function(a, d){
+  dd <- dim(a)
+  if (d > length(dd)+1) stop("d must be <= length(dim(a))+1")
+  ad <- rep(NA, length(dd)+1)
+  passed=FALSE
+  for (i in 1:(length(dd)+1)) {
+    if (i==d) { ad[i] <- 1; passed <- TRUE }
+    else if (passed) { ad[i] <- dd[i-1] }
+    else {ad[i] <- dd[i]}
+  }
+  array(a, dim=ad)
+}

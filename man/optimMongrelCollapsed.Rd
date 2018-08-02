@@ -2,13 +2,13 @@
 % Please edit documentation in R/RcppExports.R
 \name{optimMongrelCollapsed}
 \alias{optimMongrelCollapsed}
-\title{Funtion to Optimize the Collapsed Mongrel Model}
+\title{Function to Optimize the Collapsed Mongrel Model}
 \usage{
-optimMongrelCollapsed(Y, upsilon, ThetaX, K, A, etainit, n_samples = 2000L,
-  calcGradHess = TRUE, b1 = 0.9, b2 = 0.99, step_size = 0.003,
-  epsilon = 1e-06, eps_f = 1e-08, eps_g = 1e-05, max_iter = 10000L,
-  verbose = FALSE, verbose_rate = 10L, decomp_method = "eigen",
-  eigvalthresh = 0, no_error = FALSE)
+optimMongrelCollapsed(Y, upsilon, ThetaX, K, A, etainit,
+  n_samples = 2000L, calcGradHess = TRUE, b1 = 0.9, b2 = 0.99,
+  step_size = 0.003, epsilon = 1e-06, eps_f = 1e-08, eps_g = 1e-05,
+  max_iter = 10000L, verbose = FALSE, verbose_rate = 10L,
+  decomp_method = "eigen", eigvalthresh = 0, no_error = FALSE)
 }
 \arguments{
 \item{Y}{D x N matrix of counts}
@@ -30,11 +30,11 @@ as no inversion or decomposition of Hessian is required)}
 \item{calcGradHess}{if n_samples=0 should Gradient and Hessian
 still be calculated using closed form solutions?}
 
-\item{b1}{(ADAM) 1st moment decay parameter (recomend 0.9) "aka momentum"}
+\item{b1}{(ADAM) 1st moment decay parameter (recommend 0.9) "aka momentum"}
 
 \item{b2}{(ADAM) 2nd moment decay parameter (recommend 0.99 or 0.999)}
 
-\item{step_size}{(ADAM) step size for descent (reocment 0.001-0.003)}
+\item{step_size}{(ADAM) step size for descent (recommend 0.001-0.003)}
 
 \item{epsilon}{(ADAM) parameter to avoid divide by zero}
 
@@ -65,8 +65,8 @@ List containing (all with respect to found optima)
 \item Gradient - (if \code{calcGradHess}=true)
 \item Hessian - (if \code{calcGradHess}=true)
 \item Pars - Parameter value of eta at optima
-\item Sampes - (D-1) x N x n_samples array containing posterior samples of eta
-lbased on Laplace approximation (if n_samples>0)
+\item Samples - (D-1) x N x n_samples array containing posterior samples of eta
+based on Laplace approximation (if n_samples>0)
 }
 }
 \description{
@@ -91,7 +91,7 @@ form solutions. That said, the Hessian matrix can be quite large
 
 Note: Warnings about large negative eigenvalues can either signal
 that the optimizer did not reach an optima or (more commonly in my experience)
-that the prior / degrees of freedom for the covariance (given by paramters
+that the prior / degrees of freedom for the covariance (given by parameters
 \code{upsilon} and \code{K}) were too specific and at odds with the observed data.
 If you get this warning try the following.
 \enumerate{
@@ -99,11 +99,9 @@ If you get this warning try the following.
 \item Try decreasing \code{step_size} and increasing \code{max_iter} parameters
 in optimizer
 \item Try relaxing prior assumptions regarding covariance matrix. (e.g., may want
-to consider decrasing parameter \code{upsilon} closer to a minimum value of
+to consider decreasing parameter \code{upsilon} closer to a minimum value of
 D)
 }
-
-[N*(D-1) x N*(D-1)]: R:N*(D-1)%20x%20N*(D-1)%5C
 }
 \examples{
 sim <- mongrel_sim()

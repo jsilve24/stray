@@ -20,7 +20,7 @@
 \item{focus.sample}{vector of samples to include in plot (plots all if NULL)}
 
 \item{use_names}{if TRUE, uses dimension names found in data as plot labels
-rather than using dimension integer indicies.}
+rather than using dimension integer indices.}
 }
 \value{
 ggplot object

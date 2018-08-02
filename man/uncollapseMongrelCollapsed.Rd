@@ -11,7 +11,7 @@ uncollapseMongrelCollapsed(eta, X, Theta, Gamma, Xi, upsilon,
 \item{eta}{array of dimension (D-1) x N x iter (e.g., \code{Pars} output of
 function optimMongrelCollapsed)}
 
-\item{X}{matrix of covariates of dimention Q x N}
+\item{X}{matrix of covariates of dimension Q x N}
 
 \item{Theta}{matrix of prior mean of dimension (D-1) x Q}
 
@@ -19,7 +19,7 @@ function optimMongrelCollapsed)}
 
 \item{Xi}{covariance matrix of dimension (D-1) x (D-1)}
 
-\item{upsilon}{scalar (must be > D) degrees of freedom for InvWishart Prio}
+\item{upsilon}{scalar (must be > D) degrees of freedom for InvWishart prior}
 
 \item{ret_mean}{if true then uses posterior mean of Lambda and Sigma
 corresponding to each sample of eta rather than sampling from

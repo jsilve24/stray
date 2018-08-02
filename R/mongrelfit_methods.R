@@ -317,6 +317,10 @@ nsamples.mongrelfit <- function(m){ m$N }
 #' @export
 ncovariates.mongrelfit <- function(m){ m$Q }
 
+#' @rdname access_dims
+#' @export
+niter.mongrelfit <- function(m){ m$iter }
+
 
 
 # name_dims ---------------------------------------------------------------

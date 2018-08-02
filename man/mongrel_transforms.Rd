@@ -29,7 +29,7 @@ mongrelfit object
 }
 \description{
 These are a collection of convenience functions for transforming
-mongrel fit objects to a number of different representations includeing
+mongrel fit objects to a number of different representations including
 ILR bases, CLR coordinates, ALR coordinates, and proportions.
 }
 \details{

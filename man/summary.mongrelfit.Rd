@@ -12,7 +12,7 @@
 
 \item{pars}{character vector (default: c("Eta", "Lambda", "Sigma"))}
 
-\item{use_names}{should summary replace dimension indicies with mongrelfit 
+\item{use_names}{should summary replace dimension indices with mongrelfit 
 names if names Y and X were named in call to \code{\link{mongrel}}}
 
 \item{gather_prob}{if TRUE then prints quantiles in long format rather than 

@@ -5,9 +5,11 @@
 \alias{ncategories}
 \alias{nsamples}
 \alias{ncovariates}
+\alias{niter}
 \alias{ncategories.mongrelfit}
 \alias{nsamples.mongrelfit}
 \alias{ncovariates.mongrelfit}
+\alias{niter.mongrelfit}
 \title{Generic method for accessing model fit dimensions}
 \usage{
 ncategories(m)
@@ -16,11 +18,15 @@ nsamples(m)
 
 ncovariates(m)
 
+niter(m)
+
 \method{ncategories}{mongrelfit}(m)
 
 \method{nsamples}{mongrelfit}(m)
 
 \method{ncovariates}{mongrelfit}(m)
+
+\method{niter}{mongrelfit}(m)
 }
 \arguments{
 \item{m}{An object of class mongrelfit}

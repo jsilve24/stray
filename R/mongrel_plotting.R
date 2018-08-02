@@ -108,6 +108,10 @@ plot_mf_sigma <- function(m, focus.coord=NULL, use_names=TRUE){
 #' }
 ppc.mongrelfit <- function(m, iter=50){
   
+  if (iter > m$iter) {
+    stop("iter param larger than number of stored posterior samples")
+  }
+  
   if (!is.null(Y)) o <- order(m$Y, decreasing=TRUE) else o <- 1:(m$N*m$D)
   
   pp <- predict(m, response="Y")

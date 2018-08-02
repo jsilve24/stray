@@ -73,9 +73,8 @@ List uncollapseMongrelCollapsed(const Eigen::Map<Eigen::VectorXd> eta, // note t
                     const Eigen::Map<Eigen::MatrixXd> Xi, 
                     const double upsilon, 
                     bool ret_mean = false){
-  List out(4);
-  out.names() = CharacterVector::create("Lambda", "Sigma", "LambdaMean", 
-                                        "SigmaMean");
+  List out(2);
+  out.names() = CharacterVector::create("Lambda", "Sigma");
   int Q = Gamma.rows();
   int D = Xi.rows()+1;
   int N = X.cols();
@@ -115,7 +114,7 @@ List uncollapseMongrelCollapsed(const Eigen::Map<Eigen::VectorXd> eta, // note t
       Map<VectorXd> LambdaNVec(LambdaN.data(), LambdaN.size());
       Map<VectorXd> XiNVec(XiN.data(), XiN.size());
       LambdaDrawO.col(i) = LambdaNVec;
-      SigmaDrawO.col(i) = XiNVec;
+      SigmaDrawO.col(i) = (upsilonN-D-2)*XiNVec; // mean of inverse wishart
     } else {
       // Draw Random Component
       LSigmaDraw = rInvWishCholesky(upsilonN, XiN).matrix();

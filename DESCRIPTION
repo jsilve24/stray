@@ -16,9 +16,10 @@ License: What license is it under?
 Imports: Rcpp (>= 0.12.17), RcppEigen (>= 0.3.3.4.0), driver, dplyr, ggplot2, 
   purrr, tidybayes
 LinkingTo: Rcpp, RcppEigen, RcppNumerical
-RoxygenNote: 6.0.1
-Suggests: testthat, knitr, rmarkdown, phyloseq
+RoxygenNote: 6.1.0
+Suggests: testthat, knitr, rmarkdown, HMP16SData, phyloseq, ape
 Remotes:
     jsilve24/driver,
-    mjskay/tidybayes
+    mjskay/tidybayes, 
+    twbattaglia/MicrobeDS
 VignetteBuilder: knitr

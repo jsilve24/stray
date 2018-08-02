@@ -36,7 +36,7 @@ optimization}
 
 \item{pars}{character vector of posterior parameters to return}
 
-\item{...}{argumenst passed to \code{\link{optimMongrelCollapsed}} and
+\item{...}{arguments passed to \code{\link{optimMongrelCollapsed}} and
 \code{\link{uncollapseMongrelCollapsed}}}
 
 \item{m}{object of class mongrelfit}

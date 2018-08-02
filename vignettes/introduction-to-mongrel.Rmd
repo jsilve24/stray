@@ -2,7 +2,9 @@
 title: "Introduction to Mongrel"
 author: "Justin Silverman"
 date: "`r Sys.Date()`"
-output: rmarkdown::html_vignette
+output: 
+  rmarkdown::html_vignette:
+    toc: true
 vignette: >
   %\VignetteIndexEntry{Vignette Title}
   %\VignetteEncoding{UTF-8}
@@ -100,6 +102,69 @@ Essentially the main modeling component of *mongrel* is the third equation above
 That is, $X$ are your covariates (which can be continuous, discrete, binary, etc...), 
 and $\Sigma$ is the covariance matrix for the regression residuals.  
 
+
+# Example analysis of microbiome data
+Lets consider a simple analysis of the HMP dataset. We are going to look at whether
+at whether the RUN_CENTER variable is influences the microbiome composition 
+
+```{r message=FALSE, warning=FALSE}
+library(MicrobeDS)
+library(phyloseq)
+library(mongrel)
+library(dplyr)
+library(ape)
+
+set.seed(91)
+
+data("RISK_CCFA")
+
+# drop any super low abundant taxa and samples
+dat <- RISK_CCFA %>% 
+  subset_samples(disease_stat!="missing", 
+                 immunosup!="missing") %>% 
+  subset_samples(diseasesubtype %in% c("no", "CD")) %>%
+  subset_samples(steroids=="false") %>% 
+  subset_samples(antibiotics=="false") %>% 
+  subset_samples(biologics=="false") %>% 
+  subset_samples(biopsy_location=="Terminal ileum") %>% 
+  #tax_glom("Family") %>% 
+  prune_samples(sample_sums(.) >= 5000,.) %>%
+  filter_taxa(function(x) sum(x > 5) > 0.25*length(x), TRUE)
+```
+
+First we are going to look at XXX
+
+Create Design Matrix and OTU Table
+```{r}
+sample_dat <- as.data.frame(as(sample_data(dat),"matrix")) %>% 
+  mutate(age = as.numeric(as.character(age)), 
+         diseasesubtype=relevel(diseasesubtype, ref="no"))
+
+X <- t(model.matrix(~disease_stat+age, data=sample_dat))
+Y <- otu_table(dat)
+```
+
+Next specify priors, in particular use phylogeneticly
+informed prior
+```{r}
+upsilon <- ntaxa(dat)+3
+m <- vcv.phylo(phy_tree(dat), corr=TRUE)
+GG <- cbind(diag(ntaxa(dat)-1), -1)
+#Xi <- (upsilon-ntaxa(dat)-2)*GG%*%diag(ntaxa(dat))%*%t(GG)
+Xi <- (upsilon-ntaxa(dat)-2)*GG%*%m%*%t(GG)
+image(Xi)
+Theta <- matrix(0, ntaxa(dat)-1, nrow(X))
+Gamma <- diag(nrow(X))
+
+fit <- mongrel(Y, X, upsilon, Theta, Gamma, Xi, verbose=FALSE)
+
+# Name taxa by family
+names_categories(fit) <- tax_table(dat)[,"Family"]
+ 
+```
+
+
+# More Technical Details 
 ## A few notes on model inference and parameter collapsing
 
 Along with some algorithmic speed-ups enabled by the C++ Eigen library *mongrel* uses conjugate priors for the regression component of the model allowing the last three lines of the model to be
@@ -149,6 +214,5 @@ By default *mongrel* tries to approximate the posterior distribution using a Lap
 In practice we find that (typically) issues with non-positive definite hessians result from poorly chosen priors for $\Sigma$. In particular, note that the prior $\Sigma \sim W^{-1}(\upsilon, \Xi)$ ...with independence is not independent... 
 
 
-# Example analysis of microbiome data
 
 # References

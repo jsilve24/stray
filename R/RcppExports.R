@@ -67,7 +67,7 @@ hessMongrelCollapsed <- function(Y, upsilon, ThetaX, K, A, eta) {
     .Call('_mongrel_hessMongrelCollapsed', PACKAGE = 'mongrel', Y, upsilon, ThetaX, K, A, eta)
 }
 
-#' Funtion to Optimize the Collapsed Mongrel Model
+#' Function to Optimize the Collapsed Mongrel Model
 #' 
 #' See details for model. Should likely be followed by function 
 #' \code{\link{uncollapseMongrelCollapsed}}. Notation: \code{N} is number of samples,
@@ -85,9 +85,9 @@ hessMongrelCollapsed <- function(Y, upsilon, ThetaX, K, A, eta) {
 #'    as no inversion or decomposition of Hessian is required)
 #' @param calcGradHess if n_samples=0 should Gradient and Hessian 
 #'   still be calculated using closed form solutions?
-#' @param b1 (ADAM) 1st moment decay parameter (recomend 0.9) "aka momentum"
+#' @param b1 (ADAM) 1st moment decay parameter (recommend 0.9) "aka momentum"
 #' @param b2 (ADAM) 2nd moment decay parameter (recommend 0.99 or 0.999)
-#' @param step_size (ADAM) step size for descent (reocment 0.001-0.003)
+#' @param step_size (ADAM) step size for descent (recommend 0.001-0.003)
 #' @param epsilon (ADAM) parameter to avoid divide by zero
 #' @param eps_f (ADAM) normalized function improvement stopping criteria 
 #' @param eps_g (ADAM) normalized gradient magnitude stopping criteria
@@ -117,22 +117,22 @@ hessMongrelCollapsed <- function(Y, upsilon, ThetaX, K, A, eta) {
 #' 
 #' Note: Warnings about large negative eigenvalues can either signal 
 #' that the optimizer did not reach an optima or (more commonly in my experience)
-#' that the prior / degrees of freedom for the covariance (given by paramters
+#' that the prior / degrees of freedom for the covariance (given by parameters
 #' \code{upsilon} and \code{K}) were too specific and at odds with the observed data.
 #' If you get this warning try the following. 
 #' 1. Try restarting the optimization using a different initial guess for eta
 #' 2. Try decreasing \code{step_size} and increasing \code{max_iter} parameters 
 #'  in optimizer 
 #' 3. Try relaxing prior assumptions regarding covariance matrix. (e.g., may want
-#' to consider decrasing parameter \code{upsilon} closer to a minimum value of 
+#' to consider decreasing parameter \code{upsilon} closer to a minimum value of 
 #' D)
 #' @return List containing (all with respect to found optima)
 #' 1. LogLik - Log Likelihood of collapsed model (up to proportionality constant)
 #' 2. Gradient - (if \code{calcGradHess}=true)
 #' 3. Hessian - (if \code{calcGradHess}=true)
 #' 4. Pars - Parameter value of eta at optima
-#' 5. Sampes - (D-1) x N x n_samples array containing posterior samples of eta 
-#'   lbased on Laplace approximation (if n_samples>0)
+#' 5. Samples - (D-1) x N x n_samples array containing posterior samples of eta 
+#'   based on Laplace approximation (if n_samples>0)
 #' @md 
 #' @export
 #' @name optimMongrelCollapsed
@@ -159,11 +159,11 @@ optimMongrelCollapsed <- function(Y, upsilon, ThetaX, K, A, etainit, n_samples =
 #' 
 #' @param eta array of dimension (D-1) x N x iter (e.g., \code{Pars} output of 
 #'   function optimMongrelCollapsed)
-#' @param X matrix of covariates of dimention Q x N
+#' @param X matrix of covariates of dimension Q x N
 #' @param Theta matrix of prior mean of dimension (D-1) x Q
 #' @param Gamma covariance matrix of dimension Q x Q
 #' @param Xi covariance matrix of dimension (D-1) x (D-1)
-#' @param upsilon scalar (must be > D) degrees of freedom for InvWishart Prio
+#' @param upsilon scalar (must be > D) degrees of freedom for InvWishart prior
 #' @param ret_mean if true then uses posterior mean of Lambda and Sigma 
 #'   corresponding to each sample of eta rather than sampling from 
 #'   posterior of Lambda and Sigma (useful if Laplace approximation

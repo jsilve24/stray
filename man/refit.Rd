@@ -2,7 +2,7 @@
 % Please edit documentation in R/generics_s3.R
 \name{refit}
 \alias{refit}
-\title{Generic method for fitting model from passed model fit objet}
+\title{Generic method for fitting model from passed model fit object}
 \usage{
 refit(m, ...)
 }
@@ -15,5 +15,5 @@ refit(m, ...)
 object of the same class as \code{m}
 }
 \description{
-Generic method for fitting model from passed model fit objet
+Generic method for fitting model from passed model fit object
 }

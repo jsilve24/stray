@@ -2,7 +2,6 @@
 % Please edit documentation in R/mongrel_transforms.R
 \name{store_coord}
 \alias{store_coord}
-\alias{store_coord}
 \alias{reapply_coord}
 \title{Holds information on coordinates system to later be reapplied}
 \usage{

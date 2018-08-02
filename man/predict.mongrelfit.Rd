@@ -4,8 +4,9 @@
 \alias{predict.mongrelfit}
 \title{Predict response from new data}
 \usage{
-\method{predict}{mongrelfit}(object, newdata = NULL, response = "LambdaX",
-  size = NULL, use_names = TRUE, summary = FALSE, ...)
+\method{predict}{mongrelfit}(object, newdata = NULL,
+  response = "LambdaX", size = NULL, use_names = TRUE,
+  summary = FALSE, ...)
 }
 \arguments{
 \item{object}{An object of class mongrelfit}
@@ -35,7 +36,7 @@ tibble with calculated posterior summaries
 Predict response from new data
 }
 \details{
-currently only implmented for mongrelfit objects in coord_system "default"
+currently only implemented for mongrelfit objects in coord_system "default"
 "alr", or "ilr".
 }
 \examples{

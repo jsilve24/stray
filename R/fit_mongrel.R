@@ -167,12 +167,12 @@ mongrel <- function(Y=NULL, X=NULL, upsilon=NULL, Theta=NULL, Gamma=NULL, Xi=NUL
   # uncollapsing and unless otherwise specified against, use only the 
   # posterior mean for Lambda and Sigma 
   if (is.null(fitc$Samples)) {
-    fitc$Samples <- fitc$pars
+    fitc$Samples <- add_array_dim(fitc$Pars, 3)
     ret_mean <- args_null("ret_mean", args, TRUE)
     if (ret_mean && n_sample>0){
       warning("Laplace Approximation Failed, using MAP estimate of eta", 
-              "to obtain Posterior mean of Lambda and Sigma", 
-              "i.e., not sampling from posterior distribution of Lambda or Sigma")
+              " to obtain Posterior mean of Lambda and Sigma", 
+              " (i.e., not sampling from posterior distribution of Lambda or Sigma)")
     }
     if (!ret_mean && n_sample > 0){
       warning("Laplace Approximation Failed, using MAP estimate of eta", 

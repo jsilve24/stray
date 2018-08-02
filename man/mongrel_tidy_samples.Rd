@@ -9,14 +9,14 @@ mongrel_tidy_samples(m, use_names = FALSE)
 \arguments{
 \item{m}{an object of class mongrelfit}
 
-\item{use_names}{should dimension indicies be replaced by
+\item{use_names}{should dimension indices be replaced by
 dimension names if provided in data used to fit mongrel model.}
 }
 \value{
 tibble
 }
 \description{
-Combines them all into a single tibble, see example for formating and 
+Combines them all into a single tibble, see example for formatting and 
 column headers. Primarily designed to be used by 
 \code{\link{summary.mongrelfit}}.
 }

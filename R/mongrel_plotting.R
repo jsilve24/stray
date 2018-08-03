@@ -95,8 +95,10 @@ plot_mf_sigma <- function(m, focus.coord=NULL, use_names=TRUE){
 #' Visualization of Posterior Predictive Check of fit model
 #' 
 #' @param m an object of class mongrelfit
+#' @param type type of plot (options "lines" or "ribbon")
 #' @param iter number of samples from posterior predictive distribution to plot
-#'   (currently must be <= m$iter)
+#'   (currently must be <= m$iter) if type=="lines" default is 50, if type=="ribbon"
+#'   default is to use all available iterations. 
 #' @return ggplot object
 #' @import ggplot2
 #' @importFrom driver gather_array
@@ -106,27 +108,45 @@ plot_mf_sigma <- function(m, focus.coord=NULL, use_names=TRUE){
 #' fit <- mongrel(Y, X)
 #' ppc(fit)
 #' }
-ppc.mongrelfit <- function(m, iter=50){
+ppc.mongrelfit <- function(m, type="bounds", iter=NULL){
   
+  if (is.null(iter)) {
+    if (type =="lines") iter <- min(50, niter(m))
+    if (type %in% c("bounds", "points")) iter <- niter(m)
+  } 
   if (iter > m$iter) {
     stop("iter param larger than number of stored posterior samples")
   }
   
-  if (!is.null(Y)) o <- order(m$Y, decreasing=TRUE) else o <- 1:(m$N*m$D)
+  if (!is.null(m$Y)) o <- order(m$Y, decreasing=TRUE) else o <- 1:(m$N*m$D)
   
   pp <- predict(m, response="Y")
-  pp <- pp[,,sample(1:m$iter, iter), drop=F]
+  if (iter < niter(m)) pp <- pp[,,sample(1:m$iter, iter), drop=F]
   pp <- matrix(pp, m$D*m$N, iter) 
   pp <- pp[o,]
-  pp <- gather_array(pp, val) 
+  
   tr <- data.frame(dim_1 = 1:(m$N*m$D), 
                    dim_2 = NA, 
                    val = c(m$Y)[o])
-  p <- ggplot(pp, aes(x = dim_1, y = val)) +
-    geom_line(aes(group=dim_2), color="black", alpha=0.4) +
-    geom_line(data=tr, color="green", alpha=0.6)
-
-  p <- p + theme_minimal()
   
+  if (type %in% c("bounds", "points")){
+    pp <- apply(pp, 1, function(x) quantile(x, probs = c(0.025, 0.5, 0.975)))
+    rownames(pp) <- c("p2.5", "p50", "p97.5")
+    pp <- as.data.frame(t(pp))
+    pp$dim_1 <- 1:nrow(pp)
+    p <- ggplot(pp, aes(x=dim_1, y=p50)) 
+    if (type == "bounds") {
+      p <- p + geom_linerange(aes(ymin=p2.5, ymax=p97.5), color="black", alpha=0.4)
+    }
+     p <- p + 
+       geom_point(color="lightgrey", size=1) +
+       geom_line(data=tr, aes(y=val), color="green", alpha=0.6)
+  } else if (type == "lines"){
+    pp <- driver::gather_array(pp, val) 
+    p <- ggplot(pp, aes(x = dim_1, y = val)) +
+      geom_line(aes(group=dim_2), color="black", alpha=0.4) +
+      geom_line(data=tr, color="green", alpha=0.6)
+  }
+  p <- p + theme_minimal() +xlab("") +ylab("Counts")
   return(p)
 }

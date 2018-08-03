@@ -149,7 +149,7 @@ Y <- otu_table(dat)
 
 Next specify priors, in particular use weak phylogeneticly
 informed prior
-```{r}
+```{r fig.height=5, fig.width=7}
 upsilon <- ntaxa(dat)+3
 m <- diag(ntaxa(dat)) + 0.5*vcv.phylo(phy_tree(dat), corr=TRUE) # Weak Phylo Prior
 GG <- cbind(diag(ntaxa(dat)-1), -1)
@@ -214,7 +214,7 @@ are `ggplot` objects so normal `ggplot2` commands work on them. Before doing tha
 though we are going to use one of the `names` functions for `mongrelfit` objects
 to provide some more specific names for the covariates (helpful when we then plot). 
 
-```{r}
+```{r fig.height=5, fig.width=7}
 names_covariates(priors) <- rownames(X)
 plot(priors, par="Lambda") + ggplot2::xlim(c(-10, 10))
 ```
@@ -229,7 +229,7 @@ demonstrate the use of the `refit` method which can be called to refit a
 `mongrelfit` object, saving some typing and allowing us to simply add data to the 
 `priors` object.
 
-```{r}
+```{r fig.height=5, fig.width=7}
 priors$Y <- Y # add data to priors object
 Xi <- (upsilon-ntaxa(dat)-2)*GG%*% diag(ntaxa(dat)) %*%t(GG) # update Xi prior
 Xi_clr <- driver::alrvar2clrvar(Xi, ntaxa(dat)) # need to add it in CLR coords
@@ -266,7 +266,7 @@ to assess model fit. This can be accessed through the method `ppc`^[This can als
 be used to plot samples of the prior predictive distribution if Y is null in the 
 object as in our `priors` object].
 
-```{r}
+```{r fig.height=5, fig.width=7}
 ppc(fit) + ggplot2::coord_cartesian(ylim=c(0, 30000))
 ```
 
@@ -299,7 +299,7 @@ that have a 95% credible interval not including zero (i.e., those that
 the model is fairly certain are non-zero). We are also going to ignore the 
 intercept term and just look at parameters associated with age and disease status. 
 
-```{r}
+```{r fig.height=5, fig.width=7}
 fit_summary <- summary(fit, pars="Lambda")$Lambda
 focus <- fit_summary[sign(fit_summary$p2.5) == sign(fit_summary$p97.5),]
 focus <- unique(focus$coord)
@@ -310,7 +310,7 @@ The first, and most obvious ting to notice is that the covariate `age` has prett
 much no effect at all, whatever effect it may have is incredibly weak. So 
 we are going to remove age from the plot.
 
-```{r}
+```{r fig.height=5, fig.width=7}
 fit_summary <- filter(fit_summary, covariate=="disease_statinflamed") 
 focus <- fit_summary[sign(fit_summary$p2.5) == sign(fit_summary$p97.5),]
 focus <- unique(focus$coord)
@@ -324,7 +324,7 @@ What if we looked at just those with large medians.
 ```{r}
 fit_summary <- filter(fit_summary, abs(mean) > 1)
 focus <- fit_summary$coord
-tax_table(dat)[taxa_names(dat)[which(names_coords(fit) %in% focus)]]
+tax_table(dat)[taxa_names(dat)[which(names_coords(fit) %in% focus)]][,c("Phylum", "Class", "Family")]
 ```
 
 

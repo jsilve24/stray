@@ -105,7 +105,9 @@ and $\Sigma$ is the covariance matrix for the regression residuals.
 
 # Example analysis of microbiome data
 Lets consider a simple analysis of the HMP dataset. We are going to look at whether
-at whether the RUN_CENTER variable is influences the microbiome composition 
+at whether the RUN_CENTER variable is influences the microbiome composition. 
+
+Introduce microbiome data 
 
 ```{r message=FALSE, warning=FALSE}
 library(MicrobeDS)
@@ -127,9 +129,9 @@ dat <- RISK_CCFA %>%
   subset_samples(antibiotics=="false") %>% 
   subset_samples(biologics=="false") %>% 
   subset_samples(biopsy_location=="Terminal ileum") %>% 
-  #tax_glom("Family") %>% 
+  tax_glom("Family") %>% 
   prune_samples(sample_sums(.) >= 5000,.) %>%
-  filter_taxa(function(x) sum(x > 5) > 0.25*length(x), TRUE)
+  filter_taxa(function(x) sum(x > 5) > 0.05*length(x), TRUE)
 ```
 
 First we are going to look at XXX
@@ -138,30 +140,207 @@ Create Design Matrix and OTU Table
 ```{r}
 sample_dat <- as.data.frame(as(sample_data(dat),"matrix")) %>% 
   mutate(age = as.numeric(as.character(age)), 
-         diseasesubtype=relevel(diseasesubtype, ref="no"))
+         diseasesubtype=relevel(diseasesubtype, ref="no"), 
+         disease_stat = relevel(disease_stat, ref="non-inflamed"))
 
 X <- t(model.matrix(~disease_stat+age, data=sample_dat))
 Y <- otu_table(dat)
 ```
 
-Next specify priors, in particular use phylogeneticly
+Next specify priors, in particular use weak phylogeneticly
 informed prior
 ```{r}
 upsilon <- ntaxa(dat)+3
-m <- vcv.phylo(phy_tree(dat), corr=TRUE)
+m <- diag(ntaxa(dat)) + 0.5*vcv.phylo(phy_tree(dat), corr=TRUE) # Weak Phylo Prior
 GG <- cbind(diag(ntaxa(dat)-1), -1)
-#Xi <- (upsilon-ntaxa(dat)-2)*GG%*%diag(ntaxa(dat))%*%t(GG)
 Xi <- (upsilon-ntaxa(dat)-2)*GG%*%m%*%t(GG)
-image(Xi)
 Theta <- matrix(0, ntaxa(dat)-1, nrow(X))
 Gamma <- diag(nrow(X))
-
-fit <- mongrel(Y, X, upsilon, Theta, Gamma, Xi)
-
-# Name taxa by family
-names_categories(fit) <- tax_table(dat)[,"Family"]
- 
+image(Xi)
 ```
+
+The function `mongrel` is the main function in the *mongrel* package. It is 
+fairly flexible allowing sampling from the model posterior as well as prior. 
+Since we already have our priors we are going to investigate them to see what 
+they look like before fitting the data; we do this by simply leaving the 
+data out of the call to mongrel or by passing `Y=NULL`^[X however must be passed
+if sampling $\eta$ from the prior is desired.]  
+
+```{r}
+priors <- mongrel(NULL, X, upsilon, Theta, Gamma, Xi)
+priors
+```
+
+Except for the main function `mongrel`, most functions in the *mongrel* package
+work with `mongrelfit` objects (essentially just a list with some extra features).
+The default print method provides a brief summary of the mongrelfit object and 
+adds a note reminding us that this was based on priors only (e.g., prior samples
+not posterior samples). 
+The default print method  also gives basic information regarding the dimensions of the 
+object and a note about the coordinate system that the object is currently represented in. The function 
+`mongrel` takes expects inputs and outputs in the "default" coordinate system;
+this is simply the ALR coordinate system where the last category (`160` above) is taken as 
+reference. More specifically for a vector $x$ representing the proportions of 
+categories $\{1, \dots, D}$ we can write 
+$$x^* = \left( \log \frac{x_1}{x_D}, \dots, \log \frac{x_{D-1}}{x_D}\right).$$
+As mentioned above however, I have designed *mongrel* to work with many 
+different coordinate systems including the ALR (with respect to any category), CLR, 
+ILR, or proportions. To help transform things between these coordinate systems
+I have written a series of transformation functions that transform any `mongrelfit` 
+object into a desired coordinate system. Importantly, `mongrelfit` objects
+keep track of what coordinate system they are currently in so as a user you only
+need to specify the coordinate system that you want to change into. A note however is that
+covariance matricies cannot be represented in proportions and so visualizations
+or summaries based on covariance matricies will be suppressed when `mongrelfit` objects
+are in the proportions coordinate system. As an example, lets look at viewing
+a summary of the prior for $\Lambda$ with respect to the CLR coordinate system^[These are 
+very large objects with many posterior samples, so it can take a little time to compute. 
+Faster implementations of summary may be included as a future update if need arises]. 
+
+```{r}
+priors <- mongrel_to_clr(priors)
+summary(priors, pars="Lambda")
+```
+
+By default the `summary` function returns a list (with possible elements `Lambda`, 
+`Sigma`, and `Eta`) summarizing each posterior parameter based on quantiles and mean (e.g., 
+p2.5 is the 0.025 percentile of the posterior distribution). As this type of 
+table may be hard to take in due to how large it is `mongrelfit` objects also come with a default
+plotting option for each of the parameters. However, as we have `r ncategories(priors)` 
+categories the basic plot would be slightly overwhelming as well. Therefore
+we can use the `focus` options in the plot function to just show a few selected
+categories which we will pick at random. Also the returned plot objects
+are `ggplot` objects so normal `ggplot2` commands work on them. Before doing that
+though we are going to use one of the `names` functions for `mongrelfit` objects
+to provide some more specific names for the covariates (helpful when we then plot). 
+
+```{r}
+names_covariates(priors) <- rownames(X)
+plot(priors, par="Lambda") + ggplot2::xlim(c(-10, 10))
+```
+
+Woah! That looks weird! By investigating the priors I found that our 
+initial phylogenetic prior was pretty weird and implied much higher covariance
+for a few categories (taxa) and much lower covariance for others. For illustrative 
+purposes we are going to instead just specify a much simpler prior, a prior that 
+implies a particular type of independence between taxa and move on to fitting the model. 
+Also rather than refitting the model using the `mongrel` function, we will 
+demonstrate the use of the `refit` method which can be called to refit a 
+`mongrelfit` object, saving some typing and allowing us to simply add data to the 
+`priors` object.
+
+```{r}
+priors$Y <- Y # add data to priors object
+Xi <- (upsilon-ntaxa(dat)-2)*GG%*% diag(ntaxa(dat)) %*%t(GG) # update Xi prior
+Xi_clr <- driver::alrvar2clrvar(Xi, ntaxa(dat)) # need to add it in CLR coords
+priors$Xi <- Xi_clr # add new prior to mongrelfit object
+verify(priors) # run internal checks to make sure modified object is okay
+fit <- refit(priors, step_size=0.005, b1=0.99, decomp_method="cholesky")
+tax <- tax_table(dat)[,c("Class", "Family")]
+tax <- apply(tax, 1, paste, collapse="_")
+names_categories(fit) <- tax
+fit 
+```
+
+Note unlike the main *mongrel* function, the `refit` method can be called
+on objects in any coordinate system and all transfrormations to and from the
+default coordinate system are handled internally^[That said, due to the need to transform
+back and forth from the default coordinate system, it is fastest to call refit on 
+`mongrelfit` objects in the default coordinate system bypassing these transforms.]. 
+This is one nice thing about
+using the `refit` method. That said, new objects added to the `mongrelfit` object 
+need to be added in the proper basis. For example, we had to transform our prior
+for `Xi` to CLR coordinates before adding it to the `priors` object. 
+Also note that above I used the Cholesky (LLT) decomposition of the Hessian to produce samples
+from the Laplace approximation as it is faster than the default Eigen decompostion. 
+The downside to the Cholesky is that it is less safe and may give incorrect results
+if the negative Hessian is not positive definite. However, having already ran this
+analysis with the Eigen decomposition I know its safe and chose the cholesky this time. 
+
+Also, if you want to sample from the prior of the fitted object (even though it 
+has data stored) you can do it by calling `sample_prior(fit)` and it returns
+the same object as if you had called `mongrel` with just the priors. 
+
+Before doing anything else lets look at the posterior predictive distribution
+to assess model fit. This can be accessed through the method `ppc`^[This can also 
+be used to plot samples of the prior predictive distribution if Y is null in the 
+object as in our `priors` object].
+
+```{r}
+ppc(fit) + ggplot2::coord_cartesian(ylim=c(0, 30000))
+```
+
+There are a few things to note about this plot. First, when zoomed out like this
+it looks it is hard to make much of it. This is a fairly large dataset we are 
+analyzing and its hard to view an uncertainty interval; in this case its plotting
+the median and 95% confidence interval in grey and black and the observed counts in green.
+Also notice that there is a large number of very small counts (right side) of the image
+that look like they have large posterior proability at unreasonably large values. 
+This is a common feature I see in models even when they fit well. The reason
+is that the model has little certainty about many small (or zero counts). This is 
+a feature of multinomial counting, if you don't see it its hard to know what its true 
+level is. In fact, the model places most of its weight on the fact that 
+these counts are zero (if you zoom in you will see the median value is at zero for 
+these). It just looks weird because zero is the lowest value you can have
+and so the plot looks skewed to higher values. While these plots can be helpful 
+*mongrel* also has a simpler function that summarizes the poterior predictive check. 
+
+```{r}
+ppc_summary(fit)
+```
+
+Here we see that the model appears to be fitting well (at least based on the posterior
+predictive check) and that only  about 5% of observations fall outside of the 95% 
+posterior predictive density. 
+
+Now we are going to finally look at the posterior distribution of our regression
+parameters, but because there are so many we will focus on just those 
+that have a 95% credible interval not including zero (i.e., those that 
+the model is fairly certain are non-zero). We are also going to ignore the 
+intercept term and just look at parameters associated with age and disease status. 
+
+```{r}
+fit_summary <- summary(fit, pars="Lambda")$Lambda
+focus <- fit_summary[sign(fit_summary$p2.5) == sign(fit_summary$p97.5),]
+focus <- unique(focus$coord)
+plot(fit, par="Lambda", focus.coord = focus, focus.cov = rownames(X)[2:3])
+```
+
+The first, and most obvious ting to notice is that the covariate `age` has pretty 
+much no effect at all, whatever effect it may have is incredibly weak. So 
+we are going to remove age from the plot.
+
+```{r}
+fit_summary <- filter(fit_summary, covariate=="disease_statinflamed") 
+focus <- fit_summary[sign(fit_summary$p2.5) == sign(fit_summary$p97.5),]
+focus <- unique(focus$coord)
+
+tax_table(dat)[taxa_names(dat)[which(names_coords(fit) %in% focus)]]
+plot(fit, par="Lambda", focus.coord = focus, focus.cov = rownames(X)[2])
+```
+
+
+What if we looked at just those with large medians. 
+```{r}
+fit_summary <- filter(fit_summary, abs(mean) > 1)
+focus <- fit_summary$coord
+tax_table(dat)[taxa_names(dat)[which(names_coords(fit) %in% focus)]]
+```
+
+
+<!-- ```{r} -->
+<!-- otu_table(dat)[taxa_names(dat)[which(names_coords(fit) %in% focus)],] %>%  -->
+<!--   t() %>%  -->
+<!--   as("matrix") %>%  -->
+<!--   cbind(sample_data(dat)[,"disease_stat"]) %>%  -->
+<!--   as.data.frame() %>%  -->
+<!--   tidyr::gather(otu, count, -disease_stat) %>%  -->
+<!--   group_by(otu, disease_stat) %>%  -->
+<!--   summarise_posterior(count) %>%  -->
+<!--   select(otu, disease_stat, mean) %>%  -->
+<!--   tidyr::spread(disease_stat, mean) -->
+<!-- ``` -->
+
 
 
 # More Technical Details 

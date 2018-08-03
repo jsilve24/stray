@@ -55,6 +55,7 @@ check_dims <- function(x, d, par){
 # function to help with assignment of category naming conventions for different
 # coordinate systems. 
 assign_cat_names <- function(m){
+  if (is.null(m$names_categories)) return(NULL)
   if (m$coord_system=="proportions") return(paste0("prop_", m$names_categories))
   else if (m$coord_system=="clr") return(paste0("clr_", m$names_categories))
   else if (m$coord_system=="alr"){

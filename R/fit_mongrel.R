@@ -61,6 +61,7 @@
 #'  \code{\link[=model.matrix.mongrelfit]{model.matrix}},
 #'  \code{\link[=name.mongrelfit]{name}}, and
 #'  \code{\link[=sample_prior.mongrelfit]{sample_prior}}
+#'  \code{\link{name_dims}}
 #' 
 #' Plotting functions provided by \code{\link[=plot.mongrelfit]{plot}} 
 #' and \code{\link[=ppc.mongrelfit]{ppc}} (posterior predictive checks)
@@ -144,8 +145,8 @@ mongrel <- function(Y=NULL, X=NULL, upsilon=NULL, Theta=NULL, Gamma=NULL, Xi=NUL
   b2 <- args_null("b2", args, 0.99)
   step_size <- args_null("step_size", args, 0.003)
   epsilon <- args_null("epsilon", args, 10e-7)
-  eps_f <- args_null("eps_f", args, 1e-8)
-  eps_g <- args_null("eps_g", args, 1e-5)
+  eps_f <- args_null("eps_f", args, 1e-10)
+  eps_g <- args_null("eps_g", args, 1e-4)
   max_iter <- args_null("max_iter", args, 10000)
   verbose <- args_null("verbose", args, FALSE)
   verbose_rate <- args_null("verbose_rate", args, 10)

@@ -4,12 +4,14 @@
 \alias{print.mongrelfit}
 \title{Print dimensions and coordinate system information for mongrelfit object.}
 \usage{
-\method{print}{mongrelfit}(x, ...)
+\method{print}{mongrelfit}(x, summary = FALSE, ...)
 }
 \arguments{
 \item{x}{an object of class mongrelfit}
 
-\item{...}{currently unused}
+\item{summary}{if true also calculates and prints summary}
+
+\item{...}{other arguments to pass to summary function}
 }
 \description{
 Print dimensions and coordinate system information for mongrelfit object.

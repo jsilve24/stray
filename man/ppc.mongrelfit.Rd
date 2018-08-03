@@ -4,13 +4,16 @@
 \alias{ppc.mongrelfit}
 \title{Visualization of Posterior Predictive Check of fit model}
 \usage{
-\method{ppc}{mongrelfit}(m, iter = 50)
+\method{ppc}{mongrelfit}(m, type = "bounds", iter = NULL)
 }
 \arguments{
 \item{m}{an object of class mongrelfit}
 
+\item{type}{type of plot (options "lines" or "ribbon")}
+
 \item{iter}{number of samples from posterior predictive distribution to plot
-(currently must be <= m$iter)}
+(currently must be <= m$iter) if type=="lines" default is 50, if type=="ribbon"
+default is to use all available iterations.}
 }
 \value{
 ggplot object

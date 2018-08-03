@@ -117,7 +117,8 @@ summary.mongrelfit <- function(object, pars=NULL, use_names=TRUE, gather_prob=FA
 #' Print dimensions and coordinate system information for mongrelfit object. 
 #'
 #' @param x an object of class mongrelfit
-#' @param ... currently unused
+#' @param summary if true also calculates and prints summary
+#' @param ... other arguments to pass to summary function
 #' @export
 #' @examples 
 #' \dontrun{
@@ -125,8 +126,13 @@ summary.mongrelfit <- function(object, pars=NULL, use_names=TRUE, gather_prob=FA
 #' print(fit)
 #' }
 #' @seealso \code{\link{summary.mongrelfit}} summarizes posterior intervals 
-print.mongrelfit <- function(x, ...){
-  cat("Mongrelfit Object: \n" )
+print.mongrelfit <- function(x, summary=FALSE, ...){
+  if (is.null(x$Y)) {
+    cat(" Mongrelfit Object (Priors Only): \n")
+  } else {
+    cat("Mongrelfit Object: \n" )  
+  }
+  
   cat(paste("  Number of Samples:\t\t", x$N, "\n"))
   cat(paste("  Number of Categories:\t\t", x$D, "\n"))
   cat(paste("  Number of Covariates:\t\t", x$Q, "\n"))
@@ -145,7 +151,11 @@ print.mongrelfit <- function(x, ...){
   } else {
     cs <- x$coord_system
   }
-  cat(paste("  Coordinate System:\t\t", cs))
+  cat(paste("  Coordinate System:\t\t", cs, "\n"))
+  if (summary){
+    cat("\n\n Summary: \n ")
+    print(summary(x, ...))
+  }
 }
 
 
@@ -219,10 +229,14 @@ as.list.mongrelfit <- function(x,...){
 predict.mongrelfit <- function(object, newdata=NULL, response="LambdaX", size=NULL, 
                                use_names=TRUE, summary=FALSE, ...){
   
+  l <- store_coord(object)
   if (!(object$coord_system %in% c("alr", "ilr"))){
-    stop("currently only accepts mongrelfit objects in coord_system alr, or ilr")
+    object <- mongrel_to_alr(object, ncategories(object))
+    transformed <- TRUE
+  } else {
+    transformed <- FALSE
   }
-
+  
   if (is.null(newdata)) {
     newdata <- object$X
     if (response=="Y") size <-colSums(object$Y)
@@ -236,7 +250,7 @@ predict.mongrelfit <- function(object, newdata=NULL, response="LambdaX", size=NU
   # # Try to match rownames of newdata to avoid possible errors...
   # if (!is.null(rownames(newdata))) newdata <- newdata[object$names_covariates,]
   # would have error if names_covariates is NULL
-
+  
   nnew <- ncol(newdata)
   
   # Draw LambdaX
@@ -246,8 +260,14 @@ predict.mongrelfit <- function(object, newdata=NULL, response="LambdaX", size=NU
     LambdaX[,,i] <- object$Lambda[,,i] %*% newdata
   }
   if (use_names) LambdaX <- name_array(LambdaX, object,
-                                              list("cat", colnames(newdata), 
-                                                   NULL))
+                                       list("cat", colnames(newdata), 
+                                            NULL))
+  if (response=="LambdaX"){
+    if (transformed){
+      LambdaX <- alrInv_array(LambdaX, m$D, 1)
+      if (l$coord_system == "clr") LambdaX <- clr_array(LambdaX, 1)
+    }
+  }
   if ((response == "LambdaX") && summary) {
     LambdaX <- gather_array(LambdaX, val, coord, sample, iter) %>% 
       group_by(coord, sample) %>% 
@@ -265,7 +285,13 @@ predict.mongrelfit <- function(object, newdata=NULL, response="LambdaX", size=NU
     Eta[,,i] <- LambdaX[,,i] + t(chol(object$Sigma[,,i]))%*%zEta[,,i]
   }
   if (use_names) Eta <- name_array(Eta, object, list("cat", colnames(newdata), 
-                                                 NULL))
+                                                     NULL))
+  if (response=="Eta"){
+    if (transformed){
+      Eta <- alrInv_array(Eta, m$D, 1)
+      if (l$coord_system == "clr") Eta <- clr_array(Eta, 1)
+    }
+  }
   if ((response=="Eta") && summary) {
     Eta <- gather_array(Eta, val, coord, sample, iter) %>% 
       group_by(coord, sample) %>% 
@@ -287,15 +313,15 @@ predict.mongrelfit <- function(object, newdata=NULL, response="LambdaX", size=NU
     }
   }
   if (use_names) name_array(Ypred, object, 
-                                   list(object$names_categories, colnames(newdata), 
-                                        NULL))
+                            list(object$names_categories, colnames(newdata), 
+                                 NULL))
   if ((response == "Y") && summary) {
     Ypred <- gather_array(Ypred, val, coord, sample, iter) %>% 
       group_by(coord, sample) %>% 
       summarise_posterior(val, ...) %>% 
       ungroup() %>% 
       name_tidy(object, list("coord" = object$names_categories, 
-                               "sample"= colnames(newdata)))
+                             "sample"= colnames(newdata)))
   }
   if (response=="Y") return(Ypred)
   stop("response parameter not recognized")
@@ -345,6 +371,13 @@ names_categories.mongrelfit <- function(m){
   return(m$names_categories)
   
 }
+
+#' @rdname name_dims
+#' @export
+names_coords.mongrelfit <- function(m){
+  return(assign_cat_names(m))
+}
+
 
 
 #' @rdname name_dims
@@ -466,3 +499,43 @@ sample_prior.mongrelfit <- function(m, n_sample=2000,
   verify(out)
   return(out)
 }
+
+
+
+# ppc_summary -------------------------------------------------------------
+
+#' @rdname ppc_summary
+#' @export
+ppc_summary.mongrelfit <- function(m, ...){
+  if (!is.null(m$Y)) {
+    o <- order(m$Y, decreasing=TRUE)
+  } else {
+    stop("ppc_summary is only for posterior samples, current object has Y==NULL")
+  }
+  
+  if (m$iter ==1){
+    warning("ppc_summary is intended to be used with more than 1 summary, ", 
+            "results will be missleading")
+  }
+  
+  pp <- predict(m, response="Y")
+  pp <- matrix(pp, m$D*m$N, m$iter) 
+  pp <- pp[o,]
+  
+  tr <- data.frame(dim_1 = 1:(m$N*m$D), 
+                   dim_2 = NA, 
+                   val = c(m$Y)[o])
+
+  pp <- apply(pp, 1, function(x) quantile(x, probs = c(0.025, 0.975)))
+  rownames(pp) <- c("p2.5", "p97.5")
+  pp <- as.data.frame(t(pp))
+  pp$dim_1 <- 1:nrow(pp)
+  
+  inBounds <- (pp$p2.5 <= tr$val) & (pp$p97.5 >= tr$val)
+  inBounds <- sum(inBounds)/length(inBounds)
+  cat("Proportions of Observations within 95% Credible Interval: ")
+  cat(inBounds)
+  cat("\n")
+  invisible(c("percent.in.p95"=inBounds))
+}
+

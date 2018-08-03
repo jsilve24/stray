@@ -123,11 +123,15 @@ hessMongrelCollapsed <- function(Y, upsilon, ThetaX, K, A, eta) {
 #' \code{upsilon} and \code{K}) were too specific and at odds with the observed data.
 #' If you get this warning try the following. 
 #' 1. Try restarting the optimization using a different initial guess for eta
-#' 2. Try decreasing \code{step_size} and increasing \code{max_iter} parameters 
-#'  in optimizer 
+#' 2. Try decreasing (or even increasing )\code{step_size} (by increments of 0.001 or 0.002) 
+#'   and increasing \code{max_iter} parameters in optimizer. Also can try 
+#'   increasing \code{b1} to 0.99 and decreasing \code{eps_f} by a few orders
+#'   of magnitude
 #' 3. Try relaxing prior assumptions regarding covariance matrix. (e.g., may want
 #' to consider decreasing parameter \code{upsilon} closer to a minimum value of 
 #' D)
+#' 4. Try adding small amount of jitter (e.g., set \code{jitter=1e-5}) to address
+#'   potential floating point errors. 
 #' @return List containing (all with respect to found optima)
 #' 1. LogLik - Log Likelihood of collapsed model (up to proportionality constant)
 #' 2. Gradient - (if \code{calcGradHess}=true)
@@ -147,7 +151,7 @@ hessMongrelCollapsed <- function(Y, upsilon, ThetaX, K, A, eta) {
 #' # Fit model for eta
 #' fit <- optimMongrelCollapsed(sim$Y, sim$upsilon, sim$Theta%*%sim$X, sim$K, 
 #'                              sim$A, random_mongrel_init(sim$Y))  
-optimMongrelCollapsed <- function(Y, upsilon, ThetaX, K, A, etainit, n_samples = 2000L, calcGradHess = TRUE, b1 = 0.9, b2 = 0.99, step_size = 0.003, epsilon = 10e-7, eps_f = 1e-8, eps_g = 1e-5, max_iter = 10000L, verbose = FALSE, verbose_rate = 10L, decomp_method = "eigen", eigvalthresh = 0, no_error = FALSE, jitter = 0) {
+optimMongrelCollapsed <- function(Y, upsilon, ThetaX, K, A, etainit, n_samples = 2000L, calcGradHess = TRUE, b1 = 0.9, b2 = 0.99, step_size = 0.003, epsilon = 10e-7, eps_f = 1e-10, eps_g = 1e-4, max_iter = 10000L, verbose = FALSE, verbose_rate = 10L, decomp_method = "eigen", eigvalthresh = 0, no_error = FALSE, jitter = 0) {
     .Call('_mongrel_optimMongrelCollapsed', PACKAGE = 'mongrel', Y, upsilon, ThetaX, K, A, etainit, n_samples, calcGradHess, b1, b2, step_size, epsilon, eps_f, eps_g, max_iter, verbose, verbose_rate, decomp_method, eigvalthresh, no_error, jitter)
 }
 

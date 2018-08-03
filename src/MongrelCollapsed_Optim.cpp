@@ -67,11 +67,15 @@ using Eigen::VectorXd;
 //' \code{upsilon} and \code{K}) were too specific and at odds with the observed data.
 //' If you get this warning try the following. 
 //' 1. Try restarting the optimization using a different initial guess for eta
-//' 2. Try decreasing \code{step_size} and increasing \code{max_iter} parameters 
-//'  in optimizer 
+//' 2. Try decreasing (or even increasing )\code{step_size} (by increments of 0.001 or 0.002) 
+//'   and increasing \code{max_iter} parameters in optimizer. Also can try 
+//'   increasing \code{b1} to 0.99 and decreasing \code{eps_f} by a few orders
+//'   of magnitude
 //' 3. Try relaxing prior assumptions regarding covariance matrix. (e.g., may want
 //' to consider decreasing parameter \code{upsilon} closer to a minimum value of 
 //' D)
+//' 4. Try adding small amount of jitter (e.g., set \code{jitter=1e-5}) to address
+//'   potential floating point errors. 
 //' @return List containing (all with respect to found optima)
 //' 1. LogLik - Log Likelihood of collapsed model (up to proportionality constant)
 //' 2. Gradient - (if \code{calcGradHess}=true)
@@ -104,8 +108,8 @@ List optimMongrelCollapsed(const Eigen::ArrayXXd Y,
                double b2 = 0.99,        
                double step_size = 0.003, // was called eta in ADAM code
                double epsilon = 10e-7, 
-               double eps_f=1e-8,       
-               double eps_g=1e-5,       
+               double eps_f=1e-10,       
+               double eps_g=1e-4,       
                int max_iter=10000,      
                bool verbose=false,      
                int verbose_rate=10,

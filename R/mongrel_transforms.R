@@ -52,6 +52,7 @@ mongrel_to_proportions <- function(m){
     m$Xi_default <- m$Xi
     m$Xi <- NULL
     m$Theta <- alrInv_array(m$Theta, m$alr_base, 1)
+    if (!is.null(m$init)) m$init <- alrInv_array(m$init, m$alr_base, 1)
   }
   if (m$coord_system == "ilr"){
     if (!is.null(m$Eta)) m$Eta <- ilrInv_array(m$Eta, m$ilr_base, 1)
@@ -69,6 +70,7 @@ mongrel_to_proportions <- function(m){
     m$Xi_default <- m$Xi
     m$Xi <- NULL
     m$Theta <- ilrInv_array(m$Theta, m$ilr_base, 1)
+    if (!is.null(m$init)) m$init <- ilrInv_array(m$init, m$ilr_base, 1)
   }
   if (m$coord_system == "clr"){
     if (!is.null(m$Eta)) m$Eta <- clrInv_array(m$Eta, 1)
@@ -85,6 +87,7 @@ mongrel_to_proportions <- function(m){
     m$Xi_default <- clrvar2alrvar(m$Xi, m$D)
     m$Xi <- NULL
     m$Theta <- clrInv_array(m$Theta, 1)
+    if (!is.null(m$init)) m$init <- clrInv_array(m$init, 1)
   }
   if (m$coord_system=="proportions"){
     return(m)
@@ -120,6 +123,7 @@ mongrel_to_alr <- function(m, d){
   m$Xi <- alrvar2alrvar(m$Xi_default, m$D, d)
   m$Xi_default <- NULL
   m$Theta <- alr_array(m$Theta, d, 1)
+  if (!is.null(m$init)) m$init <- alr_array(m$init, d, 1)
   
   m$summary <- NULL
   m$coord_system <- "alr"
@@ -149,6 +153,7 @@ mongrel_to_ilr <- function(m, V=NULL){
   m$Xi <- alrvar2ilrvar(m$Xi_default, m$D, V)
   m$Xi_default <- NULL
   m$Theta <- ilr_array(m$Theta, V, 1)
+  if (!is.null(m$init)) m$init <- ilr_array(m$init, V, 1)
   
   m$summary <- NULL
   m$coord_system <- "ilr"
@@ -175,6 +180,7 @@ mongrel_to_clr <- function(m){
   m$Xi <- alrvar2clrvar(m$Xi_default, m$D)
   m$Xi_default <- NULL
   m$Theta <- clr_array(m$Theta, 1)
+  if (!is.null(m$init)) m$init <- clr_array(m$init, 1)
   
   m$summary <- NULL
   m$coord_system <- "clr"

@@ -121,6 +121,14 @@ niter <- function(m){
 #' @param m object
 #' @param names character vector (or NULL)
 #' @name name_dims
+#' 
+#' @details \code{names_coords} is different than \code{names_categories}. 
+#' \code{names_categories} provides access to the basic names of each multinomial 
+#' category. In contrast, \code{names_coords} provides access to the 
+#' names of the coordinates in which an object is represented. These coordinate
+#' names are based on the category names. For example, category names may be, 
+#' (OTU1, ..., OTUD) where as coordinate names could be (log(OTU1/OTUD), etc...)
+#' if object is in default coordinate system. 
 NULL
 
 #' @rdname name_dims
@@ -140,6 +148,12 @@ names_samples <- function(m){
 #' @export
 names_categories <- function(m){
   UseMethod("names_categories", m)
+}
+
+#' @rdname name_dims
+#' @export
+names_coords <- function(m){
+  UseMethod("names_coords", m)
 }
 
 
@@ -163,6 +177,21 @@ names_categories <- function(m){
 }
 
 
+
+#' Generic Method to Plot Posterior Predictive Summaries 
+#' 
+#' @param m model object
+#' @param ... other arguments to pass 
+#' 
+#' @return vector
+#' @name ppc_summary
+NULL
+
+#' @rdname ppc_summary
+#' @export
+ppc_summary <- function(m, ...){
+  UseMethod("ppc_summary", m)
+}
 
 
 

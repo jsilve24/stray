@@ -89,6 +89,7 @@ Generic functions including \code{\link[=summary.mongrelfit]{summary}},
 \code{\link[=model.matrix.mongrelfit]{model.matrix}},
 \code{\link[=name.mongrelfit]{name}}, and
 \code{\link[=sample_prior.mongrelfit]{sample_prior}}
+\code{\link{name_dims}}
 
 Plotting functions provided by \code{\link[=plot.mongrelfit]{plot}}
 and \code{\link[=ppc.mongrelfit]{ppc}} (posterior predictive checks)

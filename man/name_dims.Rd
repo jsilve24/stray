@@ -5,12 +5,14 @@
 \alias{names_covariates}
 \alias{names_samples}
 \alias{names_categories}
+\alias{names_coords}
 \alias{names_covariates<-}
 \alias{names_samples<-}
 \alias{names_categories<-}
 \alias{names_covariates.mongrelfit}
 \alias{names_samples.mongrelfit}
 \alias{names_categories.mongrelfit}
+\alias{names_coords.mongrelfit}
 \alias{names_covariates<-.mongrelfit}
 \alias{names_samples<-.mongrelfit}
 \alias{names_categories<-.mongrelfit}
@@ -21,6 +23,8 @@ names_covariates(m)
 names_samples(m)
 
 names_categories(m)
+
+names_coords(m)
 
 names_covariates(m) <- value
 
@@ -33,6 +37,8 @@ names_categories(m) <- value
 \method{names_samples}{mongrelfit}(m)
 
 \method{names_categories}{mongrelfit}(m)
+
+\method{names_coords}{mongrelfit}(m)
 
 \method{names_covariates}{mongrelfit}(m) <- value
 
@@ -47,4 +53,13 @@ names_categories(m) <- value
 }
 \description{
 Generic method for getting and setting dimension names of fit object
+}
+\details{
+\code{names_coords} is different than \code{names_categories}. 
+\code{names_categories} provides access to the basic names of each multinomial 
+category. In contrast, \code{names_coords} provides access to the 
+names of the coordinates in which an object is represented. These coordinate
+names are based on the category names. For example, category names may be, 
+(OTU1, ..., OTUD) where as coordinate names could be (log(OTU1/OTUD), etc...)
+if object is in default coordinate system.
 }

@@ -6,7 +6,7 @@
 \usage{
 optimMongrelCollapsed(Y, upsilon, ThetaX, K, A, etainit,
   n_samples = 2000L, calcGradHess = TRUE, b1 = 0.9, b2 = 0.99,
-  step_size = 0.003, epsilon = 1e-06, eps_f = 1e-08, eps_g = 1e-05,
+  step_size = 0.003, epsilon = 1e-06, eps_f = 1e-10, eps_g = 1e-04,
   max_iter = 10000L, verbose = FALSE, verbose_rate = 10L,
   decomp_method = "eigen", eigvalthresh = 0, no_error = FALSE,
   jitter = 0)
@@ -100,11 +100,15 @@ that the prior / degrees of freedom for the covariance (given by parameters
 If you get this warning try the following.
 \enumerate{
 \item Try restarting the optimization using a different initial guess for eta
-\item Try decreasing \code{step_size} and increasing \code{max_iter} parameters
-in optimizer
+\item Try decreasing (or even increasing )\code{step_size} (by increments of 0.001 or 0.002)
+and increasing \code{max_iter} parameters in optimizer. Also can try
+increasing \code{b1} to 0.99 and decreasing \code{eps_f} by a few orders
+of magnitude
 \item Try relaxing prior assumptions regarding covariance matrix. (e.g., may want
 to consider decreasing parameter \code{upsilon} closer to a minimum value of
 D)
+\item Try adding small amount of jitter (e.g., set \code{jitter=1e-5}) to address
+potential floating point errors.
 }
 }
 \examples{

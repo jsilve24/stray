@@ -64,7 +64,7 @@ plot_mf_lambdaeta <- function(m, par, focus.cov=NULL, focus.coord=NULL,
   p <- p+
     theme_minimal() +
     scale_color_brewer() +
-    guides(color=guide_legend(title="Credible Interval"))
+    guides(color=guide_legend(title="Credible\nInterval"))
   return(p)
 }
 

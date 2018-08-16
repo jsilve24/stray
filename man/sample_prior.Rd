@@ -4,14 +4,14 @@
 \alias{sample_prior}
 \title{Generic method for sampling from prior distribution of object}
 \usage{
-sample_prior(m, n_sample = 2000, ...)
+sample_prior(m, n_samples = 2000, ...)
 }
 \arguments{
 \item{m}{object}
 
-\item{...}{other arguments to be passed}
-
 \item{n_samples}{number of samples to produce}
+
+\item{...}{other arguments to be passed}
 }
 \value{
 object of the same class

@@ -47,7 +47,7 @@ name <- function(m, ...){
 #' 
 #' @export
 #' @return object of the same class 
-sample_prior <- function(m, n_sample=2000, ...){
+sample_prior <- function(m, n_samples=2000, ...){
   UseMethod("sample_prior", m)
 }
 

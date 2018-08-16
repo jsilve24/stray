@@ -4,13 +4,13 @@
 \alias{sample_prior.mongrelfit}
 \title{Sample from the prior distribution of mongrelfit object}
 \usage{
-\method{sample_prior}{mongrelfit}(m, n_sample = 2000, pars = c("Eta",
+\method{sample_prior}{mongrelfit}(m, n_samples = 2000, pars = c("Eta",
   "Lambda", "Sigma"), use_names = TRUE, ...)
 }
 \arguments{
 \item{m}{object of class mongrelfit}
 
-\item{n_sample}{number of samples to produce}
+\item{n_samples}{number of samples to produce}
 
 \item{pars}{parameters to sample}
 

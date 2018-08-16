@@ -73,7 +73,7 @@ class MongrelCollapsed : public Numer::MFuncGrad
     void updateWithEtaLL(const Ref<const VectorXd>& etavec){
       const Map<const MatrixXd> eta(etavec.data(), D-1, N);
       E = eta - ThetaX;
-      S = K*E*A*E.transpose();
+      S.noalias() = K*E*A*E.transpose();
       S.diagonal() += VectorXd::Ones(1, D-1);
       Sdec.compute(S);
       O = eta.array().exp();
@@ -86,8 +86,8 @@ class MongrelCollapsed : public Numer::MFuncGrad
       rhomat = (O.rowwise()/m.transpose()).matrix();
       Map<VectorXd> rhovec(rhomat.data() , rhomat.size());
       rho = rhovec; // probably could be done in one line rather than 2 (above)
-      C = A*E.transpose();
-      R = Sdec.solve(K); // S^{-1}K
+      C.noalias() = A*E.transpose();
+      R.noalias() = Sdec.solve(K); // S^{-1}K
     }
     
     // Must have called updateWithEtaLL first 
@@ -106,7 +106,7 @@ class MongrelCollapsed : public Numer::MFuncGrad
       // For Multinomial
       MatrixXd g = (Y - (rhomat.array().rowwise()*n.array())).matrix();
       // For MatrixVariate T
-      g += -delta*(R + R.transpose())*C.transpose();
+      g.noalias() += -delta*(R + R.transpose())*C.transpose();
       Map<VectorXd> grad(g.data(), g.size()); 
       return grad; // not transposing (leaving as vector)
     }
@@ -116,7 +116,7 @@ class MongrelCollapsed : public Numer::MFuncGrad
       // For Multinomial
       MatrixXd g = (Y - (rhomat.array().rowwise()*n.array())).matrix();
       // For MatrixVariate T
-      g += -delta*(R + R.transpose())*C.transpose();
+      g.noalias() += -delta*(R + R.transpose())*C.transpose();
       Map<VectorXd> grad(g.data(), g.size()); 
       
       // add noise
@@ -147,20 +147,23 @@ class MongrelCollapsed : public Numer::MFuncGrad
       MatrixXd RCT(D-1, N);
       MatrixXd CR(N, D-1);
       MatrixXd L(N*(D-1), N*(D-1));
-      RCT = R*C.transpose();
-      CR = C*R;
-      L = krondense(C*RCT, R.transpose());
-      H = -delta*(krondense(A, R+R.transpose())-(L+L.transpose()) -
-        tveclmult(N, D-1, krondense(RCT, RCT.transpose())
-                    + krondense(CR.transpose(), CR)));
+      RCT.noalias() = R*C.transpose();
+      CR.noalias() = C*R;
+      L.noalias() = krondense(C*RCT, R.transpose());
+      H.noalias() = krondense(A, R+R.transpose());
+      H.noalias() -= L+L.transpose();
+      L.noalias() = krondense(RCT, RCT.transpose()); // reuse L
+      L.noalias() += krondense(CR.transpose(), CR); // reuse L
+      H.noalias() -= tveclmult(N, D-1, L);
+      H.noalias() = -delta * H;
       // For Multinomial
       MatrixXd W(D-1, D-1);
       VectorXd rhoseg(D-1);
       for (int j=0; j<N; j++){
         rhoseg = rho.segment(j*(D-1), D-1);
-        W = rhoseg*rhoseg.transpose();
+        W.noalias() = rhoseg*rhoseg.transpose();
         W.diagonal() -= rhoseg;
-        H.block(j*(D-1), j*(D-1), D-1, D-1)  += n(j)*W;
+        H.block(j*(D-1), j*(D-1), D-1, D-1).noalias()  += n(j)*W;
       }
       return H;
     }

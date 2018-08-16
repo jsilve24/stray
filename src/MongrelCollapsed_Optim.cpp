@@ -134,18 +134,21 @@ List optimMongrelCollapsed(const Eigen::ArrayXXd Y,
   //int status = adamperturb::optim_adam(cm, eta, nllopt); 
 
   if (status<0)
-    Rcpp::stop("failed to converge");
+    Rcpp::warning("Max Iterations Hit, May not be at optima");
   Map<MatrixXd> etamat(eta.data(), D-1, N);
   out[0] = -nllopt; // Return (positive) LogLik
   out[3] = etamat;
   
   if (n_samples > 0 || calcGradHess){
+    if (verbose) Rcout << "Allocating for Hessian" << std::endl;
     MatrixXd hess(N*(D-1), N*(D-1));
     VectorXd grad(N*(D-1));
+    if (verbose) Rcout << "Calculating Hessian" << std::endl;
     grad = cm.calcGrad(); // should have eta at optima already
     hess = cm.calcHess(); // should have eta at optima already
     if (jitter > 0)       // potentially add jitter to improve conditioning
       hess.diagonal().array() += -jitter;
+    if (verbose) Rcout << "Copying Hessian" << std::endl;
     out[1] = grad;
     out[2] = hess;
     
@@ -153,7 +156,9 @@ List optimMongrelCollapsed(const Eigen::ArrayXXd Y,
       // Laplace Approximation
       if (decomp_method == "eigen"){
         // Eigenvalue Decomposition 
+        if (verbose) Rcout << "Decomposing Hessian" << std::endl;
         Eigen::SelfAdjointEigenSolver<MatrixXd> eh(-hess); // negative hessian
+        if (verbose) Rcout << "Inverting Eigenvalues" << std::endl;
         VectorXd evalinv(eh.eigenvalues().array().inverse().matrix());
         int excess=0;
         for (int i=1; i<N*(D-1); i++){
@@ -177,9 +182,11 @@ List optimMongrelCollapsed(const Eigen::ArrayXXd Y,
             " passed eigenvalue threshold"<< std::endl;
         }
         MatrixXd hesssqrt(N*(D-1), pos);
+        if (verbose) Rcout << "Calculating Square Root" << std::endl;
         hesssqrt = eh.eigenvectors().rightCols(pos)*
           evalinv.tail(pos).cwiseSqrt().asDiagonal(); //V*D^{-1/2}
         // now generate random numbers...
+        if (verbose) Rcout << "Sampling Random Numbers" << std::endl;
         NumericVector r(n_samples*pos);
         r = rnorm(n_samples*pos, 0, 1); // using vectorization from Rcpp sugar
         Map<VectorXd> rvec(as<Map<VectorXd> >(r));
@@ -208,7 +215,7 @@ List optimMongrelCollapsed(const Eigen::ArrayXXd Y,
         Map<VectorXd> rvec(as<Map<VectorXd> >(r));
         Map<MatrixXd> rmat(rvec.data(), N*(D-1), n_samples);
         MatrixXd samp(N*(D-1), n_samples);
-        samp = hesssqrt.matrixL().solve(rmat);  // calculate errors of approximation
+        samp.noalias() = hesssqrt.matrixL().solve(rmat);  // calculate errors of approximation
         samp.colwise() += eta; // add mean of approximation
         IntegerVector d = IntegerVector::create(D-1, N, n_samples);
         NumericVector samples = wrap(samp);

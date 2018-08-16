@@ -417,7 +417,7 @@ names_coords.mongrelfit <- function(m){
 #' be called to get counts or LambdaX (\code{\link{predict.mongrelfit}})
 #' 
 #' @param m object of class mongrelfit
-#' @param n_sample number of samples to produce
+#' @param n_samples number of samples to produce
 #' @param pars parameters to sample
 #' @param use_names should names be used if available
 #' @param ... currently ignored
@@ -440,7 +440,7 @@ names_coords.mongrelfit <- function(m){
 #'                 coord_system="alr", alr_base=D)
 #' m <- sample_prior(mongrelfit)
 #' plot(m) # plot prior distribution (defaults to parameter Lambda) 
-sample_prior.mongrelfit <- function(m, n_sample=2000, 
+sample_prior.mongrelfit <- function(m, n_samples=2000, 
                                     pars=c("Eta", "Lambda", "Sigma"), 
                                     use_names=TRUE, ...){
   req(m, c("upsilon", "Theta", "Gamma", "Xi"))
@@ -450,14 +450,14 @@ sample_prior.mongrelfit <- function(m, n_sample=2000,
   m <- mongrel_to_alr(m, m$D)
   
   # Sample Priors - Sigma
-  LSigmaInv <- rWishart(n_sample, m$upsilon, solve(m$Xi))
-  for (i in 1:n_sample) LSigmaInv[,,i] <- t(chol(LSigmaInv[,,i]))
+  LSigmaInv <- rWishart(n_samples, m$upsilon, solve(m$Xi))
+  for (i in 1:n_samples) LSigmaInv[,,i] <- t(chol(LSigmaInv[,,i]))
   
   # Sample Priors - Lambda
   if (any(c("Eta", "Lambda") %in% pars)){
-    Lambda <- array(rnorm((m$D-1)*m$Q*n_sample), dim=c(m$D-1, m$Q, n_sample)) 
+    Lambda <- array(rnorm((m$D-1)*m$Q*n_samples), dim=c(m$D-1, m$Q, n_samples)) 
     UGamma <- chol(m$Gamma)
-    for (i in 1:n_sample){
+    for (i in 1:n_samples){
       Lambda[,,i] <- m$Theta + forwardsolve(LSigmaInv[,,i], Lambda[,,i]) %*% UGamma 
     }  
   }
@@ -465,8 +465,8 @@ sample_prior.mongrelfit <- function(m, n_sample=2000,
   # Sample Priors - Eta 
   if ("Eta" %in% pars){
     req(m, "X")
-    Eta <- array(rnorm((m$D-1)*m$N*n_sample), dim=c(m$D-1, m$N, n_sample))
-    for (i in 1:n_sample) {
+    Eta <- array(rnorm((m$D-1)*m$N*n_samples), dim=c(m$D-1, m$N, n_samples))
+    for (i in 1:n_samples) {
       Eta[,,i] <- Lambda[,,i] %*% m$X + forwardsolve(LSigmaInv[,,i], Eta[,,i])
     }
   }
@@ -474,11 +474,11 @@ sample_prior.mongrelfit <- function(m, n_sample=2000,
   # Solve for Sigma if requested
   if ("Sigma" %in% pars){
     Sigma <- LSigmaInv # to make code more readable at memory expense
-    for (i in 1:n_sample) Sigma[,,i] <- chol2inv(t(Sigma[,,i]))
+    for (i in 1:n_samples) Sigma[,,i] <- chol2inv(t(Sigma[,,i]))
   }
   
   # Convert to object of class mongrelfit
-  out <- mongrelfit(m$D, m$N, m$Q, iter=as.integer(n_sample),
+  out <- mongrelfit(m$D, m$N, m$Q, iter=as.integer(n_samples),
                     coord_system="alr", 
                     alr_base=m$D, 
                     Eta = mifelse("Eta" %in% pars, Eta, NULL), 

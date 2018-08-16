@@ -132,6 +132,18 @@ dat <- RISK_CCFA %>%
   tax_glom("Family") %>% 
   prune_samples(sample_sums(.) >= 5000,.) %>%
   filter_taxa(function(x) sum(x > 5) > 0.05*length(x), TRUE)
+
+
+## Huge
+# dat <- RISK_CCFA %>% 
+#     subset_samples(disease_stat!="missing", 
+#                    immunosup!="missing") %>% 
+#     subset_samples(steroids=="false") %>% 
+#     subset_samples(antibiotics=="false") %>% 
+#     subset_samples(biologics=="false") %>% 
+#     prune_samples(sample_sums(.) >= 5000,.) %>%
+#     filter_taxa(function(x) sum(x > 3) > 5, TRUE)
+
 ```
 
 First we are going to look at XXX
@@ -167,7 +179,7 @@ data out of the call to mongrel or by passing `Y=NULL`^[X however must be passed
 if sampling $\eta$ from the prior is desired.]  
 
 ```{r}
-priors <- mongrel(NULL, X, upsilon, Theta, Gamma, Xi)
+priors <- mongrel(NULL, X, upsilon, Theta, Gamma, Xi)  
 priors
 ```
 
@@ -198,8 +210,8 @@ very large objects with many posterior samples, so it can take a little time to 
 Faster implementations of summary may be included as a future update if need arises]. 
 
 ```{r}
-priors <- mongrel_to_clr(priors)
-summary(priors, pars="Lambda")
+priors <- mongrel_to_clr(priors)  
+summary(priors, pars="Lambda")  
 ```
 
 By default the `summary` function returns a list (with possible elements `Lambda`, 
@@ -216,7 +228,8 @@ to provide some more specific names for the covariates (helpful when we then plo
 
 ```{r fig.height=5, fig.width=7}
 names_covariates(priors) <- rownames(X)
-plot(priors, par="Lambda") + ggplot2::xlim(c(-10, 10))
+plot(priors, par="Lambda") + ggplot2::xlim(c(-10, 10))  
+
 ```
 
 Woah! That looks weird! By investigating the priors I found that our 

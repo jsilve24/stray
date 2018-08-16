@@ -7,7 +7,7 @@
 #'  Notation: \code{N} is number of samples,
 #'  \code{D} is number of multinomial categories, \code{Q} is number
 #'  of covariates, \code{iter} is the number of samples of \code{eta} (e.g.,
-#'  the parameter \code{n_sample} in the function 
+#'  the parameter \code{n_samples} in the function 
 #'  \code{\link{optimMongrelCollapsed}})
 #' @param Y D x N matrix of counts (if NULL uses priors only)
 #' @param X Q x N matrix of covariates (design matrix) (if NULL uses priors only, must
@@ -116,7 +116,7 @@ mongrel <- function(Y=NULL, X=NULL, upsilon=NULL, Theta=NULL, Gamma=NULL, Xi=NUL
   }
   
   # set number of iterations 
-  n_sample <- args_null("n_sample", args, 2000)
+  n_samples <- args_null("n_samples", args, 2000)
   use_names <- args_null("use_names", args, TRUE)
   
   # This is the signal to sample the prior only
@@ -130,7 +130,7 @@ mongrel <- function(Y=NULL, X=NULL, upsilon=NULL, Theta=NULL, Gamma=NULL, Xi=NUL
                       # names_samples=colnames(Y), 
                       # names_covariates=colnames(X), 
                       X=X)
-    out <- sample_prior(out, n_sample=n_sample, pars=pars, use_names=use_names)
+    out <- sample_prior(out, n_samples=n_samples, pars=pars, use_names=use_names)
     return(out)
   } else {
     if (is.null(X)) stop("X must be given to fit model")
@@ -161,23 +161,23 @@ mongrel <- function(Y=NULL, X=NULL, upsilon=NULL, Theta=NULL, Gamma=NULL, Xi=NUL
   A <- solve(diag(N) + t(X) %*% Gamma %*% X)
 
   ## fit collapsed model ##
-  fitc <- optimMongrelCollapsed(Y, upsilon, Theta%*%X, K, A, init, n_sample, 
+  fitc <- optimMongrelCollapsed(Y, upsilon, Theta%*%X, K, A, init, n_samples, 
                                 calcGradHess, b1, b2, step_size, epsilon, eps_f, 
                                 eps_g, max_iter, verbose, verbose_rate, 
                                 decomp_method, eigvalthresh, no_error=TRUE, 
                                 jitter)
-  # if n_sample=0 or if hessian fails, then use MAP eta estimate for 
+  # if n_samples=0 or if hessian fails, then use MAP eta estimate for 
   # uncollapsing and unless otherwise specified against, use only the 
   # posterior mean for Lambda and Sigma 
   if (is.null(fitc$Samples)) {
     fitc$Samples <- add_array_dim(fitc$Pars, 3)
     ret_mean <- args_null("ret_mean", args, TRUE)
-    if (ret_mean && n_sample>0){
+    if (ret_mean && n_samples>0){
       warning("Laplace Approximation Failed, using MAP estimate of eta", 
               " to obtain Posterior mean of Lambda and Sigma", 
               " (i.e., not sampling from posterior distribution of Lambda or Sigma)")
     }
-    if (!ret_mean && n_sample > 0){
+    if (!ret_mean && n_samples > 0){
       warning("Laplace Approximation Failed, using MAP estimate of eta", 
               "but ret_mean was manually specified as FALSE so sampling", 
               "from posterior of Lambda and Sigma rather than using posterior mean")
@@ -240,9 +240,9 @@ refit.mongrelfit <- function(m, pars=c("Eta", "Lambda", "Sigma"), ...){
   ml <- as.list(m)
   argl <- c(ml, argl)
   
-  # Need to handle iter as part of m but no n_sample passed
-  # in this situation should pull iter from m and pass as n_sample to mongrel 
-  if (is.null(argl[["n_sample"]]) & !is.null(m$iter)) argl[["n_sample"]] <- m$iter 
+  # Need to handle iter as part of m but no n_samples passed
+  # in this situation should pull iter from m and pass as n_samples to mongrel 
+  if (is.null(argl[["n_samples"]]) & !is.null(m$iter)) argl[["n_samples"]] <- m$iter 
   
   # pass to mongrel function
   m <- do.call(mongrel, argl)

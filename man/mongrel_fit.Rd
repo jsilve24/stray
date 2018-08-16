@@ -52,7 +52,7 @@ See details for model specification.
 Notation: \code{N} is number of samples,
 \code{D} is number of multinomial categories, \code{Q} is number
 of covariates, \code{iter} is the number of samples of \code{eta} (e.g.,
-the parameter \code{n_sample} in the function
+the parameter \code{n_samples} in the function
 \code{\link{optimMongrelCollapsed}})
 }
 \details{

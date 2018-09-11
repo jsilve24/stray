@@ -1,5 +1,5 @@
-#ifndef MONGREL_MMTC_H
-#define MONGREL_MMTC_H
+#ifndef MALTIPOO_MMTC_H
+#define MALTIPOO_MMTC_H
 
 #include <RcppNumerical.h>
 #include <MatrixAlgebra.h>
@@ -11,7 +11,7 @@ using Eigen::VectorXd;
 using Eigen::Ref;
 
 /* Class implementing LogLik, Gradient, and Hessian calculations
- *  for the Multinomial Matrix-T collapsed model. 
+ *  for the Multinomial Matrix-T collapsed model with Variance Components. 
  *  
  *  Notation: Let Z_j denote the J-th row of a matrix Z.
  *  
@@ -20,20 +20,32 @@ using Eigen::Ref;
  *    Pi_j = Phi^{-1}(Eta_j)   // Phi^{-1} is ALRInv_D transform
  *    Eta ~ T_{D-1, N}(upsilon, Theta*X, K^{-1}, A^{-1})
  *
- *  Where A = (I_N + X*Gamma*X')^{-1}, K^{-1} =Xi is a D-1xD-1 covariance 
- *  matrix, and Gamma is a Q x Q covariance matrix
+ *  Where A = (I_N + sigma^2_1*X*Sigma_1*X' + ... + sigma^2_P*X*Sigma_P*X' )^{-1},
+ *  K^{-1} =Xi is a D-1xD-1 covariance 
+ *  
+ *  Currently treats sigma (little sigma) as a fixed parameter to be estimated
+ *  by MAP. 
+ *  
+ *  matrix, and Sigma_1,...Sigma_P are Q x Q covariance matrix
  */
-class MongrelCollapsed : public Numer::MFuncGrad
+class MaltipooCollapsed : public Numer::MFuncGrad
 {
   private:
     const ArrayXXd Y;
     const double upsilon;
-    const MatrixXd ThetaX;
+    const MatrixXd Theta;
+    const MatrixXd X;
+    MatrixXd ThetaX;
     const MatrixXd K;
-    const MatrixXd A;
+    const MatrixXd Sigma; // PQ x Q matrix of concatenated sigmas
+    MatrixXd XTSigmaX;
+    MatrixXd A; // no longer constant
+    MatrixXd Ainv; // no longer constant
     // computed quantities 
     int D;
     int N;
+    int P;
+    int Q;
     double delta;
     Eigen::ArrayXd m;
     Eigen::RowVectorXd n;
@@ -46,28 +58,44 @@ class MongrelCollapsed : public Numer::MFuncGrad
     VectorXd rho; 
     MatrixXd C;
     MatrixXd R;
+    MatrixXd M; // for maltipoo specifically
     
     
   public:
-    MongrelCollapsed(const ArrayXXd Y_,          // constructor
+    MaltipooCollapsed(const ArrayXXd Y_,          // constructor
                         const double upsilon_,
-                        const MatrixXd ThetaX_,
+                        const MatrixXd Theta_,
+                        const MatrixXd X_,
                         const MatrixXd K_,
-                        const MatrixXd A_) :
-    Y(Y_), upsilon(upsilon_), ThetaX(ThetaX_), K(K_), A(A_)
+                        const MatrixXd Sigma_) :
+    Y(Y_), upsilon(upsilon_), Theta(Theta_), X(X_), K(K_), Sigma(Sigma_)
     {
       D = Y.rows();           // number of multinomial categories
       N = Y.cols();           // number of samples
+      Q = X.rows();
+      P = Sigma.rows()/Q;
+      ThetaX.noalias() = Theta*X;
       n = Y.colwise().sum();  // total number of counts per sample
       delta = 0.5*(upsilon + N - D - 2.0);
-  
+      XTSigmaX = MatrixXd::Zero(P*N, N);
+      for (int i=0; i<P; i++){
+        XTSigmaX.middleRows(N*i, N).noalias() = X.transpose()*Sigma.middleRows(Q*i, Q)*X;
+      }
     }
-    ~MongrelCollapsed(){}                      // destructor
+    ~MaltipooCollapsed(){}                      // destructor
     
     // Update with Eta when it comes in as a vector
-    void updateWithEtaLL(const Ref<const VectorXd>& etavec){
+    void updateWithEtaLL(const Ref<const VectorXd>& etavec, const Ref<const VectorXd>& sigmavec){
       const Map<const MatrixXd> eta(etavec.data(), D-1, N);
       E = eta - ThetaX;
+      
+      Ainv = MatrixXd::Identity(N, N);
+      for (int i=0; i<P; i++){
+        Ainv += sigmavec(i)*XTSigmaX.middleRows(N*i, N);
+      }
+      //Eigen::FullPivLU<MatrixXd> lu(Ainv);
+      A = Ainv.lu().inverse(); 
+        
       S.noalias() = K*E*A*E.transpose();
       S.diagonal() += VectorXd::Ones(1, D-1);
       Sdec.compute(S);
@@ -83,6 +111,7 @@ class MongrelCollapsed : public Numer::MFuncGrad
       rho = rhovec; // probably could be done in one line rather than 2 (above)
       C.noalias() = A*E.transpose();
       R.noalias() = Sdec.solve(K); // S^{-1}K
+      M.noalias() = Ainv*E.transpose()*R*E*Ainv;
     }
     
     // Must have called updateWithEtaLL first 
@@ -102,7 +131,13 @@ class MongrelCollapsed : public Numer::MFuncGrad
       MatrixXd g = (Y - (rhomat.array().rowwise()*n.array())).matrix();
       // For MatrixVariate T
       g.noalias() += -delta*(R + R.transpose())*C.transpose();
-      Map<VectorXd> grad(g.data(), g.size()); 
+      Map<VectorXd> eg(g.data(), g.size()); 
+      VectorXd sg(P);
+      for (int i=0; i<P; i++){
+        sg(i)=-(M.array()*XTSigmaX.middleRows(N*i, N).array()).sum();
+      }
+      VectorXd grad(N*(D-1)+P);
+      grad << eg, sg;
       return grad; // not transposing (leaving as vector)
     }
     
@@ -135,8 +170,10 @@ class MongrelCollapsed : public Numer::MFuncGrad
     }
     
     // function for use by ADAMOptimizer wrapper (and for RcppNumeric L-BFGS)
-    virtual double f_grad(Numer::Constvec& eta, Numer::Refvec grad){
-      updateWithEtaLL(eta);    // precompute things needed for LogLik
+    virtual double f_grad(Numer::Constvec& pars, Numer::Refvec grad){
+      const Map<const VectorXd> eta(pars.head(N*(D-1)).data(), N*D-1);
+      const Map<const VectorXd> sigma(pars.tail(P).data(), P);
+      updateWithEtaLL(eta, sigma);    // precompute things needed for LogLik
       updateWithEtaGH();       // precompute things needed for gradient and hessian
       grad = -calcGrad();      // negative because wraper minimizes
       return -calcLogLik(eta); // negative because wraper minimizes

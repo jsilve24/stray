@@ -169,8 +169,8 @@ namespace adam{
     ADAMOptim optim(fun, theta, b1, b2, eta, epsilon, 
                     eps_f, eps_g, max_iter, verbose, verbose_rate);
     
-    int status =0; 
-    while (status==0){
+    int status = 0; 
+    while (status == 0){
       status = optim.step();
     }
     if (status == -1){

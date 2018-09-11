@@ -6,6 +6,39 @@
 
 using namespace Rcpp;
 
+// optimMaltipooCollapsed
+List optimMaltipooCollapsed(const Eigen::ArrayXXd Y, const double upsilon, const Eigen::MatrixXd Theta, const Eigen::MatrixXd X, const Eigen::MatrixXd K, const Eigen::MatrixXd Sigma, Eigen::MatrixXd etainit, Eigen::VectorXd sigmainit, int n_samples, bool calcGradHess, double b1, double b2, double step_size, double epsilon, double eps_f, double eps_g, int max_iter, bool verbose, int verbose_rate, String decomp_method, double eigvalthresh, bool no_error, double jitter);
+RcppExport SEXP _mongrel_optimMaltipooCollapsed(SEXP YSEXP, SEXP upsilonSEXP, SEXP ThetaSEXP, SEXP XSEXP, SEXP KSEXP, SEXP SigmaSEXP, SEXP etainitSEXP, SEXP sigmainitSEXP, SEXP n_samplesSEXP, SEXP calcGradHessSEXP, SEXP b1SEXP, SEXP b2SEXP, SEXP step_sizeSEXP, SEXP epsilonSEXP, SEXP eps_fSEXP, SEXP eps_gSEXP, SEXP max_iterSEXP, SEXP verboseSEXP, SEXP verbose_rateSEXP, SEXP decomp_methodSEXP, SEXP eigvalthreshSEXP, SEXP no_errorSEXP, SEXP jitterSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const Eigen::ArrayXXd >::type Y(YSEXP);
+    Rcpp::traits::input_parameter< const double >::type upsilon(upsilonSEXP);
+    Rcpp::traits::input_parameter< const Eigen::MatrixXd >::type Theta(ThetaSEXP);
+    Rcpp::traits::input_parameter< const Eigen::MatrixXd >::type X(XSEXP);
+    Rcpp::traits::input_parameter< const Eigen::MatrixXd >::type K(KSEXP);
+    Rcpp::traits::input_parameter< const Eigen::MatrixXd >::type Sigma(SigmaSEXP);
+    Rcpp::traits::input_parameter< Eigen::MatrixXd >::type etainit(etainitSEXP);
+    Rcpp::traits::input_parameter< Eigen::VectorXd >::type sigmainit(sigmainitSEXP);
+    Rcpp::traits::input_parameter< int >::type n_samples(n_samplesSEXP);
+    Rcpp::traits::input_parameter< bool >::type calcGradHess(calcGradHessSEXP);
+    Rcpp::traits::input_parameter< double >::type b1(b1SEXP);
+    Rcpp::traits::input_parameter< double >::type b2(b2SEXP);
+    Rcpp::traits::input_parameter< double >::type step_size(step_sizeSEXP);
+    Rcpp::traits::input_parameter< double >::type epsilon(epsilonSEXP);
+    Rcpp::traits::input_parameter< double >::type eps_f(eps_fSEXP);
+    Rcpp::traits::input_parameter< double >::type eps_g(eps_gSEXP);
+    Rcpp::traits::input_parameter< int >::type max_iter(max_iterSEXP);
+    Rcpp::traits::input_parameter< bool >::type verbose(verboseSEXP);
+    Rcpp::traits::input_parameter< int >::type verbose_rate(verbose_rateSEXP);
+    Rcpp::traits::input_parameter< String >::type decomp_method(decomp_methodSEXP);
+    Rcpp::traits::input_parameter< double >::type eigvalthresh(eigvalthreshSEXP);
+    Rcpp::traits::input_parameter< bool >::type no_error(no_errorSEXP);
+    Rcpp::traits::input_parameter< double >::type jitter(jitterSEXP);
+    rcpp_result_gen = Rcpp::wrap(optimMaltipooCollapsed(Y, upsilon, Theta, X, K, Sigma, etainit, sigmainit, n_samples, calcGradHess, b1, b2, step_size, epsilon, eps_f, eps_g, max_iter, verbose, verbose_rate, decomp_method, eigvalthresh, no_error, jitter));
+    return rcpp_result_gen;
+END_RCPP
+}
 // loglikMongrelCollapsed
 double loglikMongrelCollapsed(const Eigen::ArrayXXd Y, const double upsilon, const Eigen::MatrixXd ThetaX, const Eigen::MatrixXd K, const Eigen::MatrixXd A, Eigen::MatrixXd eta);
 RcppExport SEXP _mongrel_loglikMongrelCollapsed(SEXP YSEXP, SEXP upsilonSEXP, SEXP ThetaXSEXP, SEXP KSEXP, SEXP ASEXP, SEXP etaSEXP) {
@@ -141,6 +174,7 @@ END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
+    {"_mongrel_optimMaltipooCollapsed", (DL_FUNC) &_mongrel_optimMaltipooCollapsed, 23},
     {"_mongrel_loglikMongrelCollapsed", (DL_FUNC) &_mongrel_loglikMongrelCollapsed, 6},
     {"_mongrel_gradMongrelCollapsed", (DL_FUNC) &_mongrel_gradMongrelCollapsed, 6},
     {"_mongrel_hessMongrelCollapsed", (DL_FUNC) &_mongrel_hessMongrelCollapsed, 6},

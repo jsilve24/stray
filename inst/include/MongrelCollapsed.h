@@ -118,18 +118,7 @@ class MongrelCollapsed : public Numer::MFuncGrad
       // For MatrixVariate T
       g.noalias() += -delta*(R + R.transpose())*C.transpose();
       Map<VectorXd> grad(g.data(), g.size()); 
-      
-      // add noise
-      // NumericVector gnoise(N*(D-1));
-      //double ss= sigma/pow(1+t, gamma);
-      // gnoise = ss*rnorm(N*(D-1), 0, 1);
-      // t++;
-      // Rcout << t << " ss: " << ss << std::endl;
-      // Rcout << "grad norm: " <<grad.norm() << std::endl;
-      // Map<VectorXd> noise(as<Map<VectorXd> >(gnoise));
-      // Rcout << "noise norm: " << noise.norm() << std::endl;
-      // return grad+noise; // not transposing (leaving as vector)
-      
+  
       // add noise as fraction of gradient
       NumericVector gnoise(N*(D-1));
       gnoise = rnorm(N*(D-1), 0, 1);

@@ -23,9 +23,9 @@ using Eigen::VectorXd;
 //' @param Theta D-1 x Q matrix the prior mean for regression coefficients
 //' @param X Q x N matrix of covariates
 //' @param K D-1 x D-1 precision matrix (inverse of Xi)
-//' @param Sigma a PQxQ matrix of stacked variance components 
+//' @param U a PQxQ matrix of stacked variance components 
 //' @param etainit D-1 x N matrix of initial guess for eta used for optimization
-//' @param sigmainit P vector of initial guess for sigma used for optimization
+//' @param deltainit P vector of initial guess for delta used for optimization
 //' @param n_samples number of samples for Laplace Approximation (=0 very fast
 //'    as no inversion or decomposition of Hessian is required)
 //' @param calcGradHess if n_samples=0 should Gradient and Hessian 
@@ -55,7 +55,7 @@ using Eigen::VectorXd;
 //'    \deqn{Pi_j = Phi^{-1}(Eta_j)}
 //'    \deqn{Eta ~ T_{D-1, N}(upsilon, Theta*X, K^{-1}, A^{-1})}
 //'    
-//'  Where A = (I_N + sigma^2_1*X*Sigma_1*X' + ... + sigma^2_P*X*Sigma_P*X' )^{-1},
+//'  Where A = (I_N + delta^2_1*X*U_1*X' + ... + delta^2_P*X*U_P*X' )^{-1},
 //'  K^{-1} =Xi is a D-1xD-1 covariance and Phi^{-1} is ALRInv_D transform. 
 //' 
 //' Gradient and Hessian calculations are fast as they are computed using closed
@@ -84,7 +84,7 @@ using Eigen::VectorXd;
 //' 4. Pars - Parameter value of eta 
 //' 5. Samples - (D-1) x N x n_samples array containing posterior samples of eta 
 //'   based on Laplace approximation (if n_samples>0)
-//' 6. VCScale - value of sigmas as optima
+//' 6. VCScale - value of deltas as optima
 //' @md 
 //' @export
 //' @name optimMaltipooCollapsed
@@ -97,9 +97,9 @@ List optimMaltipooCollapsed(const Eigen::ArrayXXd Y,
                const Eigen::MatrixXd Theta,
                const Eigen::MatrixXd X,
                const Eigen::MatrixXd K, 
-               const Eigen::MatrixXd Sigma, 
+               const Eigen::MatrixXd U, 
                Eigen::MatrixXd etainit, 
-               Eigen::VectorXd sigmainit, 
+               Eigen::VectorXd deltainit, 
                int n_samples=2000, 
                bool calcGradHess = true,
                double b1 = 0.9,         
@@ -117,11 +117,11 @@ List optimMaltipooCollapsed(const Eigen::ArrayXXd Y,
                double jitter=0){  
   int N = Y.cols();
   int D = Y.rows();
-  MaltipooCollapsed cm(Y, upsilon, Theta, X, K, Sigma);
+  MaltipooCollapsed cm(Y, upsilon, Theta, X, K, U);
   Map<VectorXd> eta(etainit.data(), etainit.size()); // will rewrite by optim
-  VectorXd pars(etainit.size()+sigmainit.size());
+  VectorXd pars(etainit.size()+deltainit.size());
   pars.head(etainit.size()) = eta;
-  pars.tail(sigmainit.size()) = sigmainit;
+  pars.tail(deltainit.size()) = deltainit;
   double nllopt; // NEGATIVE LogLik at optim
   List out(6);
   out.names() = CharacterVector::create("LogLik", "Gradient", "Hessian",
@@ -138,10 +138,10 @@ List optimMaltipooCollapsed(const Eigen::ArrayXXd Y,
     Rcpp::warning("Max Iterations Hit, May not be at optima");
   eta = pars.head(etainit.size());
   Map<MatrixXd> etamat(eta.data(), D-1, N);
-  Map<VectorXd> sigma(pars.tail(sigmainit.size()).data(), sigmainit.size());
+  Map<VectorXd> delta(pars.tail(deltainit.size()).data(), deltainit.size());
   out[0] = -nllopt; // Return (positive) LogLik
   out[3] = etamat;
-  out[5] = sigma;
+  out[5] = delta;
 
   if (n_samples > 0 || calcGradHess){
     if (verbose) Rcout << "Allocating for Hessian" << std::endl;

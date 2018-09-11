@@ -20,13 +20,13 @@ using Eigen::Ref;
  *    Pi_j = Phi^{-1}(Eta_j)   // Phi^{-1} is ALRInv_D transform
  *    Eta ~ T_{D-1, N}(upsilon, Theta*X, K^{-1}, A^{-1})
  *
- *  Where A = (I_N + sigma^2_1*X*Sigma_1*X' + ... + sigma^2_P*X*Sigma_P*X' )^{-1},
+ *  Where A = (I_N + delta^2_1*X*U_1*X' + ... + delta^2_P*X*U_P*X' )^{-1},
  *  K^{-1} =Xi is a D-1xD-1 covariance 
  *  
- *  Currently treats sigma (little sigma) as a fixed parameter to be estimated
+ *  Currently treats delta as a fixed parameter to be estimated
  *  by MAP. 
  *  
- *  matrix, and Sigma_1,...Sigma_P are Q x Q covariance matrix
+ *  matrix, and U_1,...U_P are Q x Q covariance matrix
  */
 class MaltipooCollapsed : public Numer::MFuncGrad
 {
@@ -37,8 +37,8 @@ class MaltipooCollapsed : public Numer::MFuncGrad
     const MatrixXd X;
     MatrixXd ThetaX;
     const MatrixXd K;
-    const MatrixXd Sigma; // PQ x Q matrix of concatenated sigmas
-    MatrixXd XTSigmaX;
+    const MatrixXd U; // PQ x Q matrix of concatenated deltas
+    MatrixXd XTUX;
     MatrixXd A; // no longer constant
     MatrixXd Ainv; // no longer constant
     // computed quantities 
@@ -67,31 +67,31 @@ class MaltipooCollapsed : public Numer::MFuncGrad
                         const MatrixXd Theta_,
                         const MatrixXd X_,
                         const MatrixXd K_,
-                        const MatrixXd Sigma_) :
-    Y(Y_), upsilon(upsilon_), Theta(Theta_), X(X_), K(K_), Sigma(Sigma_)
+                        const MatrixXd U_) :
+    Y(Y_), upsilon(upsilon_), Theta(Theta_), X(X_), K(K_), U(U_)
     {
       D = Y.rows();           // number of multinomial categories
       N = Y.cols();           // number of samples
       Q = X.rows();
-      P = Sigma.rows()/Q;
+      P = U.rows()/Q;
       ThetaX.noalias() = Theta*X;
       n = Y.colwise().sum();  // total number of counts per sample
       delta = 0.5*(upsilon + N - D - 2.0);
-      XTSigmaX = MatrixXd::Zero(P*N, N);
+      XTUX = MatrixXd::Zero(P*N, N);
       for (int i=0; i<P; i++){
-        XTSigmaX.middleRows(N*i, N).noalias() = X.transpose()*Sigma.middleRows(Q*i, Q)*X;
+        XTUX.middleRows(N*i, N).noalias() = X.transpose()*U.middleRows(Q*i, Q)*X;
       }
     }
     ~MaltipooCollapsed(){}                      // destructor
     
     // Update with Eta when it comes in as a vector
-    void updateWithEtaLL(const Ref<const VectorXd>& etavec, const Ref<const VectorXd>& sigmavec){
+    void updateWithEtaLL(const Ref<const VectorXd>& etavec, const Ref<const VectorXd>& deltavec){
       const Map<const MatrixXd> eta(etavec.data(), D-1, N);
       E = eta - ThetaX;
       
       Ainv = MatrixXd::Identity(N, N);
       for (int i=0; i<P; i++){
-        Ainv += sigmavec(i)*XTSigmaX.middleRows(N*i, N);
+        Ainv += deltavec(i)*XTUX.middleRows(N*i, N);
       }
       //Eigen::FullPivLU<MatrixXd> lu(Ainv);
       A = Ainv.lu().inverse(); 
@@ -134,7 +134,7 @@ class MaltipooCollapsed : public Numer::MFuncGrad
       Map<VectorXd> eg(g.data(), g.size()); 
       VectorXd sg(P);
       for (int i=0; i<P; i++){
-        sg(i)=-(M.array()*XTSigmaX.middleRows(N*i, N).array()).sum();
+        sg(i)=-(M.array()*XTUX.middleRows(N*i, N).array()).sum();
       }
       VectorXd grad(N*(D-1)+P);
       grad << eg, sg;
@@ -172,8 +172,8 @@ class MaltipooCollapsed : public Numer::MFuncGrad
     // function for use by ADAMOptimizer wrapper (and for RcppNumeric L-BFGS)
     virtual double f_grad(Numer::Constvec& pars, Numer::Refvec grad){
       const Map<const VectorXd> eta(pars.head(N*(D-1)).data(), N*D-1);
-      const Map<const VectorXd> sigma(pars.tail(P).data(), P);
-      updateWithEtaLL(eta, sigma);    // precompute things needed for LogLik
+      const Map<const VectorXd> delta(pars.tail(P).data(), P);
+      updateWithEtaLL(eta, delta);    // precompute things needed for LogLik
       updateWithEtaGH();       // precompute things needed for gradient and hessian
       grad = -calcGrad();      // negative because wraper minimizes
       return -calcLogLik(eta); // negative because wraper minimizes

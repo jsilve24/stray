@@ -62,7 +62,7 @@ class MongrelCollapsed : public Numer::MFuncGrad
       D = Y.rows();           // number of multinomial categories
       N = Y.cols();           // number of samples
       n = Y.colwise().sum();  // total number of counts per sample
-      delta = 0.5*(upsilon + N - D - 2.0);
+      delta = 0.5*(upsilon + N + D - 2.0);
       
       // temporary or testing
       t = 0;
@@ -97,7 +97,7 @@ class MongrelCollapsed : public Numer::MFuncGrad
       // start with multinomial ll
       ll += (Y.topRows(D-1)*eta.array()).sum() - n*m.log().matrix();
       // Now compute collapsed prior ll
-      ll -= 0.5*(upsilon+N-D-2)*Sdec.logAbsDeterminant();
+      ll -= delta*Sdec.logAbsDeterminant();
       return ll;
     }
     

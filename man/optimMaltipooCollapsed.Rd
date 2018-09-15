@@ -4,7 +4,7 @@
 \alias{optimMaltipooCollapsed}
 \title{Function to Optimize the Collapsed Maltipoo Model}
 \usage{
-optimMaltipooCollapsed(Y, upsilon, Theta, X, K, Sigma, etainit, sigmainit,
+optimMaltipooCollapsed(Y, upsilon, Theta, X, K, U, init, ellinit,
   n_samples = 2000L, calcGradHess = TRUE, b1 = 0.9, b2 = 0.99,
   step_size = 0.003, epsilon = 1e-06, eps_f = 1e-10, eps_g = 1e-04,
   max_iter = 10000L, verbose = FALSE, verbose_rate = 10L,
@@ -22,11 +22,11 @@ optimMaltipooCollapsed(Y, upsilon, Theta, X, K, Sigma, etainit, sigmainit,
 
 \item{K}{D-1 x D-1 precision matrix (inverse of Xi)}
 
-\item{Sigma}{a PQxQ matrix of stacked variance components}
+\item{U}{a PQxQ matrix of stacked variance components}
 
-\item{etainit}{D-1 x N matrix of initial guess for eta used for optimization}
+\item{init}{D-1 x N matrix of initial guess for eta used for optimization}
 
-\item{sigmainit}{P vector of initial guess for sigma used for optimization}
+\item{ellinit}{P vector of initial guess for ell used for optimization}
 
 \item{n_samples}{number of samples for Laplace Approximation (=0 very fast
 as no inversion or decomposition of Hessian is required)}
@@ -74,7 +74,7 @@ List containing (all with respect to found optima)
 \item Pars - Parameter value of eta
 \item Samples - (D-1) x N x n_samples array containing posterior samples of eta
 based on Laplace approximation (if n_samples>0)
-\item VCScale - value of sigmas as optima
+\item VCScale - value of e^ell_i at optima
 }
 }
 \description{
@@ -90,7 +90,7 @@ Model:
 \deqn{Pi_j = Phi^{-1}(Eta_j)}
 \deqn{Eta ~ T_{D-1, N}(upsilon, Theta*X, K^{-1}, A^{-1})}
 
-Where A = (I_N + sigma^2_1\emph{X}Sigma_1\emph{X' + ... + sigma^2_P}X\emph{Sigma_P}X' )^{-1},
+Where A = (I_N + e^{ell_1}\emph{X}U_1\emph{X' + ... + e^{ell_P}\emph{X}U_P}X' )^{-1},
 K^{-1} =Xi is a D-1xD-1 covariance and Phi^{-1} is ALRInv_D transform.
 
 Gradient and Hessian calculations are fast as they are computed using closed

@@ -13,9 +13,9 @@
 #' @param Theta D-1 x Q matrix the prior mean for regression coefficients
 #' @param X Q x N matrix of covariates
 #' @param K D-1 x D-1 precision matrix (inverse of Xi)
-#' @param Sigma a PQxQ matrix of stacked variance components 
-#' @param etainit D-1 x N matrix of initial guess for eta used for optimization
-#' @param sigmainit P vector of initial guess for sigma used for optimization
+#' @param U a PQxQ matrix of stacked variance components 
+#' @param init D-1 x N matrix of initial guess for eta used for optimization
+#' @param ellinit P vector of initial guess for ell used for optimization
 #' @param n_samples number of samples for Laplace Approximation (=0 very fast
 #'    as no inversion or decomposition of Hessian is required)
 #' @param calcGradHess if n_samples=0 should Gradient and Hessian 
@@ -45,7 +45,7 @@
 #'    \deqn{Pi_j = Phi^{-1}(Eta_j)}
 #'    \deqn{Eta ~ T_{D-1, N}(upsilon, Theta*X, K^{-1}, A^{-1})}
 #'    
-#'  Where A = (I_N + sigma^2_1*X*Sigma_1*X' + ... + sigma^2_P*X*Sigma_P*X' )^{-1},
+#'  Where A = (I_N + e^{ell_1}*X*U_1*X' + ... + e^{ell_P}*X*U_P*X' )^{-1},
 #'  K^{-1} =Xi is a D-1xD-1 covariance and Phi^{-1} is ALRInv_D transform. 
 #' 
 #' Gradient and Hessian calculations are fast as they are computed using closed
@@ -74,15 +74,15 @@
 #' 4. Pars - Parameter value of eta 
 #' 5. Samples - (D-1) x N x n_samples array containing posterior samples of eta 
 #'   based on Laplace approximation (if n_samples>0)
-#' 6. VCScale - value of sigmas as optima
+#' 6. VCScale - value of e^ell_i at optima
 #' @md 
 #' @export
 #' @name optimMaltipooCollapsed
 #' @references S. Ruder (2016) \emph{An overview of gradient descent 
 #' optimization algorithms}. arXiv 1609.04747
 #' @seealso \code{\link{uncollapseMongrelCollapsed}}
-optimMaltipooCollapsed <- function(Y, upsilon, Theta, X, K, Sigma, etainit, sigmainit, n_samples = 2000L, calcGradHess = TRUE, b1 = 0.9, b2 = 0.99, step_size = 0.003, epsilon = 10e-7, eps_f = 1e-10, eps_g = 1e-4, max_iter = 10000L, verbose = FALSE, verbose_rate = 10L, decomp_method = "eigen", eigvalthresh = 0, no_error = FALSE, jitter = 0) {
-    .Call('_mongrel_optimMaltipooCollapsed', PACKAGE = 'mongrel', Y, upsilon, Theta, X, K, Sigma, etainit, sigmainit, n_samples, calcGradHess, b1, b2, step_size, epsilon, eps_f, eps_g, max_iter, verbose, verbose_rate, decomp_method, eigvalthresh, no_error, jitter)
+optimMaltipooCollapsed <- function(Y, upsilon, Theta, X, K, U, init, ellinit, n_samples = 2000L, calcGradHess = TRUE, b1 = 0.9, b2 = 0.99, step_size = 0.003, epsilon = 10e-7, eps_f = 1e-10, eps_g = 1e-4, max_iter = 10000L, verbose = FALSE, verbose_rate = 10L, decomp_method = "eigen", eigvalthresh = 0, no_error = FALSE, jitter = 0) {
+    .Call('_mongrel_optimMaltipooCollapsed', PACKAGE = 'mongrel', Y, upsilon, Theta, X, K, U, init, ellinit, n_samples, calcGradHess, b1, b2, step_size, epsilon, eps_f, eps_g, max_iter, verbose, verbose_rate, decomp_method, eigvalthresh, no_error, jitter)
 }
 
 #' Calculations for the Collapsed Mongrel Model
@@ -164,7 +164,7 @@ hessMongrelCollapsed <- function(Y, upsilon, ThetaX, K, A, eta) {
 #'    for regression coefficients) 
 #' @param K D-1 x D-1 precision matrix (inverse of Xi)
 #' @param A N x N precision matrix given by (I_N + X*Gamma*X')^{-1}]
-#' @param etainit D-1 x N matrix of initial guess for eta used for optimization
+#' @param init D-1 x N matrix of initial guess for eta used for optimization
 #' @param n_samples number of samples for Laplace Approximation (=0 very fast
 #'    as no inversion or decomposition of Hessian is required)
 #' @param calcGradHess if n_samples=0 should Gradient and Hessian 
@@ -235,8 +235,8 @@ hessMongrelCollapsed <- function(Y, upsilon, ThetaX, K, A, eta) {
 #' # Fit model for eta
 #' fit <- optimMongrelCollapsed(sim$Y, sim$upsilon, sim$Theta%*%sim$X, sim$K, 
 #'                              sim$A, random_mongrel_init(sim$Y))  
-optimMongrelCollapsed <- function(Y, upsilon, ThetaX, K, A, etainit, n_samples = 2000L, calcGradHess = TRUE, b1 = 0.9, b2 = 0.99, step_size = 0.003, epsilon = 10e-7, eps_f = 1e-10, eps_g = 1e-4, max_iter = 10000L, verbose = FALSE, verbose_rate = 10L, decomp_method = "eigen", eigvalthresh = 0, no_error = FALSE, jitter = 0) {
-    .Call('_mongrel_optimMongrelCollapsed', PACKAGE = 'mongrel', Y, upsilon, ThetaX, K, A, etainit, n_samples, calcGradHess, b1, b2, step_size, epsilon, eps_f, eps_g, max_iter, verbose, verbose_rate, decomp_method, eigvalthresh, no_error, jitter)
+optimMongrelCollapsed <- function(Y, upsilon, ThetaX, K, A, init, n_samples = 2000L, calcGradHess = TRUE, b1 = 0.9, b2 = 0.99, step_size = 0.003, epsilon = 10e-7, eps_f = 1e-10, eps_g = 1e-4, max_iter = 10000L, verbose = FALSE, verbose_rate = 10L, decomp_method = "eigen", eigvalthresh = 0, no_error = FALSE, jitter = 0) {
+    .Call('_mongrel_optimMongrelCollapsed', PACKAGE = 'mongrel', Y, upsilon, ThetaX, K, A, init, n_samples, calcGradHess, b1, b2, step_size, epsilon, eps_f, eps_g, max_iter, verbose, verbose_rate, decomp_method, eigvalthresh, no_error, jitter)
 }
 
 #' Uncollapse output from optimMongrelCollapsed to full Mongrel Model

@@ -20,10 +20,10 @@ using Eigen::Ref;
  *    Pi_j = Phi^{-1}(Eta_j)   // Phi^{-1} is ALRInv_D transform
  *    Eta ~ T_{D-1, N}(upsilon, Theta*X, K^{-1}, A^{-1})
  *
- *  Where A = (I_N + delta^2_1*X*U_1*X' + ... + delta^2_P*X*U_P*X' )^{-1},
+ *  Where A = (I_N + e^{ell_1}*X*U_1*X' + ... + e^{ell_P}*X*U_P*X' )^{-1},
  *  K^{-1} =Xi is a D-1xD-1 covariance 
  *  
- *  Currently treats delta as a fixed parameter to be estimated
+ *  Currently treats ell as a fixed parameter to be estimated
  *  by MAP. 
  *  
  *  matrix, and U_1,...U_P are Q x Q covariance matrix
@@ -51,6 +51,7 @@ class MaltipooCollapsed : public Numer::MFuncGrad
     Eigen::RowVectorXd n;
     MatrixXd S;  // I_D-1 + KEAE'
     Eigen::ColPivHouseholderQR<MatrixXd> Sdec;
+    Eigen::ColPivHouseholderQR<MatrixXd> Ainvdec;
     MatrixXd E;  // eta-ThetaX
     ArrayXXd O;  // exp{eta}
     // only needed for gradient and hessian
@@ -76,7 +77,7 @@ class MaltipooCollapsed : public Numer::MFuncGrad
       P = U.rows()/Q;
       ThetaX.noalias() = Theta*X;
       n = Y.colwise().sum();  // total number of counts per sample
-      delta = 0.5*(upsilon + N - D - 2.0);
+      delta = 0.5*(upsilon + N + D - 2.0);
       XTUX = MatrixXd::Zero(P*N, N);
       for (int i=0; i<P; i++){
         XTUX.middleRows(N*i, N).noalias() = X.transpose()*U.middleRows(Q*i, Q)*X;
@@ -85,16 +86,17 @@ class MaltipooCollapsed : public Numer::MFuncGrad
     ~MaltipooCollapsed(){}                      // destructor
     
     // Update with Eta when it comes in as a vector
-    void updateWithEtaLL(const Ref<const VectorXd>& etavec, const Ref<const VectorXd>& deltavec){
+    void updateWithEtaLL(const Ref<const VectorXd>& etavec, const Ref<const VectorXd>& ell){
       const Map<const MatrixXd> eta(etavec.data(), D-1, N);
       E = eta - ThetaX;
       
       Ainv = MatrixXd::Identity(N, N);
       for (int i=0; i<P; i++){
-        Ainv += deltavec(i)*XTUX.middleRows(N*i, N);
+        Ainv += exp(ell(i))*XTUX.middleRows(N*i, N);
       }
       //Eigen::FullPivLU<MatrixXd> lu(Ainv);
-      A = Ainv.lu().inverse(); 
+      Ainvdec.compute(Ainv);
+      A = Ainvdec.inverse(); 
         
       S.noalias() = K*E*A*E.transpose();
       S.diagonal() += VectorXd::Ones(1, D-1);
@@ -121,12 +123,13 @@ class MaltipooCollapsed : public Numer::MFuncGrad
       // start with multinomial ll
       ll += (Y.topRows(D-1)*eta.array()).sum() - n*m.log().matrix();
       // Now compute collapsed prior ll
-      ll -= 0.5*(upsilon+N-D-2)*Sdec.logAbsDeterminant();
+      ll -= delta*Sdec.logAbsDeterminant();
+      ll -= 0.5*(D-1)*Ainvdec.logAbsDeterminant(); // repeated can speed up in future
       return ll;
     }
     
     // Must have called updateWithEtaLL and then updateWithEtaGH first 
-    VectorXd calcGrad(){
+    VectorXd calcGrad(const Ref<const VectorXd>& ell){ 
       // For Multinomial
       MatrixXd g = (Y - (rhomat.array().rowwise()*n.array())).matrix();
       // For MatrixVariate T
@@ -134,7 +137,9 @@ class MaltipooCollapsed : public Numer::MFuncGrad
       Map<VectorXd> eg(g.data(), g.size()); 
       VectorXd sg(P);
       for (int i=0; i<P; i++){
-        sg(i)=-(M.array()*XTUX.middleRows(N*i, N).array()).sum();
+        sg(i) = delta*(M.array()*XTUX.middleRows(N*i, N).array()).sum();
+        sg(i) -= 0.5*(D-1)*(A.array()*XTUX.middleRows(N*i,N).array()).sum();
+        sg(i) = exp(ell(i))*sg(i);
       }
       VectorXd grad(N*(D-1)+P);
       grad << eg, sg;
@@ -172,10 +177,10 @@ class MaltipooCollapsed : public Numer::MFuncGrad
     // function for use by ADAMOptimizer wrapper (and for RcppNumeric L-BFGS)
     virtual double f_grad(Numer::Constvec& pars, Numer::Refvec grad){
       const Map<const VectorXd> eta(pars.head(N*(D-1)).data(), N*D-1);
-      const Map<const VectorXd> delta(pars.tail(P).data(), P);
-      updateWithEtaLL(eta, delta);    // precompute things needed for LogLik
+      const Map<const VectorXd> ell(pars.tail(P).data(), P);
+      updateWithEtaLL(eta, ell);    // precompute things needed for LogLik
       updateWithEtaGH();       // precompute things needed for gradient and hessian
-      grad = -calcGrad();      // negative because wraper minimizes
+      grad = -calcGrad(ell);      // negative because wraper minimizes
       return -calcLogLik(eta); // negative because wraper minimizes
     }
 };

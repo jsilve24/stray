@@ -156,4 +156,16 @@ mifelse <- function(b, y, n){
 }
 
 
+# x is vector of elements that should either be NULL or all the same 
+try_set_dims <- function(x){
+  stopifnot(length(x) > 0)
+  if (all(x[1]==x)) return(as.integer(x[1])) else stop("Dimension missmatch in arguments")
+}
+
+
+# to make default checking of extra arguments easier
+args_null <- function(par, argl, default){
+  if (is.null(argl[[par]])) return(default)
+  return(argl[[par]])
+}
 

@@ -1,91 +1,64 @@
-#' Interface to fit mongrel models 
+#' Interface to fit maltipoo models
 #' 
 #' This function is largely a more user friendly wrapper around 
-#' \code{\link{optimMongrelCollapsed}} and 
+#' \code{\link{optimMaltipooCollapsed}} and 
 #' \code{\link{uncollapseMongrelCollapsed}}. 
 #' See details for model specification. 
 #'  Notation: \code{N} is number of samples,
 #'  \code{D} is number of multinomial categories, \code{Q} is number
-#'  of covariates, \code{iter} is the number of samples of \code{eta} (e.g.,
+#'  of covariates, \code{P} is the number of variance components 
+#'  \code{iter} is the number of samples of \code{eta} (e.g.,
 #'  the parameter \code{n_samples} in the function 
 #'  \code{\link{optimMongrelCollapsed}})
-#' @param Y D x N matrix of counts (if NULL uses priors only)
-#' @param X Q x N matrix of covariates (design matrix) (if NULL uses priors only, must
-#' be present to sample Eta)
-#' @param upsilon dof for inverse wishart prior (numeric must be > D) 
-#'   (default: D+3)
-#' @param Theta (D-1) x Q matrix of prior mean for regression parameters
-#'   (default: matrix(0, D-1, Q))
-#' @param Gamma QxQ prior covariance matrix 
-#'   (default: diag(Q))
-#' @param Xi (D-1)x(D-1) prior covariance matrix
-#'   (default: ALR transform of diag(1)*(upsilon-D-2)/2 - this is 
-#'   essentially iid on "base scale" using Aitchison terminology)
+#'  
+#' @param U a PQ x Q matrix of stacked variance components (each of dimension Q x Q)
 #' @param init (D-1) x Q initialization for Eta for optimization
-#' @param pars character vector of posterior parameters to return
-#' @param m object of class mongrelfit 
-#' @param ... arguments passed to \code{\link{optimMongrelCollapsed}} and 
-#'   \code{\link{uncollapseMongrelCollapsed}}
-#' 
+#' @param ellinit P vector initialization values for ell for optimization 
+#' @inheritParams mongrel_fit
+#'  
 #' @details the full model is given by:
-#'    \deqn{Y_j ~ Multinomial(Pi_j)} <- 
+#'    \deqn{Y_j ~ Multinomial(Pi_j)}
 #'    \deqn{Pi_j = Phi^{-1}(Eta_j)}
 #'    \deqn{Eta ~ MN_{D-1 x N}(Lambda*X, Sigma, I_N)}
 #'    \deqn{Lambda ~ MN_{D-1 x Q}(Theta, Sigma, Gamma)}
+#'    \deqn{Gamma = e^{ell_1} U_1 + ... + e^{ell_P} U_P}
 #'    \deqn{Sigma ~ InvWish(upsilon, Xi)}
+#'    
 #'  Where A = (I_N + X * Gamma * X')^{-1}, K^{-1} = Xi is a (D-1)x(D-1) 
-#'  covariance matrix, Gamma is a Q x Q covariance matrix, and Phi^{-1} is 
+#'  covariance matrix, U_1 is a Q x Q covariance matrix (a variance component), 
+#'  e^{\ell_i} is a scale for that variance component and Phi^{-1} is 
 #'  ALRInv_D transform. 
 #'  
 #'  Default behavior is to use MAP estimate for uncollaping collapsed mongrel 
 #'  model if laplace approximation is not preformed. 
-#' @return an object of class mongrelfit
-#' @md
-#' @name mongrel_fit
-#' @examples 
-#' sim <- mongrel_sim()
-#' fit <- mongrel(sim$Y, sim$X)
-#' @seealso \code{\link{mongrel_transforms}} provide convenience methods for 
-#'  transforming the representation of mongrelfit objects (e.g., conversion to 
-#'  proportions, alr, clr, or ilr coordinates.)
 #'  
-#' \code{\link{access_dims}} provides convenience methods for accessing
-#'   dimensions of mongrelfit object
-#'   
-#' Generic functions including \code{\link[=summary.mongrelfit]{summary}},  
-#' \code{\link[=print.mongrelfit]{print}}, 
-#'  \code{\link[=coef.mongrelfit]{coef}},  
-#'  \code{\link[=as.list.mongrelfit]{as.list}},  
-#'  \code{\link[=predict.mongrelfit]{predict}}, 
-#'  \code{\link[=model.matrix.mongrelfit]{model.matrix}},
-#'  \code{\link[=name.mongrelfit]{name}}, and
-#'  \code{\link[=sample_prior.mongrelfit]{sample_prior}}
-#'  \code{\link{name_dims}}
-#' 
-#' Plotting functions provided by \code{\link[=plot.mongrelfit]{plot}} 
-#' and \code{\link[=ppc.mongrelfit]{ppc}} (posterior predictive checks)
+#'  Parameters ell are treated as fixed and estimated by MAP estimation. 
+#'  
+#' @name maltipoo_fit
+#' @return an object of class maltipoofit
 NULL
 
-#' @rdname mongrel_fit
+#' @rdname maltipoo_fit
 #' @export
-mongrel <- function(Y=NULL, X=NULL, upsilon=NULL, Theta=NULL, Gamma=NULL, Xi=NULL,
-                    init=NULL, 
-                    pars=c("Eta", "Lambda", "Sigma"),
-                    ...){
+maltipoo <- function(Y=NULL, X=NULL, upsilon=NULL, Theta=NULL, U=NULL, 
+                     Xi=NULL, init=NULL, ellinit=NULL, 
+                     pars=c("Eta", "Lambda", "Sigma"), 
+                     ...){
   args <- list(...)
-    
+  
   N <- try_set_dims(c(ncol(Y), ncol(X), args[["N"]]))
   D <- try_set_dims(c(nrow(Y), nrow(Theta)+1, nrow(Xi)+1, ncol(Xi)+1, args[["D"]]))
-  Q <- try_set_dims(c(nrow(X), ncol(Theta), nrow(Gamma), ncol(Gamma), args[["Q"]]))
+  Q <- try_set_dims(c(nrow(X), ncol(Theta), ncol(U), args[["Q"]]))
+  P <- try_set_dims(c(nrow(U)/Q)) # Maltipoo specific
   if (any(c(N, D, Q) <=0)) stop("N, D, and Q must all be greater than 0 (D must be greater than 1)")
   if (D <= 1) stop("D must be greater than 1")
   
   ## construct default values ##
   # for priors
   if (is.null(upsilon)) upsilon <- D+3  # default is minimal information 
-                                        # but with defined mean
+  # but with defined mean
   if (is.null(Theta)) Theta <- matrix(0, D-1, Q) # default is mean zero
-  if (is.null(Gamma)) Gamma <- diag(Q) # default is iid
+  if (is.null(U)) U <- diag(Q) # default is iid
   if (is.null(Xi)) {
     # default is iid on base scale
     # G <- cbind(diag(D-1), -1) ## alr log-constrast matrix
@@ -98,7 +71,7 @@ mongrel <- function(Y=NULL, X=NULL, upsilon=NULL, Theta=NULL, Gamma=NULL, Xi=NUL
   # check dimensions
   check_dims(upsilon, 1, "upsilon")
   check_dims(Theta, c(D-1, Q), "Theta")
-  check_dims(Gamma, c(Q, Q), "Gamma")
+  check_dims(U, c(P*Q, Q), "Q")
   check_dims(Xi, c(D-1, D-1), "Xi")
   
   # set number of iterations 
@@ -108,10 +81,9 @@ mongrel <- function(Y=NULL, X=NULL, upsilon=NULL, Theta=NULL, Gamma=NULL, Xi=NUL
   # This is the signal to sample the prior only
   if (is.null(Y)){
     if (("Eta" %in% pars) & (is.null(X))) stop("X must be given if Eta is to be sampled")
-    # create mongrelfit object and pass to sample_prior then return
-    out <- mongrelfit(N=N, D=D, Q=Q, coord_system="alr", alr_base=D, 
-                      upsilon=upsilon, Theta=Theta, 
-                      Gamma=Gamma, Xi=Xi, 
+    # create matipoofit object and pass to sample_prior then return
+    out <- maltipoofit(N=N, D=D, Q=Q, P=P, coord_system="alr", alr_base=D, 
+                      upsilon=upsilon, Theta=Theta, Xi=Xi,U=U, 
                       # names_categories=rownames(Y), # these won't be present... 
                       # names_samples=colnames(Y), 
                       # names_covariates=colnames(X), 
@@ -121,9 +93,9 @@ mongrel <- function(Y=NULL, X=NULL, upsilon=NULL, Theta=NULL, Gamma=NULL, Xi=NUL
   } else {
     if (is.null(X)) stop("X must be given to fit model")
     if(is.null(init)) init <- random_mongrel_init(Y)   # initialize init 
+    if(is.null(ellinit)) ellinit <- rep(0, P)
   }
-
-
+  
   
   # for optimization and laplace approximation
   calcGradHess <- args_null("calcGradHess", args, TRUE)
@@ -142,14 +114,15 @@ mongrel <- function(Y=NULL, X=NULL, upsilon=NULL, Theta=NULL, Gamma=NULL, Xi=NUL
   
   ## precomputation ## 
   K <- solve(Xi)
-  A <- solve(diag(N) + t(X) %*% Gamma %*% X)
-
+  
   ## fit collapsed model ##
-  fitc <- optimMongrelCollapsed(Y, upsilon, Theta%*%X, K, A, init, n_samples, 
+  fitc <- optimMaltipooCollapsed(Y, upsilon, Theta, X, K, U, init, ellinit, 
+                                n_samples, 
                                 calcGradHess, b1, b2, step_size, epsilon, eps_f, 
                                 eps_g, max_iter, verbose, verbose_rate, 
                                 decomp_method, eigvalthresh, no_error=TRUE, 
                                 jitter)
+  
   # if n_samples=0 or if hessian fails, then use MAP eta estimate for 
   # uncollapsing and unless otherwise specified against, use only the 
   # posterior mean for Lambda and Sigma 
@@ -170,9 +143,12 @@ mongrel <- function(Y=NULL, X=NULL, upsilon=NULL, Theta=NULL, Gamma=NULL, Xi=NUL
     ret_mean <- args_null("ret_mean", args, FALSE)
   }
   
-  stop("foo")
-  
   ## uncollapse collapsed model ##
+  # Calculate Gamma using MAP estimate for ell
+  Gamma <- matrix(0, Q, Q)
+  for (i in 1:P){
+    Gamma <- Gamma + fitc$VCScale[i]*U[((i-1)*Q+1):(i*Q),]
+  }
   fitu <- uncollapseMongrelCollapsed(fitc$Samples, X, Theta, Gamma, Xi, upsilon, 
                                      ret_mean=ret_mean)
   
@@ -187,17 +163,21 @@ mongrel <- function(Y=NULL, X=NULL, upsilon=NULL, Theta=NULL, Gamma=NULL, Xi=NUL
   if ("Sigma" %in% pars){
     out[["Sigma"]] <- fitu$Sigma
   }
+  
   # By default just returns all other parameters
   out$N <- N
   out$Q <- Q
   out$D <- D
+  out$P <- P
   out$Y <- Y
   out$upsilon <- upsilon
   out$Theta <- Theta
   out$X <- X
   out$Xi <- Xi
-  out$Gamma <- Gamma
+  out$U <- U
+  out$VCScale <- fitc$VCScale
   out$init <- init
+  out$ellinit <- ellinit
   out$iter <- dim(fitc$Samples)[3]
   # for other methods
   out$names_categories <- rownames(Y)
@@ -206,35 +186,13 @@ mongrel <- function(Y=NULL, X=NULL, upsilon=NULL, Theta=NULL, Gamma=NULL, Xi=NUL
   out$coord_system <- "alr"
   out$alr_base <- D
   out$summary <- NULL
-  attr(out, "class") <- c("mongrelfit")
+  attr(out, "class") <- c("maltipoofit", "mongrelfit")
   # add names if present 
   if (use_names) out <- name(out)
   verify(out) # verify the mongrelfit object
   return(out)
 }
 
-#' @rdname mongrel_fit
-#' @export
-refit.mongrelfit <- function(m, pars=c("Eta", "Lambda", "Sigma"), ...){
-  # Store coordinates and tranfsorm to cannonical representation
-  l <- store_coord(m)
-  m <- mongrel_to_alr(m, m$D)
-  
-  # Concatenate parameters to pass to mongrel function
-  argl <- list(...)
-  argl$pars <- pars
-  ml <- as.list(m)
-  argl <- c(ml, argl)
-  
-  # Need to handle iter as part of m but no n_samples passed
-  # in this situation should pull iter from m and pass as n_samples to mongrel 
-  if (is.null(argl[["n_samples"]]) & !is.null(m$iter)) argl[["n_samples"]] <- m$iter 
-  
-  # pass to mongrel function
-  m <- do.call(mongrel, argl)
-  
-  # Reapply original coordinates
-  m <- reapply_coord(m, l)
-  verify(m)
-  return(m)
-}
+
+# Refit
+# Sample prior

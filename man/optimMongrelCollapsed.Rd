@@ -4,12 +4,11 @@
 \alias{optimMongrelCollapsed}
 \title{Function to Optimize the Collapsed Mongrel Model}
 \usage{
-optimMongrelCollapsed(Y, upsilon, ThetaX, K, A, etainit,
-  n_samples = 2000L, calcGradHess = TRUE, b1 = 0.9, b2 = 0.99,
-  step_size = 0.003, epsilon = 1e-06, eps_f = 1e-10, eps_g = 1e-04,
-  max_iter = 10000L, verbose = FALSE, verbose_rate = 10L,
-  decomp_method = "eigen", eigvalthresh = 0, no_error = FALSE,
-  jitter = 0)
+optimMongrelCollapsed(Y, upsilon, ThetaX, K, A, init, n_samples = 2000L,
+  calcGradHess = TRUE, b1 = 0.9, b2 = 0.99, step_size = 0.003,
+  epsilon = 1e-06, eps_f = 1e-10, eps_g = 1e-04, max_iter = 10000L,
+  verbose = FALSE, verbose_rate = 10L, decomp_method = "eigen",
+  eigvalthresh = 0, no_error = FALSE, jitter = 0)
 }
 \arguments{
 \item{Y}{D x N matrix of counts}
@@ -23,7 +22,7 @@ for regression coefficients)}
 
 \item{A}{N x N precision matrix given by (I_N + X\emph{Gamma}X')^{-1}]}
 
-\item{etainit}{D-1 x N matrix of initial guess for eta used for optimization}
+\item{init}{D-1 x N matrix of initial guess for eta used for optimization}
 
 \item{n_samples}{number of samples for Laplace Approximation (=0 very fast
 as no inversion or decomposition of Hessian is required)}

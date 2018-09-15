@@ -1,8 +1,8 @@
 #' Create maltipoofit object 
 #' 
 #' @inheritParams mongrelfit
-#' @param VCScale scale factors (sigma) for variance components 
-#' @param U PQ x Q matrix row concatenated variance components 
+#' @inheritParams maltipoo_fit
+#' @param VCScale scale factors (delta) for variance components 
 #' @return object of class maltipoofit
 #' @export
 #' @seealso \code{\link{maltipoo}}
@@ -11,12 +11,12 @@ maltipoofit <- function(D, N, Q, P, coord_system, iter=NULL,
                         Eta=NULL, Lambda=NULL, Sigma=NULL, Sigma_default=NULL, 
                         Y=NULL, X=NULL, upsilon=NULL, 
                         Theta=NULL, Xi=NULL,Xi_default=NULL, Gamma=NULL, 
-                        init=NULL, names_categories=NULL, names_samples=NULL, 
+                        init=NULL, deltainit=NULL, names_categories=NULL, names_samples=NULL, 
                         names_covariates=NULL, VCScale=NULL, U=NULL){
   m <- new_maltipoo(D, N, Q, coord_system, iter, alr_base, ilr_base,
                     Eta, Lambda, Sigma, Sigma_default, 
                     Y, X, upsilon, Theta, Xi,Xi_default, Gamma, 
-                    init, names_categories, names_samples, 
+                    init, deltainit, names_categories, names_samples, 
                     names_covariates, VCScale, U)
   verify(m)
   return(m)
@@ -28,15 +28,16 @@ new_maltipoofit <- function(D, N, Q, P, coord_system, iter=NULL,
                             Eta=NULL, Lambda=NULL,Sigma=NULL, Sigma_default=NULL, 
                             Y=NULL, X=NULL, upsilon=NULL, 
                             Theta=NULL, Xi=NULL,Xi_default=NULL, Gamma=NULL, 
-                            init=NULL, names_categories=NULL, names_samples=NULL, 
+                            init=NULL, deltainit=NULL, names_categories=NULL, names_samples=NULL, 
                             names_covariates=NULL, VCScale=NULL, U=NULL){
   m <- new_mongrelfit(D, N, Q, coord_system, iter, alr_base, ilr_base,
                       Eta, Lambda, Sigma, Sigma_default, 
                       Y, X, upsilon, Theta, Xi,Xi_default, Gamma, 
-                      init, names_categories, names_samples, 
+                      init, deltainit, names_categories, names_samples, 
                       names_covariates)
   m$VCScale <- VCScale
-  m$VCScale <- U
+  m$U <- U
+  m$deltainit <- deltainit
   m$P <- P
   class(m) <- c("maltipoofit", "mongrelfit")
 }
@@ -52,6 +53,7 @@ verify.multipoo <- function(m,...){
   P <- m$P
   ifnotnull(m$VCScale, check_dims(m$VCScale, P))
   ifnotnull(m$U, check_dims(m$U, P*Q, Q))
+  ifnotnull(m$deltainit, chec_dims(m$P))
 }
 
 #' require elements to be non-null in mongrelfit or throw error

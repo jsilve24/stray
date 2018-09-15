@@ -31,8 +31,7 @@ be present to sample Eta)}
 (default: ALR transform of diag(1)*(upsilon-D-2)/2 - this is
 essentially iid on "base scale" using Aitchison terminology)}
 
-\item{init}{(D-1) x Q initialization for regression parameters for
-optimization}
+\item{init}{(D-1) x Q initialization for Eta for optimization}
 
 \item{pars}{character vector of posterior parameters to return}
 
@@ -57,7 +56,7 @@ the parameter \code{n_samples} in the function
 }
 \details{
 the full model is given by:
-\deqn{Y_j ~ Multinomial(Pi_j)}
+\deqn{Y_j ~ Multinomial(Pi_j)} <-
 \deqn{Pi_j = Phi^{-1}(Eta_j)}
 \deqn{Eta ~ MN_{D-1 x N}(Lambda*X, Sigma, I_N)}
 \deqn{Lambda ~ MN_{D-1 x Q}(Theta, Sigma, Gamma)}

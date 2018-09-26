@@ -24,7 +24,7 @@ using Eigen::VectorXd;
 //'    for regression coefficients) 
 //' @param K D-1 x D-1 precision matrix (inverse of Xi)
 //' @param A N x N precision matrix given by (I_N + X*Gamma*X')^{-1}]
-//' @param etainit D-1 x N matrix of initial guess for eta used for optimization
+//' @param init D-1 x N matrix of initial guess for eta used for optimization
 //' @param n_samples number of samples for Laplace Approximation (=0 very fast
 //'    as no inversion or decomposition of Hessian is required)
 //' @param calcGradHess if n_samples=0 should Gradient and Hessian 
@@ -101,7 +101,7 @@ List optimMongrelCollapsed(const Eigen::ArrayXXd Y,
                const Eigen::MatrixXd ThetaX, 
                const Eigen::MatrixXd K, 
                const Eigen::MatrixXd A, 
-               Eigen::MatrixXd etainit, 
+               Eigen::MatrixXd init, 
                int n_samples=2000, 
                bool calcGradHess = true,
                double b1 = 0.9,         
@@ -120,7 +120,7 @@ List optimMongrelCollapsed(const Eigen::ArrayXXd Y,
   int N = Y.cols();
   int D = Y.rows();
   MongrelCollapsed cm(Y, upsilon, ThetaX, K, A);
-  Map<VectorXd> eta(etainit.data(), etainit.size()); // will rewrite by optim
+  Map<VectorXd> eta(init.data(), init.size()); // will rewrite by optim
   double nllopt; // NEGATIVE LogLik at optim
   List out(5);
   out.names() = CharacterVector::create("LogLik", "Gradient", "Hessian",
@@ -176,7 +176,7 @@ List optimMongrelCollapsed(const Eigen::ArrayXXd Y,
           if (evalinv(pos) > 0)
             pos++;
         }
-        if (pos < N*(D-1)) {
+        if (pos < N*(D-1)-1) {
           Rcpp::warning("Some small negative eigenvalues are being chopped");
           Rcout << N*(D-1)-pos << " out of " << N*(D-1) <<
             " passed eigenvalue threshold"<< std::endl;

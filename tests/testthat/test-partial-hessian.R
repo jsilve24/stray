@@ -17,7 +17,5 @@ test_that("stub", {
                                decomp_method="eigen",
                                calcPartialHess = TRUE)
 
-  # expect_equal(fit1[3], fit2[3], tolerance = 0.1)
-
   expect_true(TRUE)
 })

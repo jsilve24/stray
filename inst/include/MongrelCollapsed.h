@@ -168,7 +168,7 @@ class MongrelCollapsed : public Numer::MFuncGrad
       return H;
     }
 
-    // should return a N(D-1) x D-1 matrix
+    // should return blocks of size D-1 x D-1 stacked in a N(D-1) x D-1 matrix
     MatrixXd calcPartialHess(){
       // For Multinomial only
       MatrixXd H = ArrayXXd::Zero(N*(D-1), D-1);

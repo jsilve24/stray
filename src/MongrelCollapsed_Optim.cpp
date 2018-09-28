@@ -161,12 +161,12 @@ List optimMongrelCollapsed(const Eigen::ArrayXXd Y,
       // Laplace Approximation
       if (decomp_method == "eigen"){
         if(calcPartialHess) {
-          // printf("\nGot a Hessian of size: %d %d\n", hess.rows(), hess.cols());
           // do inversion in blocks
           int excess = 0;
           int pos = 0;
+          int total_pos = 0;
+          int cidx = 0;
           MatrixXd hesssqrt = ArrayXXd::Zero(N*(D-1), N*(D-1));
-          // how to dynamically resize hesssqrt to N*(D-1) x pos if we need to???
           for (int j=0; j<N; j++){
             if (verbose) Rcout << "Decomposing Hessian of block #" << (j+1) << std::endl;
             MatrixXd working_block = hess.block(j*(D-1), 0, D-1, D-1);
@@ -175,34 +175,37 @@ List optimMongrelCollapsed(const Eigen::ArrayXXd Y,
             VectorXd block_evalinv(block_eh.eigenvalues().array().inverse().matrix());
             // check for small negative values
             excess = 0;
-            for (int i=1; i<(D-1); i++){
-              // why does this iterate 1...4?
+            for (int i=0; i<(D-1); i++){
               if (block_evalinv(i) < eigvalthresh) {
                 excess++;
               }
             }
             if (excess > 0){
-              Rcpp::warning("Some eigenvalues are below minimum threshold");
+              Rcpp::warning("Some eigenvalues are below minimum threshold!!!");
               Rcout << "Eigenvalues" << block_evalinv.transpose() << std::endl;
               return out;
             }
             pos = 0;
-            for (int i = (D-1)-1; i>=0; i--){
-              // any reason this iterates backward?
-              if (block_evalinv(pos) > 0) pos++;
+            for (int i=0; i<(D-1); i++){
+              if (block_evalinv(pos) > 0)
+                pos++;
             }
-            if (pos < (D-1)-1) {
+            total_pos += pos;
+            if (pos < D-1) {
               Rcpp::warning("Some small negative eigenvalues are being chopped");
               Rcout << (D-1)-pos << " out of " << (D-1) <<
-                " passed eigenvalue threshold"<< std::endl;
+                " passed eigenvalue threshold" << std::endl;
             }
             // calculate square root
             MatrixXd block_hesssqrt((D-1), pos);
             if (verbose) Rcout << "Calculating Square Root" << std::endl;
             block_hesssqrt = block_eh.eigenvectors().rightCols(pos)*
               block_evalinv.tail(pos).cwiseSqrt().asDiagonal(); //V*D^{-1/2}
-            hesssqrt.block(j*(D-1), j*(D-1), D-1, D-1) += block_hesssqrt;
-            // need to be using .noalias() here?
+            hesssqrt.block(j*(D-1), cidx, D-1, pos).noalias() += block_hesssqrt;
+            cidx += pos; // housekeeping on the number of columns we've filled
+          }
+          if (total_pos < N*(D-1)) {
+            hesssqrt.conservativeResize(N*(D-1),total_pos);
           }
           // sample
           NumericVector r(n_samples*pos);
@@ -210,7 +213,7 @@ List optimMongrelCollapsed(const Eigen::ArrayXXd Y,
           Map<VectorXd> rvec(as<Map<VectorXd> >(r));
           Map<MatrixXd> rmat(rvec.data(), pos, n_samples);
           MatrixXd samp(pos, n_samples);
-          samp = hesssqrt*rmat;
+          samp.noalias() = hesssqrt*rmat;
           samp.colwise() += eta; // add mean of approximation
           IntegerVector d = IntegerVector::create(D-1, N, n_samples);
           NumericVector samples = wrap(samp);
@@ -284,7 +287,7 @@ List optimMongrelCollapsed(const Eigen::ArrayXXd Y,
           Map<VectorXd> rvec(as<Map<VectorXd> >(r));
           Map<MatrixXd> rmat(rvec.data(), N*(D-1), n_samples);
           MatrixXd samp(N*(D-1), n_samples);
-          samp = hesssqrt*rmat; // need noalias() here?
+          samp.noalias() = hesssqrt*rmat;
           samp.colwise() += eta; // add mean of approximation
           IntegerVector d = IntegerVector::create(D-1, N, n_samples);
           NumericVector samples = wrap(samp);

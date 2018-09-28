@@ -151,8 +151,8 @@ hessMongrelCollapsed <- function(Y, upsilon, ThetaX, K, A, eta) {
 #' # Fit model for eta
 #' fit <- optimMongrelCollapsed(sim$Y, sim$upsilon, sim$Theta%*%sim$X, sim$K, 
 #'                              sim$A, random_mongrel_init(sim$Y))  
-optimMongrelCollapsed <- function(Y, upsilon, ThetaX, K, A, init, n_samples = 2000L, calcGradHess = TRUE, b1 = 0.9, b2 = 0.99, step_size = 0.003, epsilon = 10e-7, eps_f = 1e-10, eps_g = 1e-4, max_iter = 10000L, verbose = FALSE, verbose_rate = 10L, decomp_method = "eigen", eigvalthresh = 0, no_error = FALSE, jitter = 0) {
-    .Call('_mongrel_optimMongrelCollapsed', PACKAGE = 'mongrel', Y, upsilon, ThetaX, K, A, init, n_samples, calcGradHess, b1, b2, step_size, epsilon, eps_f, eps_g, max_iter, verbose, verbose_rate, decomp_method, eigvalthresh, no_error, jitter)
+optimMongrelCollapsed <- function(Y, upsilon, ThetaX, K, A, init, n_samples = 2000L, calcGradHess = TRUE, b1 = 0.9, b2 = 0.99, step_size = 0.003, epsilon = 10e-7, eps_f = 1e-10, eps_g = 1e-4, max_iter = 10000L, verbose = FALSE, verbose_rate = 10L, decomp_method = "eigen", eigvalthresh = 0, no_error = FALSE, jitter = 0, calcPartialHess = FALSE) {
+    .Call('_mongrel_optimMongrelCollapsed', PACKAGE = 'mongrel', Y, upsilon, ThetaX, K, A, init, n_samples, calcGradHess, b1, b2, step_size, epsilon, eps_f, eps_g, max_iter, verbose, verbose_rate, decomp_method, eigvalthresh, no_error, jitter, calcPartialHess)
 }
 
 #' Uncollapse output from optimMongrelCollapsed to full Mongrel Model

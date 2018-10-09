@@ -79,7 +79,7 @@ hessMongrelCollapsed <- function(Y, upsilon, ThetaX, K, A, eta) {
 #' @param ThetaX D-1 x N matrix formed by Theta*X (Theta is Prior mean 
 #'    for regression coefficients) 
 #' @param K D-1 x D-1 precision matrix (inverse of Xi)
-#' @param A N x N precision matrix given by (I_N + X*Gamma*X')^{-1}]
+#' @param A N x N precision matrix given by (I_N + X'*Gamma*X)^{-1}]
 #' @param init D-1 x N matrix of initial guess for eta used for optimization
 #' @param n_samples number of samples for Laplace Approximation (=0 very fast
 #'    as no inversion or decomposition of Hessian is required)

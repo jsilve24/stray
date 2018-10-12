@@ -108,7 +108,7 @@ List uncollapseMongrelCollapsed(const Eigen::Map<Eigen::VectorXd> eta, // note t
     //Rcout << LambdaN.row(1) << std::endl;
     ELambda = LambdaN-Theta;
     EEta = Eta-LambdaN*X;
-    XiN = Xi+ EEta*EEta.transpose() + ELambda*Gamma*ELambda.transpose();
+    XiN = Xi+ EEta*EEta.transpose() + ELambda*GammaInv*ELambda.transpose();
     
     if (ret_mean){
       Map<VectorXd> LambdaNVec(LambdaN.data(), LambdaN.size());

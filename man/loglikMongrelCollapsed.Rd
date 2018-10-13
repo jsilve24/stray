@@ -22,7 +22,7 @@ for regression coefficients)}
 
 \item{K}{D-1 x D-1 precision matrix (inverse of Xi)}
 
-\item{A}{N x N precision matrix given by (I_N + X\emph{Gamma}X')^{-1}]}
+\item{A}{N x N precision matrix given by (I_N + X'\emph{Gamma}X)^{-1}]}
 
 \item{eta}{matrix (D-1)xN of parameter values at which to calculate quantities}
 }

@@ -1,3 +1,5 @@
+<img align="left" width="160" height="160" src="inst/mongrel.png" />
+
 # mongrel
 Multinomial Logistic-Normal Linear Regression Models
 

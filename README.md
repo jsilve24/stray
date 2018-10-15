@@ -1,4 +1,4 @@
-<img style="padding: 0 15px", align="left" width="160" height="160" src="inst/mongrel.png">
+<img style="padding: 0 15px", align="left" width="160" height="160" src="https://github.com/jsilve24/mongrel/blob/master/inst/mongrel.png">
 
 
 # mongrel

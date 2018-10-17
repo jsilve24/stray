@@ -170,8 +170,6 @@ mongrel <- function(Y=NULL, X=NULL, upsilon=NULL, Theta=NULL, Gamma=NULL, Xi=NUL
     ret_mean <- args_null("ret_mean", args, FALSE)
   }
   
-  stop("foo")
-  
   ## uncollapse collapsed model ##
   fitu <- uncollapseMongrelCollapsed(fitc$Samples, X, Theta, Gamma, Xi, upsilon, 
                                      ret_mean=ret_mean)

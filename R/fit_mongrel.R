@@ -166,6 +166,7 @@ mongrel <- function(Y=NULL, X=NULL, upsilon=NULL, Theta=NULL, Gamma=NULL, Xi=NUL
                                 eps_g, max_iter, verbose, verbose_rate, 
                                 decomp_method, eigvalthresh, no_error=TRUE, 
                                 jitter)
+
   # if n_samples=0 or if hessian fails, then use MAP eta estimate for 
   # uncollapsing and unless otherwise specified against, use only the 
   # posterior mean for Lambda and Sigma 

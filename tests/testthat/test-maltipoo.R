@@ -12,7 +12,7 @@ test_that("maltipoo wrapper correctness", {
   Gamma <- delta_true*U
   upsilon <- D+3000
   Xi <- diag(D-1)
-  Sigma <- Xi/(upsilon-D-2)
+  Sigma <- Xi/(upsilon-D)
   
   # Mean Zero
   Theta <- matrix(0, D-1, Q)
@@ -34,11 +34,11 @@ test_that("maltipoo wrapper correctness", {
   # Laplace approximation contains true value # given the true value
   p0.25 <- apply(fit$Eta, c(1,2), function(x) quantile(x, probs=0.0025))
   p99.75 <- apply(fit$Eta, c(1,2), function(x) quantile(x, probs=0.9975))
-  expect_true(sum(!((p0.25 <= Eta) & (p99.75 >= Eta))) < 0.2*sim$N*(sim$D-1))
+  expect_true(sum(!((p0.25 <= Eta) & (p99.75 >= Eta))) < 0.02*N*(D-1))
   
   # Check Lambda
-  expect_true(mean(abs(apply(fit$Lambda, c(1,2), mean) - B)) < 0.5)
+  expect_true(mean(abs(apply(fit$Lambda, c(1,2), mean) - B)) < 0.01)
   p0.25 <- apply(fit$Lambda, c(1,2), function(x) quantile(x, probs=0.0025))
   p99.75 <- apply(fit$Lambda, c(1,2), function(x) quantile(x, probs=0.9975))
-  expect_true(sum(!((p0.25 <= B) & (p99.75 >= B))) < 0.2*sim$N*(sim$D-1))
+  expect_true(sum(!((p0.25 <= B) & (p99.75 >= B))) < 0.02*N*(D-1))
 })

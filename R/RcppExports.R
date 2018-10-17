@@ -124,7 +124,7 @@ optimMaltipooCollapsed <- function(Y, upsilon, Theta, X, K, U, init, ellinit, n_
 #' 
 #' # Priors
 #' upsilon <- D+10
-#' Xi <- Sigma*(upsilon-D-2)
+#' Xi <- Sigma*(upsilon-D)
 #' 
 #' # Precompute
 #' K <- solve(Xi)

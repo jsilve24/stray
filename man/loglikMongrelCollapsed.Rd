@@ -64,7 +64,7 @@ for (i in 1:N) Y[,i] <- rmultinom(1, sample(5000:10000), prob = Pi[,i])
 
 # Priors
 upsilon <- D+10
-Xi <- Sigma*(upsilon-D-2)
+Xi <- Sigma*(upsilon-D)
 
 # Precompute
 K <- solve(Xi)

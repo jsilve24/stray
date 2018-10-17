@@ -28,7 +28,7 @@ be present to sample Eta)}
 (default: diag(Q))}
 
 \item{Xi}{(D-1)x(D-1) prior covariance matrix
-(default: ALR transform of diag(1)*(upsilon-D-2)/2 - this is
+(default: ALR transform of diag(1)*(upsilon-D)/2 - this is
 essentially iid on "base scale" using Aitchison terminology)}
 
 \item{init}{(D-1) x Q initialization for Eta for optimization}

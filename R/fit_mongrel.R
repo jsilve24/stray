@@ -19,7 +19,7 @@
 #' @param Gamma QxQ prior covariance matrix 
 #'   (default: diag(Q))
 #' @param Xi (D-1)x(D-1) prior covariance matrix
-#'   (default: ALR transform of diag(1)*(upsilon-D-2)/2 - this is 
+#'   (default: ALR transform of diag(1)*(upsilon-D)/2 - this is 
 #'   essentially iid on "base scale" using Aitchison terminology)
 #' @param init (D-1) x Q initialization for Eta for optimization
 #' @param pars character vector of posterior parameters to return
@@ -92,7 +92,7 @@ mongrel <- function(Y=NULL, X=NULL, upsilon=NULL, Theta=NULL, Gamma=NULL, Xi=NUL
     # Xi <- 0.5*G%*%diag(D)%*%t(G) ## default is iid on base scale
     Xi <- matrix(0.5, D-1, D-1) # same as commented out above 2 lines
     diag(Xi) <- 1               # same as commented out above 2 lines
-    Xi <- Xi*(upsilon-D-2) # make inverse wishart mean Xi as in previous lines 
+    Xi <- Xi*(upsilon-D) # make inverse wishart mean Xi as in previous lines 
   }
   
   # check dimensions

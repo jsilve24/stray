@@ -45,7 +45,7 @@
 #   # Priors
 #   if (true_priors){
 #     upsilon <- D+50
-#     Xi <- Sigma*(upsilon-D-2)
+#     Xi <- Sigma*(upsilon-D)
 #   } else {
 #     upsilon <- D
 #     Xi <- diag(D-1)

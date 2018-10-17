@@ -28,7 +28,7 @@
 # Gamma <- delta_true*U
 # upsilon <- D+30
 # Xi <- diag(D-1)
-# Sigma <- Xi/(upsilon-D-2)
+# Sigma <- Xi/(upsilon-D)
 # 
 # # Mean Zero
 # Theta <- matrix(0, D-1, Q)
@@ -65,7 +65,7 @@
 # Gamma <- delta_true*U
 # upsilon <- D+30
 # Xi <- diag(D-1)
-# Sigma <- Xi/(upsilon-D-2)
+# Sigma <- Xi/(upsilon-D)
 # 
 # # Mean Zero
 # Theta <- matrix(0, D-1, Q)

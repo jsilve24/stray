@@ -205,12 +205,12 @@ List optimMaltipooCollapsed(const Eigen::ArrayXXd Y,
       } else if (decomp_method == "cholesky"){
         //Cholesky Decomposition
         Eigen::LLT<MatrixXd> hesssqrt;
-        hesssqrt.compute(hess);
-        if (hesssqrt.info() != 1){
+        hesssqrt.compute(-hess);
+        if (hesssqrt.info() == Eigen::NumericalIssue){
           if (no_error){
-            Rcpp::warning("Cholesky of Hessian failed, probably not positive definite");
+            Rcpp::warning("Cholesky of Hessian failed with status status Eigen::NumericalIssue");
           } else if (!no_error){
-            Rcpp::stop("Cholesky of Hessian failed, probably not positive definite");
+            Rcpp::stop("Cholesky of Hessian failed with status Eigen::NumericalIssue");
           }
         }
         NumericVector r(n_samples*N*(D-1));

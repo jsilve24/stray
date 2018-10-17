@@ -273,11 +273,11 @@ List optimMongrelCollapsed(const Eigen::ArrayXXd Y,
             MatrixXd working_block = hess.block(j*(D-1), 0, D-1, D-1);
             Eigen::LLT<MatrixXd> block_hesssqrt;
             block_hesssqrt.compute(-working_block);
-            if (block_hesssqrt.info() != 1){
+            if (block_hesssqrt.info() == Eigen::NumericalIssue){
               if (no_error){
-                Rcpp::warning("Cholesky of Hessian failed, probably not positive definite");
+                Rcpp::warning("Cholesky of Hessian failed with status status Eigen::NumericalIssue");
               } else if (!no_error){
-                Rcpp::stop("Cholesky of Hessian failed, probably not positive definite");
+                Rcpp::stop("Cholesky of Hessian failed with status Eigen::NumericalIssue");
               }
             }
             hesssqrt.block(j*(D-1), j*(D-1), D-1, D-1) += block_hesssqrt.matrixL().solve(MatrixXd::Identity(N*(D-1),N*(D-1)));
@@ -296,13 +296,13 @@ List optimMongrelCollapsed(const Eigen::ArrayXXd Y,
         } else {
           Eigen::LLT<MatrixXd> hesssqrt;
           hesssqrt.compute(-hess);
-          if (hesssqrt.info() != 1){
+          if (hesssqrt.info() == Eigen::NumericalIssue){
             if (no_error){
-              Rcpp::warning("Cholesky of Hessian failed, probably not positive definite");
+              Rcpp::warning("Cholesky of Hessian failed with status status Eigen::NumericalIssue");
             } else if (!no_error){
-              Rcpp::stop("Cholesky of Hessian failed, probably not positive definite");
+                Rcpp::stop("Cholesky of Hessian failed with status Eigen::NumericalIssue");
             }
-          }          
+          }
           NumericVector r(n_samples*N*(D-1));
           r = rnorm(n_samples*N*(D-1), 0, 1); // using vectorization from Rcpp sugar
           Map<VectorXd> rvec(as<Map<VectorXd> >(r));

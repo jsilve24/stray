@@ -114,7 +114,7 @@ List uncollapseMongrelCollapsed(const Eigen::Map<Eigen::VectorXd> eta, // note t
       Map<VectorXd> LambdaNVec(LambdaN.data(), LambdaN.size());
       Map<VectorXd> XiNVec(XiN.data(), XiN.size());
       LambdaDrawO.col(i) = LambdaNVec;
-      SigmaDrawO.col(i) = (upsilonN-D-2)*XiNVec; // mean of inverse wishart
+      SigmaDrawO.col(i) = (upsilonN-D)*XiNVec; // mean of inverse wishart
     } else {
       // Draw Random Component
       LSigmaDraw = rInvWishCholesky(upsilonN, XiN).matrix();

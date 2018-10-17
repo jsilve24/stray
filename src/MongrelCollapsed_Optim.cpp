@@ -272,7 +272,7 @@ List optimMongrelCollapsed(const Eigen::ArrayXXd Y,
             if (verbose) Rcout << "Decomposing Hessian of block #" << (j+1) << std::endl;
             MatrixXd working_block = hess.block(j*(D-1), 0, D-1, D-1);
             Eigen::LLT<MatrixXd> block_hesssqrt;
-            block_hesssqrt.compute(working_block);
+            block_hesssqrt.compute(-working_block);
             if (block_hesssqrt.info() != 1){
               if (no_error){
                 Rcpp::warning("Cholesky of Hessian failed, probably not positive definite");
@@ -295,7 +295,7 @@ List optimMongrelCollapsed(const Eigen::ArrayXXd Y,
           out[4] = samples;
         } else {
           Eigen::LLT<MatrixXd> hesssqrt;
-          hesssqrt.compute(hess);
+          hesssqrt.compute(-hess);
           if (hesssqrt.info() != 1){
             if (no_error){
               Rcpp::warning("Cholesky of Hessian failed, probably not positive definite");

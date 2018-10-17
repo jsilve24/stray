@@ -35,7 +35,7 @@ mongrel_sim <- function(D=10, N=30, Q=2, use_names=TRUE, true_priors=FALSE){
   # Priors
   if (true_priors){
     upsilon <- D+10
-    Xi <- Sigma*(upsilon-D-2)
+    Xi <- Sigma*(upsilon-D)
   } else {
     upsilon <- D
     Xi <- diag(D-1)

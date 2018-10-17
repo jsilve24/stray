@@ -40,7 +40,7 @@
 #' 
 #' # Priors
 #' upsilon <- D+10
-#' Xi <- Sigma*(upsilon-D-2)
+#' Xi <- Sigma*(upsilon-D)
 #' 
 #' # Precompute
 #' K <- solve(Xi)

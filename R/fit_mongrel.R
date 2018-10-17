@@ -99,7 +99,7 @@ mongrel <- function(Y=NULL, X=NULL, upsilon=NULL, Theta=NULL, Gamma=NULL, Xi=NUL
     # Xi <- 0.5*G%*%diag(D)%*%t(G) ## default is iid on base scale
     Xi <- matrix(0.5, D-1, D-1) # same as commented out above 2 lines
     diag(Xi) <- 1               # same as commented out above 2 lines
-    Xi <- Xi*(upsilon-D-2) # make inverse wishart mean Xi as in previous lines 
+    Xi <- Xi*(upsilon-D) # make inverse wishart mean Xi as in previous lines 
   }
   
   # check dimensions

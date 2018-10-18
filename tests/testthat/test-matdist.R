@@ -63,8 +63,17 @@ test_that("InvWishart Correctness of Mean", {
 })
 
 test_that("Unit normal filler is correct",{
-  x <- c(rMatUnitNormal_test(1000,1000))
-  expect_equal(mean(x), 0, tolerance=0.01)
-  expect_equal(var(x), 1, tolerance=0.01)
+  x <- rMatUnitNormal_test1(1000,1000)
+  expect_equal(dim(x), c(1000, 1000))
+  x <- c(x)
+  expect_equal(mean(x), 0, tolerance=0.02)
+  expect_equal(var(x), 1, tolerance=0.02)
+  
+  # Test that unit normal filler handles VectorXd objects as well. 
+  x <- rMatUnitNormal_test2(100000)
+  expect_equal(dim(x), c(100000, 1))
+  x <- c(x)
+  expect_equal(mean(x), 0, tolerance=0.02)
+  expect_equal(var(x), 1, tolerance=0.02)
 })
 

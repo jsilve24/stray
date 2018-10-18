@@ -141,7 +141,6 @@ List uncollapseMongrelCollapsed(const Eigen::Map<Eigen::VectorXd> eta, // note t
   return out;
 }
 
-
 // A few functions for testing MatDist Functions
 // [[Rcpp::export]]
 Eigen::MatrixXd rMatNormalCholesky_test(Eigen::MatrixXd M, 
@@ -154,10 +153,17 @@ Eigen::MatrixXd rMatNormalCholesky_test(Eigen::MatrixXd M,
 Eigen::MatrixXd rInvWishCholesky_test(int v, Eigen::MatrixXd Psi){
   return rInvWishCholesky(v, Psi);
 }
-  
+
 // [[Rcpp::export]]
-Eigen::MatrixXd rMatUnitNormal_test(int n, int m){
+Eigen::MatrixXd rMatUnitNormal_test1(int n, int m){
   MatrixXd X(n,m);
+  fillUnitNormal(X);
+  return X;
+}
+
+// [[Rcpp::export]]
+Eigen::MatrixXd rMatUnitNormal_test2(int n){
+  VectorXd X(n);
   fillUnitNormal(X);
   return X;
 }

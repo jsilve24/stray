@@ -164,7 +164,7 @@ mongrel <- function(Y=NULL, X=NULL, upsilon=NULL, Theta=NULL, Gamma=NULL, Xi=NUL
   fitc <- optimMongrelCollapsed(Y, upsilon, Theta%*%X, K, A, init, n_samples, 
                                 calcGradHess, b1, b2, step_size, epsilon, eps_f, 
                                 eps_g, max_iter, verbose, verbose_rate, 
-                                decomp_method, eigvalthresh, no_error=TRUE, 
+                                decomp_method, eigvalthresh, 
                                 jitter)
 
   # if n_samples=0 or if hessian fails, then use MAP eta estimate for 

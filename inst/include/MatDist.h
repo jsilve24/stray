@@ -44,7 +44,7 @@ void fillUnitNormal(Eigen::DenseBase<Derived>& Z){
 //' LV <- t(chol(V))
 //' LU <- t(chol(U))
 //' rMatNormalCholesky(M, LU, LV)
-Eigen::MatrixXd rMatNormalCholesky(const Eigen::Ref<const Eigen::MatrixXd>& M, 
+inline Eigen::MatrixXd rMatNormalCholesky(const Eigen::Ref<const Eigen::MatrixXd>& M, 
                                    const Eigen::Ref<const Eigen::MatrixXd>& LU,
                                    const Eigen::Ref<const Eigen::MatrixXd>& LV){
   int nrows = M.rows();
@@ -75,7 +75,7 @@ Eigen::MatrixXd rMatNormalCholesky(const Eigen::Ref<const Eigen::MatrixXd>& M,
 //' @name InvWishart
 //' 
 //' @return Matrix
-Eigen::MatrixXd rInvWishCholesky(const int v, 
+inline Eigen::MatrixXd rInvWishCholesky(const int v, 
                                  const Eigen::Ref<const Eigen::MatrixXd>& Psi){
   int p = Psi.rows();
   MatrixXd L(Psi.llt().matrixL());

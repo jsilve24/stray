@@ -55,5 +55,5 @@ test_that("hessian agrees with finite differences", {
   A <- solve(diag(sim$N) + t(sim$X) %*% sim$Gamma %*% sim$X)
   hess <- hessMongrelCollapsed(sim$Y, sim$upsilon, sim$Theta%*%sim$X, 
                                solve(sim$Xi), A, sim$Eta)
-  expect_equal(hess.nd, -hess)
+  expect_equal(hess.nd, -hess, tolerance=1e-6)
 })

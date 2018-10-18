@@ -1,6 +1,6 @@
 context("test-main.R")
 library(driver)
-# set.seed(4)
+set.seed(4)
 
 
 sim <- mongrel_sim(true_priors=TRUE)

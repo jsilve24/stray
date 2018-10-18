@@ -103,6 +103,8 @@ hessMongrelCollapsed <- function(Y, upsilon, ThetaX, K, A, eta) {
 #'   not positive definite. 
 #' @param jitter (default: 0) if >0 then adds that factor to diagonal of Hessian 
 #' before decomposition (to improve matrix conditioning)
+#' @param calcPartialHess if true only calculates hessian of multinomial 
+#'   much more computationaly and memory efficient but it is an approximation. 
 #'   
 #' @details Notation: Let Z_j denote the J-th row of a matrix Z.
 #' Model:
@@ -151,8 +153,8 @@ hessMongrelCollapsed <- function(Y, upsilon, ThetaX, K, A, eta) {
 #' # Fit model for eta
 #' fit <- optimMongrelCollapsed(sim$Y, sim$upsilon, sim$Theta%*%sim$X, sim$K, 
 #'                              sim$A, random_mongrel_init(sim$Y))  
-optimMongrelCollapsed <- function(Y, upsilon, ThetaX, K, A, init, n_samples = 2000L, calcGradHess = TRUE, b1 = 0.9, b2 = 0.99, step_size = 0.003, epsilon = 10e-7, eps_f = 1e-10, eps_g = 1e-4, max_iter = 10000L, verbose = FALSE, verbose_rate = 10L, decomp_method = "eigen", eigvalthresh = 0, no_error = FALSE, jitter = 0, calcPartialHess = FALSE) {
-    .Call('_mongrel_optimMongrelCollapsed', PACKAGE = 'mongrel', Y, upsilon, ThetaX, K, A, init, n_samples, calcGradHess, b1, b2, step_size, epsilon, eps_f, eps_g, max_iter, verbose, verbose_rate, decomp_method, eigvalthresh, no_error, jitter, calcPartialHess)
+optimMongrelCollapsed <- function(Y, upsilon, ThetaX, K, A, init, n_samples = 2000L, calcGradHess = TRUE, b1 = 0.9, b2 = 0.99, step_size = 0.003, epsilon = 10e-7, eps_f = 1e-10, eps_g = 1e-4, max_iter = 10000L, verbose = FALSE, verbose_rate = 10L, decomp_method = "eigen", eigvalthresh = 0, jitter = 0, calcPartialHess = FALSE) {
+    .Call('_mongrel_optimMongrelCollapsed', PACKAGE = 'mongrel', Y, upsilon, ThetaX, K, A, init, n_samples, calcGradHess, b1, b2, step_size, epsilon, eps_f, eps_g, max_iter, verbose, verbose_rate, decomp_method, eigvalthresh, jitter, calcPartialHess)
 }
 
 #' Uncollapse output from optimMongrelCollapsed to full Mongrel Model
@@ -221,7 +223,23 @@ rInvWishCholesky_test <- function(v, Psi) {
     .Call('_mongrel_rInvWishCholesky_test', PACKAGE = 'mongrel', v, Psi)
 }
 
-rMatUnitNormal_test <- function(n, m) {
-    .Call('_mongrel_rMatUnitNormal_test', PACKAGE = 'mongrel', n, m)
+rMatUnitNormal_test1 <- function(n, m) {
+    .Call('_mongrel_rMatUnitNormal_test1', PACKAGE = 'mongrel', n, m)
+}
+
+rMatUnitNormal_test2 <- function(n) {
+    .Call('_mongrel_rMatUnitNormal_test2', PACKAGE = 'mongrel', n)
+}
+
+eigen_lap_test <- function(n_samples, m, S, eigvalthresh) {
+    .Call('_mongrel_eigen_lap_test', PACKAGE = 'mongrel', n_samples, m, S, eigvalthresh)
+}
+
+cholesky_lap_test <- function(n_samples, m, S, eigvalthresh) {
+    .Call('_mongrel_cholesky_lap_test', PACKAGE = 'mongrel', n_samples, m, S, eigvalthresh)
+}
+
+LaplaceApproximation_test <- function(n_samples, m, S, decomp_method, eigvalthresh) {
+    .Call('_mongrel_LaplaceApproximation_test', PACKAGE = 'mongrel', n_samples, m, S, decomp_method, eigvalthresh)
 }
 

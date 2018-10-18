@@ -174,6 +174,22 @@ class MaltipooCollapsed : public Numer::MFuncGrad
       return H;
     }
     
+    // should return blocks of size D-1 x D-1 stacked in a N(D-1) x D-1 matrix
+    MatrixXd calcPartialHess(){
+      // For Multinomial only
+      MatrixXd H = ArrayXXd::Zero(N*(D-1), D-1);
+      MatrixXd W(D-1, D-1);
+      VectorXd rhoseg(D-1);
+      for (int j=0; j<N; j++){
+        rhoseg = rho.segment(j*(D-1), D-1); // rho calculated in updateWithEtaGH()
+        W.noalias() = rhoseg*rhoseg.transpose();
+        W.diagonal() -= rhoseg;
+        H.block(j*(D-1), 0, D-1, D-1).noalias() += n(j)*W;
+      }
+      return H;
+    }
+    
+    
     // function for use by ADAMOptimizer wrapper (and for RcppNumeric L-BFGS)
     virtual double f_grad(Numer::Constvec& pars, Numer::Refvec grad){
       const Map<const VectorXd> eta(pars.head(N*(D-1)).data(), N*D-1);

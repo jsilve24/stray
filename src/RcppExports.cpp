@@ -7,8 +7,8 @@
 using namespace Rcpp;
 
 // optimMaltipooCollapsed
-List optimMaltipooCollapsed(const Eigen::ArrayXXd Y, const double upsilon, const Eigen::MatrixXd Theta, const Eigen::MatrixXd X, const Eigen::MatrixXd K, const Eigen::MatrixXd U, Eigen::MatrixXd init, Eigen::VectorXd ellinit, int n_samples, bool calcGradHess, double b1, double b2, double step_size, double epsilon, double eps_f, double eps_g, int max_iter, bool verbose, int verbose_rate, String decomp_method, double eigvalthresh, bool no_error, double jitter);
-RcppExport SEXP _mongrel_optimMaltipooCollapsed(SEXP YSEXP, SEXP upsilonSEXP, SEXP ThetaSEXP, SEXP XSEXP, SEXP KSEXP, SEXP USEXP, SEXP initSEXP, SEXP ellinitSEXP, SEXP n_samplesSEXP, SEXP calcGradHessSEXP, SEXP b1SEXP, SEXP b2SEXP, SEXP step_sizeSEXP, SEXP epsilonSEXP, SEXP eps_fSEXP, SEXP eps_gSEXP, SEXP max_iterSEXP, SEXP verboseSEXP, SEXP verbose_rateSEXP, SEXP decomp_methodSEXP, SEXP eigvalthreshSEXP, SEXP no_errorSEXP, SEXP jitterSEXP) {
+List optimMaltipooCollapsed(const Eigen::ArrayXXd Y, const double upsilon, const Eigen::MatrixXd Theta, const Eigen::MatrixXd X, const Eigen::MatrixXd K, const Eigen::MatrixXd U, Eigen::MatrixXd init, Eigen::VectorXd ellinit, int n_samples, bool calcGradHess, double b1, double b2, double step_size, double epsilon, double eps_f, double eps_g, int max_iter, bool verbose, int verbose_rate, String decomp_method, double eigvalthresh, double jitter, bool calcPartialHess);
+RcppExport SEXP _mongrel_optimMaltipooCollapsed(SEXP YSEXP, SEXP upsilonSEXP, SEXP ThetaSEXP, SEXP XSEXP, SEXP KSEXP, SEXP USEXP, SEXP initSEXP, SEXP ellinitSEXP, SEXP n_samplesSEXP, SEXP calcGradHessSEXP, SEXP b1SEXP, SEXP b2SEXP, SEXP step_sizeSEXP, SEXP epsilonSEXP, SEXP eps_fSEXP, SEXP eps_gSEXP, SEXP max_iterSEXP, SEXP verboseSEXP, SEXP verbose_rateSEXP, SEXP decomp_methodSEXP, SEXP eigvalthreshSEXP, SEXP jitterSEXP, SEXP calcPartialHessSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -33,9 +33,9 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< int >::type verbose_rate(verbose_rateSEXP);
     Rcpp::traits::input_parameter< String >::type decomp_method(decomp_methodSEXP);
     Rcpp::traits::input_parameter< double >::type eigvalthresh(eigvalthreshSEXP);
-    Rcpp::traits::input_parameter< bool >::type no_error(no_errorSEXP);
     Rcpp::traits::input_parameter< double >::type jitter(jitterSEXP);
-    rcpp_result_gen = Rcpp::wrap(optimMaltipooCollapsed(Y, upsilon, Theta, X, K, U, init, ellinit, n_samples, calcGradHess, b1, b2, step_size, epsilon, eps_f, eps_g, max_iter, verbose, verbose_rate, decomp_method, eigvalthresh, no_error, jitter));
+    Rcpp::traits::input_parameter< bool >::type calcPartialHess(calcPartialHessSEXP);
+    rcpp_result_gen = Rcpp::wrap(optimMaltipooCollapsed(Y, upsilon, Theta, X, K, U, init, ellinit, n_samples, calcGradHess, b1, b2, step_size, epsilon, eps_f, eps_g, max_iter, verbose, verbose_rate, decomp_method, eigvalthresh, jitter, calcPartialHess));
     return rcpp_result_gen;
 END_RCPP
 }

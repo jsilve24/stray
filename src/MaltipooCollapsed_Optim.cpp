@@ -1,6 +1,7 @@
 #include <MatrixAlgebra.h>
 #include <MaltipooCollapsed.h>
 #include <AdamOptim.h>
+#include <LaplaceApproximation.h>
 #include <AdamOptimPerturb.h> // optional not fully implemented yet (or helpful)
 // [[Rcpp::depends(RcppNumerical)]]
 // [[Rcpp::depends(RcppEigen)]]
@@ -113,8 +114,8 @@ List optimMaltipooCollapsed(const Eigen::ArrayXXd Y,
                int verbose_rate=10,
                String decomp_method="eigen",
                double eigvalthresh=0, 
-               bool no_error=false, 
-               double jitter=0){  
+               double jitter=0, 
+               bool calcPartialHess = false){  
   int N = Y.cols();
   int D = Y.rows();
   MaltipooCollapsed cm(Y, upsilon, Theta, X, K, U);
@@ -142,90 +143,43 @@ List optimMaltipooCollapsed(const Eigen::ArrayXXd Y,
   out[0] = -nllopt; // Return (positive) LogLik
   out[3] = etamat;
   out[5] = ell.array().exp().matrix();
-
+  
   if (n_samples > 0 || calcGradHess){
     if (verbose) Rcout << "Allocating for Hessian" << std::endl;
     MatrixXd hess(N*(D-1), N*(D-1));
     VectorXd grad(N*(D-1));
     if (verbose) Rcout << "Calculating Hessian" << std::endl;
-  grad = cm.calcGrad(ell); // should have eta at optima already
-  hess = cm.calcHess(); // should have eta at optima already
-  if (jitter > 0)       // potentially add jitter to improve conditioning
-  hess.diagonal().array() += -jitter;
-  if (verbose) Rcout << "Copying Hessian" << std::endl;
-  out[1] = grad;
-  out[2] = hess;
-
+    grad = cm.calcGrad(ell); // should have eta at optima already
+    if(calcPartialHess) {
+      hess = cm.calcPartialHess();
+    } else {
+      hess = cm.calcHess(); // should have eta at optima already
+    }
+    out[1] = grad;
+    if ((N * (D-1)) > 44750){
+      Rcpp::warning("Hessian is to large to return to R");
+    } else {
+      if (calcGradHess)
+        out[2] = hess;    
+    }
+    
     if (n_samples>0){
       // Laplace Approximation
-      if (decomp_method == "eigen"){
-        // Eigenvalue Decomposition
-        if (verbose) Rcout << "Decomposing Hessian" << std::endl;
-        Eigen::SelfAdjointEigenSolver<MatrixXd> eh(-hess); // negative hessian
-        if (verbose) Rcout << "Inverting Eigenvalues" << std::endl;
-        VectorXd evalinv(eh.eigenvalues().array().inverse().matrix());
-        int excess=0;
-        for (int i=1; i<N*(D-1); i++){
-          if (evalinv(i) < eigvalthresh) {
-            excess++;
-          }
-        }
-        if (excess > 0){
-          Rcpp::warning("Some eigenvalues are below minimum threshold");
-          Rcout << "Eigenvalues" << evalinv.transpose() << std::endl;
-        }
-        int pos = 0;
-        for (int i = N*(D-1)-1; i>=0; i--){
-          if (evalinv(pos) > 0)
-            pos++;
-        }
-        if (pos < N*(D-1)-1) {
-          Rcpp::warning("Some small negative eigenvalues are being chopped");
-          Rcout << N*(D-1)-pos << " out of " << N*(D-1) <<
-            " passed eigenvalue threshold"<< std::endl;
-        }
-        MatrixXd hesssqrt(N*(D-1), pos);
-        if (verbose) Rcout << "Calculating Square Root" << std::endl;
-        hesssqrt = eh.eigenvectors().rightCols(pos)*
-          evalinv.tail(pos).cwiseSqrt().asDiagonal(); //V*D^{-1/2}
-        // now generate random numbers...
-        if (verbose) Rcout << "Sampling Random Numbers" << std::endl;
-        NumericVector r(n_samples*pos);
-        r = rnorm(n_samples*pos, 0, 1); // using vectorization from Rcpp sugar
-        Map<VectorXd> rvec(as<Map<VectorXd> >(r));
-        Map<MatrixXd> rmat(rvec.data(), pos, n_samples);
-        MatrixXd samp(pos, n_samples);
-        samp = hesssqrt*rmat;
-        samp.colwise() += eta; // add mean of approximation
-        IntegerVector d = IntegerVector::create(D-1, N, n_samples);
-        NumericVector samples = wrap(samp);
-        samples.attr("dim") = d; // convert to 3d array for return to R
-        out[4] = samples;
-
-      } else if (decomp_method == "cholesky"){
-        //Cholesky Decomposition
-        Eigen::LLT<MatrixXd> hesssqrt;
-        hesssqrt.compute(-hess);
-        if (hesssqrt.info() == Eigen::NumericalIssue){
-          if (no_error){
-            Rcpp::warning("Cholesky of Hessian failed with status status Eigen::NumericalIssue");
-          } else if (!no_error){
-            Rcpp::stop("Cholesky of Hessian failed with status Eigen::NumericalIssue");
-          }
-        }
-        NumericVector r(n_samples*N*(D-1));
-        r = rnorm(n_samples*N*(D-1), 0, 1); // using vectorization from Rcpp sugar
-        Map<VectorXd> rvec(as<Map<VectorXd> >(r));
-        Map<MatrixXd> rmat(rvec.data(), N*(D-1), n_samples);
-        MatrixXd samp(N*(D-1), n_samples);
-        samp.noalias() = hesssqrt.matrixL().solve(rmat);  // calculate errors of approximation
-        samp.colwise() += eta; // add mean of approximation
-        IntegerVector d = IntegerVector::create(D-1, N, n_samples);
-        NumericVector samples = wrap(samp);
-        samples.attr("dim") = d; // convert to 3d array for return to R
-        out[4] = samples;
-      } //endif decomp_method
-    } // endif n_samples
-   }// endif n_samples || calcGradHess
+      int status;
+      MatrixXd samp = MatrixXd::Zero(N*(D-1), n_samples);
+      status = lapap::LaplaceApproximation(samp, eta, hess, 
+                                           decomp_method, eigvalthresh, 
+                                           jitter);
+      if (status != 0){
+        Rcpp::warning("Decomposition of Hessian Failed, returning MAP Estimate only");
+        return out;
+      }
+      
+      IntegerVector d = IntegerVector::create(D-1, N, n_samples);
+      NumericVector samples = wrap(samp);
+      samples.attr("dim") = d; // convert to 3d array for return to R
+      out[4] = samples;
+    } // endif n_samples || calcGradHess
+  } // endif n_samples || calcGradHess
   return out;
 }

@@ -303,8 +303,8 @@ rMatNormalCholesky_test <- function(M, LU, LV) {
     .Call('_mongrel_rMatNormalCholesky_test', PACKAGE = 'mongrel', M, LU, LV)
 }
 
-rInvWishCholesky_test <- function(v, Psi) {
-    .Call('_mongrel_rInvWishCholesky_test', PACKAGE = 'mongrel', v, Psi)
+rInvWishRevCholesky_test <- function(v, Psi) {
+    .Call('_mongrel_rInvWishRevCholesky_test', PACKAGE = 'mongrel', v, Psi)
 }
 
 rMatUnitNormal_test1 <- function(n, m) {

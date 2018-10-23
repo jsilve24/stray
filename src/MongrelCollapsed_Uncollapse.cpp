@@ -117,7 +117,8 @@ List uncollapseMongrelCollapsed(const Eigen::Map<Eigen::VectorXd> eta, // note t
       SigmaDrawO.col(i) = (upsilonN-D)*XiNVec; // mean of inverse wishart
     } else {
       // Draw Random Component
-      LSigmaDraw = rInvWishCholesky(upsilonN, XiN).matrix();
+      LSigmaDraw = rInvWishRevCholesky(upsilonN, XiN).matrix();
+      // Note: Below is valid even though LSigmaDraw is reverse cholesky factor
       LambdaDraw = rMatNormalCholesky(LambdaN, LSigmaDraw, LGammaN.matrix());
       
       // map output to vectors
@@ -150,8 +151,8 @@ Eigen::MatrixXd rMatNormalCholesky_test(Eigen::MatrixXd M,
 }
 
 // [[Rcpp::export]]
-Eigen::MatrixXd rInvWishCholesky_test(int v, Eigen::MatrixXd Psi){
-  return rInvWishCholesky(v, Psi);
+Eigen::MatrixXd rInvWishRevCholesky_test(int v, Eigen::MatrixXd Psi){
+  return rInvWishRevCholesky(v, Psi);
 }
 
 // [[Rcpp::export]]

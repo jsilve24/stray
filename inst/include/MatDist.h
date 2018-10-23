@@ -53,7 +53,7 @@ inline Eigen::MatrixXd rMatNormalCholesky(const Eigen::Ref<const Eigen::MatrixXd
   MatrixXd X(nrows, ncols);
   
   fillUnitNormal(Z);
-  X = M + LU.triangularView<Lower>()*Z*LV.triangularView<Lower>().transpose();
+  X = M + LU*Z*LV.transpose();
   return X;
 }
 
@@ -72,10 +72,12 @@ inline Eigen::MatrixXd rMatNormalCholesky(const Eigen::Ref<const Eigen::MatrixXd
 //' via the Bartlett Decomposition. Mean is given by Psi/(v-P-1). 
 //' Mode is given by Psi/(v+P+1). Does minor imput validation to ensure v > P-1, 
 //' throws range_error if not false. 
+//' 
 //' @name InvWishart
 //' 
-//' @return Matrix
-inline Eigen::MatrixXd rInvWishCholesky(const int v, 
+//' @return Reverse cholesky factor of the inverse wishart sample. That is it
+//' returns an upper triangular matrix U such if V=UU^T, V ~ IW(v, Psi).
+inline Eigen::MatrixXd rInvWishRevCholesky(const int v, 
                                  const Eigen::Ref<const Eigen::MatrixXd>& Psi){
   int p = Psi.rows();
   MatrixXd PsiInv = Psi.llt().solve(MatrixXd::Identity(p,p));
@@ -96,8 +98,9 @@ inline Eigen::MatrixXd rInvWishCholesky(const int v,
   }
   MatrixXd Y;
   Y.noalias() = PsiInv.llt().matrixL()*X;
-  X.noalias() = Y*Y.transpose();
-  return X.llt().solve(MatrixXd::Identity(p,p)).llt().matrixL();
+  //X.noalias() = Y*Y.transpose();
+  //return X.llt().solve(MatrixXd::Identity(p,p)).llt().matrixL();
+  return Y.triangularView<Lower>().solve(MatrixXd::Identity(p,p)).transpose();
 }
 
 #endif

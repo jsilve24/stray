@@ -148,15 +148,15 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// rInvWishCholesky_test
-Eigen::MatrixXd rInvWishCholesky_test(int v, Eigen::MatrixXd Psi);
-RcppExport SEXP _mongrel_rInvWishCholesky_test(SEXP vSEXP, SEXP PsiSEXP) {
+// rInvWishRevCholesky_test
+Eigen::MatrixXd rInvWishRevCholesky_test(int v, Eigen::MatrixXd Psi);
+RcppExport SEXP _mongrel_rInvWishRevCholesky_test(SEXP vSEXP, SEXP PsiSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< int >::type v(vSEXP);
     Rcpp::traits::input_parameter< Eigen::MatrixXd >::type Psi(PsiSEXP);
-    rcpp_result_gen = Rcpp::wrap(rInvWishCholesky_test(v, Psi));
+    rcpp_result_gen = Rcpp::wrap(rInvWishRevCholesky_test(v, Psi));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -235,7 +235,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_mongrel_optimMongrelCollapsed", (DL_FUNC) &_mongrel_optimMongrelCollapsed, 21},
     {"_mongrel_uncollapseMongrelCollapsed", (DL_FUNC) &_mongrel_uncollapseMongrelCollapsed, 7},
     {"_mongrel_rMatNormalCholesky_test", (DL_FUNC) &_mongrel_rMatNormalCholesky_test, 3},
-    {"_mongrel_rInvWishCholesky_test", (DL_FUNC) &_mongrel_rInvWishCholesky_test, 2},
+    {"_mongrel_rInvWishRevCholesky_test", (DL_FUNC) &_mongrel_rInvWishRevCholesky_test, 2},
     {"_mongrel_rMatUnitNormal_test1", (DL_FUNC) &_mongrel_rMatUnitNormal_test1, 2},
     {"_mongrel_rMatUnitNormal_test2", (DL_FUNC) &_mongrel_rMatUnitNormal_test2, 1},
     {"_mongrel_eigen_lap_test", (DL_FUNC) &_mongrel_eigen_lap_test, 4},

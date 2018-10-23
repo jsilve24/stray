@@ -50,15 +50,16 @@ test_that("MVN correctness of Covariances", {
 
 test_that("InvWishart Correctness of Mean", {
   Psi <- matrix(c(1,.5,.5, 2), ncol=2)
-  v <- 10
+  v <- 4
   t <- 10000
   Sigma <- array(0, dim=c(2,2,t))
   for (i in 1:t){
-    Sigma[,,i] <- rInvWishCholesky_test(v, Psi)
+    Sigma[,,i] <- rInvWishRevCholesky_test(v, Psi)
     Sigma[,,i] <- tcrossprod(Sigma[,,i])
   }
-  expect_equal(apply(Sigma, c(1,2), mean), Psi/(v-2-1), tolerance=0.05)
+  expect_equal(apply(Sigma, c(1,2), mean), Psi/(v-2-1), tolerance=0.1)
 })
+
 
 test_that("Unit normal filler is correct",{
   x <- rMatUnitNormal_test1(1000,1000)

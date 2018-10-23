@@ -8,8 +8,8 @@ optimMaltipooCollapsed(Y, upsilon, Theta, X, K, U, init, ellinit,
   n_samples = 2000L, calcGradHess = TRUE, b1 = 0.9, b2 = 0.99,
   step_size = 0.003, epsilon = 1e-06, eps_f = 1e-10, eps_g = 1e-04,
   max_iter = 10000L, verbose = FALSE, verbose_rate = 10L,
-  decomp_method = "eigen", eigvalthresh = 0, no_error = FALSE,
-  jitter = 0)
+  decomp_method = "eigen", eigvalthresh = 0, jitter = 0,
+  calcPartialHess = FALSE)
 }
 \arguments{
 \item{Y}{D x N matrix of counts}
@@ -59,11 +59,11 @@ iteration number}
 \item{eigvalthresh}{threshold for negative eigenvalues in
 decomposition of negative inverse hessian (should be <=0)}
 
-\item{no_error}{if true will throw hessian warning rather than error if
-not positive definite.}
-
 \item{jitter}{(default: 0) if >0 then adds that factor to diagonal of Hessian
 before decomposition (to improve matrix conditioning)}
+
+\item{no_error}{if true will throw hessian warning rather than error if
+not positive definite.}
 }
 \value{
 List containing (all with respect to found optima)

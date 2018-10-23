@@ -78,7 +78,7 @@ inline Eigen::MatrixXd rMatNormalCholesky(const Eigen::Ref<const Eigen::MatrixXd
 inline Eigen::MatrixXd rInvWishCholesky(const int v, 
                                  const Eigen::Ref<const Eigen::MatrixXd>& Psi){
   int p = Psi.rows();
-  MatrixXd L(Psi.llt().matrixL());
+  MatrixXd PsiInv = Psi.llt().solve(MatrixXd::Identity(p,p));
   if (v <= p-1)
     Rcpp::stop("v must be > Psi.rows - 1");
   VectorXd z(p*(p-1)/2);
@@ -94,10 +94,10 @@ inline Eigen::MatrixXd rInvWishCholesky(const int v,
       pos++;
     }
   }
-  MatrixXd Y(p,p);
-  Y = L.triangularView<Lower>().solve(X).triangularView<Lower>().
-      solve(MatrixXd::Identity(p,p));
-  return Y;
+  MatrixXd Y;
+  Y.noalias() = PsiInv.llt().matrixL()*X;
+  X.noalias() = Y*Y.transpose();
+  return X.llt().solve(MatrixXd::Identity(p,p)).llt().matrixL();
 }
 
 #endif

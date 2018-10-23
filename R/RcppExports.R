@@ -28,7 +28,7 @@
 #' @md
 #' @examples
 #' sim <- mongrel_sim()
-#' eta.hat <- t(alr(t(sim$Y+0.65)))
+#' eta.hat <- t(driver::alr(t(sim$Y+0.65)))
 #' fit <- conjugateLinearModel(eta.hat, sim$X, sim$Theta, sim$Gamma, 
 #'                             sim$Xi, sim$upsilon, n_samples=2000)
 conjugateLinearModel <- function(Y, X, Theta, Gamma, Xi, upsilon, n_samples = 2000L) {

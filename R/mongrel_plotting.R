@@ -39,7 +39,6 @@ plot_mf_lambdaeta <- function(m, par, focus.cov=NULL, focus.coord=NULL,
   data <- summary.mongrelfit(m, pars=par, use_names=use_names, gather_prob=TRUE)
   data <- data[[par]]
   
-  
   # some code to handle numeric focuses
   
   # Focus 

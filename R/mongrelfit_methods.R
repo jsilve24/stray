@@ -450,15 +450,15 @@ sample_prior.mongrelfit <- function(m, n_samples=2000,
   m <- mongrel_to_alr(m, m$D)
   
   # Sample Priors - Sigma
-  LSigmaInv <- rWishart(n_samples, m$upsilon, solve(m$Xi))
-  for (i in 1:n_samples) LSigmaInv[,,i] <- t(chol(LSigmaInv[,,i]))
+  USigmaInv <- rWishart(n_samples, m$upsilon, solve(m$Xi))
+  for (i in 1:n_samples) USigmaInv[,,i] <- chol(USigmaInv[,,i])
   
   # Sample Priors - Lambda
   if (any(c("Eta", "Lambda") %in% pars)){
     Lambda <- array(rnorm((m$D-1)*m$Q*n_samples), dim=c(m$D-1, m$Q, n_samples)) 
     UGamma <- chol(m$Gamma)
     for (i in 1:n_samples){
-      Lambda[,,i] <- m$Theta + forwardsolve(LSigmaInv[,,i], Lambda[,,i]) %*% UGamma 
+      Lambda[,,i] <- m$Theta + backsolve(USigmaInv[,,i], Lambda[,,i]) %*% UGamma 
     }  
   }
   
@@ -467,14 +467,17 @@ sample_prior.mongrelfit <- function(m, n_samples=2000,
     req(m, "X")
     Eta <- array(rnorm((m$D-1)*m$N*n_samples), dim=c(m$D-1, m$N, n_samples))
     for (i in 1:n_samples) {
-      Eta[,,i] <- Lambda[,,i] %*% m$X + forwardsolve(LSigmaInv[,,i], Eta[,,i])
+      Eta[,,i] <- Lambda[,,i] %*% m$X + backsolve(USigmaInv[,,i], Eta[,,i])
     }
   }
   
   # Solve for Sigma if requested
   if ("Sigma" %in% pars){
-    Sigma <- LSigmaInv # to make code more readable at memory expense
-    for (i in 1:n_samples) Sigma[,,i] <- chol2inv(t(Sigma[,,i]))
+    Sigma <- USigmaInv # to make code more readable at memory expense
+    for (i in 1:n_samples) {
+      Sigma[,,i] <- backsolve(Sigma[,,i], diag(m$D-1))
+      Sigma[,,i] <- tcrossprod(Sigma[,,i])
+    }
   }
   
   # Convert to object of class mongrelfit

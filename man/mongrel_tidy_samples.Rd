@@ -4,13 +4,15 @@
 \alias{mongrel_tidy_samples}
 \title{Convert mongrel samples of Eta Lambda and Sigma to tidy format}
 \usage{
-mongrel_tidy_samples(m, use_names = FALSE)
+mongrel_tidy_samples(m, use_names = FALSE, as_factor = FALSE)
 }
 \arguments{
 \item{m}{an object of class mongrelfit}
 
 \item{use_names}{should dimension indices be replaced by
 dimension names if provided in data used to fit mongrel model.}
+
+\item{as_factor}{if use_names should names be returned as factor?}
 }
 \value{
 tibble

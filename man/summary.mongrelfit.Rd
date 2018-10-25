@@ -5,7 +5,7 @@
 \title{Summarise mongrelfit object and print posterior quantiles}
 \usage{
 \method{summary}{mongrelfit}(object, pars = NULL, use_names = TRUE,
-  gather_prob = FALSE, ...)
+  as_factor = FALSE, gather_prob = FALSE, ...)
 }
 \arguments{
 \item{object}{an object of class mongrelfit}
@@ -14,6 +14,9 @@
 
 \item{use_names}{should summary replace dimension indices with mongrelfit 
 names if names Y and X were named in call to \code{\link{mongrel}}}
+
+\item{as_factor}{if use_names and as_factor then returns names as factors 
+(useful for maintaining orderings when plotting)}
 
 \item{gather_prob}{if TRUE then prints quantiles in long format rather than 
 wide (useful for some plotting functions)}

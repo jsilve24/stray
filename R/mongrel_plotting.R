@@ -36,15 +36,17 @@ plot.mongrelfit <- function(m, par="Lambda", focus.cov=NULL, focus.coord=NULL,
 
 plot_mf_lambdaeta <- function(m, par, focus.cov=NULL, focus.coord=NULL, 
                               focus.sample=NULL, use_names=TRUE){
-  data <- summary.mongrelfit(m, pars=par, use_names=use_names, gather_prob=TRUE)
+  data <- summary.mongrelfit(m, pars=par, use_names=use_names, 
+                             as_factor=TRUE, gather_prob=TRUE)
   data <- data[[par]]
-  
+    
   # some code to handle numeric focuses
   
   # Focus 
   if (!is.null(focus.cov)) data <- filter(data, covariate %in% focus.cov)
   if (!is.null(focus.coord)) data <- filter(data, coord %in% focus.coord)
   if (!is.null(focus.sample)) data <- filter(data, sample %in% focus.sample)
+  
   
   if (par=="Lambda"){
     p <- data %>% 
@@ -68,7 +70,7 @@ plot_mf_lambdaeta <- function(m, par, focus.cov=NULL, focus.coord=NULL,
 }
 
 plot_mf_sigma <- function(m, focus.coord=NULL, use_names=TRUE){
-  data <- mongrel_tidy_samples(m, use_names)
+  data <- mongrel_tidy_samples(m, use_names, as_factor=TRUE)
   if (!is.null(focus.coord)) data <- filter(data, 
                                             coord %in% focus.coord, 
                                             coord2 %in% focus.coord)

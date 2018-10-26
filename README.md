@@ -11,7 +11,7 @@ All source code freely availale under [GPL-3 License](https://www.gnu.org/licens
 
 ## Installation ##
 ``` r
-devtools::install_github("jsilve24/mongrel")
+devtools::install_github("jsilve24/mongrel", build_vignettes=TRUE)
 ```
 
 ## Bugs/Feature requests ##

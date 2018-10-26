@@ -139,6 +139,7 @@ mongrel <- function(Y=NULL, X=NULL, upsilon=NULL, Theta=NULL, Gamma=NULL, Xi=NUL
   decomp_method <- args_null("decomp_method", args, "eigen")
   eigvalthresh <- args_null("eigvalthresh", args, 0)
   jitter <- args_null("jitter", args, 0)
+  calcPartialHess <- args_null("calcPartialHess", args, FALSE)
   
   ## precomputation ## 
   K <- solve(Xi)
@@ -149,7 +150,7 @@ mongrel <- function(Y=NULL, X=NULL, upsilon=NULL, Theta=NULL, Gamma=NULL, Xi=NUL
                                 calcGradHess, b1, b2, step_size, epsilon, eps_f, 
                                 eps_g, max_iter, verbose, verbose_rate, 
                                 decomp_method, eigvalthresh, 
-                                jitter)
+                                jitter, calcPartialHess)
 
   # if n_samples=0 or if hessian fails, then use MAP eta estimate for 
   # uncollapsing and unless otherwise specified against, use only the 

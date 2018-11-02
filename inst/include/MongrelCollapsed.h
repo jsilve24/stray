@@ -111,34 +111,6 @@ class MongrelCollapsed : public Numer::MFuncGrad
       return grad; // not transposing (leaving as vector)
     }
     
-    // Must have called updateWithEtaLL and then updateWithEtaGH first 
-    VectorXd calcGrad_wnoise(double sigma, double gamma){
-      // For Multinomial
-      MatrixXd g = (Y - (rhomat.array().rowwise()*n.array())).matrix();
-      // For MatrixVariate T
-      g.noalias() += -delta*(R + R.transpose())*C.transpose();
-      Map<VectorXd> grad(g.data(), g.size()); 
-      
-      // add noise
-      // NumericVector gnoise(N*(D-1));
-      //double ss= sigma/pow(1+t, gamma);
-      // gnoise = ss*rnorm(N*(D-1), 0, 1);
-      // t++;
-      // Rcout << t << " ss: " << ss << std::endl;
-      // Rcout << "grad norm: " <<grad.norm() << std::endl;
-      // Map<VectorXd> noise(as<Map<VectorXd> >(gnoise));
-      // Rcout << "noise norm: " << noise.norm() << std::endl;
-      // return grad+noise; // not transposing (leaving as vector)
-      
-      // add noise as fraction of gradient
-      NumericVector gnoise(N*(D-1));
-      gnoise = rnorm(N*(D-1), 0, 1);
-      //double ss= sigma/pow(1+t, gamma);
-      double ss = pow(sigma, gamma*(1+t));
-      t++;
-      Map<Eigen::ArrayXd> noise(as<Map<Eigen::ArrayXd> >(gnoise));
-      return grad+(ss*grad.array().abs()*noise).matrix(); // not transposing (leaving as vector)
-    }
     
     // Must have called updateWithEtaLL and then updateWithEtaGH first 
     MatrixXd calcHess(){
@@ -170,8 +142,26 @@ class MongrelCollapsed : public Numer::MFuncGrad
 
     // should return blocks of size D-1 x D-1 stacked in a N(D-1) x D-1 matrix
     MatrixXd calcPartialHess(){
-      // For Multinomial only
       MatrixXd H = ArrayXXd::Zero(N*(D-1), D-1);
+      VectorXd gamma = A.diagonal();
+      VectorXd pC(D-1);
+      MatrixXd L(D-1, D-1);
+      Eigen::Matrix<double, 1, 1> s;
+      Eigen::Matrix<double, 1, 1> one;
+      double pR;
+      one << 1.0;
+      double pdelta = upsilon + D -1.0;
+      
+      // for multivariate ts
+      for (int j=0; j<N; j++){
+        s.noalias() = one+gamma(j)*E.col(j).transpose()*K*E.col(j);
+        pC.noalias() = K*E.col(j);
+        pR = gamma(j)/s.value();
+        L.noalias() = pow(pR, 2) * pC * pC.transpose();
+        H.block(j*(D-1), 0, D-1, D-1).noalias() += -pdelta *pR*K + pdelta*2.0*L;
+      }
+      
+      // For Multinomial only
       MatrixXd W(D-1, D-1);
       VectorXd rhoseg(D-1);
       for (int j=0; j<N; j++){

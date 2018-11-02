@@ -105,8 +105,8 @@ BEGIN_RCPP
 END_RCPP
 }
 // optimMongrelCollapsed
-List optimMongrelCollapsed(const Eigen::ArrayXXd Y, const double upsilon, const Eigen::MatrixXd ThetaX, const Eigen::MatrixXd K, const Eigen::MatrixXd A, Eigen::MatrixXd init, int n_samples, bool calcGradHess, double b1, double b2, double step_size, double epsilon, double eps_f, double eps_g, int max_iter, bool verbose, int verbose_rate, String decomp_method, double eigvalthresh, double jitter, bool calcPartialHess);
-RcppExport SEXP _mongrel_optimMongrelCollapsed(SEXP YSEXP, SEXP upsilonSEXP, SEXP ThetaXSEXP, SEXP KSEXP, SEXP ASEXP, SEXP initSEXP, SEXP n_samplesSEXP, SEXP calcGradHessSEXP, SEXP b1SEXP, SEXP b2SEXP, SEXP step_sizeSEXP, SEXP epsilonSEXP, SEXP eps_fSEXP, SEXP eps_gSEXP, SEXP max_iterSEXP, SEXP verboseSEXP, SEXP verbose_rateSEXP, SEXP decomp_methodSEXP, SEXP eigvalthreshSEXP, SEXP jitterSEXP, SEXP calcPartialHessSEXP) {
+List optimMongrelCollapsed(const Eigen::ArrayXXd Y, const double upsilon, const Eigen::MatrixXd ThetaX, const Eigen::MatrixXd K, const Eigen::MatrixXd A, Eigen::MatrixXd init, int n_samples, bool calcGradHess, double b1, double b2, double step_size, double epsilon, double eps_f, double eps_g, int max_iter, bool verbose, int verbose_rate, String decomp_method, double eigvalthresh, double jitter, bool calcPartialHess, bool multDirichletBoot);
+RcppExport SEXP _mongrel_optimMongrelCollapsed(SEXP YSEXP, SEXP upsilonSEXP, SEXP ThetaXSEXP, SEXP KSEXP, SEXP ASEXP, SEXP initSEXP, SEXP n_samplesSEXP, SEXP calcGradHessSEXP, SEXP b1SEXP, SEXP b2SEXP, SEXP step_sizeSEXP, SEXP epsilonSEXP, SEXP eps_fSEXP, SEXP eps_gSEXP, SEXP max_iterSEXP, SEXP verboseSEXP, SEXP verbose_rateSEXP, SEXP decomp_methodSEXP, SEXP eigvalthreshSEXP, SEXP jitterSEXP, SEXP calcPartialHessSEXP, SEXP multDirichletBootSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -131,7 +131,8 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< double >::type eigvalthresh(eigvalthreshSEXP);
     Rcpp::traits::input_parameter< double >::type jitter(jitterSEXP);
     Rcpp::traits::input_parameter< bool >::type calcPartialHess(calcPartialHessSEXP);
-    rcpp_result_gen = Rcpp::wrap(optimMongrelCollapsed(Y, upsilon, ThetaX, K, A, init, n_samples, calcGradHess, b1, b2, step_size, epsilon, eps_f, eps_g, max_iter, verbose, verbose_rate, decomp_method, eigvalthresh, jitter, calcPartialHess));
+    Rcpp::traits::input_parameter< bool >::type multDirichletBoot(multDirichletBootSEXP);
+    rcpp_result_gen = Rcpp::wrap(optimMongrelCollapsed(Y, upsilon, ThetaX, K, A, init, n_samples, calcGradHess, b1, b2, step_size, epsilon, eps_f, eps_g, max_iter, verbose, verbose_rate, decomp_method, eigvalthresh, jitter, calcPartialHess, multDirichletBoot));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -243,6 +244,53 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// alrInv_default_test
+Eigen::MatrixXd alrInv_default_test(Eigen::MatrixXd eta);
+RcppExport SEXP _mongrel_alrInv_default_test(SEXP etaSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Eigen::MatrixXd >::type eta(etaSEXP);
+    rcpp_result_gen = Rcpp::wrap(alrInv_default_test(eta));
+    return rcpp_result_gen;
+END_RCPP
+}
+// alr_default_test
+Eigen::MatrixXd alr_default_test(Eigen::MatrixXd pi);
+RcppExport SEXP _mongrel_alr_default_test(SEXP piSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Eigen::MatrixXd >::type pi(piSEXP);
+    rcpp_result_gen = Rcpp::wrap(alr_default_test(pi));
+    return rcpp_result_gen;
+END_RCPP
+}
+// rDirichlet_test
+Eigen::MatrixXd rDirichlet_test(int n_samples, Eigen::VectorXd alpha);
+RcppExport SEXP _mongrel_rDirichlet_test(SEXP n_samplesSEXP, SEXP alphaSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< int >::type n_samples(n_samplesSEXP);
+    Rcpp::traits::input_parameter< Eigen::VectorXd >::type alpha(alphaSEXP);
+    rcpp_result_gen = Rcpp::wrap(rDirichlet_test(n_samples, alpha));
+    return rcpp_result_gen;
+END_RCPP
+}
+// MultDirichletBoot_test
+Eigen::MatrixXd MultDirichletBoot_test(int n_samples, Eigen::MatrixXd eta, Eigen::ArrayXXd Y);
+RcppExport SEXP _mongrel_MultDirichletBoot_test(SEXP n_samplesSEXP, SEXP etaSEXP, SEXP YSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< int >::type n_samples(n_samplesSEXP);
+    Rcpp::traits::input_parameter< Eigen::MatrixXd >::type eta(etaSEXP);
+    Rcpp::traits::input_parameter< Eigen::ArrayXXd >::type Y(YSEXP);
+    rcpp_result_gen = Rcpp::wrap(MultDirichletBoot_test(n_samples, eta, Y));
+    return rcpp_result_gen;
+END_RCPP
+}
 
 static const R_CallMethodDef CallEntries[] = {
     {"_mongrel_conjugateLinearModel", (DL_FUNC) &_mongrel_conjugateLinearModel, 7},
@@ -250,7 +298,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_mongrel_loglikMongrelCollapsed", (DL_FUNC) &_mongrel_loglikMongrelCollapsed, 6},
     {"_mongrel_gradMongrelCollapsed", (DL_FUNC) &_mongrel_gradMongrelCollapsed, 6},
     {"_mongrel_hessMongrelCollapsed", (DL_FUNC) &_mongrel_hessMongrelCollapsed, 6},
-    {"_mongrel_optimMongrelCollapsed", (DL_FUNC) &_mongrel_optimMongrelCollapsed, 21},
+    {"_mongrel_optimMongrelCollapsed", (DL_FUNC) &_mongrel_optimMongrelCollapsed, 22},
     {"_mongrel_uncollapseMongrelCollapsed", (DL_FUNC) &_mongrel_uncollapseMongrelCollapsed, 7},
     {"_mongrel_rMatNormalCholesky_test", (DL_FUNC) &_mongrel_rMatNormalCholesky_test, 3},
     {"_mongrel_rInvWishRevCholesky_test", (DL_FUNC) &_mongrel_rInvWishRevCholesky_test, 2},
@@ -259,6 +307,10 @@ static const R_CallMethodDef CallEntries[] = {
     {"_mongrel_eigen_lap_test", (DL_FUNC) &_mongrel_eigen_lap_test, 4},
     {"_mongrel_cholesky_lap_test", (DL_FUNC) &_mongrel_cholesky_lap_test, 4},
     {"_mongrel_LaplaceApproximation_test", (DL_FUNC) &_mongrel_LaplaceApproximation_test, 5},
+    {"_mongrel_alrInv_default_test", (DL_FUNC) &_mongrel_alrInv_default_test, 1},
+    {"_mongrel_alr_default_test", (DL_FUNC) &_mongrel_alr_default_test, 1},
+    {"_mongrel_rDirichlet_test", (DL_FUNC) &_mongrel_rDirichlet_test, 2},
+    {"_mongrel_MultDirichletBoot_test", (DL_FUNC) &_mongrel_MultDirichletBoot_test, 3},
     {NULL, NULL, 0}
 };
 

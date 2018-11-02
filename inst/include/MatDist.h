@@ -10,7 +10,7 @@ using Eigen::Map;
 
 // fills passed dense objects with unit normal random variables
 template <typename Derived>
-void fillUnitNormal(Eigen::DenseBase<Derived>& Z){
+inline void fillUnitNormal(Eigen::DenseBase<Derived>& Z){
   int m = Z.rows();
   int n = Z.cols();
   NumericVector r(m*n);

@@ -105,7 +105,7 @@ BEGIN_RCPP
 END_RCPP
 }
 // optimMongrelCollapsed
-List optimMongrelCollapsed(const Eigen::ArrayXXd Y, const double upsilon, const Eigen::MatrixXd ThetaX, const Eigen::MatrixXd K, const Eigen::MatrixXd A, Eigen::MatrixXd init, int n_samples, bool calcGradHess, double b1, double b2, double step_size, double epsilon, double eps_f, double eps_g, int max_iter, bool verbose, int verbose_rate, String decomp_method, double eigvalthresh, double jitter, bool calcPartialHess, bool multDirichletBoot);
+List optimMongrelCollapsed(const Eigen::ArrayXXd Y, const double upsilon, const Eigen::MatrixXd ThetaX, const Eigen::MatrixXd K, const Eigen::MatrixXd A, Eigen::MatrixXd init, int n_samples, bool calcGradHess, double b1, double b2, double step_size, double epsilon, double eps_f, double eps_g, int max_iter, bool verbose, int verbose_rate, String decomp_method, double eigvalthresh, double jitter, bool calcPartialHess, double multDirichletBoot);
 RcppExport SEXP _mongrel_optimMongrelCollapsed(SEXP YSEXP, SEXP upsilonSEXP, SEXP ThetaXSEXP, SEXP KSEXP, SEXP ASEXP, SEXP initSEXP, SEXP n_samplesSEXP, SEXP calcGradHessSEXP, SEXP b1SEXP, SEXP b2SEXP, SEXP step_sizeSEXP, SEXP epsilonSEXP, SEXP eps_fSEXP, SEXP eps_gSEXP, SEXP max_iterSEXP, SEXP verboseSEXP, SEXP verbose_rateSEXP, SEXP decomp_methodSEXP, SEXP eigvalthreshSEXP, SEXP jitterSEXP, SEXP calcPartialHessSEXP, SEXP multDirichletBootSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
@@ -131,7 +131,7 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< double >::type eigvalthresh(eigvalthreshSEXP);
     Rcpp::traits::input_parameter< double >::type jitter(jitterSEXP);
     Rcpp::traits::input_parameter< bool >::type calcPartialHess(calcPartialHessSEXP);
-    Rcpp::traits::input_parameter< bool >::type multDirichletBoot(multDirichletBootSEXP);
+    Rcpp::traits::input_parameter< double >::type multDirichletBoot(multDirichletBootSEXP);
     rcpp_result_gen = Rcpp::wrap(optimMongrelCollapsed(Y, upsilon, ThetaX, K, A, init, n_samples, calcGradHess, b1, b2, step_size, epsilon, eps_f, eps_g, max_iter, verbose, verbose_rate, decomp_method, eigvalthresh, jitter, calcPartialHess, multDirichletBoot));
     return rcpp_result_gen;
 END_RCPP
@@ -279,15 +279,16 @@ BEGIN_RCPP
 END_RCPP
 }
 // MultDirichletBoot_test
-Eigen::MatrixXd MultDirichletBoot_test(int n_samples, Eigen::MatrixXd eta, Eigen::ArrayXXd Y);
-RcppExport SEXP _mongrel_MultDirichletBoot_test(SEXP n_samplesSEXP, SEXP etaSEXP, SEXP YSEXP) {
+Eigen::MatrixXd MultDirichletBoot_test(int n_samples, Eigen::MatrixXd eta, Eigen::ArrayXXd Y, double pseudocount);
+RcppExport SEXP _mongrel_MultDirichletBoot_test(SEXP n_samplesSEXP, SEXP etaSEXP, SEXP YSEXP, SEXP pseudocountSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< int >::type n_samples(n_samplesSEXP);
     Rcpp::traits::input_parameter< Eigen::MatrixXd >::type eta(etaSEXP);
     Rcpp::traits::input_parameter< Eigen::ArrayXXd >::type Y(YSEXP);
-    rcpp_result_gen = Rcpp::wrap(MultDirichletBoot_test(n_samples, eta, Y));
+    Rcpp::traits::input_parameter< double >::type pseudocount(pseudocountSEXP);
+    rcpp_result_gen = Rcpp::wrap(MultDirichletBoot_test(n_samples, eta, Y, pseudocount));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -310,7 +311,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_mongrel_alrInv_default_test", (DL_FUNC) &_mongrel_alrInv_default_test, 1},
     {"_mongrel_alr_default_test", (DL_FUNC) &_mongrel_alr_default_test, 1},
     {"_mongrel_rDirichlet_test", (DL_FUNC) &_mongrel_rDirichlet_test, 2},
-    {"_mongrel_MultDirichletBoot_test", (DL_FUNC) &_mongrel_MultDirichletBoot_test, 3},
+    {"_mongrel_MultDirichletBoot_test", (DL_FUNC) &_mongrel_MultDirichletBoot_test, 4},
     {NULL, NULL, 0}
 };
 

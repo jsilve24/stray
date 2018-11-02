@@ -219,11 +219,11 @@ hessMongrelCollapsed <- function(Y, upsilon, ThetaX, K, A, eta) {
 #'   decomposition of negative inverse hessian (should be <=0)
 #' @param no_error if true will throw hessian warning rather than error if 
 #'   not positive definite. 
-#' @param jitter (default: 0) if >0 then adds that factor to diagonal of Hessian 
+#' @param jitter (default: 0) if >=0 then adds that factor to diagonal of Hessian 
 #' before decomposition (to improve matrix conditioning)
 #' @param calcPartialHess if true only calculates hessian of multinomial 
 #'   much more computationaly and memory efficient but it is an approximation. 
-#' @param multDirichletBoot if true (overrides laplace approximation) and samples
+#' @param multDirichletBoot if >0 (overrides laplace approximation) and samples
 #'  eta efficiently at MAP estimate from pseudo Multinomial-Dirichlet posterior. 
 #'  
 #' @details Notation: Let Z_j denote the J-th row of a matrix Z.
@@ -273,7 +273,7 @@ hessMongrelCollapsed <- function(Y, upsilon, ThetaX, K, A, eta) {
 #' # Fit model for eta
 #' fit <- optimMongrelCollapsed(sim$Y, sim$upsilon, sim$Theta%*%sim$X, sim$K, 
 #'                              sim$A, random_mongrel_init(sim$Y))  
-optimMongrelCollapsed <- function(Y, upsilon, ThetaX, K, A, init, n_samples = 2000L, calcGradHess = TRUE, b1 = 0.9, b2 = 0.99, step_size = 0.003, epsilon = 10e-7, eps_f = 1e-10, eps_g = 1e-4, max_iter = 10000L, verbose = FALSE, verbose_rate = 10L, decomp_method = "eigen", eigvalthresh = 0, jitter = 0, calcPartialHess = FALSE, multDirichletBoot = FALSE) {
+optimMongrelCollapsed <- function(Y, upsilon, ThetaX, K, A, init, n_samples = 2000L, calcGradHess = TRUE, b1 = 0.9, b2 = 0.99, step_size = 0.003, epsilon = 10e-7, eps_f = 1e-10, eps_g = 1e-4, max_iter = 10000L, verbose = FALSE, verbose_rate = 10L, decomp_method = "eigen", eigvalthresh = 0, jitter = 0, calcPartialHess = FALSE, multDirichletBoot = -1.0) {
     .Call('_mongrel_optimMongrelCollapsed', PACKAGE = 'mongrel', Y, upsilon, ThetaX, K, A, init, n_samples, calcGradHess, b1, b2, step_size, epsilon, eps_f, eps_g, max_iter, verbose, verbose_rate, decomp_method, eigvalthresh, jitter, calcPartialHess, multDirichletBoot)
 }
 
@@ -375,7 +375,7 @@ rDirichlet_test <- function(n_samples, alpha) {
     .Call('_mongrel_rDirichlet_test', PACKAGE = 'mongrel', n_samples, alpha)
 }
 
-MultDirichletBoot_test <- function(n_samples, eta, Y) {
-    .Call('_mongrel_MultDirichletBoot_test', PACKAGE = 'mongrel', n_samples, eta, Y)
+MultDirichletBoot_test <- function(n_samples, eta, Y, pseudocount) {
+    .Call('_mongrel_MultDirichletBoot_test', PACKAGE = 'mongrel', n_samples, eta, Y, pseudocount)
 }
 

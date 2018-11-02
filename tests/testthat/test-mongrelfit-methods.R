@@ -2,9 +2,7 @@ context("test-sample_prior-correct.R")
 
 test_that("sample_prior correct", {
   sim <- mongrel_sim()
-  attach(sim)
-  fit <- mongrel(Y, X)
-  detach(sim)
+  fit <- mongrel(sim$Y, sim$X)
   priors <- sample_prior(fit)
   
   expect_equal(apply(priors$Eta, c(1, 2), mean), priors$Theta%*%priors$X, 

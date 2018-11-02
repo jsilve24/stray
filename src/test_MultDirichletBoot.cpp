@@ -28,6 +28,6 @@ Eigen::MatrixXd rDirichlet_test(int n_samples, Eigen::VectorXd alpha){
 // Wrapper functions 
 // [[Rcpp::export]]
 Eigen::MatrixXd MultDirichletBoot_test(int n_samples, Eigen::MatrixXd eta, 
-                                       Eigen::ArrayXXd Y){
-  return MultDirichletBoot::MultDirichletBoot(n_samples, eta, Y);
+                                       Eigen::ArrayXXd Y, double pseudocount){
+  return MultDirichletBoot::MultDirichletBoot(n_samples, eta, Y, pseudocount);
 }

@@ -46,7 +46,7 @@ using Eigen::VectorXd;
 //'   decomposition of negative inverse hessian (should be <=0)
 //' @param no_error if true will throw hessian warning rather than error if 
 //'   not positive definite. 
-//' @param jitter (default: 0) if >0 then adds that factor to diagonal of Hessian 
+//' @param jitter (default: 0) if >=0 then adds that factor to diagonal of Hessian 
 //' before decomposition (to improve matrix conditioning)
 //' @param calcPartialHess if true only calculates hessian of multinomial 
 //'   much more computationaly and memory efficient but it is an approximation. 
@@ -122,7 +122,7 @@ List optimMongrelCollapsed(const Eigen::ArrayXXd Y,
                double eigvalthresh=0, 
                double jitter=0,
                bool calcPartialHess = false, 
-               double multDirichletBoot = 0.0){  
+               double multDirichletBoot = -1.0){  
   int N = Y.cols();
   int D = Y.rows();
   MongrelCollapsed cm(Y, upsilon, ThetaX, K, A);
@@ -145,14 +145,15 @@ List optimMongrelCollapsed(const Eigen::ArrayXXd Y,
   out[3] = etamat;
   
   if (n_samples > 0 || calcGradHess){
-    if (verbose) Rcout << "Allocating for Hessian" << std::endl;
-    MatrixXd hess(N*(D-1), N*(D-1));
+    if (verbose) Rcout << "Allocating for Gradient" << std::endl;
     VectorXd grad(N*(D-1));
-    if (verbose) Rcout << "Calculating Hessian" << std::endl;
+    MatrixXd hess; // don't preallocate this thing could be unneeded
+    if (verbose) Rcout << "Calculating Gradient" << std::endl;
     grad = cm.calcGrad(); // should have eta at optima already
     
     // "Multinomial-Dirichlet" option
-    if (multDirichletBoot>0.0){
+    if (multDirichletBoot>=0.0){
+      if (verbose) Rcout << "Preforming Multinomial Dirichlet Bootstrap" << std::endl;
       MatrixXd samp = MultDirichletBoot::MultDirichletBoot(n_samples, etamat, Y, 
                                                            multDirichletBoot);
       out[1] = R_NilValue;
@@ -166,8 +167,10 @@ List optimMongrelCollapsed(const Eigen::ArrayXXd Y,
     // "Multinomial-Dirchlet" option 
     
     if(calcPartialHess) {
+      if (verbose) Rcout << "Calculating Partial Hessian" << std::endl;
       hess = cm.calcPartialHess();
     } else {
+      if (verbose) Rcout << "Calculating Hessian" << std::endl;
       hess = cm.calcHess(); // should have eta at optima already
     }
     out[1] = grad;

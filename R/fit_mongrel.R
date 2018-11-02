@@ -140,7 +140,9 @@ mongrel <- function(Y=NULL, X=NULL, upsilon=NULL, Theta=NULL, Gamma=NULL, Xi=NUL
   eigvalthresh <- args_null("eigvalthresh", args, 0)
   jitter <- args_null("jitter", args, 0)
   calcPartialHess <- args_null("calcPartialHess", args, FALSE)
-  multDirichletBoot <- args_null("multDirichletBoot", args, 0.0)
+  multDirichletBoot <- args_null("multDirichletBoot", args, -1.0)
+  
+  if (calcPartialHess) warning("Cannot recoomend calcPartialHess at this time.")
   
   ## precomputation ## 
   K <- solve(Xi)

@@ -23,7 +23,7 @@ test_that("MultDirichletBoot is correct", {
   eta <- alr_array(pi, parts=1)
   depth <- 10
   Y <- matrix(rep(depth, 5), 5, 1)
-  s <- MultDirichletBoot_test(n_samples, eta, Y)
+  s <- MultDirichletBoot_test(n_samples, eta, Y, 0.05)
   
   x <- rDirichlet(n_samples, pi*depth*5)
   x <- alr_array(x, parts=1)

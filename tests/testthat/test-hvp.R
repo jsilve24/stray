@@ -1,0 +1,17 @@
+context("test-hessianvectorproduct")
+
+test_that("hessVectorProd output is reasonable", {
+  N <- 20
+  D <- 20
+  sim <- mongrel_sim(D=D, N=N, true_priors=FALSE)
+  Z <- runif(N*(D-1))
+  ThetaX <- sim$Theta%*%sim$X
+  prod1 <- hessMongrelCollapsed(sim$Y, sim$upsilon, ThetaX, sim$K, sim$A, sim$Eta)
+  prod1 <- prod1%*%Z;
+  prod2 <- hessVectorProd(sim$Y, sim$upsilon, ThetaX, sim$K, sim$A, sim$Eta, Z, 0.001)
+  expect_equal(prod1[,1], prod2, tolerance=0.001)
+})
+
+
+
+

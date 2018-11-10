@@ -9,7 +9,7 @@ optimMongrelCollapsed(Y, upsilon, ThetaX, K, A, init, n_samples = 2000L,
   epsilon = 1e-06, eps_f = 1e-10, eps_g = 1e-04, max_iter = 10000L,
   verbose = FALSE, verbose_rate = 10L, decomp_method = "eigen",
   eigvalthresh = 0, jitter = 0, calcPartialHess = FALSE,
-  multDirichletBoot = 0)
+  multDirichletBoot = -1)
 }
 \arguments{
 \item{Y}{D x N matrix of counts}
@@ -56,7 +56,7 @@ iteration number}
 \item{eigvalthresh}{threshold for negative eigenvalues in
 decomposition of negative inverse hessian (should be <=0)}
 
-\item{jitter}{(default: 0) if >0 then adds that factor to diagonal of Hessian
+\item{jitter}{(default: 0) if >=0 then adds that factor to diagonal of Hessian
 before decomposition (to improve matrix conditioning)}
 
 \item{calcPartialHess}{if true only calculates hessian of multinomial

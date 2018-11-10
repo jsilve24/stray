@@ -3,12 +3,17 @@
 
 #include <RcppNumerical.h>
 #include <MatrixAlgebra.h>
+#ifdef _OPENMP
+  #include <omp.h>
+#endif
 using namespace Rcpp;
 using Eigen::Map;
 using Eigen::MatrixXd;
 using Eigen::ArrayXXd;
 using Eigen::VectorXd;
 using Eigen::Ref;
+
+// [[Rcpp::plugins(openmp)]]
 
 /* Class implementing LogLik, Gradient, and Hessian calculations
  *  for the Multinomial Matrix-T collapsed model. 
@@ -38,7 +43,7 @@ class MongrelCollapsed : public Numer::MFuncGrad
     Eigen::ArrayXd m;
     Eigen::RowVectorXd n;
     MatrixXd S;  // I_D-1 + KEAE'
-    Eigen::ColPivHouseholderQR<MatrixXd> Sdec;
+    Eigen::HouseholderQR<MatrixXd> Sdec;
     MatrixXd E;  // eta-ThetaX
     ArrayXXd O;  // exp{eta}
     // only needed for gradient and hessian

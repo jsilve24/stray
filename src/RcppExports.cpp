@@ -201,6 +201,19 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// testing
+Eigen::MatrixXd testing(Eigen::MatrixXd A, Eigen::MatrixXd B, int n_threads);
+RcppExport SEXP _mongrel_testing(SEXP ASEXP, SEXP BSEXP, SEXP n_threadsSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Eigen::MatrixXd >::type A(ASEXP);
+    Rcpp::traits::input_parameter< Eigen::MatrixXd >::type B(BSEXP);
+    Rcpp::traits::input_parameter< int >::type n_threads(n_threadsSEXP);
+    rcpp_result_gen = Rcpp::wrap(testing(A, B, n_threads));
+    return rcpp_result_gen;
+END_RCPP
+}
 // eigen_lap_test
 Eigen::MatrixXd eigen_lap_test(int n_samples, Eigen::VectorXd m, Eigen::MatrixXd S, double eigvalthresh);
 RcppExport SEXP _mongrel_eigen_lap_test(SEXP n_samplesSEXP, SEXP mSEXP, SEXP SSEXP, SEXP eigvalthreshSEXP) {
@@ -305,6 +318,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_mongrel_rInvWishRevCholesky_test", (DL_FUNC) &_mongrel_rInvWishRevCholesky_test, 2},
     {"_mongrel_rMatUnitNormal_test1", (DL_FUNC) &_mongrel_rMatUnitNormal_test1, 2},
     {"_mongrel_rMatUnitNormal_test2", (DL_FUNC) &_mongrel_rMatUnitNormal_test2, 1},
+    {"_mongrel_testing", (DL_FUNC) &_mongrel_testing, 3},
     {"_mongrel_eigen_lap_test", (DL_FUNC) &_mongrel_eigen_lap_test, 4},
     {"_mongrel_cholesky_lap_test", (DL_FUNC) &_mongrel_cholesky_lap_test, 4},
     {"_mongrel_LaplaceApproximation_test", (DL_FUNC) &_mongrel_LaplaceApproximation_test, 5},

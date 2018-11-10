@@ -7,12 +7,12 @@
 #' \code{D} is the dimension of the response, \code{Q} is number
 #' of covariates. 
 #' 
-#' @param Y matrix of dimension (D-1) x N
+#' @param Y matrix of dimension D x N
 #' @param X matrix of covariates of dimension Q x N
-#' @param Theta matrix of prior mean of dimension (D-1) x Q
+#' @param Theta matrix of prior mean of dimension D x Q
 #' @param Gamma covariance matrix of dimension Q x Q
-#' @param Xi covariance matrix of dimension (D-1) x (D-1)
-#' @param upsilon scalar (must be > D) degrees of freedom for InvWishart prior
+#' @param Xi covariance matrix of dimension D x D
+#' @param upsilon scalar (must be > D-1) degrees of freedom for InvWishart prior
 #' @param n_samples number of samples to draw (default: 2000)
 #' 
 #' @details 
@@ -349,6 +349,10 @@ rMatUnitNormal_test1 <- function(n, m) {
 
 rMatUnitNormal_test2 <- function(n) {
     .Call('_mongrel_rMatUnitNormal_test2', PACKAGE = 'mongrel', n)
+}
+
+testing <- function(A, B, n_threads = 1L) {
+    .Call('_mongrel_testing', PACKAGE = 'mongrel', A, B, n_threads)
 }
 
 eigen_lap_test <- function(n_samples, m, S, eigvalthresh) {

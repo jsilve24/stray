@@ -101,6 +101,7 @@ List uncollapseMongrelCollapsed(const Eigen::Map<Eigen::VectorXd> eta, // note t
 
   // iterate over all draws of eta
   for (int i=0; i < iter; i++){
+    R_CheckUserInterrupt();
     VectorXd EtaV(eta.segment(i*N*(D-1),N*(D-1)));
     Map<MatrixXd> Eta(EtaV.data(), D-1, N);
     //Rcout << Eta.col(1).transpose() << std::endl;

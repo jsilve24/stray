@@ -104,3 +104,70 @@ Eigen::MatrixXd hessMongrelCollapsed(const Eigen::ArrayXXd Y,
   cm.updateWithEtaGH();
   return cm.calcHess();
 }
+
+//' @rdname hessVectorProd
+//' @export
+// [[Rcpp::export]]
+Eigen::VectorXd hessVectorProd(const Eigen::ArrayXXd Y,
+                         const double upsilon,
+                         const Eigen::MatrixXd ThetaX,
+                         const Eigen::MatrixXd K,
+                         const Eigen::MatrixXd A,
+                         Eigen::MatrixXd eta,
+                         Eigen::VectorXd v,
+                         double r){
+  eta += r*v;
+  MongrelCollapsed cm(Y, upsilon, ThetaX, K, A);
+  Map<VectorXd> etavec(eta.data(), eta.size());
+  cm.updateWithEtaLL(etavec);
+  cm.updateWithEtaGH();
+  Eigen::VectorXd g1 = cm.calcGrad();
+  eta -= 2*r*v;
+  etavec = Map<VectorXd>(eta.data(), eta.size());
+  cm.updateWithEtaLL(etavec);
+  cm.updateWithEtaGH();
+  Eigen::VectorXd g2 = cm.calcGrad();
+  return (g1-g2)/(2*r);
+}
+
+//' @rdname lineSearch
+//' @export
+// [[Rcpp::export]]
+Eigen::VectorXd lineSearch(const Eigen::ArrayXXd Y,
+                         const double upsilon,
+                         const Eigen::MatrixXd ThetaX,
+                         const Eigen::MatrixXd K,
+                         const Eigen::MatrixXd A,
+                         Eigen::MatrixXd eta,
+                         int direction,
+                         double rho,
+                         double c) {
+  // direction: element of eta to step gradient along; (+)
+  // rho: the backtrack step between (0,1) usually 0.5
+  // c: parameter between 0 and 1, usually 0.0001
+  // calculate gradient at current eta
+  Eigen::VectorXd grad = gradMongrelCollapsed(Y, upsilon, ThetaX, K, A, eta);
+  // choose d
+  Eigen::VectorXd d = Eigen::VectorXd::Zero(eta.size());
+  // R indexing to C indexing?
+  d(direction-1) = 1;
+  if(grad(direction-1) < 0) {
+    d(direction-1) = -1;
+  }
+  // how to set initial forward step size?
+  double step = 100;
+  double f0 = loglikMongrelCollapsed(Y, upsilon, ThetaX, K, A, eta);
+  // printf("Original likelihood: %f\n", f0);
+  VectorXd new_eta = eta + step*d;
+  double f1 = loglikMongrelCollapsed(Y, upsilon, ThetaX, K, A, new_eta);
+  // printf("New likelihood: %f\n", f1);
+  // we want an increase in llik, hence the stopping condition
+  while (f1 < f0 + c*step*grad.transpose()*d) {
+    step = step*rho;
+    new_eta = eta + step*d;
+    f1 = loglikMongrelCollapsed(Y, upsilon, ThetaX, K, A, new_eta);
+    // printf("New likelihood: %f\n", f1);
+  }
+  // terminates with an optimal step size
+  return (new_eta);
+}

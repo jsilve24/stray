@@ -78,7 +78,7 @@ List conjugateLinearModel(const Eigen::Map<Eigen::MatrixXd> Y,
   LambdaN = Y*XTGammaN+ThetaGammaInvGammaN;
   ELambda = LambdaN-Theta;
   EY = Y-LambdaN*X;
-  XiN =  EY*EY.transpose() + Xi + ELambda*GammaInv*ELambda.transpose();
+  XiN =  (EY*EY.transpose()).eval() + Xi + (ELambda*GammaInv*ELambda.transpose()).eval();
   
   // iterate over all draws of eta
   for (int i=0; i < iter; i++){

@@ -185,6 +185,20 @@ hessMongrelCollapsed <- function(Y, upsilon, ThetaX, K, A, eta) {
     .Call('_mongrel_hessMongrelCollapsed', PACKAGE = 'mongrel', Y, upsilon, ThetaX, K, A, eta)
 }
 
+#' Hessian Vector Product using Finite Differences 
+#' @rdname hessVectorProd
+#' @export
+hessVectorProd <- function(Y, upsilon, ThetaX, K, A, eta, v, r) {
+    .Call('_mongrel_hessVectorProd', PACKAGE = 'mongrel', Y, upsilon, ThetaX, K, A, eta, v, r)
+}
+
+#' Backtracking line search
+#' @rdname lineSearch
+#' @export
+lineSearch <- function(Y, upsilon, ThetaX, K, A, eta, direction, rho, c) {
+    .Call('_mongrel_lineSearch', PACKAGE = 'mongrel', Y, upsilon, ThetaX, K, A, eta, direction, rho, c)
+}
+
 #' Function to Optimize the Collapsed Mongrel Model
 #' 
 #' See details for model. Should likely be followed by function 
@@ -349,10 +363,6 @@ rMatUnitNormal_test1 <- function(n, m) {
 
 rMatUnitNormal_test2 <- function(n) {
     .Call('_mongrel_rMatUnitNormal_test2', PACKAGE = 'mongrel', n)
-}
-
-testing <- function(A, B, n_threads = 1L) {
-    .Call('_mongrel_testing', PACKAGE = 'mongrel', A, B, n_threads)
 }
 
 eigen_lap_test <- function(n_samples, m, S, eigvalthresh) {

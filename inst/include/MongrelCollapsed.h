@@ -52,9 +52,6 @@ class MongrelCollapsed : public Numer::MFuncGrad
     MatrixXd C;
     MatrixXd R;
     
-    // temporary or testing
-    int t;
-    
     
   public:
     MongrelCollapsed(const ArrayXXd Y_,          // constructor
@@ -68,9 +65,6 @@ class MongrelCollapsed : public Numer::MFuncGrad
       N = Y.cols();           // number of samples
       n = Y.colwise().sum();  // total number of counts per sample
       delta = 0.5*(upsilon + N + D - 2.0);
-      
-      // temporary or testing
-      t = 0;
     }
     ~MongrelCollapsed(){}                      // destructor
     
@@ -178,6 +172,23 @@ class MongrelCollapsed : public Numer::MFuncGrad
       return H;
     }
     
+    
+    // function to quickly calculate approximation of hessian-vector product
+    //  @param etavec eta at which to calculate hessian
+    //  @param v vector to multiply by
+    //  @param r size of hessian-vector product difference 
+    //  @ref https://justindomke.wordpress.com/2009/01/17/hessian-vector-products/
+    VectorXd calcHessVectorProd(const Ref<const VectorXd>& etavec, 
+                                VectorXd v, double r=0.001){
+      updateWithEtaLL(etavec+r*v);
+      updateWithEtaGH();
+      VectorXd g1 = calcGrad();
+      updateWithEtaLL(etavec-r*v);
+      updateWithEtaGH();
+      VectorXd g2 = calcGrad();
+      return (g1-g2)/(2*r);
+    }
+    
     // function for use by ADAMOptimizer wrapper (and for RcppNumeric L-BFGS)
     virtual double f_grad(Numer::Constvec& eta, Numer::Refvec grad){
       updateWithEtaLL(eta);    // precompute things needed for LogLik
@@ -186,6 +197,9 @@ class MongrelCollapsed : public Numer::MFuncGrad
       //grad = -calcGrad_wnoise(.3, 1.001); // optional but not very useful
       return -calcLogLik(eta); // negative because wraper minimizes
     }
+  
+    
+    
 };
 
 

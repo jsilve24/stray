@@ -105,6 +105,7 @@ Eigen::MatrixXd hessMongrelCollapsed(const Eigen::ArrayXXd Y,
   return cm.calcHess();
 }
 
+//' Hessian Vector Product using Finite Differences 
 //' @rdname hessVectorProd
 //' @export
 // [[Rcpp::export]]
@@ -116,20 +117,12 @@ Eigen::VectorXd hessVectorProd(const Eigen::ArrayXXd Y,
                          Eigen::MatrixXd eta,
                          Eigen::VectorXd v,
                          double r){
-  eta += r*v;
   MongrelCollapsed cm(Y, upsilon, ThetaX, K, A);
   Map<VectorXd> etavec(eta.data(), eta.size());
-  cm.updateWithEtaLL(etavec);
-  cm.updateWithEtaGH();
-  Eigen::VectorXd g1 = cm.calcGrad();
-  eta -= 2*r*v;
-  etavec = Map<VectorXd>(eta.data(), eta.size());
-  cm.updateWithEtaLL(etavec);
-  cm.updateWithEtaGH();
-  Eigen::VectorXd g2 = cm.calcGrad();
-  return (g1-g2)/(2*r);
+  return cm.calcHessVectorProd(etavec, v, r);
 }
 
+//' Backtracking line search
 //' @rdname lineSearch
 //' @export
 // [[Rcpp::export]]

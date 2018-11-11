@@ -329,6 +329,25 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// MongrelTruncatedEigen_mongrel_test
+List MongrelTruncatedEigen_mongrel_test(Eigen::ArrayXXd Y, double upsilon, Eigen::MatrixXd ThetaX, Eigen::MatrixXd K, Eigen::MatrixXd A, Eigen::VectorXd etavec, double r, int nev, int ncv);
+RcppExport SEXP _mongrel_MongrelTruncatedEigen_mongrel_test(SEXP YSEXP, SEXP upsilonSEXP, SEXP ThetaXSEXP, SEXP KSEXP, SEXP ASEXP, SEXP etavecSEXP, SEXP rSEXP, SEXP nevSEXP, SEXP ncvSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Eigen::ArrayXXd >::type Y(YSEXP);
+    Rcpp::traits::input_parameter< double >::type upsilon(upsilonSEXP);
+    Rcpp::traits::input_parameter< Eigen::MatrixXd >::type ThetaX(ThetaXSEXP);
+    Rcpp::traits::input_parameter< Eigen::MatrixXd >::type K(KSEXP);
+    Rcpp::traits::input_parameter< Eigen::MatrixXd >::type A(ASEXP);
+    Rcpp::traits::input_parameter< Eigen::VectorXd >::type etavec(etavecSEXP);
+    Rcpp::traits::input_parameter< double >::type r(rSEXP);
+    Rcpp::traits::input_parameter< int >::type nev(nevSEXP);
+    Rcpp::traits::input_parameter< int >::type ncv(ncvSEXP);
+    rcpp_result_gen = Rcpp::wrap(MongrelTruncatedEigen_mongrel_test(Y, upsilon, ThetaX, K, A, etavec, r, nev, ncv));
+    return rcpp_result_gen;
+END_RCPP
+}
 
 static const R_CallMethodDef CallEntries[] = {
     {"_mongrel_conjugateLinearModel", (DL_FUNC) &_mongrel_conjugateLinearModel, 7},
@@ -351,6 +370,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_mongrel_alr_default_test", (DL_FUNC) &_mongrel_alr_default_test, 1},
     {"_mongrel_rDirichlet_test", (DL_FUNC) &_mongrel_rDirichlet_test, 2},
     {"_mongrel_MultDirichletBoot_test", (DL_FUNC) &_mongrel_MultDirichletBoot_test, 4},
+    {"_mongrel_MongrelTruncatedEigen_mongrel_test", (DL_FUNC) &_mongrel_MongrelTruncatedEigen_mongrel_test, 9},
     {NULL, NULL, 0}
 };
 

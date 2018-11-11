@@ -1,7 +1,7 @@
 #ifndef MONGREL_MMTC_H
 #define MONGREL_MMTC_H
 
-#include <RcppNumerical.h>
+#include <MongrelModelClass.h>
 #include <MatrixAlgebra.h>
 #ifdef _OPENMP
   #include <omp.h>
@@ -28,8 +28,7 @@ using Eigen::Ref;
  *  Where A = (I_N + X*Gamma*X')^{-1}, K^{-1} =Xi is a D-1xD-1 covariance 
  *  matrix, and Gamma is a Q x Q covariance matrix
  */
-class MongrelCollapsed : public Numer::MFuncGrad
-{
+class MongrelCollapsed : public mongrel::MongrelModel {
   private:
     const ArrayXXd Y;
     const double upsilon;
@@ -172,7 +171,6 @@ class MongrelCollapsed : public Numer::MFuncGrad
       return H;
     }
     
-    
     // function to quickly calculate approximation of hessian-vector product
     //  @param etavec eta at which to calculate hessian
     //  @param v vector to multiply by
@@ -186,21 +184,26 @@ class MongrelCollapsed : public Numer::MFuncGrad
       updateWithEtaLL(etavec-r*v);
       updateWithEtaGH();
       VectorXd g2 = calcGrad();
-      return (g1-g2)/(2*r);
+      return (g1-g2).array()/(2.0*r);
     }
+    
+    int getN() { return N; }
+    int getD() { return D; }
+    
     
     // function for use by ADAMOptimizer wrapper (and for RcppNumeric L-BFGS)
     virtual double f_grad(Numer::Constvec& eta, Numer::Refvec grad){
       updateWithEtaLL(eta);    // precompute things needed for LogLik
       updateWithEtaGH();       // precompute things needed for gradient and hessian
       grad = -calcGrad();      // negative because wraper minimizes
-      //grad = -calcGrad_wnoise(.3, 1.001); // optional but not very useful
       return -calcLogLik(eta); // negative because wraper minimizes
     }
-  
-    
     
 };
+
+
+
+
 
 
 #endif

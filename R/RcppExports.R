@@ -393,3 +393,7 @@ MultDirichletBoot_test <- function(n_samples, eta, Y, pseudocount) {
     .Call('_mongrel_MultDirichletBoot_test', PACKAGE = 'mongrel', n_samples, eta, Y, pseudocount)
 }
 
+MongrelTruncatedEigen_mongrel_test <- function(Y, upsilon, ThetaX, K, A, etavec, r, nev, ncv) {
+    .Call('_mongrel_MongrelTruncatedEigen_mongrel_test', PACKAGE = 'mongrel', Y, upsilon, ThetaX, K, A, etavec, r, nev, ncv)
+}
+

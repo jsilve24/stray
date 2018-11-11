@@ -95,7 +95,7 @@ namespace mongreltrunclapap{
     double largest = eig_largest.eigenvalues().value(); 
     Rcpp::Rcout << "Largest: " << largest << std::endl;
     
-    op.addOffset(largest+10.0); // add negative 
+    op.addOffset(largest); // add negative 
 
     // Get Smallest part of spectrum
     MongrelSymEig eigs(&op, nev, ncv);
@@ -115,7 +115,7 @@ namespace mongreltrunclapap{
     eigRes res;
     res.k = nev;
     res.eigenvalues=eigs.eigenvalues();
-    res.eigenvalues.array() += largest+10.0;
+    res.eigenvalues.array() += largest;
     res.eigenvalues.array() *= -1;
     res.eigenvectors = eigs.eigenvectors();
     return res;

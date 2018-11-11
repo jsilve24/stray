@@ -51,7 +51,9 @@ using Eigen::VectorXd;
 //' @param calcPartialHess if true only calculates hessian of multinomial 
 //'   much more computationaly and memory efficient but it is an approximation. 
 //' @param multDirichletBoot if >0 (overrides laplace approximation) and samples
-//'  eta efficiently at MAP estimate from pseudo Multinomial-Dirichlet posterior. 
+//'  eta efficiently at MAP estimate from pseudo Multinomial-Dirichlet posterior.
+//' @param useSylv (default: true) if N<D-1 uses Sylvester Determinant Identity
+//'   to speed up calculation of log-likelihood and gradients. 
 //'  
 //' @details Notation: Let Z_j denote the J-th row of a matrix Z.
 //' Model:
@@ -122,10 +124,11 @@ List optimMongrelCollapsed(const Eigen::ArrayXXd Y,
                double eigvalthresh=0, 
                double jitter=0,
                bool calcPartialHess = false, 
-               double multDirichletBoot = -1.0){  
+               double multDirichletBoot = -1.0, 
+               bool useSylv = true){  
   int N = Y.cols();
   int D = Y.rows();
-  MongrelCollapsed cm(Y, upsilon, ThetaX, K, A);
+  MongrelCollapsed cm(Y, upsilon, ThetaX, K, A, useSylv);
   Map<VectorXd> eta(init.data(), init.size()); // will rewrite by optim
   double nllopt; // NEGATIVE LogLik at optim
   List out(5);

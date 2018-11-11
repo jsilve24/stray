@@ -51,19 +51,24 @@ class MongrelCollapsed : public mongrel::MongrelModel {
     MatrixXd C;
     MatrixXd R;
     
+    // testing
+    bool sylv;
+    
     
   public:
     MongrelCollapsed(const ArrayXXd Y_,          // constructor
                         const double upsilon_,
                         const MatrixXd ThetaX_,
                         const MatrixXd K_,
-                        const MatrixXd A_) :
+                        const MatrixXd A_, 
+                        bool sylv=false) :
     Y(Y_), upsilon(upsilon_), ThetaX(ThetaX_), K(K_), A(A_)
     {
       D = Y.rows();           // number of multinomial categories
       N = Y.cols();           // number of samples
       n = Y.colwise().sum();  // total number of counts per sample
       delta = 0.5*(upsilon + N + D - 2.0);
+      this->sylv = sylv;
     }
     ~MongrelCollapsed(){}                      // destructor
     
@@ -71,8 +76,13 @@ class MongrelCollapsed : public mongrel::MongrelModel {
     void updateWithEtaLL(const Ref<const VectorXd>& etavec){
       const Map<const MatrixXd> eta(etavec.data(), D-1, N);
       E = eta - ThetaX;
-      S.noalias() = K*E*A*E.transpose();
-      S.diagonal() += VectorXd::Ones(1, D-1);
+      if (sylv & (N < (D-1))){
+        S.noalias() = A*E.transpose()*K*E;
+        S.diagonal() += VectorXd::Ones(1, N);
+      } else {
+        S.noalias() = K*E*A*E.transpose();
+        S.diagonal() += VectorXd::Ones(1, D-1);  
+      }
       Sdec.compute(S);
       O = eta.array().exp();
       m = O.colwise().sum();
@@ -84,8 +94,13 @@ class MongrelCollapsed : public mongrel::MongrelModel {
       rhomat = (O.rowwise()/m.transpose()).matrix();
       Map<VectorXd> rhovec(rhomat.data() , rhomat.size());
       rho = rhovec; // probably could be done in one line rather than 2 (above)
-      C.noalias() = A*E.transpose();
-      R.noalias() = Sdec.solve(K); // S^{-1}K
+      if (sylv & (N < (D-1))){
+        C.noalias() = K*E;
+        R.noalias() = Sdec.solve(A); // S^{-1}A
+      } else {
+        C.noalias() = A*E.transpose();
+        R.noalias() = Sdec.solve(K); // S^{-1}K    
+      }
     }
     
     // Must have called updateWithEtaLL first 
@@ -104,7 +119,11 @@ class MongrelCollapsed : public mongrel::MongrelModel {
       // For Multinomial
       MatrixXd g = (Y - (rhomat.array().rowwise()*n.array())).matrix();
       // For MatrixVariate T
-      g.noalias() += -delta*(R + R.transpose())*C.transpose();
+      if (sylv & (N < (D-1))){
+        g.noalias() += -delta*C*(R+R.transpose());
+      } else {
+        g.noalias() += -delta*(R + R.transpose())*C.transpose();        
+      }
       Map<VectorXd> grad(g.data(), g.size()); 
       return grad; // not transposing (leaving as vector)
     }
@@ -112,6 +131,14 @@ class MongrelCollapsed : public mongrel::MongrelModel {
     
     // Must have called updateWithEtaLL and then updateWithEtaGH first 
     MatrixXd calcHess(){
+      bool tmp_sylv = sylv;
+      if (sylv & (N < (D-1))){
+        MatrixXd eta = E + ThetaX;
+        Map<VectorXd> etavec(eta.data(), N*(D-1));
+        this->sylv=false;
+        updateWithEtaLL(etavec);
+        updateWithEtaGH();
+      }
       // for MatrixVariate T
       MatrixXd H(N*(D-1), N*(D-1));
       MatrixXd RCT(D-1, N);
@@ -135,11 +162,14 @@ class MongrelCollapsed : public mongrel::MongrelModel {
         W.diagonal() -= rhoseg;
         H.block(j*(D-1), j*(D-1), D-1, D-1).noalias()  += n(j)*W;
       }
+      // Turn back on sylv option if it was wanted:
+      this->sylv = tmp_sylv;
       return H;
     }
 
     // should return blocks of size D-1 x D-1 stacked in a N(D-1) x D-1 matrix
     MatrixXd calcPartialHess(){
+      if (sylv) Rcpp::stop("Partial Hessian not Updated to Take advantage of Sylv option");
       MatrixXd H = ArrayXXd::Zero(N*(D-1), D-1);
       VectorXd gamma = A.diagonal();
       VectorXd pC(D-1);

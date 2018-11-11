@@ -6,11 +6,11 @@
 \alias{hessMongrelCollapsed}
 \title{Calculations for the Collapsed Mongrel Model}
 \usage{
-loglikMongrelCollapsed(Y, upsilon, ThetaX, K, A, eta)
+loglikMongrelCollapsed(Y, upsilon, ThetaX, K, A, eta, sylv = FALSE)
 
-gradMongrelCollapsed(Y, upsilon, ThetaX, K, A, eta)
+gradMongrelCollapsed(Y, upsilon, ThetaX, K, A, eta, sylv = FALSE)
 
-hessMongrelCollapsed(Y, upsilon, ThetaX, K, A, eta)
+hessMongrelCollapsed(Y, upsilon, ThetaX, K, A, eta, sylv = FALSE)
 }
 \arguments{
 \item{Y}{D x N matrix of counts}
@@ -25,6 +25,9 @@ for regression coefficients)}
 \item{A}{N x N precision matrix given by (I_N + X'\emph{Gamma}X)^{-1}]}
 
 \item{eta}{matrix (D-1)xN of parameter values at which to calculate quantities}
+
+\item{sylv}{(default:false) if true and if N < D-1 will use sylvester determinant
+identity to speed computation}
 }
 \value{
 see below

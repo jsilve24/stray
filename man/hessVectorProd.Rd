@@ -4,7 +4,7 @@
 \alias{hessVectorProd}
 \title{Hessian Vector Product using Finite Differences}
 \usage{
-hessVectorProd(Y, upsilon, ThetaX, K, A, eta, v, r)
+hessVectorProd(Y, upsilon, ThetaX, K, A, eta, v, r, sylv = FALSE)
 }
 \description{
 Hessian Vector Product using Finite Differences

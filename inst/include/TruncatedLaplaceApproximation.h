@@ -89,11 +89,11 @@ namespace mongreltrunclapap{
     if (eig_largest.info() != Spectra::SUCCESSFUL) {
       Rcpp::stop("Something unexpected went wrong in truncated eigendecomposition");
     }
-    
-    Rcpp::Rcout << "Took " << nconv1 << " iterations to converge First TruncSVD" 
-                << std::endl;
+    // 
+    // Rcpp::Rcout << "Took " << nconv1 << " iterations to converge First TruncSVD" 
+    //             << std::endl;
     double largest = eig_largest.eigenvalues().value(); 
-    Rcpp::Rcout << "Largest: " << largest << std::endl;
+    //Rcpp::Rcout << "Largest: " << largest << std::endl;
     
     op.addOffset(largest); // add negative 
 
@@ -102,9 +102,9 @@ namespace mongreltrunclapap{
 
     eigs.init();
     int nconv2 = eigs.compute();
-    
-    Rcpp::Rcout << "Took " << nconv2 << " iterations to converge First TruncSVD" 
-                << std::endl;
+    // 
+    // Rcpp::Rcout << "Took " << nconv2 << " iterations to converge First TruncSVD" 
+    //             << std::endl;
     
     if (eigs.info() == Spectra::NOT_CONVERGING){
       Rcpp::stop("Spectra not converging in truncated eigendecomposition");

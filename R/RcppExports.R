@@ -132,6 +132,8 @@ optimMaltipooCollapsed <- function(Y, upsilon, Theta, X, K, U, init, ellinit, n_
 #' 
 #' @inheritParams optimMongrelCollapsed
 #' @param eta matrix (D-1)xN of parameter values at which to calculate quantities
+#' @param sylv (default:false) if true and if N < D-1 will use sylvester determinant
+#'   identity to speed computation
 #' @return see below
 #' * loglikMongrelCollapsed - double 
 #' * gradMongrelCollapsed - vector
@@ -169,27 +171,27 @@ optimMaltipooCollapsed <- function(Y, upsilon, Theta, X, K, U, init, ellinit, n_
 #' loglikMongrelCollapsed(Y, upsilon, ThetaX, K, A, Eta)
 #' gradMongrelCollapsed(Y, upsilon, ThetaX, K, A, Eta)
 #' hessMongrelCollapsed(Y, upsilon, ThetaX, K, A, Eta)
-loglikMongrelCollapsed <- function(Y, upsilon, ThetaX, K, A, eta) {
-    .Call('_mongrel_loglikMongrelCollapsed', PACKAGE = 'mongrel', Y, upsilon, ThetaX, K, A, eta)
+loglikMongrelCollapsed <- function(Y, upsilon, ThetaX, K, A, eta, sylv = FALSE) {
+    .Call('_mongrel_loglikMongrelCollapsed', PACKAGE = 'mongrel', Y, upsilon, ThetaX, K, A, eta, sylv)
 }
 
 #' @rdname loglikMongrelCollapsed
 #' @export
-gradMongrelCollapsed <- function(Y, upsilon, ThetaX, K, A, eta) {
-    .Call('_mongrel_gradMongrelCollapsed', PACKAGE = 'mongrel', Y, upsilon, ThetaX, K, A, eta)
+gradMongrelCollapsed <- function(Y, upsilon, ThetaX, K, A, eta, sylv = FALSE) {
+    .Call('_mongrel_gradMongrelCollapsed', PACKAGE = 'mongrel', Y, upsilon, ThetaX, K, A, eta, sylv)
 }
 
 #' @rdname loglikMongrelCollapsed
 #' @export
-hessMongrelCollapsed <- function(Y, upsilon, ThetaX, K, A, eta) {
-    .Call('_mongrel_hessMongrelCollapsed', PACKAGE = 'mongrel', Y, upsilon, ThetaX, K, A, eta)
+hessMongrelCollapsed <- function(Y, upsilon, ThetaX, K, A, eta, sylv = FALSE) {
+    .Call('_mongrel_hessMongrelCollapsed', PACKAGE = 'mongrel', Y, upsilon, ThetaX, K, A, eta, sylv)
 }
 
 #' Hessian Vector Product using Finite Differences 
 #' @rdname hessVectorProd
 #' @export
-hessVectorProd <- function(Y, upsilon, ThetaX, K, A, eta, v, r) {
-    .Call('_mongrel_hessVectorProd', PACKAGE = 'mongrel', Y, upsilon, ThetaX, K, A, eta, v, r)
+hessVectorProd <- function(Y, upsilon, ThetaX, K, A, eta, v, r, sylv = FALSE) {
+    .Call('_mongrel_hessVectorProd', PACKAGE = 'mongrel', Y, upsilon, ThetaX, K, A, eta, v, r, sylv)
 }
 
 #' Backtracking line search
@@ -238,7 +240,9 @@ lineSearch <- function(Y, upsilon, ThetaX, K, A, eta, direction, rho, c) {
 #' @param calcPartialHess if true only calculates hessian of multinomial 
 #'   much more computationaly and memory efficient but it is an approximation. 
 #' @param multDirichletBoot if >0 (overrides laplace approximation) and samples
-#'  eta efficiently at MAP estimate from pseudo Multinomial-Dirichlet posterior. 
+#'  eta efficiently at MAP estimate from pseudo Multinomial-Dirichlet posterior.
+#' @param useSylv (default: true) if N<D-1 uses Sylvester Determinant Identity
+#'   to speed up calculation of log-likelihood and gradients. 
 #'  
 #' @details Notation: Let Z_j denote the J-th row of a matrix Z.
 #' Model:
@@ -287,8 +291,8 @@ lineSearch <- function(Y, upsilon, ThetaX, K, A, eta, direction, rho, c) {
 #' # Fit model for eta
 #' fit <- optimMongrelCollapsed(sim$Y, sim$upsilon, sim$Theta%*%sim$X, sim$K, 
 #'                              sim$A, random_mongrel_init(sim$Y))  
-optimMongrelCollapsed <- function(Y, upsilon, ThetaX, K, A, init, n_samples = 2000L, calcGradHess = TRUE, b1 = 0.9, b2 = 0.99, step_size = 0.003, epsilon = 10e-7, eps_f = 1e-10, eps_g = 1e-4, max_iter = 10000L, verbose = FALSE, verbose_rate = 10L, decomp_method = "eigen", eigvalthresh = 0, jitter = 0, calcPartialHess = FALSE, multDirichletBoot = -1.0) {
-    .Call('_mongrel_optimMongrelCollapsed', PACKAGE = 'mongrel', Y, upsilon, ThetaX, K, A, init, n_samples, calcGradHess, b1, b2, step_size, epsilon, eps_f, eps_g, max_iter, verbose, verbose_rate, decomp_method, eigvalthresh, jitter, calcPartialHess, multDirichletBoot)
+optimMongrelCollapsed <- function(Y, upsilon, ThetaX, K, A, init, n_samples = 2000L, calcGradHess = TRUE, b1 = 0.9, b2 = 0.99, step_size = 0.003, epsilon = 10e-7, eps_f = 1e-10, eps_g = 1e-4, max_iter = 10000L, verbose = FALSE, verbose_rate = 10L, decomp_method = "eigen", eigvalthresh = 0, jitter = 0, calcPartialHess = FALSE, multDirichletBoot = -1.0, useSylv = TRUE) {
+    .Call('_mongrel_optimMongrelCollapsed', PACKAGE = 'mongrel', Y, upsilon, ThetaX, K, A, init, n_samples, calcGradHess, b1, b2, step_size, epsilon, eps_f, eps_g, max_iter, verbose, verbose_rate, decomp_method, eigvalthresh, jitter, calcPartialHess, multDirichletBoot, useSylv)
 }
 
 #' Uncollapse output from optimMongrelCollapsed to full Mongrel Model

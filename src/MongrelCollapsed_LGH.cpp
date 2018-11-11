@@ -22,6 +22,8 @@ using Eigen::VectorXd;
 //' 
 //' @inheritParams optimMongrelCollapsed
 //' @param eta matrix (D-1)xN of parameter values at which to calculate quantities
+//' @param sylv (default:false) if true and if N < D-1 will use sylvester determinant
+//'   identity to speed computation
 //' @return see below
 //' * loglikMongrelCollapsed - double 
 //' * gradMongrelCollapsed - vector
@@ -65,8 +67,9 @@ double loglikMongrelCollapsed(const Eigen::ArrayXXd Y,
                   const Eigen::MatrixXd ThetaX,
                   const Eigen::MatrixXd K,
                   const Eigen::MatrixXd A,
-                  Eigen::MatrixXd eta){
-  MongrelCollapsed cm(Y, upsilon, ThetaX, K, A);
+                  Eigen::MatrixXd eta, 
+                  bool sylv=false){
+  MongrelCollapsed cm(Y, upsilon, ThetaX, K, A, sylv);
   Map<VectorXd> etavec(eta.data(), eta.size());
   cm.updateWithEtaLL(etavec);
   return cm.calcLogLik(etavec);
@@ -81,8 +84,9 @@ Eigen::VectorXd gradMongrelCollapsed(const Eigen::ArrayXXd Y,
                          const Eigen::MatrixXd ThetaX,
                          const Eigen::MatrixXd K,
                          const Eigen::MatrixXd A,
-                         Eigen::MatrixXd eta){
-  MongrelCollapsed cm(Y, upsilon, ThetaX, K, A);
+                         Eigen::MatrixXd eta, 
+                         bool sylv=false){
+  MongrelCollapsed cm(Y, upsilon, ThetaX, K, A, sylv);
   Map<VectorXd> etavec(eta.data(), eta.size());
   cm.updateWithEtaLL(etavec);
   cm.updateWithEtaGH();
@@ -97,8 +101,9 @@ Eigen::MatrixXd hessMongrelCollapsed(const Eigen::ArrayXXd Y,
                          const Eigen::MatrixXd ThetaX,
                          const Eigen::MatrixXd K,
                          const Eigen::MatrixXd A,
-                         Eigen::MatrixXd eta){
-  MongrelCollapsed cm(Y, upsilon, ThetaX, K, A);
+                         Eigen::MatrixXd eta, 
+                         bool sylv=false){
+  MongrelCollapsed cm(Y, upsilon, ThetaX, K, A, sylv);
   Map<VectorXd> etavec(eta.data(), eta.size());
   cm.updateWithEtaLL(etavec);
   cm.updateWithEtaGH();
@@ -116,8 +121,9 @@ Eigen::VectorXd hessVectorProd(const Eigen::ArrayXXd Y,
                          const Eigen::MatrixXd A,
                          Eigen::MatrixXd eta,
                          Eigen::VectorXd v,
-                         double r){
-  MongrelCollapsed cm(Y, upsilon, ThetaX, K, A);
+                         double r, 
+                         bool sylv=false){
+  MongrelCollapsed cm(Y, upsilon, ThetaX, K, A, sylv);
   Map<VectorXd> etavec(eta.data(), eta.size());
   return cm.calcHessVectorProd(etavec, v, r);
 }

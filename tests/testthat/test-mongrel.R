@@ -38,6 +38,33 @@ test_that("optim and uncollapse correctnesss", {
 })
 
 
+test_that("optim sylvester gets same result", {
+  sim <- mongrel_sim(D=30, N=10, true_priors = TRUE)
+  init <- random_mongrel_init(sim$Y)
+  start <- Sys.time()
+  fit <- optimMongrelCollapsed(sim$Y, sim$upsilon, (sim$Theta%*%sim$X), sim$K, 
+                               sim$A, init,
+                               n_samples=2000,
+                               calcGradHess = FALSE, 
+                               useSylv=FALSE)
+  end <- Sys.time()
+  plain <- end-start
+  start <- Sys.time()
+  fitsylv <- optimMongrelCollapsed(sim$Y, sim$upsilon, (sim$Theta%*%sim$X), sim$K, 
+                               sim$A, init,
+                               n_samples=2000,
+                               calcGradHess = FALSE, 
+                               useSylv=TRUE)
+  end <- Sys.time()
+  sylv <- end-start
+  
+  expect_equal(plain>sylv, TRUE)
+  
+  # check closeness of MAP
+  expect_true(abs(mean(fit$Pars - fitsylv$Pars)) < .1)
+})
+
+
 test_that("mongrel wrapper correctness", {
   fit <- mongrel(sim$Y, sim$X, upsilon = sim$upsilon, Theta = sim$Theta, Xi=sim$Xi, 
                  Gamma=sim$Gamma)

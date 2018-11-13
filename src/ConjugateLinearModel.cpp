@@ -65,8 +65,6 @@ List conjugateLinearModel(const Eigen::Map<Eigen::MatrixXd> Y,
   // // Storage for computation
   MatrixXd LambdaN(D-1, Q);
   MatrixXd XiN(D-1, D-1);
-  MatrixXd temp1(D-1, D-1);
-  MatrixXd temp2(D-1, D-1);
   MatrixXd LambdaDraw(D-1, Q);
   MatrixXd LSigmaDraw(D-1, D-1);
   MatrixXd SigmaDraw(D-1, D-1);
@@ -80,11 +78,7 @@ List conjugateLinearModel(const Eigen::Map<Eigen::MatrixXd> Y,
   LambdaN = Y*XTGammaN+ThetaGammaInvGammaN;
   ELambda = LambdaN-Theta;
   EY = Y-LambdaN*X;
-  //XiN = Xi+ EY*EY.transpose() + ELambda*GammaInv*ELambda.transpose();
-
-  temp1 = EY*EY.transpose();
-  temp2 = ELambda*GammaInv*ELambda.transpose();
-  XiN = temp1 + Xi + temp2;
+  XiN =  (EY*EY.transpose()).eval() + Xi + (ELambda*GammaInv*ELambda.transpose()).eval();
   
   // iterate over all draws of eta
   for (int i=0; i < iter; i++){

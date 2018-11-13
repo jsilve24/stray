@@ -1,3 +1,4 @@
+#include <time.h>
 #include <MatrixAlgebra.h>
 #include <MongrelCollapsed.h>
 #include <AdamOptim.h>
@@ -128,6 +129,9 @@ List optimMongrelCollapsed(const Eigen::ArrayXXd Y,
   List out(5);
   out.names() = CharacterVector::create("LogLik", "Gradient", "Hessian",
             "Pars", "Samples");
+
+  time_t seconds = time(NULL);
+  printf("Starting gradient descent: %ld\n", seconds);
   
   // Pick optimizer (ADAM - without perturbation appears to be best)
   //   ADAM with perturbations not fully implemented
@@ -136,6 +140,9 @@ List optimMongrelCollapsed(const Eigen::ArrayXXd Y,
                                 eps_f, eps_g, max_iter, verbose, verbose_rate); 
   //int status = adamperturb::optim_adam(cm, eta, nllopt); 
 
+  seconds = time(NULL);
+  printf("Completed gradient descent: %ld\n", seconds);
+
   if (status<0)
     Rcpp::warning("Max Iterations Hit, May not be at optima");
   Map<MatrixXd> etamat(eta.data(), D-1, N);
@@ -143,6 +150,10 @@ List optimMongrelCollapsed(const Eigen::ArrayXXd Y,
   out[3] = etamat;
   
   if (n_samples > 0 || calcGradHess){
+
+    seconds = time(NULL);
+    printf("Starting Hessian calc: %ld\n", seconds);
+
     if (verbose) Rcout << "Allocating for Hessian" << std::endl;
     MatrixXd hess(N*(D-1), N*(D-1));
     VectorXd grad(N*(D-1));
@@ -160,6 +171,9 @@ List optimMongrelCollapsed(const Eigen::ArrayXXd Y,
       if (calcGradHess)
         out[2] = hess;    
     }
+
+    seconds = time(NULL);
+    printf("Completed Hessian calc: %ld\n", seconds);
 
     if (n_samples>0){
       // Laplace Approximation

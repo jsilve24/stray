@@ -65,6 +65,8 @@ List conjugateLinearModel(const Eigen::Map<Eigen::MatrixXd> Y,
   // // Storage for computation
   MatrixXd LambdaN(D-1, Q);
   MatrixXd XiN(D-1, D-1);
+  MatrixXd temp1(D-1, D-1);
+  MatrixXd temp2(D-1, D-1);
   MatrixXd LambdaDraw(D-1, Q);
   MatrixXd LSigmaDraw(D-1, D-1);
   MatrixXd SigmaDraw(D-1, D-1);
@@ -73,13 +75,16 @@ List conjugateLinearModel(const Eigen::Map<Eigen::MatrixXd> Y,
   // Storage for output
   MatrixXd LambdaDrawO((D-1)*Q, iter);
   MatrixXd SigmaDrawO((D-1)*(D-1), iter);
-  
+
   // computation out of for-loop compared to mongrelcollapsed_uncollapse
   LambdaN = Y*XTGammaN+ThetaGammaInvGammaN;
   ELambda = LambdaN-Theta;
   EY = Y-LambdaN*X;
-  XiN = Xi+ EY*EY.transpose() + ELambda*GammaInv*ELambda.transpose();
-  
+  //XiN = Xi+ EY*EY.transpose() + ELambda*GammaInv*ELambda.transpose();
+
+  temp1 = EY*EY.transpose();
+  temp2 = ELambda*GammaInv*ELambda.transpose();
+  XiN = temp1 + Xi + temp2;
   
   // iterate over all draws of eta
   for (int i=0; i < iter; i++){
@@ -104,6 +109,6 @@ List conjugateLinearModel(const Eigen::Map<Eigen::MatrixXd> Y,
   nvSigma.attr("dim") = dSigma;
   out[0] = nvLambda;
   out[1] = nvSigma;
-  
+
   return out;
 }

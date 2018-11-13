@@ -57,8 +57,8 @@ BEGIN_RCPP
 END_RCPP
 }
 // loglikMongrelCollapsed
-double loglikMongrelCollapsed(const Eigen::ArrayXXd Y, const double upsilon, const Eigen::MatrixXd ThetaX, const Eigen::MatrixXd K, const Eigen::MatrixXd A, Eigen::MatrixXd eta);
-RcppExport SEXP _mongrel_loglikMongrelCollapsed(SEXP YSEXP, SEXP upsilonSEXP, SEXP ThetaXSEXP, SEXP KSEXP, SEXP ASEXP, SEXP etaSEXP) {
+double loglikMongrelCollapsed(const Eigen::ArrayXXd Y, const double upsilon, const Eigen::MatrixXd ThetaX, const Eigen::MatrixXd K, const Eigen::MatrixXd A, Eigen::MatrixXd eta, bool sylv);
+RcppExport SEXP _mongrel_loglikMongrelCollapsed(SEXP YSEXP, SEXP upsilonSEXP, SEXP ThetaXSEXP, SEXP KSEXP, SEXP ASEXP, SEXP etaSEXP, SEXP sylvSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -68,13 +68,14 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< const Eigen::MatrixXd >::type K(KSEXP);
     Rcpp::traits::input_parameter< const Eigen::MatrixXd >::type A(ASEXP);
     Rcpp::traits::input_parameter< Eigen::MatrixXd >::type eta(etaSEXP);
-    rcpp_result_gen = Rcpp::wrap(loglikMongrelCollapsed(Y, upsilon, ThetaX, K, A, eta));
+    Rcpp::traits::input_parameter< bool >::type sylv(sylvSEXP);
+    rcpp_result_gen = Rcpp::wrap(loglikMongrelCollapsed(Y, upsilon, ThetaX, K, A, eta, sylv));
     return rcpp_result_gen;
 END_RCPP
 }
 // gradMongrelCollapsed
-Eigen::VectorXd gradMongrelCollapsed(const Eigen::ArrayXXd Y, const double upsilon, const Eigen::MatrixXd ThetaX, const Eigen::MatrixXd K, const Eigen::MatrixXd A, Eigen::MatrixXd eta);
-RcppExport SEXP _mongrel_gradMongrelCollapsed(SEXP YSEXP, SEXP upsilonSEXP, SEXP ThetaXSEXP, SEXP KSEXP, SEXP ASEXP, SEXP etaSEXP) {
+Eigen::VectorXd gradMongrelCollapsed(const Eigen::ArrayXXd Y, const double upsilon, const Eigen::MatrixXd ThetaX, const Eigen::MatrixXd K, const Eigen::MatrixXd A, Eigen::MatrixXd eta, bool sylv);
+RcppExport SEXP _mongrel_gradMongrelCollapsed(SEXP YSEXP, SEXP upsilonSEXP, SEXP ThetaXSEXP, SEXP KSEXP, SEXP ASEXP, SEXP etaSEXP, SEXP sylvSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -84,13 +85,14 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< const Eigen::MatrixXd >::type K(KSEXP);
     Rcpp::traits::input_parameter< const Eigen::MatrixXd >::type A(ASEXP);
     Rcpp::traits::input_parameter< Eigen::MatrixXd >::type eta(etaSEXP);
-    rcpp_result_gen = Rcpp::wrap(gradMongrelCollapsed(Y, upsilon, ThetaX, K, A, eta));
+    Rcpp::traits::input_parameter< bool >::type sylv(sylvSEXP);
+    rcpp_result_gen = Rcpp::wrap(gradMongrelCollapsed(Y, upsilon, ThetaX, K, A, eta, sylv));
     return rcpp_result_gen;
 END_RCPP
 }
 // hessMongrelCollapsed
-Eigen::MatrixXd hessMongrelCollapsed(const Eigen::ArrayXXd Y, const double upsilon, const Eigen::MatrixXd ThetaX, const Eigen::MatrixXd K, const Eigen::MatrixXd A, Eigen::MatrixXd eta);
-RcppExport SEXP _mongrel_hessMongrelCollapsed(SEXP YSEXP, SEXP upsilonSEXP, SEXP ThetaXSEXP, SEXP KSEXP, SEXP ASEXP, SEXP etaSEXP) {
+Eigen::MatrixXd hessMongrelCollapsed(const Eigen::ArrayXXd Y, const double upsilon, const Eigen::MatrixXd ThetaX, const Eigen::MatrixXd K, const Eigen::MatrixXd A, Eigen::MatrixXd eta, bool sylv);
+RcppExport SEXP _mongrel_hessMongrelCollapsed(SEXP YSEXP, SEXP upsilonSEXP, SEXP ThetaXSEXP, SEXP KSEXP, SEXP ASEXP, SEXP etaSEXP, SEXP sylvSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -100,13 +102,52 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< const Eigen::MatrixXd >::type K(KSEXP);
     Rcpp::traits::input_parameter< const Eigen::MatrixXd >::type A(ASEXP);
     Rcpp::traits::input_parameter< Eigen::MatrixXd >::type eta(etaSEXP);
-    rcpp_result_gen = Rcpp::wrap(hessMongrelCollapsed(Y, upsilon, ThetaX, K, A, eta));
+    Rcpp::traits::input_parameter< bool >::type sylv(sylvSEXP);
+    rcpp_result_gen = Rcpp::wrap(hessMongrelCollapsed(Y, upsilon, ThetaX, K, A, eta, sylv));
+    return rcpp_result_gen;
+END_RCPP
+}
+// hessVectorProd
+Eigen::VectorXd hessVectorProd(const Eigen::ArrayXXd Y, const double upsilon, const Eigen::MatrixXd ThetaX, const Eigen::MatrixXd K, const Eigen::MatrixXd A, Eigen::MatrixXd eta, Eigen::VectorXd v, double r, bool sylv);
+RcppExport SEXP _mongrel_hessVectorProd(SEXP YSEXP, SEXP upsilonSEXP, SEXP ThetaXSEXP, SEXP KSEXP, SEXP ASEXP, SEXP etaSEXP, SEXP vSEXP, SEXP rSEXP, SEXP sylvSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const Eigen::ArrayXXd >::type Y(YSEXP);
+    Rcpp::traits::input_parameter< const double >::type upsilon(upsilonSEXP);
+    Rcpp::traits::input_parameter< const Eigen::MatrixXd >::type ThetaX(ThetaXSEXP);
+    Rcpp::traits::input_parameter< const Eigen::MatrixXd >::type K(KSEXP);
+    Rcpp::traits::input_parameter< const Eigen::MatrixXd >::type A(ASEXP);
+    Rcpp::traits::input_parameter< Eigen::MatrixXd >::type eta(etaSEXP);
+    Rcpp::traits::input_parameter< Eigen::VectorXd >::type v(vSEXP);
+    Rcpp::traits::input_parameter< double >::type r(rSEXP);
+    Rcpp::traits::input_parameter< bool >::type sylv(sylvSEXP);
+    rcpp_result_gen = Rcpp::wrap(hessVectorProd(Y, upsilon, ThetaX, K, A, eta, v, r, sylv));
+    return rcpp_result_gen;
+END_RCPP
+}
+// lineSearch
+Eigen::VectorXd lineSearch(const Eigen::ArrayXXd Y, const double upsilon, const Eigen::MatrixXd ThetaX, const Eigen::MatrixXd K, const Eigen::MatrixXd A, Eigen::MatrixXd eta, int direction, double rho, double c);
+RcppExport SEXP _mongrel_lineSearch(SEXP YSEXP, SEXP upsilonSEXP, SEXP ThetaXSEXP, SEXP KSEXP, SEXP ASEXP, SEXP etaSEXP, SEXP directionSEXP, SEXP rhoSEXP, SEXP cSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const Eigen::ArrayXXd >::type Y(YSEXP);
+    Rcpp::traits::input_parameter< const double >::type upsilon(upsilonSEXP);
+    Rcpp::traits::input_parameter< const Eigen::MatrixXd >::type ThetaX(ThetaXSEXP);
+    Rcpp::traits::input_parameter< const Eigen::MatrixXd >::type K(KSEXP);
+    Rcpp::traits::input_parameter< const Eigen::MatrixXd >::type A(ASEXP);
+    Rcpp::traits::input_parameter< Eigen::MatrixXd >::type eta(etaSEXP);
+    Rcpp::traits::input_parameter< int >::type direction(directionSEXP);
+    Rcpp::traits::input_parameter< double >::type rho(rhoSEXP);
+    Rcpp::traits::input_parameter< double >::type c(cSEXP);
+    rcpp_result_gen = Rcpp::wrap(lineSearch(Y, upsilon, ThetaX, K, A, eta, direction, rho, c));
     return rcpp_result_gen;
 END_RCPP
 }
 // optimMongrelCollapsed
-List optimMongrelCollapsed(const Eigen::ArrayXXd Y, const double upsilon, const Eigen::MatrixXd ThetaX, const Eigen::MatrixXd K, const Eigen::MatrixXd A, Eigen::MatrixXd init, int n_samples, bool calcGradHess, double b1, double b2, double step_size, double epsilon, double eps_f, double eps_g, int max_iter, bool verbose, int verbose_rate, String decomp_method, double eigvalthresh, double jitter, bool calcPartialHess);
-RcppExport SEXP _mongrel_optimMongrelCollapsed(SEXP YSEXP, SEXP upsilonSEXP, SEXP ThetaXSEXP, SEXP KSEXP, SEXP ASEXP, SEXP initSEXP, SEXP n_samplesSEXP, SEXP calcGradHessSEXP, SEXP b1SEXP, SEXP b2SEXP, SEXP step_sizeSEXP, SEXP epsilonSEXP, SEXP eps_fSEXP, SEXP eps_gSEXP, SEXP max_iterSEXP, SEXP verboseSEXP, SEXP verbose_rateSEXP, SEXP decomp_methodSEXP, SEXP eigvalthreshSEXP, SEXP jitterSEXP, SEXP calcPartialHessSEXP) {
+List optimMongrelCollapsed(const Eigen::ArrayXXd Y, const double upsilon, const Eigen::MatrixXd ThetaX, const Eigen::MatrixXd K, const Eigen::MatrixXd A, Eigen::MatrixXd init, int n_samples, bool calcGradHess, double b1, double b2, double step_size, double epsilon, double eps_f, double eps_g, int max_iter, bool verbose, int verbose_rate, String decomp_method, double eigvalthresh, double jitter, bool calcPartialHess, double multDirichletBoot, bool useSylv);
+RcppExport SEXP _mongrel_optimMongrelCollapsed(SEXP YSEXP, SEXP upsilonSEXP, SEXP ThetaXSEXP, SEXP KSEXP, SEXP ASEXP, SEXP initSEXP, SEXP n_samplesSEXP, SEXP calcGradHessSEXP, SEXP b1SEXP, SEXP b2SEXP, SEXP step_sizeSEXP, SEXP epsilonSEXP, SEXP eps_fSEXP, SEXP eps_gSEXP, SEXP max_iterSEXP, SEXP verboseSEXP, SEXP verbose_rateSEXP, SEXP decomp_methodSEXP, SEXP eigvalthreshSEXP, SEXP jitterSEXP, SEXP calcPartialHessSEXP, SEXP multDirichletBootSEXP, SEXP useSylvSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -131,7 +172,9 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< double >::type eigvalthresh(eigvalthreshSEXP);
     Rcpp::traits::input_parameter< double >::type jitter(jitterSEXP);
     Rcpp::traits::input_parameter< bool >::type calcPartialHess(calcPartialHessSEXP);
-    rcpp_result_gen = Rcpp::wrap(optimMongrelCollapsed(Y, upsilon, ThetaX, K, A, init, n_samples, calcGradHess, b1, b2, step_size, epsilon, eps_f, eps_g, max_iter, verbose, verbose_rate, decomp_method, eigvalthresh, jitter, calcPartialHess));
+    Rcpp::traits::input_parameter< double >::type multDirichletBoot(multDirichletBootSEXP);
+    Rcpp::traits::input_parameter< bool >::type useSylv(useSylvSEXP);
+    rcpp_result_gen = Rcpp::wrap(optimMongrelCollapsed(Y, upsilon, ThetaX, K, A, init, n_samples, calcGradHess, b1, b2, step_size, epsilon, eps_f, eps_g, max_iter, verbose, verbose_rate, decomp_method, eigvalthresh, jitter, calcPartialHess, multDirichletBoot, useSylv));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -243,14 +286,83 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// alrInv_default_test
+Eigen::MatrixXd alrInv_default_test(Eigen::MatrixXd eta);
+RcppExport SEXP _mongrel_alrInv_default_test(SEXP etaSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Eigen::MatrixXd >::type eta(etaSEXP);
+    rcpp_result_gen = Rcpp::wrap(alrInv_default_test(eta));
+    return rcpp_result_gen;
+END_RCPP
+}
+// alr_default_test
+Eigen::MatrixXd alr_default_test(Eigen::MatrixXd pi);
+RcppExport SEXP _mongrel_alr_default_test(SEXP piSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Eigen::MatrixXd >::type pi(piSEXP);
+    rcpp_result_gen = Rcpp::wrap(alr_default_test(pi));
+    return rcpp_result_gen;
+END_RCPP
+}
+// rDirichlet_test
+Eigen::MatrixXd rDirichlet_test(int n_samples, Eigen::VectorXd alpha);
+RcppExport SEXP _mongrel_rDirichlet_test(SEXP n_samplesSEXP, SEXP alphaSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< int >::type n_samples(n_samplesSEXP);
+    Rcpp::traits::input_parameter< Eigen::VectorXd >::type alpha(alphaSEXP);
+    rcpp_result_gen = Rcpp::wrap(rDirichlet_test(n_samples, alpha));
+    return rcpp_result_gen;
+END_RCPP
+}
+// MultDirichletBoot_test
+Eigen::MatrixXd MultDirichletBoot_test(int n_samples, Eigen::MatrixXd eta, Eigen::ArrayXXd Y, double pseudocount);
+RcppExport SEXP _mongrel_MultDirichletBoot_test(SEXP n_samplesSEXP, SEXP etaSEXP, SEXP YSEXP, SEXP pseudocountSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< int >::type n_samples(n_samplesSEXP);
+    Rcpp::traits::input_parameter< Eigen::MatrixXd >::type eta(etaSEXP);
+    Rcpp::traits::input_parameter< Eigen::ArrayXXd >::type Y(YSEXP);
+    Rcpp::traits::input_parameter< double >::type pseudocount(pseudocountSEXP);
+    rcpp_result_gen = Rcpp::wrap(MultDirichletBoot_test(n_samples, eta, Y, pseudocount));
+    return rcpp_result_gen;
+END_RCPP
+}
+// MongrelTruncatedEigen_mongrel_test
+List MongrelTruncatedEigen_mongrel_test(Eigen::ArrayXXd Y, double upsilon, Eigen::MatrixXd ThetaX, Eigen::MatrixXd K, Eigen::MatrixXd A, Eigen::VectorXd etavec, double r, int nev, int ncv);
+RcppExport SEXP _mongrel_MongrelTruncatedEigen_mongrel_test(SEXP YSEXP, SEXP upsilonSEXP, SEXP ThetaXSEXP, SEXP KSEXP, SEXP ASEXP, SEXP etavecSEXP, SEXP rSEXP, SEXP nevSEXP, SEXP ncvSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Eigen::ArrayXXd >::type Y(YSEXP);
+    Rcpp::traits::input_parameter< double >::type upsilon(upsilonSEXP);
+    Rcpp::traits::input_parameter< Eigen::MatrixXd >::type ThetaX(ThetaXSEXP);
+    Rcpp::traits::input_parameter< Eigen::MatrixXd >::type K(KSEXP);
+    Rcpp::traits::input_parameter< Eigen::MatrixXd >::type A(ASEXP);
+    Rcpp::traits::input_parameter< Eigen::VectorXd >::type etavec(etavecSEXP);
+    Rcpp::traits::input_parameter< double >::type r(rSEXP);
+    Rcpp::traits::input_parameter< int >::type nev(nevSEXP);
+    Rcpp::traits::input_parameter< int >::type ncv(ncvSEXP);
+    rcpp_result_gen = Rcpp::wrap(MongrelTruncatedEigen_mongrel_test(Y, upsilon, ThetaX, K, A, etavec, r, nev, ncv));
+    return rcpp_result_gen;
+END_RCPP
+}
 
 static const R_CallMethodDef CallEntries[] = {
     {"_mongrel_conjugateLinearModel", (DL_FUNC) &_mongrel_conjugateLinearModel, 7},
     {"_mongrel_optimMaltipooCollapsed", (DL_FUNC) &_mongrel_optimMaltipooCollapsed, 23},
-    {"_mongrel_loglikMongrelCollapsed", (DL_FUNC) &_mongrel_loglikMongrelCollapsed, 6},
-    {"_mongrel_gradMongrelCollapsed", (DL_FUNC) &_mongrel_gradMongrelCollapsed, 6},
-    {"_mongrel_hessMongrelCollapsed", (DL_FUNC) &_mongrel_hessMongrelCollapsed, 6},
-    {"_mongrel_optimMongrelCollapsed", (DL_FUNC) &_mongrel_optimMongrelCollapsed, 21},
+    {"_mongrel_loglikMongrelCollapsed", (DL_FUNC) &_mongrel_loglikMongrelCollapsed, 7},
+    {"_mongrel_gradMongrelCollapsed", (DL_FUNC) &_mongrel_gradMongrelCollapsed, 7},
+    {"_mongrel_hessMongrelCollapsed", (DL_FUNC) &_mongrel_hessMongrelCollapsed, 7},
+    {"_mongrel_hessVectorProd", (DL_FUNC) &_mongrel_hessVectorProd, 9},
+    {"_mongrel_lineSearch", (DL_FUNC) &_mongrel_lineSearch, 9},
+    {"_mongrel_optimMongrelCollapsed", (DL_FUNC) &_mongrel_optimMongrelCollapsed, 23},
     {"_mongrel_uncollapseMongrelCollapsed", (DL_FUNC) &_mongrel_uncollapseMongrelCollapsed, 7},
     {"_mongrel_rMatNormalCholesky_test", (DL_FUNC) &_mongrel_rMatNormalCholesky_test, 3},
     {"_mongrel_rInvWishRevCholesky_test", (DL_FUNC) &_mongrel_rInvWishRevCholesky_test, 2},
@@ -259,6 +371,11 @@ static const R_CallMethodDef CallEntries[] = {
     {"_mongrel_eigen_lap_test", (DL_FUNC) &_mongrel_eigen_lap_test, 4},
     {"_mongrel_cholesky_lap_test", (DL_FUNC) &_mongrel_cholesky_lap_test, 4},
     {"_mongrel_LaplaceApproximation_test", (DL_FUNC) &_mongrel_LaplaceApproximation_test, 5},
+    {"_mongrel_alrInv_default_test", (DL_FUNC) &_mongrel_alrInv_default_test, 1},
+    {"_mongrel_alr_default_test", (DL_FUNC) &_mongrel_alr_default_test, 1},
+    {"_mongrel_rDirichlet_test", (DL_FUNC) &_mongrel_rDirichlet_test, 2},
+    {"_mongrel_MultDirichletBoot_test", (DL_FUNC) &_mongrel_MultDirichletBoot_test, 4},
+    {"_mongrel_MongrelTruncatedEigen_mongrel_test", (DL_FUNC) &_mongrel_MongrelTruncatedEigen_mongrel_test, 9},
     {NULL, NULL, 0}
 };
 

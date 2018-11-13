@@ -17,19 +17,19 @@ test_that("check_dims correct", {
   expect_error(check_dims(y, c(2), "y"))
 })
 
-test_that("name correct on unnamed imput", {
-  sim <- mongrel_sim()
-  sim$Y <- unname(sim$Y)
-  sim$X <- unname(sim$X)
-  attach(sim)
-  fit <- mongrel(Y, X)
-  
-  
-  
-  # When not all parameters are present
-  fit$Eta <- NULL
-  name(fit)
-  
-  detach(sim)
-  expect_true(TRUE) # so that above does not give error
-})
+# test_that("name correct on unnamed imput", {
+#   sim <- mongrel_sim()
+#   sim$Y <- unname(sim$Y)
+#   sim$X <- unname(sim$X)
+#   attach(sim)
+#   fit <- mongrel(Y, X)
+#   
+#   
+#   
+#   # When not all parameters are present
+#   fit$Eta <- NULL
+#   name(fit)
+#   
+#   detach(sim)
+#   expect_true(TRUE) # so that above does not give error
+# })

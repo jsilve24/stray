@@ -7,6 +7,7 @@
 #' @param m an object of class mongrelfit
 #' @param use_names should dimension indices be replaced by
 #'   dimension names if provided in data used to fit mongrel model.  
+#' @param as_factor if use_names should names be returned as factor?
 #' 
 #' @importFrom driver gather_array
 #' @importFrom dplyr bind_rows group_by 
@@ -17,7 +18,7 @@
 #' fit <- mongrel(sim$Y, sim$X)
 #' fit_tidy <- mongrel_tidy_samples(fit, use_names=TRUE)
 #' head(fit_tidy)
-mongrel_tidy_samples<- function(m, use_names=FALSE){
+mongrel_tidy_samples<- function(m, use_names=FALSE, as_factor=FALSE){
   l <- list()
   if (!is.null(m$Eta)) l$Eta <- driver::gather_array(m$Eta, val, coord, sample, iter)
   if (!is.null(m$Lambda)) l$Lambda <- driver::gather_array(m$Lambda, val, coord, covariate, iter)
@@ -41,7 +42,7 @@ mongrel_tidy_samples<- function(m, use_names=FALSE){
     cl[["coord2"]] = "cat"
   }
 
-  l <- name_tidy(l, m, cl)
+  l <- name_tidy(l, m, cl, as_factor)
   
   return(l)
 }
@@ -62,6 +63,8 @@ summary_check_precomputed <- function(m, pars){
 #' @param pars character vector (default: c("Eta", "Lambda", "Sigma"))
 #' @param use_names should summary replace dimension indices with mongrelfit 
 #'   names if names Y and X were named in call to \code{\link{mongrel}}
+#' @param as_factor if use_names and as_factor then returns names as factors 
+#'   (useful for maintaining orderings when plotting)
 #' @param gather_prob if TRUE then prints quantiles in long format rather than 
 #'  wide (useful for some plotting functions)
 #' @param ... other expressions to pass to summarise (using name 'val' unquoted is 
@@ -80,8 +83,8 @@ summary_check_precomputed <- function(m, pars){
 #' # Some later functions make use of precomputation
 #' fit$summary <- summary(fit)
 #' }
-summary.mongrelfit <- function(object, pars=NULL, use_names=TRUE, gather_prob=FALSE,
-                               ...){
+summary.mongrelfit <- function(object, pars=NULL, use_names=TRUE, as_factor=FALSE, 
+                               gather_prob=FALSE, ...){
   if (is.null(pars)) {
     pars <- c("Eta", "Lambda", "Sigma")
     pars <- pars[pars %in% names(object)] # only for the ones that are present 
@@ -91,7 +94,8 @@ summary.mongrelfit <- function(object, pars=NULL, use_names=TRUE, gather_prob=FA
   # if already calculated
   if (summary_check_precomputed(object, pars)) return(object$summary[pars])
   
-  mtidy <- dplyr::filter(mongrel_tidy_samples(object, use_names), Parameter %in% pars)
+  mtidy <- dplyr::filter(mongrel_tidy_samples(object, use_names, as_factor), 
+                         Parameter %in% pars)
   if (object$coord_system != "proportions") {
     mtidy <- dplyr::group_by(mtidy, Parameter, coord, coord2, sample, covariate) 
   } else {
@@ -450,15 +454,15 @@ sample_prior.mongrelfit <- function(m, n_samples=2000,
   m <- mongrel_to_alr(m, m$D)
   
   # Sample Priors - Sigma
-  LSigmaInv <- rWishart(n_samples, m$upsilon, solve(m$Xi))
-  for (i in 1:n_samples) LSigmaInv[,,i] <- t(chol(LSigmaInv[,,i]))
+  USigmaInv <- rWishart(n_samples, m$upsilon, solve(m$Xi))
+  for (i in 1:n_samples) USigmaInv[,,i] <- chol(USigmaInv[,,i])
   
   # Sample Priors - Lambda
   if (any(c("Eta", "Lambda") %in% pars)){
     Lambda <- array(rnorm((m$D-1)*m$Q*n_samples), dim=c(m$D-1, m$Q, n_samples)) 
     UGamma <- chol(m$Gamma)
     for (i in 1:n_samples){
-      Lambda[,,i] <- m$Theta + forwardsolve(LSigmaInv[,,i], Lambda[,,i]) %*% UGamma 
+      Lambda[,,i] <- m$Theta + backsolve(USigmaInv[,,i], Lambda[,,i]) %*% UGamma 
     }  
   }
   
@@ -467,14 +471,17 @@ sample_prior.mongrelfit <- function(m, n_samples=2000,
     req(m, "X")
     Eta <- array(rnorm((m$D-1)*m$N*n_samples), dim=c(m$D-1, m$N, n_samples))
     for (i in 1:n_samples) {
-      Eta[,,i] <- Lambda[,,i] %*% m$X + forwardsolve(LSigmaInv[,,i], Eta[,,i])
+      Eta[,,i] <- Lambda[,,i] %*% m$X + backsolve(USigmaInv[,,i], Eta[,,i])
     }
   }
   
   # Solve for Sigma if requested
   if ("Sigma" %in% pars){
-    Sigma <- LSigmaInv # to make code more readable at memory expense
-    for (i in 1:n_samples) Sigma[,,i] <- chol2inv(t(Sigma[,,i]))
+    Sigma <- USigmaInv # to make code more readable at memory expense
+    for (i in 1:n_samples) {
+      Sigma[,,i] <- backsolve(Sigma[,,i], diag(m$D-1))
+      Sigma[,,i] <- tcrossprod(Sigma[,,i])
+    }
   }
   
   # Convert to object of class mongrelfit

@@ -1,14 +1,19 @@
 #ifndef MONGREL_MMTC_H
 #define MONGREL_MMTC_H
 
-#include <RcppNumerical.h>
+#include <MongrelModelClass.h>
 #include <MatrixAlgebra.h>
+#ifdef _OPENMP
+  #include <omp.h>
+#endif
 using namespace Rcpp;
 using Eigen::Map;
 using Eigen::MatrixXd;
 using Eigen::ArrayXXd;
 using Eigen::VectorXd;
 using Eigen::Ref;
+
+// [[Rcpp::plugins(openmp)]]
 
 /* Class implementing LogLik, Gradient, and Hessian calculations
  *  for the Multinomial Matrix-T collapsed model. 
@@ -23,8 +28,7 @@ using Eigen::Ref;
  *  Where A = (I_N + X*Gamma*X')^{-1}, K^{-1} =Xi is a D-1xD-1 covariance 
  *  matrix, and Gamma is a Q x Q covariance matrix
  */
-class MongrelCollapsed : public Numer::MFuncGrad
-{
+class MongrelCollapsed : public mongrel::MongrelModel {
   private:
     const ArrayXXd Y;
     const double upsilon;
@@ -38,7 +42,7 @@ class MongrelCollapsed : public Numer::MFuncGrad
     Eigen::ArrayXd m;
     Eigen::RowVectorXd n;
     MatrixXd S;  // I_D-1 + KEAE'
-    Eigen::ColPivHouseholderQR<MatrixXd> Sdec;
+    Eigen::HouseholderQR<MatrixXd> Sdec;
     MatrixXd E;  // eta-ThetaX
     ArrayXXd O;  // exp{eta}
     // only needed for gradient and hessian
@@ -47,8 +51,8 @@ class MongrelCollapsed : public Numer::MFuncGrad
     MatrixXd C;
     MatrixXd R;
     
-    // temporary or testing
-    int t;
+    // testing
+    bool sylv;
     
     
   public:
@@ -56,16 +60,15 @@ class MongrelCollapsed : public Numer::MFuncGrad
                         const double upsilon_,
                         const MatrixXd ThetaX_,
                         const MatrixXd K_,
-                        const MatrixXd A_) :
+                        const MatrixXd A_, 
+                        bool sylv=false) :
     Y(Y_), upsilon(upsilon_), ThetaX(ThetaX_), K(K_), A(A_)
     {
       D = Y.rows();           // number of multinomial categories
       N = Y.cols();           // number of samples
       n = Y.colwise().sum();  // total number of counts per sample
       delta = 0.5*(upsilon + N + D - 2.0);
-      
-      // temporary or testing
-      t = 0;
+      this->sylv = sylv;
     }
     ~MongrelCollapsed(){}                      // destructor
     
@@ -73,8 +76,13 @@ class MongrelCollapsed : public Numer::MFuncGrad
     void updateWithEtaLL(const Ref<const VectorXd>& etavec){
       const Map<const MatrixXd> eta(etavec.data(), D-1, N);
       E = eta - ThetaX;
-      S.noalias() = K*E*A*E.transpose();
-      S.diagonal() += VectorXd::Ones(1, D-1);
+      if (sylv & (N < (D-1))){
+        S.noalias() = A*E.transpose()*K*E;
+        S.diagonal() += VectorXd::Ones(1, N);
+      } else {
+        S.noalias() = K*E*A*E.transpose();
+        S.diagonal() += VectorXd::Ones(1, D-1);  
+      }
       Sdec.compute(S);
       O = eta.array().exp();
       m = O.colwise().sum();
@@ -86,8 +94,13 @@ class MongrelCollapsed : public Numer::MFuncGrad
       rhomat = (O.rowwise()/m.transpose()).matrix();
       Map<VectorXd> rhovec(rhomat.data() , rhomat.size());
       rho = rhovec; // probably could be done in one line rather than 2 (above)
-      C.noalias() = A*E.transpose();
-      R.noalias() = Sdec.solve(K); // S^{-1}K
+      if (sylv & (N < (D-1))){
+        C.noalias() = K*E;
+        R.noalias() = Sdec.solve(A); // S^{-1}A
+      } else {
+        C.noalias() = A*E.transpose();
+        R.noalias() = Sdec.solve(K); // S^{-1}K    
+      }
     }
     
     // Must have called updateWithEtaLL first 
@@ -106,42 +119,26 @@ class MongrelCollapsed : public Numer::MFuncGrad
       // For Multinomial
       MatrixXd g = (Y - (rhomat.array().rowwise()*n.array())).matrix();
       // For MatrixVariate T
-      g.noalias() += -delta*(R + R.transpose())*C.transpose();
+      if (sylv & (N < (D-1))){
+        g.noalias() += -delta*C*(R+R.transpose());
+      } else {
+        g.noalias() += -delta*(R + R.transpose())*C.transpose();        
+      }
       Map<VectorXd> grad(g.data(), g.size()); 
       return grad; // not transposing (leaving as vector)
     }
     
-    // Must have called updateWithEtaLL and then updateWithEtaGH first 
-    VectorXd calcGrad_wnoise(double sigma, double gamma){
-      // For Multinomial
-      MatrixXd g = (Y - (rhomat.array().rowwise()*n.array())).matrix();
-      // For MatrixVariate T
-      g.noalias() += -delta*(R + R.transpose())*C.transpose();
-      Map<VectorXd> grad(g.data(), g.size()); 
-      
-      // add noise
-      // NumericVector gnoise(N*(D-1));
-      //double ss= sigma/pow(1+t, gamma);
-      // gnoise = ss*rnorm(N*(D-1), 0, 1);
-      // t++;
-      // Rcout << t << " ss: " << ss << std::endl;
-      // Rcout << "grad norm: " <<grad.norm() << std::endl;
-      // Map<VectorXd> noise(as<Map<VectorXd> >(gnoise));
-      // Rcout << "noise norm: " << noise.norm() << std::endl;
-      // return grad+noise; // not transposing (leaving as vector)
-      
-      // add noise as fraction of gradient
-      NumericVector gnoise(N*(D-1));
-      gnoise = rnorm(N*(D-1), 0, 1);
-      //double ss= sigma/pow(1+t, gamma);
-      double ss = pow(sigma, gamma*(1+t));
-      t++;
-      Map<Eigen::ArrayXd> noise(as<Map<Eigen::ArrayXd> >(gnoise));
-      return grad+(ss*grad.array().abs()*noise).matrix(); // not transposing (leaving as vector)
-    }
     
     // Must have called updateWithEtaLL and then updateWithEtaGH first 
     MatrixXd calcHess(){
+      bool tmp_sylv = sylv;
+      if (sylv & (N < (D-1))){
+        MatrixXd eta = E + ThetaX;
+        Map<VectorXd> etavec(eta.data(), N*(D-1));
+        this->sylv=false;
+        updateWithEtaLL(etavec);
+        updateWithEtaGH();
+      }
       // for MatrixVariate T
       MatrixXd H(N*(D-1), N*(D-1));
       MatrixXd RCT(D-1, N);
@@ -165,13 +162,34 @@ class MongrelCollapsed : public Numer::MFuncGrad
         W.diagonal() -= rhoseg;
         H.block(j*(D-1), j*(D-1), D-1, D-1).noalias()  += n(j)*W;
       }
+      // Turn back on sylv option if it was wanted:
+      this->sylv = tmp_sylv;
       return H;
     }
 
     // should return blocks of size D-1 x D-1 stacked in a N(D-1) x D-1 matrix
     MatrixXd calcPartialHess(){
-      // For Multinomial only
+      if (sylv) Rcpp::stop("Partial Hessian not Updated to Take advantage of Sylv option");
       MatrixXd H = ArrayXXd::Zero(N*(D-1), D-1);
+      VectorXd gamma = A.diagonal();
+      VectorXd pC(D-1);
+      MatrixXd L(D-1, D-1);
+      Eigen::Matrix<double, 1, 1> s;
+      Eigen::Matrix<double, 1, 1> one;
+      double pR;
+      one << 1.0;
+      double pdelta = upsilon + D -1.0;
+      
+      // for multivariate ts
+      for (int j=0; j<N; j++){
+        s.noalias() = one+gamma(j)*E.col(j).transpose()*K*E.col(j);
+        pC.noalias() = K*E.col(j);
+        pR = gamma(j)/s.value();
+        L.noalias() = pow(pR, 2) * pC * pC.transpose();
+        H.block(j*(D-1), 0, D-1, D-1).noalias() += -pdelta *pR*K + pdelta*2.0*L;
+      }
+      
+      // For Multinomial only
       MatrixXd W(D-1, D-1);
       VectorXd rhoseg(D-1);
       for (int j=0; j<N; j++){
@@ -183,15 +201,39 @@ class MongrelCollapsed : public Numer::MFuncGrad
       return H;
     }
     
+    // function to quickly calculate approximation of hessian-vector product
+    //  @param etavec eta at which to calculate hessian
+    //  @param v vector to multiply by
+    //  @param r size of hessian-vector product difference 
+    //  @ref https://justindomke.wordpress.com/2009/01/17/hessian-vector-products/
+    VectorXd calcHessVectorProd(const Ref<const VectorXd>& etavec, 
+                                VectorXd v, double r=0.001){
+      updateWithEtaLL(etavec+r*v);
+      updateWithEtaGH();
+      VectorXd g1 = calcGrad();
+      updateWithEtaLL(etavec-r*v);
+      updateWithEtaGH();
+      VectorXd g2 = calcGrad();
+      return (g1-g2).array()/(2.0*r);
+    }
+    
+    int getN() { return N; }
+    int getD() { return D; }
+    
+    
     // function for use by ADAMOptimizer wrapper (and for RcppNumeric L-BFGS)
     virtual double f_grad(Numer::Constvec& eta, Numer::Refvec grad){
       updateWithEtaLL(eta);    // precompute things needed for LogLik
       updateWithEtaGH();       // precompute things needed for gradient and hessian
       grad = -calcGrad();      // negative because wraper minimizes
-      //grad = -calcGrad_wnoise(.3, 1.001); // optional but not very useful
       return -calcLogLik(eta); // negative because wraper minimizes
     }
+    
 };
+
+
+
+
 
 
 #endif

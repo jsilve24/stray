@@ -67,6 +67,7 @@ assign_cat_names <- function(m){
   else stop("not a recognized coordinate system to name")
 }
 
+
 apply_names <- function(X, m, dimvars){
   n <- list()
   for (i in seq_along(dimvars)){
@@ -103,12 +104,17 @@ name_array <- function(X, m, dimvars){
 
 # same as apply_names array but dimvars list must be 
 # named with colnames of X to replace/use 
-name_tidy <- function(X, m, dimvars){
+# @param as_factor if TRUE returns names as factors
+name_tidy <- function(X, m, dimvars, as_factor=FALSE){
   if (is.null(names(dimvars))) stop("list element of dimvars must be named")
   n <- apply_names(X, m, dimvars)
   for (i in seq_along(dimvars)){
     d <- names(dimvars)[i]
-    if (!is.null(n[[i]])) X[[d]] <- n[[i]][X[[d]]]
+    if (as_factor){
+      if (!is.null(n[[i]])) X[[d]] <- factor(n[[i]][X[[d]]], levels=n[[i]])
+    } else {
+      if (!is.null(n[[i]])) X[[d]] <- n[[i]][X[[d]]]  
+    }
   }
   return(X)
 }

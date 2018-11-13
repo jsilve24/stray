@@ -3,7 +3,7 @@
 #include <MongrelCollapsed.h>
 #include <AdamOptim.h>
 #include <LaplaceApproximation.h>
-#include <AdamOptimPerturb.h> // optional not fully implemented yet (or helpful)
+#include <MultDirichletBoot.h>
 // [[Rcpp::depends(RcppNumerical)]]
 // [[Rcpp::depends(RcppEigen)]]
 
@@ -47,11 +47,15 @@ using Eigen::VectorXd;
 //'   decomposition of negative inverse hessian (should be <=0)
 //' @param no_error if true will throw hessian warning rather than error if 
 //'   not positive definite. 
-//' @param jitter (default: 0) if >0 then adds that factor to diagonal of Hessian 
+//' @param jitter (default: 0) if >=0 then adds that factor to diagonal of Hessian 
 //' before decomposition (to improve matrix conditioning)
 //' @param calcPartialHess if true only calculates hessian of multinomial 
 //'   much more computationaly and memory efficient but it is an approximation. 
-//'   
+//' @param multDirichletBoot if >0 (overrides laplace approximation) and samples
+//'  eta efficiently at MAP estimate from pseudo Multinomial-Dirichlet posterior.
+//' @param useSylv (default: true) if N<D-1 uses Sylvester Determinant Identity
+//'   to speed up calculation of log-likelihood and gradients. 
+//'  
 //' @details Notation: Let Z_j denote the J-th row of a matrix Z.
 //' Model:
 //'    \deqn{Y_j ~ Multinomial(Pi_j)}
@@ -120,10 +124,12 @@ List optimMongrelCollapsed(const Eigen::ArrayXXd Y,
                String decomp_method="eigen",
                double eigvalthresh=0, 
                double jitter=0,
-               bool calcPartialHess = false){  
+               bool calcPartialHess = false, 
+               double multDirichletBoot = -1.0, 
+               bool useSylv = true){  
   int N = Y.cols();
   int D = Y.rows();
-  MongrelCollapsed cm(Y, upsilon, ThetaX, K, A);
+  MongrelCollapsed cm(Y, upsilon, ThetaX, K, A, useSylv);
   Map<VectorXd> eta(init.data(), init.size()); // will rewrite by optim
   double nllopt; // NEGATIVE LogLik at optim
   List out(5);
@@ -138,7 +144,6 @@ List optimMongrelCollapsed(const Eigen::ArrayXXd Y,
   //int status = Numer::optim_lbfgs(cm, eta, nllopt);
   int status = adam::optim_adam(cm, eta, nllopt, b1, b2, step_size, epsilon, 
                                 eps_f, eps_g, max_iter, verbose, verbose_rate); 
-  //int status = adamperturb::optim_adam(cm, eta, nllopt); 
 
   seconds = time(NULL);
   printf("Completed gradient descent: %ld\n", seconds);
@@ -150,18 +155,34 @@ List optimMongrelCollapsed(const Eigen::ArrayXXd Y,
   out[3] = etamat;
   
   if (n_samples > 0 || calcGradHess){
-
     seconds = time(NULL);
     printf("Starting Hessian calc: %ld\n", seconds);
-
-    if (verbose) Rcout << "Allocating for Hessian" << std::endl;
-    MatrixXd hess(N*(D-1), N*(D-1));
+    if (verbose) Rcout << "Allocating for Gradient" << std::endl;
     VectorXd grad(N*(D-1));
-    if (verbose) Rcout << "Calculating Hessian" << std::endl;
+    MatrixXd hess; // don't preallocate this thing could be unneeded
+    if (verbose) Rcout << "Calculating Gradient" << std::endl;
     grad = cm.calcGrad(); // should have eta at optima already
+    
+    // "Multinomial-Dirichlet" option
+    if (multDirichletBoot>=0.0){
+      if (verbose) Rcout << "Preforming Multinomial Dirichlet Bootstrap" << std::endl;
+      MatrixXd samp = MultDirichletBoot::MultDirichletBoot(n_samples, etamat, Y, 
+                                                           multDirichletBoot);
+      out[1] = R_NilValue;
+      out[2] = R_NilValue;
+      IntegerVector d = IntegerVector::create(D-1, N, n_samples);
+      NumericVector samples = wrap(samp);
+      samples.attr("dim") = d; // convert to 3d array for return to R
+      out[4] = samples;
+      return out;
+    }
+    // "Multinomial-Dirchlet" option 
+    
     if(calcPartialHess) {
+      if (verbose) Rcout << "Calculating Partial Hessian" << std::endl;
       hess = cm.calcPartialHess();
     } else {
+      if (verbose) Rcout << "Calculating Hessian" << std::endl;
       hess = cm.calcHess(); // should have eta at optima already
     }
     out[1] = grad;

@@ -8,7 +8,8 @@ optimMongrelCollapsed(Y, upsilon, ThetaX, K, A, init, n_samples = 2000L,
   calcGradHess = TRUE, b1 = 0.9, b2 = 0.99, step_size = 0.003,
   epsilon = 1e-06, eps_f = 1e-10, eps_g = 1e-04, max_iter = 10000L,
   verbose = FALSE, verbose_rate = 10L, decomp_method = "eigen",
-  eigvalthresh = 0, jitter = 0, calcPartialHess = FALSE)
+  eigvalthresh = 0, jitter = 0, calcPartialHess = FALSE,
+  multDirichletBoot = -1, useSylv = TRUE)
 }
 \arguments{
 \item{Y}{D x N matrix of counts}
@@ -55,11 +56,17 @@ iteration number}
 \item{eigvalthresh}{threshold for negative eigenvalues in
 decomposition of negative inverse hessian (should be <=0)}
 
-\item{jitter}{(default: 0) if >0 then adds that factor to diagonal of Hessian
+\item{jitter}{(default: 0) if >=0 then adds that factor to diagonal of Hessian
 before decomposition (to improve matrix conditioning)}
 
 \item{calcPartialHess}{if true only calculates hessian of multinomial
 much more computationaly and memory efficient but it is an approximation.}
+
+\item{multDirichletBoot}{if >0 (overrides laplace approximation) and samples
+eta efficiently at MAP estimate from pseudo Multinomial-Dirichlet posterior.}
+
+\item{useSylv}{(default: true) if N<D-1 uses Sylvester Determinant Identity
+to speed up calculation of log-likelihood and gradients.}
 
 \item{no_error}{if true will throw hessian warning rather than error if
 not positive definite.}

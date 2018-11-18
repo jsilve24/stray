@@ -65,8 +65,8 @@ namespace lapap{
       evalinv.tail(pos).cwiseSqrt().asDiagonal(); //V*D^{-1/2}
     typename T1::PlainObject samp(pos, nc);
     fillUnitNormal(samp);
-    z.template noalias() = invhesssqrt*samp;
-    z.template colwise() += m;
+    z.noalias() = invhesssqrt*samp;
+    z.colwise() += m;
     return 0;
   }
   
@@ -90,7 +90,7 @@ namespace lapap{
     //typename T1::PlainObject samp(nr, nc);
     fillUnitNormal(z);
     hesssqrt.matrixU().solveInPlace(z);
-    z.template colwise() += m;
+    z.colwise() += m;
     return 0;
   }
   

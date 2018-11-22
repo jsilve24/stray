@@ -1,7 +1,7 @@
 Package: mongrel
 Type: Package
 Title: Bayesian Multinomial Logistic Normal Regression
-Version: 0.1.5
+Version: 0.1.6
 Date: 2018-06-26
 Author: Justin Silverman
 Authors@R: c(person("Justin", "Silverman", role=c("aut", "cre"),

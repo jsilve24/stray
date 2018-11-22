@@ -82,6 +82,7 @@ plot_mf_sigma <- function(m, focus.coord=NULL, use_names=TRUE){
   if (!is.null(focus.coord)) data <- filter(data, 
                                             coord %in% focus.coord, 
                                             coord2 %in% focus.coord)
+  data <- dplyr::filter(data, Parameter=="Sigma")
   data <-  group_by(data, coord, coord2) %>% 
     mutate(medval = median(val)) %>% 
     ungroup() 

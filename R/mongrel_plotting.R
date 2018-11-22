@@ -82,14 +82,17 @@ plot_mf_sigma <- function(m, focus.coord=NULL, use_names=TRUE){
   if (!is.null(focus.coord)) data <- filter(data, 
                                             coord %in% focus.coord, 
                                             coord2 %in% focus.coord)
+  data <- dplyr::filter(data, Parameter=="Sigma")
   data <-  group_by(data, coord, coord2) %>% 
     mutate(medval = median(val)) %>% 
     ungroup() 
   p <- data %>% 
     ggplot(aes(x = val)) +
     geom_rect(data = filter(data, iter==1), 
-              aes(fill=medval), xmin=-Inf, xmax=Inf, ymin=-Inf, ymax=Inf) +
-    geom_density(fill="lightgrey") +
+              aes(fill=medval), xmin=-Inf, xmax=Inf, ymin=-Inf, ymax=Inf)
+  
+  if (m$iter > 1) p <- p+ geom_density(fill="lightgrey") 
+  p <- p +
     facet_grid(coord~coord2) +
     theme_minimal() +
     theme(strip.text.y = element_text(angle=0)) +

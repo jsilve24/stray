@@ -26,7 +26,7 @@
 #'    
 #'  Where A = (I_N + X * Gamma * X')^{-1}, K^{-1} = Xi is a (D-1)x(D-1) 
 #'  covariance matrix, U_1 is a Q x Q covariance matrix (a variance component), 
-#'  e^{\ell_i} is a scale for that variance component and Phi^{-1} is 
+#'  e^{ell_i} is a scale for that variance component and Phi^{-1} is 
 #'  ALRInv_D transform. 
 #'  
 #'  Default behavior is to use MAP estimate for uncollaping collapsed mongrel 

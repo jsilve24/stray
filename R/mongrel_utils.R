@@ -167,8 +167,13 @@ try_set_dims <- function(x){
   if (length(x) ==0){
     stop("Not Information provided to set dimension")
   }
-  #stopifnot(length(x) > 0)
-  if (all(x[1]==x)) return(as.integer(x[1])) else stop("Dimension missmatch in arguments")
+  if (all(x[1]==x)) {
+    return(as.integer(x[1])) 
+  }else{
+    msg <- paste(x, collapse = ",")
+    msg <- paste("Dimension missmatch in arguments: [", msg, "]", sep="")
+    stop(msg)
+  } 
 }
 
 

@@ -110,7 +110,7 @@ summary.mongrelfit <- function(object, pars=NULL, use_names=TRUE, as_factor=FALS
   } else if (gather_prob){
     mtidy <- mtidy %>% 
       dplyr::select(-iter) %>% 
-      tidybayes::mean_qi(val, .prob=c(.5, .8, .95, .99)) %>% 
+      tidybayes::mean_qi(val, .width=c(.5, .8, .95, .99)) %>% 
       dplyr::ungroup() %>% 
       split(.$Parameter) %>% 
       purrr::map(~dplyr::select_if(.x, ~!all(is.na(.x))))  

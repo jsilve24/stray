@@ -65,7 +65,15 @@ plot_mf_lambdaeta <- function(m, par, focus.cov=NULL, focus.coord=NULL,
   p <- p+
     theme_minimal() +
     scale_color_brewer() +
-    guides(color=guide_legend(title="Credible\nInterval"))
+    guides(color=guide_legend(title="Credible\nInterval")) +
+    theme(axis.title.y=element_blank())
+  # Set axis labels
+  if (m$coord_system %in% c("clr", "ilr", "alr")){
+    p <- p + xlab("Log-Ratio Value")
+  } else if (m$coord_system == "proportions"){
+    p <- p + xlab("Proportions")
+  }
+  
   return(p)
 }
 

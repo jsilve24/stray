@@ -243,6 +243,30 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// lmvgamma
+double lmvgamma(double a, int p);
+RcppExport SEXP _mongrel_lmvgamma(SEXP aSEXP, SEXP pSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< double >::type a(aSEXP);
+    Rcpp::traits::input_parameter< int >::type p(pSEXP);
+    rcpp_result_gen = Rcpp::wrap(lmvgamma(a, p));
+    return rcpp_result_gen;
+END_RCPP
+}
+// lmvgamma_deriv
+double lmvgamma_deriv(double a, int p);
+RcppExport SEXP _mongrel_lmvgamma_deriv(SEXP aSEXP, SEXP pSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< double >::type a(aSEXP);
+    Rcpp::traits::input_parameter< int >::type p(pSEXP);
+    rcpp_result_gen = Rcpp::wrap(lmvgamma_deriv(a, p));
+    return rcpp_result_gen;
+END_RCPP
+}
 // eigen_lap_test
 Eigen::MatrixXd eigen_lap_test(int n_samples, Eigen::VectorXd m, Eigen::MatrixXd S, double eigvalthresh);
 RcppExport SEXP _mongrel_eigen_lap_test(SEXP n_samplesSEXP, SEXP mSEXP, SEXP SSEXP, SEXP eigvalthreshSEXP) {
@@ -368,6 +392,8 @@ static const R_CallMethodDef CallEntries[] = {
     {"_mongrel_rInvWishRevCholesky_test", (DL_FUNC) &_mongrel_rInvWishRevCholesky_test, 2},
     {"_mongrel_rMatUnitNormal_test1", (DL_FUNC) &_mongrel_rMatUnitNormal_test1, 2},
     {"_mongrel_rMatUnitNormal_test2", (DL_FUNC) &_mongrel_rMatUnitNormal_test2, 1},
+    {"_mongrel_lmvgamma", (DL_FUNC) &_mongrel_lmvgamma, 2},
+    {"_mongrel_lmvgamma_deriv", (DL_FUNC) &_mongrel_lmvgamma_deriv, 2},
     {"_mongrel_eigen_lap_test", (DL_FUNC) &_mongrel_eigen_lap_test, 4},
     {"_mongrel_cholesky_lap_test", (DL_FUNC) &_mongrel_cholesky_lap_test, 4},
     {"_mongrel_LaplaceApproximation_test", (DL_FUNC) &_mongrel_LaplaceApproximation_test, 5},

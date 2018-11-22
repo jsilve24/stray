@@ -369,6 +369,18 @@ rMatUnitNormal_test2 <- function(n) {
     .Call('_mongrel_rMatUnitNormal_test2', PACKAGE = 'mongrel', n)
 }
 
+#' Log of Multivarate Gamma Function - Gamma_p(a)
+#' @reference https://en.wikipedia.org/wiki/Multivariate_gamma_function
+lmvgamma <- function(a, p) {
+    .Call('_mongrel_lmvgamma', PACKAGE = 'mongrel', a, p)
+}
+
+#' Derivative of Log of Multivariate Gamma Function - Gamma_p(a)
+#' @reference https://en.wikipedia.org/wiki/Multivariate_gamma_function
+lmvgamma_deriv <- function(a, p) {
+    .Call('_mongrel_lmvgamma_deriv', PACKAGE = 'mongrel', a, p)
+}
+
 eigen_lap_test <- function(n_samples, m, S, eigvalthresh) {
     .Call('_mongrel_eigen_lap_test', PACKAGE = 'mongrel', n_samples, m, S, eigvalthresh)
 }

@@ -110,6 +110,9 @@ plot_mf_sigma <- function(m, focus.coord=NULL, use_names=TRUE){
 #' ppc(fit)
 #' }
 ppc.mongrelfit <- function(m, type="bounds", iter=NULL){
+  msg <- paste("No observed count data (Y) to check against", 
+               "perhaps you are looking for the function `predict`?")
+  if (is.null(m$Y)) stop(msg)
   
   if (is.null(iter)) {
     if (type =="lines") iter <- min(50, niter(m))

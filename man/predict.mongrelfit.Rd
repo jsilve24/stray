@@ -6,7 +6,7 @@
 \usage{
 \method{predict}{mongrelfit}(object, newdata = NULL,
   response = "LambdaX", size = NULL, use_names = TRUE,
-  summary = FALSE, ...)
+  summary = FALSE, iter = NULL, ...)
 }
 \arguments{
 \item{object}{An object of class mongrelfit}
@@ -19,12 +19,14 @@
 \item{size}{the number of counts per sample if response="Y" (as vector or matrix), 
 default if newdata=NULL and response="Y" is to use colsums of m$Y. Otherwise
 uses median colsums of m$Y as default. If passed as a matrix should have dimensions
-ncol(newdata) x m$iter.}
+ncol(newdata) x iter.}
 
 \item{use_names}{if TRUE apply names to output}
 
 \item{summary}{if TRUE, posterior summary of predictions are returned rather
 than samples}
+
+\item{iter}{number of iterations to return if NULL uses object$iter}
 
 \item{...}{other arguments passed to summarise_posterior}
 }

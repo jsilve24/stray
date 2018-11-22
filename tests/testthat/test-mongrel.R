@@ -1,4 +1,4 @@
-context("test-main.R")
+context("test-mongrel.R")
 library(driver)
 set.seed(4)
 
@@ -182,3 +182,4 @@ test_that("eigen and cholesky get same result", {
 test_that("max_iter leads to warning not error", {
   expect_warning(mongrel(sim$Y, sim$X, max_iter=3))
 })
+

@@ -150,3 +150,11 @@ test_that("eigen and cholesky get same result", {
                apply(fite$Samples, c(1,2), var), 
                tolerance=0.01)
 })
+
+
+test_that("Predict works with priors only",{
+  sim <- mongrel_sim()
+  fit <- mongrel(Y=NULL, sim$X,  D=sim$D)
+  foo <- predict(fit, response="Y", size = 5000)
+  expect_equal(dim(foo), c(sim$D, sim$N, fit$iter))
+})

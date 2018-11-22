@@ -151,3 +151,8 @@ test_that("eigen and cholesky get same result", {
                tolerance=0.01)
 })
 
+
+test_that("max_iter leads to warning not error", {
+  expect_warning(mongrel(sim$Y, sim$X, max_iter=3))
+})
+

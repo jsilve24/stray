@@ -31,7 +31,8 @@ test_that("Plot works with focus.cooord and coord system change",{
   expect_error(print(p), NA)
 })
 
-test_that("Plots work with iter=1", {
-  fit <- mongrel(sim$Y, sim$X, n_samples=10)
-  plot(fit, par="Sigma")
-})
+# test_that("Plots work with iter=1", {
+#   fit <- mongrel(sim$Y, sim$X, n_samples=1)
+#   plot(fit, par="Sigma")
+#   plot(fit, par="Eta")
+# })

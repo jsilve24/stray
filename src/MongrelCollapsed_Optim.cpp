@@ -43,6 +43,7 @@ using Eigen::VectorXd;
 //' @param verbose_rate (ADAM) rate to print verbose stats to screen
 //' @param decomp_method decomposition of hessian for Laplace approximation
 //'   'eigen' (more stable, slower, default) or 'cholesky' (less stable, faster)
+//' @param optim_method (default:"adam") or "lbfgs"
 //' @param eigvalthresh threshold for negative eigenvalues in 
 //'   decomposition of negative inverse hessian (should be <=0)
 //' @param no_error if true will throw hessian warning rather than error if 
@@ -123,6 +124,7 @@ List optimMongrelCollapsed(const Eigen::ArrayXXd Y,
                bool verbose=false,      
                int verbose_rate=10,
                String decomp_method="eigen",
+               String optim_method="adam",
                double eigvalthresh=0, 
                double jitter=0,
                bool calcPartialHess = false, 
@@ -142,9 +144,16 @@ List optimMongrelCollapsed(const Eigen::ArrayXXd Y,
   // Pick optimizer (ADAM - without perturbation appears to be best)
   //   ADAM with perturbations not fully implemented
   timer.step("Optimization_start");
-  //int status = Numer::optim_lbfgs(cm, eta, nllopt);
-  int status = adam::optim_adam(cm, eta, nllopt, b1, b2, step_size, epsilon, 
-                                eps_f, eps_g, max_iter, verbose, verbose_rate); 
+  int status;
+  if (optim_method=="lbfgs"){
+    status = Numer::optim_lbfgs(cm, eta, nllopt, max_iter, eps_f, eps_g);
+  } else if (optim_method=="adam"){
+    status = adam::optim_adam(cm, eta, nllopt, b1, b2, step_size, epsilon, 
+                                  eps_f, eps_g, max_iter, verbose, verbose_rate);  
+  } else {
+    Rcpp::stop("unrecognized optimization method");
+  }
+   
   timer.step("Optimization_stop");
 
   if (status<0)

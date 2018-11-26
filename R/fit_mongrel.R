@@ -140,6 +140,7 @@ mongrel <- function(Y=NULL, X=NULL, upsilon=NULL, Theta=NULL, Gamma=NULL, Xi=NUL
   jitter <- args_null("jitter", args, 0)
   calcPartialHess <- args_null("calcPartialHess", args, FALSE)
   multDirichletBoot <- args_null("multDirichletBoot", args, -1.0)
+  optim_method <- args_null("optim_method", args, "adam")
   
   if (calcPartialHess) warning("Cannot recoomend calcPartialHess at this time.")
   
@@ -151,7 +152,7 @@ mongrel <- function(Y=NULL, X=NULL, upsilon=NULL, Theta=NULL, Gamma=NULL, Xi=NUL
   fitc <- optimMongrelCollapsed(Y, upsilon, Theta%*%X, K, A, init, n_samples, 
                                 calcGradHess, b1, b2, step_size, epsilon, eps_f, 
                                 eps_g, max_iter, verbose, verbose_rate, 
-                                decomp_method, eigvalthresh, 
+                                decomp_method, optim_method, eigvalthresh, 
                                 jitter, calcPartialHess, multDirichletBoot)
   timerc <- parse_timer_seconds(fitc$Timer)
 

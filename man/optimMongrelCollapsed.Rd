@@ -8,8 +8,8 @@ optimMongrelCollapsed(Y, upsilon, ThetaX, K, A, init, n_samples = 2000L,
   calcGradHess = TRUE, b1 = 0.9, b2 = 0.99, step_size = 0.003,
   epsilon = 1e-06, eps_f = 1e-10, eps_g = 1e-04, max_iter = 10000L,
   verbose = FALSE, verbose_rate = 10L, decomp_method = "eigen",
-  eigvalthresh = 0, jitter = 0, calcPartialHess = FALSE,
-  multDirichletBoot = -1, useSylv = TRUE)
+  optim_method = "adam", eigvalthresh = 0, jitter = 0,
+  calcPartialHess = FALSE, multDirichletBoot = -1, useSylv = TRUE)
 }
 \arguments{
 \item{Y}{D x N matrix of counts}
@@ -52,6 +52,8 @@ iteration number}
 
 \item{decomp_method}{decomposition of hessian for Laplace approximation
 'eigen' (more stable, slower, default) or 'cholesky' (less stable, faster)}
+
+\item{optim_method}{(default:"adam") or "lbfgs"}
 
 \item{eigvalthresh}{threshold for negative eigenvalues in
 decomposition of negative inverse hessian (should be <=0)}

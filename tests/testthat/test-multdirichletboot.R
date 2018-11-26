@@ -29,5 +29,5 @@ test_that("MultDirichletBoot is correct", {
   x <- alr_array(x, parts=1)
   
   expect_equal(rowMeans(x), rowMeans(s), tolerance=0.01)
-  expect_equal(apply(x, 1, var), apply(s, 1, var), tolerance=0.01)
+  expect_equal(apply(x, 1, var), apply(s, 1, var), tolerance=0.05)
 })

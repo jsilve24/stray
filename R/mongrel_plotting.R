@@ -65,7 +65,15 @@ plot_mf_lambdaeta <- function(m, par, focus.cov=NULL, focus.coord=NULL,
   p <- p+
     theme_minimal() +
     scale_color_brewer() +
-    guides(color=guide_legend(title="Credible\nInterval"))
+    guides(color=guide_legend(title="Credible\nInterval")) +
+    theme(axis.title.y=element_blank())
+  # Set axis labels
+  if (m$coord_system %in% c("clr", "ilr", "alr")){
+    p <- p + xlab("Log-Ratio Value")
+  } else if (m$coord_system == "proportions"){
+    p <- p + xlab("Proportions")
+  }
+  
   return(p)
 }
 
@@ -74,14 +82,17 @@ plot_mf_sigma <- function(m, focus.coord=NULL, use_names=TRUE){
   if (!is.null(focus.coord)) data <- filter(data, 
                                             coord %in% focus.coord, 
                                             coord2 %in% focus.coord)
+  data <- dplyr::filter(data, Parameter=="Sigma")
   data <-  group_by(data, coord, coord2) %>% 
     mutate(medval = median(val)) %>% 
     ungroup() 
   p <- data %>% 
     ggplot(aes(x = val)) +
     geom_rect(data = filter(data, iter==1), 
-              aes(fill=medval), xmin=-Inf, xmax=Inf, ymin=-Inf, ymax=Inf) +
-    geom_density(fill="lightgrey") +
+              aes(fill=medval), xmin=-Inf, xmax=Inf, ymin=-Inf, ymax=Inf)
+  
+  if (m$iter > 1) p <- p+ geom_density(fill="lightgrey") 
+  p <- p +
     facet_grid(coord~coord2) +
     theme_minimal() +
     theme(strip.text.y = element_text(angle=0)) +
@@ -110,6 +121,9 @@ plot_mf_sigma <- function(m, focus.coord=NULL, use_names=TRUE){
 #' ppc(fit)
 #' }
 ppc.mongrelfit <- function(m, type="bounds", iter=NULL){
+  msg <- paste("No observed count data (Y) to check against", 
+               "perhaps you are looking for the function `predict`?")
+  if (is.null(m$Y)) stop(msg)
   
   if (is.null(iter)) {
     if (type =="lines") iter <- min(50, niter(m))

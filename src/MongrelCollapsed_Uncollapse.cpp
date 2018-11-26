@@ -1,5 +1,6 @@
 #include <RcppEigen.h>
 #include <MatDist.h>
+#include <Rcpp/Benchmark/Timer.h>
 // [[Rcpp::depends(RcppEigen)]]
 using namespace Rcpp;
 using Eigen::MatrixXd;
@@ -52,6 +53,7 @@ using Eigen::Lower;
 //' @return List with components 
 //' 1. Lambda Array of dimension (D-1) x Q x iter (posterior samples)
 //' 2. Sigma Array of dimension (D-1) x (D-1) x iter (posterior samples)
+//' 3. Timer
 //' @export
 //' @md
 //' @seealso \code{\link{optimMongrelCollapsed}}
@@ -73,8 +75,10 @@ List uncollapseMongrelCollapsed(const Eigen::Map<Eigen::VectorXd> eta, // note t
                     const Eigen::Map<Eigen::MatrixXd> Xi, 
                     const double upsilon, 
                     bool ret_mean = false){
-  List out(2);
-  out.names() = CharacterVector::create("Lambda", "Sigma");
+  Timer timer;
+  timer.step("Overall_start");
+  List out(3);
+  out.names() = CharacterVector::create("Lambda", "Sigma", "Timer");
   int Q = Gamma.rows();
   int D = Xi.rows()+1;
   int N = X.cols();
@@ -139,7 +143,9 @@ List uncollapseMongrelCollapsed(const Eigen::Map<Eigen::VectorXd> eta, // note t
   nvSigma.attr("dim") = dSigma;
   out[0] = nvLambda;
   out[1] = nvSigma;
-  
+  timer.step("Overall_stop");
+  NumericVector t(timer);
+  out[2] = timer;
   return out;
 }
 

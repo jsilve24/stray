@@ -164,8 +164,16 @@ mifelse <- function(b, y, n){
 
 # x is vector of elements that should either be NULL or all the same 
 try_set_dims <- function(x){
-  stopifnot(length(x) > 0)
-  if (all(x[1]==x)) return(as.integer(x[1])) else stop("Dimension missmatch in arguments")
+  if (length(x) ==0){
+    stop("Not Information provided to set dimension")
+  }
+  if (all(x[1]==x)) {
+    return(as.integer(x[1])) 
+  }else{
+    msg <- paste(x, collapse = ",")
+    msg <- paste("Dimension missmatch in arguments: [", msg, "]", sep="")
+    stop(msg)
+  } 
 }
 
 
@@ -174,4 +182,18 @@ args_null <- function(par, argl, default){
   if (is.null(argl[[par]])) return(default)
   return(argl[[par]])
 }
+
+# Parse Timer
+parse_timer_seconds <- function(timer){
+  n <- strsplit(names(timer), "_")
+  n1 <- unlist(lapply(n, FUN = function(x) x[1]))
+  n1n <- as.integer(as.factor(n1))
+  n1s <- split(timer, n1n)
+  n1names <- lapply(split(n1, n1n), unique)
+  times <- lapply(n1s, diff)
+  times.seconds <- unlist(times)/1e9
+  names(times.seconds) <- unlist(n1names)
+  return(times.seconds)
+}
+
 

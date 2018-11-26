@@ -110,7 +110,7 @@ summary.mongrelfit <- function(object, pars=NULL, use_names=TRUE, as_factor=FALS
   } else if (gather_prob){
     mtidy <- mtidy %>% 
       dplyr::select(-iter) %>% 
-      tidybayes::mean_qi(val, .prob=c(.5, .8, .95, .99)) %>% 
+      tidybayes::mean_qi(val, .width=c(.5, .8, .95, .99)) %>% 
       dplyr::ungroup() %>% 
       split(.$Parameter) %>% 
       purrr::map(~dplyr::select_if(.x, ~!all(is.na(.x))))  
@@ -212,10 +212,11 @@ as.list.mongrelfit <- function(x,...){
 #' @param size the number of counts per sample if response="Y" (as vector or matrix), 
 #'   default if newdata=NULL and response="Y" is to use colsums of m$Y. Otherwise
 #'   uses median colsums of m$Y as default. If passed as a matrix should have dimensions
-#'   ncol(newdata) x m$iter. 
+#'   ncol(newdata) x iter. 
 #' @param use_names if TRUE apply names to output 
 #' @param summary if TRUE, posterior summary of predictions are returned rather
 #'   than samples
+#' @param iter number of iterations to return if NULL uses object$iter
 #' @param ... other arguments passed to summarise_posterior
 #' 
 #' @details currently only implemented for mongrelfit objects in coord_system "default"
@@ -231,7 +232,7 @@ as.list.mongrelfit <- function(x,...){
 #' fit <- mongrel(sim$Y, sim$X)
 #' predict(fit)
 predict.mongrelfit <- function(object, newdata=NULL, response="LambdaX", size=NULL, 
-                               use_names=TRUE, summary=FALSE, ...){
+                               use_names=TRUE, summary=FALSE, iter=NULL, ...){
   
   l <- store_coord(object)
   if (!(object$coord_system %in% c("alr", "ilr"))){
@@ -241,15 +242,40 @@ predict.mongrelfit <- function(object, newdata=NULL, response="LambdaX", size=NU
     transformed <- FALSE
   }
   
-  if (is.null(newdata)) {
+  # If newdata is null - then predict based on existing data (X)
+  # If size is null - then use colsums or median colsums of Y, 
+  #    if that is null throw informative error
+  if (is.null(newdata)){
     newdata <- object$X
-    if (response=="Y") size <-colSums(object$Y)
-  } else {
-    if ((response=="Y")&&(is.null(size))) size <- median(colSums(object$Y))
+    if (response=="Y"){
+      if (is.null(size)){
+        if (is.null(object$Y)){
+          stop("Either Y or size must be specified to predict Counts")
+        } else { # Y not null
+          size <- colSums(object$Y)
+        }
+      }
+    }
+  } else { #newdata specified 
+    if (response=="Y"){
+      if (is.null(size)){
+        if (is.null(object$Y)){
+          stop("Either Y or size must be specified to predict Counts")
+        } else {
+          size <- median(colSums(object$Y))
+        }
+      }
+    }
   }
-  if ((response=="Y") && is.vector(size)){
-    size <- replicate(object$iter, size)
-  }
+  
+  # if iter is null use object$iter
+  if (is.null(iter)){ iter <- object$iter }
+  
+  # if size is a scalar, replicate it to a vector 
+  if ((response=="Y") && (length(size)==1)) { size <- replicate(object$N, size) }
+  # If size is a vector, replicate it to a matrix
+  if ((response=="Y") && is.vector(size)){ size <- replicate(iter, size) }
+
   
   # # Try to match rownames of newdata to avoid possible errors...
   # if (!is.null(rownames(newdata))) newdata <- newdata[object$names_covariates,]
@@ -259,8 +285,8 @@ predict.mongrelfit <- function(object, newdata=NULL, response="LambdaX", size=NU
   
   # Draw LambdaX
   if (is.null(object$Lambda)) stop("mongrelfit object does not contain samples of Lambda")
-  LambdaX <- array(0, dim = c(object$D-1, nnew, object$iter))
-  for (i in 1:object$iter){
+  LambdaX <- array(0, dim = c(object$D-1, nnew, iter))
+  for (i in 1:iter){
     LambdaX[,,i] <- object$Lambda[,,i] %*% newdata
   }
   if (use_names) LambdaX <- name_array(LambdaX, object,
@@ -284,8 +310,8 @@ predict.mongrelfit <- function(object, newdata=NULL, response="LambdaX", size=NU
   
   # Draw Eta
   Eta <- array(0, dim=dim(LambdaX))
-  zEta <- array(rnorm((object$D-1)*nnew*object$iter), dim = dim(Eta))
-  for (i in 1:object$iter){
+  zEta <- array(rnorm((object$D-1)*nnew*iter), dim = dim(Eta))
+  for (i in 1:iter){
     Eta[,,i] <- LambdaX[,,i] + t(chol(object$Sigma[,,i]))%*%zEta[,,i]
   }
   if (use_names) Eta <- name_array(Eta, object, list("cat", colnames(newdata), 
@@ -310,8 +336,8 @@ predict.mongrelfit <- function(object, newdata=NULL, response="LambdaX", size=NU
   
   com <- names(object)[!(names(object) %in% c("Lambda", "Sigma"))] # to save computation
   Pi <- mongrel_to_proportions(object[com])$Eta
-  Ypred <- array(0, dim=c(object$D, nnew, object$iter))
-  for (i in 1:object$iter){
+  Ypred <- array(0, dim=c(object$D, nnew, iter))
+  for (i in 1:iter){
     for (j in 1:nnew){
       Ypred[,j,i] <- rmultinom(1, size=size[j,i], prob=Pi[,j,i])
     }

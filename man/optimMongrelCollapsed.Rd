@@ -80,6 +80,7 @@ List containing (all with respect to found optima)
 \item Pars - Parameter value of eta at optima
 \item Samples - (D-1) x N x n_samples array containing posterior samples of eta
 based on Laplace approximation (if n_samples>0)
+\item Timer - Vector of Execution Times
 }
 }
 \description{

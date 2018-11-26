@@ -4,6 +4,7 @@
 #include <AdamOptim.h>
 #include <LaplaceApproximation.h>
 #include <MultDirichletBoot.h>
+#include <Rcpp/Benchmark/Timer.h>
 // [[Rcpp::depends(RcppNumerical)]]
 // [[Rcpp::depends(RcppEigen)]]
 
@@ -91,6 +92,7 @@ using Eigen::VectorXd;
 //' 4. Pars - Parameter value of eta at optima
 //' 5. Samples - (D-1) x N x n_samples array containing posterior samples of eta 
 //'   based on Laplace approximation (if n_samples>0)
+//' 6. Timer - Vector of Execution Times
 //' @md 
 //' @export
 //' @name optimMongrelCollapsed
@@ -127,26 +129,24 @@ List optimMongrelCollapsed(const Eigen::ArrayXXd Y,
                bool calcPartialHess = false, 
                double multDirichletBoot = -1.0, 
                bool useSylv = true){  
+  Timer timer;
+  timer.step("Overall_start");
   int N = Y.cols();
   int D = Y.rows();
   MongrelCollapsed cm(Y, upsilon, ThetaX, K, A, useSylv);
   Map<VectorXd> eta(init.data(), init.size()); // will rewrite by optim
   double nllopt; // NEGATIVE LogLik at optim
-  List out(5);
+  List out(6);
   out.names() = CharacterVector::create("LogLik", "Gradient", "Hessian",
-            "Pars", "Samples");
-
-  time_t seconds = time(NULL);
-  printf("Starting gradient descent: %ld\n", seconds);
+            "Pars", "Samples", "Timer");
   
   // Pick optimizer (ADAM - without perturbation appears to be best)
   //   ADAM with perturbations not fully implemented
+  timer.step("Optimization_start");
   //int status = Numer::optim_lbfgs(cm, eta, nllopt);
   int status = adam::optim_adam(cm, eta, nllopt, b1, b2, step_size, epsilon, 
                                 eps_f, eps_g, max_iter, verbose, verbose_rate); 
-
-  seconds = time(NULL);
-  printf("Completed gradient descent: %ld\n", seconds);
+  timer.step("Optimization_stop");
 
   if (status<0)
     Rcpp::warning("Max Iterations Hit, May not be at optima");
@@ -155,8 +155,6 @@ List optimMongrelCollapsed(const Eigen::ArrayXXd Y,
   out[3] = etamat;
   
   if (n_samples > 0 || calcGradHess){
-    seconds = time(NULL);
-    printf("Starting Hessian calc: %ld\n", seconds);
     if (verbose) Rcout << "Allocating for Gradient" << std::endl;
     VectorXd grad(N*(D-1));
     MatrixXd hess; // don't preallocate this thing could be unneeded
@@ -165,15 +163,20 @@ List optimMongrelCollapsed(const Eigen::ArrayXXd Y,
     
     // "Multinomial-Dirichlet" option
     if (multDirichletBoot>=0.0){
+      timer.step("MultDirichletBoot_start");
       if (verbose) Rcout << "Preforming Multinomial Dirichlet Bootstrap" << std::endl;
       MatrixXd samp = MultDirichletBoot::MultDirichletBoot(n_samples, etamat, Y, 
                                                            multDirichletBoot);
+      timer.step("MultDirichletBoot_stop");
       out[1] = R_NilValue;
       out[2] = R_NilValue;
       IntegerVector d = IntegerVector::create(D-1, N, n_samples);
       NumericVector samples = wrap(samp);
       samples.attr("dim") = d; // convert to 3d array for return to R
       out[4] = samples;
+      NumericVector t(timer);
+      out[5] = t;
+      timer.step("Overall_stop");
       return out;
     }
     // "Multinomial-Dirchlet" option 
@@ -183,7 +186,9 @@ List optimMongrelCollapsed(const Eigen::ArrayXXd Y,
       hess = cm.calcPartialHess();
     } else {
       if (verbose) Rcout << "Calculating Hessian" << std::endl;
+      timer.step("HessianCalculation_start");
       hess = cm.calcHess(); // should have eta at optima already
+      timer.step("HessianCalculation_Stop");
     }
     out[1] = grad;
     if ((N * (D-1)) > 44750){
@@ -193,16 +198,15 @@ List optimMongrelCollapsed(const Eigen::ArrayXXd Y,
         out[2] = hess;    
     }
 
-    seconds = time(NULL);
-    printf("Completed Hessian calc: %ld\n", seconds);
-
     if (n_samples>0){
       // Laplace Approximation
       int status;
+      timer.step("LaplaceApproximation_start");
       MatrixXd samp = MatrixXd::Zero(N*(D-1), n_samples);
       status = lapap::LaplaceApproximation(samp, eta, hess, 
                                            decomp_method, eigvalthresh, 
                                            jitter);
+      timer.step("LaplaceApproximation_stop");
       if (status != 0){
         Rcpp::warning("Decomposition of Hessian Failed, returning MAP Estimate only");
         return out;
@@ -214,5 +218,8 @@ List optimMongrelCollapsed(const Eigen::ArrayXXd Y,
       out[4] = samples;
     } // endif n_samples || calcGradHess
   } // endif n_samples || calcGradHess
+  timer.step("Overall_stop");
+  NumericVector t(timer);
+  out[5] = t;
   return out;
 }

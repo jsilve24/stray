@@ -31,6 +31,7 @@ List with components
 \enumerate{
 \item Lambda Array of dimension (D-1) x Q x iter (posterior samples)
 \item Sigma Array of dimension (D-1) x (D-1) x iter (posterior samples)
+\item Timer
 }
 }
 \description{

@@ -183,3 +183,17 @@ args_null <- function(par, argl, default){
   return(argl[[par]])
 }
 
+# Parse Timer
+parse_timer_seconds <- function(timer){
+  n <- strsplit(names(timer), "_")
+  n1 <- unlist(lapply(n, FUN = function(x) x[1]))
+  n1n <- as.integer(as.factor(n1))
+  n1s <- split(timer, n1n)
+  n1names <- lapply(split(n1, n1n), unique)
+  times <- lapply(n1s, diff)
+  times.seconds <- unlist(times)/1e9
+  names(times.seconds) <- unlist(n1names)
+  return(times.seconds)
+}
+
+

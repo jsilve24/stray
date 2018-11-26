@@ -279,6 +279,7 @@ lineSearch <- function(Y, upsilon, ThetaX, K, A, eta, direction, rho, c) {
 #' 4. Pars - Parameter value of eta at optima
 #' 5. Samples - (D-1) x N x n_samples array containing posterior samples of eta 
 #'   based on Laplace approximation (if n_samples>0)
+#' 6. Timer - Vector of Execution Times
 #' @md 
 #' @export
 #' @name optimMongrelCollapsed
@@ -336,6 +337,7 @@ optimMongrelCollapsed <- function(Y, upsilon, ThetaX, K, A, init, n_samples = 20
 #' @return List with components 
 #' 1. Lambda Array of dimension (D-1) x Q x iter (posterior samples)
 #' 2. Sigma Array of dimension (D-1) x (D-1) x iter (posterior samples)
+#' 3. Timer
 #' @export
 #' @md
 #' @seealso \code{\link{optimMongrelCollapsed}}
@@ -370,13 +372,13 @@ rMatUnitNormal_test2 <- function(n) {
 }
 
 #' Log of Multivarate Gamma Function - Gamma_p(a)
-#' @reference https://en.wikipedia.org/wiki/Multivariate_gamma_function
+#' @references https://en.wikipedia.org/wiki/Multivariate_gamma_function
 lmvgamma <- function(a, p) {
     .Call('_mongrel_lmvgamma', PACKAGE = 'mongrel', a, p)
 }
 
 #' Derivative of Log of Multivariate Gamma Function - Gamma_p(a)
-#' @reference https://en.wikipedia.org/wiki/Multivariate_gamma_function
+#' @references https://en.wikipedia.org/wiki/Multivariate_gamma_function
 lmvgamma_deriv <- function(a, p) {
     .Call('_mongrel_lmvgamma_deriv', PACKAGE = 'mongrel', a, p)
 }

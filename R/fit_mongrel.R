@@ -153,6 +153,7 @@ mongrel <- function(Y=NULL, X=NULL, upsilon=NULL, Theta=NULL, Gamma=NULL, Xi=NUL
                                 eps_g, max_iter, verbose, verbose_rate, 
                                 decomp_method, eigvalthresh, 
                                 jitter, calcPartialHess, multDirichletBoot)
+  timerc <- parse_timer_seconds(fitc$Timer)
 
   # if n_samples=0 or if hessian fails, then use MAP eta estimate for 
   # uncollapsing and unless otherwise specified against, use only the 
@@ -177,6 +178,14 @@ mongrel <- function(Y=NULL, X=NULL, upsilon=NULL, Theta=NULL, Gamma=NULL, Xi=NUL
   ## uncollapse collapsed model ##
   fitu <- uncollapseMongrelCollapsed(fitc$Samples, X, Theta, Gamma, Xi, upsilon, 
                                      ret_mean=ret_mean)
+  timeru <- parse_timer_seconds(fitu$Timer)
+  
+  timer <- c(timerc, timeru)
+  timer <- timer[which(names(timer)!="Overall")]
+  timer <- c(timer, 
+             "Overall" = unname(timerc["Overall"]) +  unname(timeru["Overall"]), 
+             "Uncollapse_Overall" = timeru["Overall"])
+  
   
   ## pretty output ##
   out <- list()
@@ -212,6 +221,7 @@ mongrel <- function(Y=NULL, X=NULL, upsilon=NULL, Theta=NULL, Gamma=NULL, Xi=NUL
   # add names if present 
   if (use_names) out <- name(out)
   verify(out) # verify the mongrelfit object
+  out$Timer <- timer
   return(out)
 }
 

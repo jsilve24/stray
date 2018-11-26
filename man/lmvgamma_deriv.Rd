@@ -9,3 +9,6 @@ lmvgamma_deriv(a, p)
 \description{
 Derivative of Log of Multivariate Gamma Function - Gamma_p(a)
 }
+\references{
+https://en.wikipedia.org/wiki/Multivariate_gamma_function
+}

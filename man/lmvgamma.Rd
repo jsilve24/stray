@@ -9,3 +9,6 @@ lmvgamma(a, p)
 \description{
 Log of Multivarate Gamma Function - Gamma_p(a)
 }
+\references{
+https://en.wikipedia.org/wiki/Multivariate_gamma_function
+}

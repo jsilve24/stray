@@ -2,7 +2,7 @@
 using namespace Rcpp;
 
 //' Log of Multivarate Gamma Function - Gamma_p(a)
-//' @reference https://en.wikipedia.org/wiki/Multivariate_gamma_function
+//' @references https://en.wikipedia.org/wiki/Multivariate_gamma_function
 // [[Rcpp::export]]
 double lmvgamma(double a, int p){
   static const double pi = log(3.14159265); 
@@ -15,7 +15,7 @@ double lmvgamma(double a, int p){
 }
 
 //' Derivative of Log of Multivariate Gamma Function - Gamma_p(a)
-//' @reference https://en.wikipedia.org/wiki/Multivariate_gamma_function
+//' @references https://en.wikipedia.org/wiki/Multivariate_gamma_function
 // [[Rcpp::export]]
 double lmvgamma_deriv(double a, int p){
   double s=0;

@@ -109,11 +109,11 @@ List uncollapseMongrelCollapsed(const Eigen::Map<Eigen::VectorXd> eta, // note t
     VectorXd EtaV(eta.segment(i*N*(D-1),N*(D-1)));
     Map<MatrixXd> Eta(EtaV.data(), D-1, N);
     //Rcout << Eta.col(1).transpose() << std::endl;
-    LambdaN = Eta*XTGammaN+ThetaGammaInvGammaN;
+    LambdaN.noalias() = Eta*XTGammaN+ThetaGammaInvGammaN;
     //Rcout << LambdaN.row(1) << std::endl;
     ELambda = LambdaN-Theta;
-    EEta = Eta-LambdaN*X;
-    XiN = Xi+ EEta*EEta.transpose() + ELambda*GammaInv*ELambda.transpose();
+    EEta.noalias() = Eta-LambdaN*X;
+    XiN.noalias() = Xi+ EEta*EEta.transpose() + ELambda*GammaInv*ELambda.transpose();
     
     if (ret_mean){
       Map<VectorXd> LambdaNVec(LambdaN.data(), LambdaN.size());
@@ -129,7 +129,7 @@ List uncollapseMongrelCollapsed(const Eigen::Map<Eigen::VectorXd> eta, // note t
       // map output to vectors
       Map<VectorXd> LambdaDrawVec(LambdaDraw.data(), LambdaDraw.size());
       LambdaDrawO.col(i) = LambdaDrawVec;
-      SigmaDraw = LSigmaDraw*LSigmaDraw.transpose();
+      SigmaDraw.noalias() = LSigmaDraw*LSigmaDraw.transpose();
       Map<VectorXd> SigmaDrawVec(SigmaDraw.data(), SigmaDraw.size());
       SigmaDrawO.col(i) = SigmaDrawVec;
     }

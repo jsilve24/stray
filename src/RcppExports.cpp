@@ -378,6 +378,16 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// fillUnitNormal_test
+void fillUnitNormal_test(Eigen::Map<Eigen::MatrixXd>& Z);
+RcppExport SEXP _mongrel_fillUnitNormal_test(SEXP ZSEXP) {
+BEGIN_RCPP
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Eigen::Map<Eigen::MatrixXd>& >::type Z(ZSEXP);
+    fillUnitNormal_test(Z);
+    return R_NilValue;
+END_RCPP
+}
 
 static const R_CallMethodDef CallEntries[] = {
     {"_mongrel_conjugateLinearModel", (DL_FUNC) &_mongrel_conjugateLinearModel, 7},
@@ -403,6 +413,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_mongrel_rDirichlet_test", (DL_FUNC) &_mongrel_rDirichlet_test, 2},
     {"_mongrel_MultDirichletBoot_test", (DL_FUNC) &_mongrel_MultDirichletBoot_test, 4},
     {"_mongrel_MongrelTruncatedEigen_mongrel_test", (DL_FUNC) &_mongrel_MongrelTruncatedEigen_mongrel_test, 9},
+    {"_mongrel_fillUnitNormal_test", (DL_FUNC) &_mongrel_fillUnitNormal_test, 1},
     {NULL, NULL, 0}
 };
 

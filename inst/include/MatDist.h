@@ -53,7 +53,7 @@ inline Eigen::MatrixXd rMatNormalCholesky(const Eigen::Ref<const Eigen::MatrixXd
   MatrixXd X(nrows, ncols);
   
   fillUnitNormal(Z);
-  X = M + LU*Z*LV.transpose();
+  X.noalias() =  M + LU*Z*LV.transpose();
   return X;
 }
 

@@ -141,6 +141,7 @@ mongrel <- function(Y=NULL, X=NULL, upsilon=NULL, Theta=NULL, Gamma=NULL, Xi=NUL
   calcPartialHess <- args_null("calcPartialHess", args, FALSE)
   multDirichletBoot <- args_null("multDirichletBoot", args, -1.0)
   optim_method <- args_null("optim_method", args, "adam")
+  useSylv <- args_null("useSylv", args, TRUE)
   
   if (calcPartialHess) warning("Cannot recoomend calcPartialHess at this time.")
   
@@ -153,7 +154,8 @@ mongrel <- function(Y=NULL, X=NULL, upsilon=NULL, Theta=NULL, Gamma=NULL, Xi=NUL
                                 calcGradHess, b1, b2, step_size, epsilon, eps_f, 
                                 eps_g, max_iter, verbose, verbose_rate, 
                                 decomp_method, optim_method, eigvalthresh, 
-                                jitter, calcPartialHess, multDirichletBoot)
+                                jitter, calcPartialHess, multDirichletBoot, 
+                                useSylv)
   timerc <- parse_timer_seconds(fitc$Timer)
 
   # if n_samples=0 or if hessian fails, then use MAP eta estimate for 

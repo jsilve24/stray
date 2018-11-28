@@ -416,3 +416,7 @@ MongrelTruncatedEigen_mongrel_test <- function(Y, upsilon, ThetaX, K, A, etavec,
     .Call('_mongrel_MongrelTruncatedEigen_mongrel_test', PACKAGE = 'mongrel', Y, upsilon, ThetaX, K, A, etavec, r, nev, ncv)
 }
 
+fillUnitNormal_test <- function(Z) {
+    invisible(.Call('_mongrel_fillUnitNormal_test', PACKAGE = 'mongrel', Z))
+}
+

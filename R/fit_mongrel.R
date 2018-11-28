@@ -157,6 +157,7 @@ mongrel <- function(Y=NULL, X=NULL, upsilon=NULL, Theta=NULL, Gamma=NULL, Xi=NUL
                                 jitter, calcPartialHess, multDirichletBoot, 
                                 useSylv)
   timerc <- parse_timer_seconds(fitc$Timer)
+  
 
   # if n_samples=0 or if hessian fails, then use MAP eta estimate for 
   # uncollapsing and unless otherwise specified against, use only the 

@@ -1,7 +1,8 @@
 <img align="left" width="160" height="160" src="inst/mongrel.png" />
 
 # mongrel
-Multinomial Logistic-Normal Linear Regression Models
+Multinomial Logistic-Normal Linear Regression Models <br/>
+(*A Little* __*tar*__*Ball of Joy*)
 
 ## Citation ##
 The paper is currently being written. Cite how you like till then :)

@@ -160,12 +160,12 @@ test_that("eigen and cholesky get same result", {
   init <- random_mongrel_init(sim$Y)
   fitc <- optimMongrelCollapsed(sim$Y, sim$upsilon, (sim$Theta%*%sim$X), sim$K, 
                                sim$A, init,
-                               n_samples=500000,
+                               n_samples=50000,
                                calcGradHess = FALSE, 
                                decomp="cholesky")
   fite <- optimMongrelCollapsed(sim$Y, sim$upsilon, (sim$Theta%*%sim$X), sim$K, 
                                 sim$A, init,
-                                n_samples=500000,
+                                n_samples=50000,
                                 calcGradHess = FALSE, 
                                 decomp="eigen")
   
@@ -176,6 +176,18 @@ test_that("eigen and cholesky get same result", {
   expect_equal(apply(fitc$Samples, c(1,2), var), 
                apply(fite$Samples, c(1,2), var), 
                tolerance=0.01)
+  
+  expect_equal(fitc$logInvNegHessDet, fite$logInvNegHessDet, tolerance=1e-3)
+})
+
+test_that("logInvNegHessDet correct", {
+  init <- random_mongrel_init(sim$Y)
+  fitc <- optimMongrelCollapsed(sim$Y, sim$upsilon, (sim$Theta%*%sim$X), sim$K, 
+                                sim$A, init,
+                                n_samples=1,
+                                calcGradHess = TRUE, 
+                                decomp="cholesky")
+  expect_equal(-log(det(-fitc$Hessian)), fitc$logInvNegHessDet)
 })
 
 

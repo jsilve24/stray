@@ -38,8 +38,10 @@ Eigen::MatrixXd LaplaceApproximation_test(int n_samples, Eigen::VectorXd m,
                                           double eigvalthresh){
   int p=m.rows();
   MatrixXd z = MatrixXd::Zero(p, n_samples);
+  double logInvNegHessDet;
   int status = lapap::LaplaceApproximation(z, m, S, decomp_method, 
-                                           eigvalthresh,0);
+                                           eigvalthresh,0, 
+                                           logInvNegHessDet);
   if (status==1) Rcpp::stop("decomposition failed");
   return z;
 }

@@ -108,7 +108,7 @@ maltipoo <- function(Y=NULL, X=NULL, upsilon=NULL, Theta=NULL, U=NULL,
   max_iter <- args_null("max_iter", args, 10000)
   verbose <- args_null("verbose", args, FALSE)
   verbose_rate <- args_null("verbose_rate", args, 10)
-  decomp_method <- args_null("decomp_method", args, "eigen")
+  decomp_method <- args_null("decomp_method", args, "cholesky")
   eigvalthresh <- args_null("eigvalthresh", args, 0)
   jitter <- args_null("jitter", args, 0)
   calcPartialHess <- args_null("calcPartialHess", args, FALSE)
@@ -165,6 +165,10 @@ maltipoo <- function(Y=NULL, X=NULL, upsilon=NULL, Theta=NULL, U=NULL,
     out[["Sigma"]] <- fitu$Sigma
   }
   
+  # Marginal Likelihood
+  d <- D^2 + N*D + D*Q + length(fitc$VCScale)
+  logMarginalLikelihood <- fitc$LogLik+d/2*log(2*pi)+.5*fitc$logInvNegHessDet
+  
   # By default just returns all other parameters
   out$N <- N
   out$Q <- Q
@@ -187,6 +191,7 @@ maltipoo <- function(Y=NULL, X=NULL, upsilon=NULL, Theta=NULL, U=NULL,
   out$coord_system <- "alr"
   out$alr_base <- D
   out$summary <- NULL
+  out$logMarginalLikelihood
   attr(out, "class") <- c("maltipoofit", "mongrelfit")
   # add names if present 
   if (use_names) out <- name(out)

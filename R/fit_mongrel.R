@@ -135,7 +135,7 @@ mongrel <- function(Y=NULL, X=NULL, upsilon=NULL, Theta=NULL, Gamma=NULL, Xi=NUL
   max_iter <- args_null("max_iter", args, 10000)
   verbose <- args_null("verbose", args, FALSE)
   verbose_rate <- args_null("verbose_rate", args, 10)
-  decomp_method <- args_null("decomp_method", args, "eigen")
+  decomp_method <- args_null("decomp_method", args, "cholesky")
   eigvalthresh <- args_null("eigvalthresh", args, 0)
   jitter <- args_null("jitter", args, 0)
   calcPartialHess <- args_null("calcPartialHess", args, FALSE)
@@ -191,6 +191,12 @@ mongrel <- function(Y=NULL, X=NULL, upsilon=NULL, Theta=NULL, Gamma=NULL, Xi=NUL
              "Uncollapse_Overall" = timeru["Overall"])
   
   
+  # Marginal Likelihood Computation
+  d <- D^2 + N*D + D*Q
+  logMarginalLikelihood <- fitc$LogLik+d/2*log(2*pi)+.5*fitc$logInvNegHessDet
+  
+  
+  
   ## pretty output ##
   out <- list()
   if ("Eta" %in% pars){
@@ -202,6 +208,7 @@ mongrel <- function(Y=NULL, X=NULL, upsilon=NULL, Theta=NULL, Gamma=NULL, Xi=NUL
   if ("Sigma" %in% pars){
     out[["Sigma"]] <- fitu$Sigma
   }
+  
   # By default just returns all other parameters
   out$N <- N
   out$Q <- Q
@@ -221,11 +228,12 @@ mongrel <- function(Y=NULL, X=NULL, upsilon=NULL, Theta=NULL, Gamma=NULL, Xi=NUL
   out$coord_system <- "alr"
   out$alr_base <- D
   out$summary <- NULL
+  out$Timer <- timer
+  out$logMarginalLikelihood <- logMarginalLikelihood
   attr(out, "class") <- c("mongrelfit")
   # add names if present 
   if (use_names) out <- name(out)
   verify(out) # verify the mongrelfit object
-  out$Timer <- timer
   return(out)
 }
 

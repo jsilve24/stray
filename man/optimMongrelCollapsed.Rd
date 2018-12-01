@@ -7,7 +7,7 @@
 optimMongrelCollapsed(Y, upsilon, ThetaX, K, A, init, n_samples = 2000L,
   calcGradHess = TRUE, b1 = 0.9, b2 = 0.99, step_size = 0.003,
   epsilon = 1e-06, eps_f = 1e-10, eps_g = 1e-04, max_iter = 10000L,
-  verbose = FALSE, verbose_rate = 10L, decomp_method = "eigen",
+  verbose = FALSE, verbose_rate = 10L, decomp_method = "cholesky",
   optim_method = "adam", eigvalthresh = 0, jitter = 0,
   calcPartialHess = FALSE, multDirichletBoot = -1, useSylv = TRUE)
 }
@@ -51,7 +51,7 @@ iteration number}
 \item{verbose_rate}{(ADAM) rate to print verbose stats to screen}
 
 \item{decomp_method}{decomposition of hessian for Laplace approximation
-'eigen' (more stable, slower, default) or 'cholesky' (less stable, faster)}
+'eigen' (more stable-slightly, slower) or 'cholesky' (less stable, faster, default)}
 
 \item{optim_method}{(default:"adam") or "lbfgs"}
 
@@ -83,6 +83,8 @@ List containing (all with respect to found optima)
 \item Samples - (D-1) x N x n_samples array containing posterior samples of eta
 based on Laplace approximation (if n_samples>0)
 \item Timer - Vector of Execution Times
+\item logInvNegHessDet - the log determinant of the covariacne of the Laplace
+approximation, useful for calculating marginal likelihood
 }
 }
 \description{

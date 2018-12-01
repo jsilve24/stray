@@ -42,7 +42,7 @@ using Eigen::VectorXd;
 //'   iteration number
 //' @param verbose_rate (ADAM) rate to print verbose stats to screen
 //' @param decomp_method decomposition of hessian for Laplace approximation
-//'   'eigen' (more stable, slower, default) or 'cholesky' (less stable, faster)
+//'   'eigen' (more stable-slightly, slower) or 'cholesky' (less stable, faster, default)
 //' @param optim_method (default:"adam") or "lbfgs"
 //' @param eigvalthresh threshold for negative eigenvalues in 
 //'   decomposition of negative inverse hessian (should be <=0)
@@ -93,6 +93,8 @@ using Eigen::VectorXd;
 //' 5. Samples - (D-1) x N x n_samples array containing posterior samples of eta 
 //'   based on Laplace approximation (if n_samples>0)
 //' 6. Timer - Vector of Execution Times
+//' 7. logInvNegHessDet - the log determinant of the covariacne of the Laplace 
+//'    approximation, useful for calculating marginal likelihood 
 //' @md 
 //' @export
 //' @name optimMongrelCollapsed
@@ -123,7 +125,7 @@ List optimMongrelCollapsed(const Eigen::ArrayXXd Y,
                int max_iter=10000,      
                bool verbose=false,      
                int verbose_rate=10,
-               String decomp_method="eigen",
+               String decomp_method="cholesky",
                String optim_method="adam",
                double eigvalthresh=0, 
                double jitter=0,
@@ -137,9 +139,9 @@ List optimMongrelCollapsed(const Eigen::ArrayXXd Y,
   MongrelCollapsed cm(Y, upsilon, ThetaX, K, A, useSylv);
   Map<VectorXd> eta(init.data(), init.size()); // will rewrite by optim
   double nllopt; // NEGATIVE LogLik at optim
-  List out(6);
+  List out(7);
   out.names() = CharacterVector::create("LogLik", "Gradient", "Hessian",
-            "Pars", "Samples", "Timer");
+            "Pars", "Samples", "Timer", "logInvNegHessDet");
   
   // Pick optimizer (ADAM - without perturbation appears to be best)
   //   ADAM with perturbations not fully implemented
@@ -211,14 +213,17 @@ List optimMongrelCollapsed(const Eigen::ArrayXXd Y,
       int status;
       timer.step("LaplaceApproximation_start");
       MatrixXd samp = MatrixXd::Zero(N*(D-1), n_samples);
+      double logInvNegHessDet;
       status = lapap::LaplaceApproximation(samp, eta, hess, 
                                            decomp_method, eigvalthresh, 
-                                           jitter);
+                                           jitter, 
+                                           logInvNegHessDet);
       timer.step("LaplaceApproximation_stop");
       if (status != 0){
         Rcpp::warning("Decomposition of Hessian Failed, returning MAP Estimate only");
         return out;
       }
+      out[6] = logInvNegHessDet;
       
       IntegerVector d = IntegerVector::create(D-1, N, n_samples);
       NumericVector samples = wrap(samp);

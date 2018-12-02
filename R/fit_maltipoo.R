@@ -167,7 +167,7 @@ maltipoo <- function(Y=NULL, X=NULL, upsilon=NULL, Theta=NULL, U=NULL,
   
   # Marginal Likelihood
   d <- D^2 + N*D + D*Q + length(fitc$VCScale)
-  logMarginalLikelihood <- fitc$LogLik+d/2*log(2*pi)+.5*fitc$logInvNegHessDet
+  logMarginalLikelihood <- fitc$LogLik+d/2*log(2*pi)+.5*fitc$logInvNegHessDet - d/2*log(N)
   
   # By default just returns all other parameters
   out$N <- N

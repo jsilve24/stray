@@ -156,9 +156,9 @@ print.mongrelfit <- function(x, summary=FALSE, ...){
     cs <- x$coord_system
   }
   cat(paste("  Coordinate System:\t\t", cs, "\n"))
-  if (!is.null(fit$logMarginalLikelihood)){
+  if (!is.null(x$logMarginalLikelihood)){
     cat(paste("  Log Marginal Likelihood:\t", 
-              signif(fit$logMarginalLikelihood), "\n"))
+              round(x$logMarginalLikelihood, 3), "\n"))
   }
   
   if (summary){

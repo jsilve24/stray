@@ -17,7 +17,7 @@ devtools::install_github("jsilve24/mongrel", build_vignettes=TRUE)
 Or to download the development version
 
 ``` r
-install_github("jsilve24/mongrel", ref="develop", build_vignettes=TRUE)
+devtools::install_github("jsilve24/mongrel", ref="develop", build_vignettes=TRUE)
 ```
 
 ## Bugs/Feature requests ##

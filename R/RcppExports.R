@@ -246,6 +246,8 @@ lineSearch <- function(Y, upsilon, ThetaX, K, A, eta, direction, rho, c) {
 #'  eta efficiently at MAP estimate from pseudo Multinomial-Dirichlet posterior.
 #' @param useSylv (default: true) if N<D-1 uses Sylvester Determinant Identity
 #'   to speed up calculation of log-likelihood and gradients. 
+#' @param ncores (default:-1) number of cores to use, if ncores==-1 then 
+#' uses default from OpenMP typically to use all available cores. 
 #'  
 #' @details Notation: Let Z_j denote the J-th row of a matrix Z.
 #' Model:
@@ -297,8 +299,8 @@ lineSearch <- function(Y, upsilon, ThetaX, K, A, eta, direction, rho, c) {
 #' # Fit model for eta
 #' fit <- optimMongrelCollapsed(sim$Y, sim$upsilon, sim$Theta%*%sim$X, sim$K, 
 #'                              sim$A, random_mongrel_init(sim$Y))  
-optimMongrelCollapsed <- function(Y, upsilon, ThetaX, K, A, init, n_samples = 2000L, calcGradHess = TRUE, b1 = 0.9, b2 = 0.99, step_size = 0.003, epsilon = 10e-7, eps_f = 1e-10, eps_g = 1e-4, max_iter = 10000L, verbose = FALSE, verbose_rate = 10L, decomp_method = "cholesky", optim_method = "adam", eigvalthresh = 0, jitter = 0, calcPartialHess = FALSE, multDirichletBoot = -1.0, useSylv = TRUE) {
-    .Call('_mongrel_optimMongrelCollapsed', PACKAGE = 'mongrel', Y, upsilon, ThetaX, K, A, init, n_samples, calcGradHess, b1, b2, step_size, epsilon, eps_f, eps_g, max_iter, verbose, verbose_rate, decomp_method, optim_method, eigvalthresh, jitter, calcPartialHess, multDirichletBoot, useSylv)
+optimMongrelCollapsed <- function(Y, upsilon, ThetaX, K, A, init, n_samples = 2000L, calcGradHess = TRUE, b1 = 0.9, b2 = 0.99, step_size = 0.003, epsilon = 10e-7, eps_f = 1e-10, eps_g = 1e-4, max_iter = 10000L, verbose = FALSE, verbose_rate = 10L, decomp_method = "cholesky", optim_method = "adam", eigvalthresh = 0, jitter = 0, calcPartialHess = FALSE, multDirichletBoot = -1.0, useSylv = TRUE, ncores = -1L) {
+    .Call('_mongrel_optimMongrelCollapsed', PACKAGE = 'mongrel', Y, upsilon, ThetaX, K, A, init, n_samples, calcGradHess, b1, b2, step_size, epsilon, eps_f, eps_g, max_iter, verbose, verbose_rate, decomp_method, optim_method, eigvalthresh, jitter, calcPartialHess, multDirichletBoot, useSylv, ncores)
 }
 
 #' Uncollapse output from optimMongrelCollapsed to full Mongrel Model
@@ -320,7 +322,9 @@ optimMongrelCollapsed <- function(Y, upsilon, ThetaX, K, A, init, n_samples = 20
 #'   corresponding to each sample of eta rather than sampling from 
 #'   posterior of Lambda and Sigma (useful if Laplace approximation
 #'   is not used (or fails) in optimMongrelCollapsed)
-#' 
+#' @param ncores (default:-1) number of cores to use, if ncores==-1 then 
+#' uses default from OpenMP typically to use all available cores. 
+#'  
 #' @details Notation: Let Z_j denote the J-th row of a matrix Z.
 #' While the collapsed model is given by:
 #'    \deqn{Y_j ~ Multinomial(Pi_j)}
@@ -356,8 +360,8 @@ optimMongrelCollapsed <- function(Y, upsilon, ThetaX, K, A, init, n_samples = 20
 #' # Finally obtain samples from Lambda and Sigma
 #' fit2 <- uncollapseMongrelCollapsed(fit$Samples, sim$X, sim$Theta, 
 #'                                    sim$Gamma, sim$Xi, sim$upsilon)
-uncollapseMongrelCollapsed <- function(eta, X, Theta, Gamma, Xi, upsilon, ret_mean = FALSE) {
-    .Call('_mongrel_uncollapseMongrelCollapsed', PACKAGE = 'mongrel', eta, X, Theta, Gamma, Xi, upsilon, ret_mean)
+uncollapseMongrelCollapsed <- function(eta, X, Theta, Gamma, Xi, upsilon, ret_mean = FALSE, ncores = -1L) {
+    .Call('_mongrel_uncollapseMongrelCollapsed', PACKAGE = 'mongrel', eta, X, Theta, Gamma, Xi, upsilon, ret_mean, ncores)
 }
 
 rMatNormalCholesky_test <- function(M, LU, LV) {

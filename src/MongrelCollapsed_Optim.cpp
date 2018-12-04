@@ -1,11 +1,18 @@
+#ifdef _OPENMP
+  #include <omp.h>
+#endif
 #include <MatrixAlgebra.h>
 #include <MongrelCollapsed.h>
 #include <AdamOptim.h>
 #include <LaplaceApproximation.h>
 #include <MultDirichletBoot.h>
 #include <Rcpp/Benchmark/Timer.h>
+
 // [[Rcpp::depends(RcppNumerical)]]
 // [[Rcpp::depends(RcppEigen)]]
+// [[Rcpp::plugins(openmp)]]
+
+
 
 using namespace Rcpp;
 using Eigen::Map;
@@ -56,6 +63,8 @@ using Eigen::VectorXd;
 //'  eta efficiently at MAP estimate from pseudo Multinomial-Dirichlet posterior.
 //' @param useSylv (default: true) if N<D-1 uses Sylvester Determinant Identity
 //'   to speed up calculation of log-likelihood and gradients. 
+//' @param ncores (default:-1) number of cores to use, if ncores==-1 then 
+//' uses default from OpenMP typically to use all available cores. 
 //'  
 //' @details Notation: Let Z_j denote the J-th row of a matrix Z.
 //' Model:
@@ -131,7 +140,9 @@ List optimMongrelCollapsed(const Eigen::ArrayXXd Y,
                double jitter=0,
                bool calcPartialHess = false, 
                double multDirichletBoot = -1.0, 
-               bool useSylv = true){  
+               bool useSylv = true, 
+               int ncores=-1){  
+  if (ncores > 0) omp_set_num_threads(ncores);
   Timer timer;
   timer.step("Overall_start");
   int N = Y.cols();

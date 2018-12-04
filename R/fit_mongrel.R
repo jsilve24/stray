@@ -142,6 +142,7 @@ mongrel <- function(Y=NULL, X=NULL, upsilon=NULL, Theta=NULL, Gamma=NULL, Xi=NUL
   multDirichletBoot <- args_null("multDirichletBoot", args, -1.0)
   optim_method <- args_null("optim_method", args, "adam")
   useSylv <- args_null("useSylv", args, TRUE)
+  ncores <- args_null("ncores", args, -1)
   
   if (calcPartialHess) warning("Cannot recoomend calcPartialHess at this time.")
   
@@ -155,7 +156,7 @@ mongrel <- function(Y=NULL, X=NULL, upsilon=NULL, Theta=NULL, Gamma=NULL, Xi=NUL
                                 eps_g, max_iter, verbose, verbose_rate, 
                                 decomp_method, optim_method, eigvalthresh, 
                                 jitter, calcPartialHess, multDirichletBoot, 
-                                useSylv)
+                                useSylv, ncores)
   timerc <- parse_timer_seconds(fitc$Timer)
   
 
@@ -181,7 +182,7 @@ mongrel <- function(Y=NULL, X=NULL, upsilon=NULL, Theta=NULL, Gamma=NULL, Xi=NUL
   
   ## uncollapse collapsed model ##
   fitu <- uncollapseMongrelCollapsed(fitc$Samples, X, Theta, Gamma, Xi, upsilon, 
-                                     ret_mean=ret_mean)
+                                     ret_mean=ret_mean, ncores=ncores)
   timeru <- parse_timer_seconds(fitu$Timer)
   
   timer <- c(timerc, timeru)

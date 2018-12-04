@@ -108,6 +108,8 @@ class MongrelCollapsed : public mongrel::MongrelModel {
       ll += (Y.topRows(D-1)*eta.array()).sum() - n*m.log().matrix();
       // Now compute collapsed prior ll
       //ll -= delta*Sdec.logAbsDeterminant();
+      // Following was adapted from : 
+      //   https://gist.github.com/redpony/fc8a0db6b20f7b1a3f23
       double ld = 0.0;
       double c = Sdec.permutationP().determinant();
       VectorXd diagLU = Sdec.matrixLU().diagonal();

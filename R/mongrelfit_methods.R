@@ -145,17 +145,22 @@ print.mongrelfit <- function(x, summary=FALSE, ...){
   pars <- c("Eta", "Lambda", "Sigma")
   pars <- pars[pars %in% names(x)]
   pars <- paste(pars, collapse = "  ")
-  cat(paste("  Contains Samples of Parameters:", pars, "\n"))
+  cat(paste("  Contains Samples of Parameters:", pars, "\n", sep=""))
   
   if (x$coord_system=="alr"){
     cs <- x$alr_base
     nm <- x$names_categories
     if (!is.null(nm)) cs <- paste0(cs, " [", nm[x$alr_base], "]")
-    cs <- paste("alr, reference category: ", cs)
+    cs <- paste("alr, reference category:", cs)
   } else {
     cs <- x$coord_system
   }
   cat(paste("  Coordinate System:\t\t", cs, "\n"))
+  if (!is.null(x$logMarginalLikelihood)){
+    cat(paste("  Log Marginal Likelihood:\t", 
+              round(x$logMarginalLikelihood, 3), "\n"))
+  }
+  
   if (summary){
     cat("\n\n Summary: \n ")
     print(summary(x, ...))

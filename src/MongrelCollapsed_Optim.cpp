@@ -1,12 +1,18 @@
-#include <time.h>
+#ifdef _OPENMP
+  #include <omp.h>
+#endif
 #include <MatrixAlgebra.h>
 #include <MongrelCollapsed.h>
 #include <AdamOptim.h>
 #include <LaplaceApproximation.h>
 #include <MultDirichletBoot.h>
 #include <Rcpp/Benchmark/Timer.h>
+
 // [[Rcpp::depends(RcppNumerical)]]
 // [[Rcpp::depends(RcppEigen)]]
+// [[Rcpp::plugins(openmp)]]
+
+
 
 using namespace Rcpp;
 using Eigen::Map;
@@ -43,7 +49,8 @@ using Eigen::VectorXd;
 //'   iteration number
 //' @param verbose_rate (ADAM) rate to print verbose stats to screen
 //' @param decomp_method decomposition of hessian for Laplace approximation
-//'   'eigen' (more stable, slower, default) or 'cholesky' (less stable, faster)
+//'   'eigen' (more stable-slightly, slower) or 'cholesky' (less stable, faster, default)
+//' @param optim_method (default:"adam") or "lbfgs"
 //' @param eigvalthresh threshold for negative eigenvalues in 
 //'   decomposition of negative inverse hessian (should be <=0)
 //' @param no_error if true will throw hessian warning rather than error if 
@@ -56,6 +63,8 @@ using Eigen::VectorXd;
 //'  eta efficiently at MAP estimate from pseudo Multinomial-Dirichlet posterior.
 //' @param useSylv (default: true) if N<D-1 uses Sylvester Determinant Identity
 //'   to speed up calculation of log-likelihood and gradients. 
+//' @param ncores (default:-1) number of cores to use, if ncores==-1 then 
+//' uses default from OpenMP typically to use all available cores. 
 //'  
 //' @details Notation: Let Z_j denote the J-th row of a matrix Z.
 //' Model:
@@ -93,6 +102,8 @@ using Eigen::VectorXd;
 //' 5. Samples - (D-1) x N x n_samples array containing posterior samples of eta 
 //'   based on Laplace approximation (if n_samples>0)
 //' 6. Timer - Vector of Execution Times
+//' 7. logInvNegHessDet - the log determinant of the covariacne of the Laplace 
+//'    approximation, useful for calculating marginal likelihood 
 //' @md 
 //' @export
 //' @name optimMongrelCollapsed
@@ -123,12 +134,15 @@ List optimMongrelCollapsed(const Eigen::ArrayXXd Y,
                int max_iter=10000,      
                bool verbose=false,      
                int verbose_rate=10,
-               String decomp_method="eigen",
+               String decomp_method="cholesky",
+               String optim_method="adam",
                double eigvalthresh=0, 
                double jitter=0,
                bool calcPartialHess = false, 
                double multDirichletBoot = -1.0, 
-               bool useSylv = true){  
+               bool useSylv = true, 
+               int ncores=-1){  
+  if (ncores > 0) omp_set_num_threads(ncores);
   Timer timer;
   timer.step("Overall_start");
   int N = Y.cols();
@@ -136,16 +150,23 @@ List optimMongrelCollapsed(const Eigen::ArrayXXd Y,
   MongrelCollapsed cm(Y, upsilon, ThetaX, K, A, useSylv);
   Map<VectorXd> eta(init.data(), init.size()); // will rewrite by optim
   double nllopt; // NEGATIVE LogLik at optim
-  List out(6);
+  List out(7);
   out.names() = CharacterVector::create("LogLik", "Gradient", "Hessian",
-            "Pars", "Samples", "Timer");
+            "Pars", "Samples", "Timer", "logInvNegHessDet");
   
   // Pick optimizer (ADAM - without perturbation appears to be best)
   //   ADAM with perturbations not fully implemented
   timer.step("Optimization_start");
-  //int status = Numer::optim_lbfgs(cm, eta, nllopt);
-  int status = adam::optim_adam(cm, eta, nllopt, b1, b2, step_size, epsilon, 
-                                eps_f, eps_g, max_iter, verbose, verbose_rate); 
+  int status;
+  if (optim_method=="lbfgs"){
+    status = Numer::optim_lbfgs(cm, eta, nllopt, max_iter, eps_f, eps_g);
+  } else if (optim_method=="adam"){
+    status = adam::optim_adam(cm, eta, nllopt, b1, b2, step_size, epsilon, 
+                                  eps_f, eps_g, max_iter, verbose, verbose_rate);  
+  } else {
+    Rcpp::stop("unrecognized optimization method");
+  }
+   
   timer.step("Optimization_stop");
 
   if (status<0)
@@ -203,14 +224,17 @@ List optimMongrelCollapsed(const Eigen::ArrayXXd Y,
       int status;
       timer.step("LaplaceApproximation_start");
       MatrixXd samp = MatrixXd::Zero(N*(D-1), n_samples);
+      double logInvNegHessDet;
       status = lapap::LaplaceApproximation(samp, eta, hess, 
                                            decomp_method, eigvalthresh, 
-                                           jitter);
+                                           jitter, 
+                                           logInvNegHessDet);
       timer.step("LaplaceApproximation_stop");
       if (status != 0){
         Rcpp::warning("Decomposition of Hessian Failed, returning MAP Estimate only");
         return out;
       }
+      out[6] = logInvNegHessDet;
       
       IntegerVector d = IntegerVector::create(D-1, N, n_samples);
       NumericVector samples = wrap(samp);

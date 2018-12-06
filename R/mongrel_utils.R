@@ -185,6 +185,7 @@ args_null <- function(par, argl, default){
 
 # Parse Timer
 parse_timer_seconds <- function(timer){
+  if (is.null(timer)) return(NULL)
   n <- strsplit(names(timer), "_")
   n1 <- unlist(lapply(n, FUN = function(x) x[1]))
   n1n <- as.integer(as.factor(n1))

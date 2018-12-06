@@ -16,11 +16,13 @@ namespace lapap{
   struct lappars
   {
     double eigvalthresh;
+    double logInvNegHessDet;
   };
 
   inline lappars init_lappars(double eigvalthresh){
     lappars lap;
     lap.eigvalthresh=eigvalthresh;
+    lap.logInvNegHessDet=0.0;
     return lap;
   }
 
@@ -60,6 +62,8 @@ namespace lapap{
         " passed eigenvalue threshold" << std::endl;
     }
     
+    pars.logInvNegHessDet += evalinv.array().log().sum();
+    
     MatrixXd invhesssqrt(p, pos);
     invhesssqrt = eh.eigenvectors().rightCols(pos)*
       evalinv.tail(pos).cwiseSqrt().asDiagonal(); //V*D^{-1/2}
@@ -87,6 +91,7 @@ namespace lapap{
         Rcpp::warning("Cholesky of Hessian failed with status status Eigen::NumericalIssue");
         return 1;
     }
+    pars.logInvNegHessDet -=  2.0*hesssqrt.matrixLLT().diagonal().array().log().sum();
     //typename T1::PlainObject samp(nr, nc);
     fillUnitNormal(z);
     hesssqrt.matrixU().solveInPlace(z);
@@ -120,12 +125,15 @@ namespace lapap{
   // @param eigvalthresh for eigen decomposition, threshold for negative 
   //    eigenvalues dictates clipping vs. stopping behavior
   // @param jitter amount of jitter to add to diagonal
+  // @parameter logInvNegHessDet if passed will return Log of Determinant of 
+  //   Laplace Approximation Covariance
   // @return MatrixXd columns are samples 
   inline int LaplaceApproximation(Eigen::MatrixBase<T1>& z, Eigen::MatrixBase<T2>& m, 
                            Eigen::MatrixBase<T3>& S,
                            String decomp_method, 
                            double eigvalthresh, 
-                           double jitter){
+                           double jitter, 
+                           double& logInvNegHessDet){
     lappars pars = init_lappars(eigvalthresh);
     int nr = S.rows();
     int nc = S.cols();
@@ -163,8 +171,12 @@ namespace lapap{
         S.diagonal().array() += jitter; 
       status = lap_picker(z, m, S, pars, decomp_method);
     }
+    logInvNegHessDet = pars.logInvNegHessDet;
     return status;
   }
 }
+
+
+
 
 #endif

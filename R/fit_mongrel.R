@@ -135,11 +135,14 @@ mongrel <- function(Y=NULL, X=NULL, upsilon=NULL, Theta=NULL, Gamma=NULL, Xi=NUL
   max_iter <- args_null("max_iter", args, 10000)
   verbose <- args_null("verbose", args, FALSE)
   verbose_rate <- args_null("verbose_rate", args, 10)
-  decomp_method <- args_null("decomp_method", args, "eigen")
+  decomp_method <- args_null("decomp_method", args, "cholesky")
   eigvalthresh <- args_null("eigvalthresh", args, 0)
   jitter <- args_null("jitter", args, 0)
   calcPartialHess <- args_null("calcPartialHess", args, FALSE)
   multDirichletBoot <- args_null("multDirichletBoot", args, -1.0)
+  optim_method <- args_null("optim_method", args, "adam")
+  useSylv <- args_null("useSylv", args, TRUE)
+  ncores <- args_null("ncores", args, -1)
   
   if (calcPartialHess) warning("Cannot recoomend calcPartialHess at this time.")
   
@@ -151,9 +154,11 @@ mongrel <- function(Y=NULL, X=NULL, upsilon=NULL, Theta=NULL, Gamma=NULL, Xi=NUL
   fitc <- optimMongrelCollapsed(Y, upsilon, Theta%*%X, K, A, init, n_samples, 
                                 calcGradHess, b1, b2, step_size, epsilon, eps_f, 
                                 eps_g, max_iter, verbose, verbose_rate, 
-                                decomp_method, eigvalthresh, 
-                                jitter, calcPartialHess, multDirichletBoot)
+                                decomp_method, optim_method, eigvalthresh, 
+                                jitter, calcPartialHess, multDirichletBoot, 
+                                useSylv, ncores)
   timerc <- parse_timer_seconds(fitc$Timer)
+  
 
   # if n_samples=0 or if hessian fails, then use MAP eta estimate for 
   # uncollapsing and unless otherwise specified against, use only the 
@@ -177,7 +182,7 @@ mongrel <- function(Y=NULL, X=NULL, upsilon=NULL, Theta=NULL, Gamma=NULL, Xi=NUL
   
   ## uncollapse collapsed model ##
   fitu <- uncollapseMongrelCollapsed(fitc$Samples, X, Theta, Gamma, Xi, upsilon, 
-                                     ret_mean=ret_mean)
+                                     ret_mean=ret_mean, ncores=ncores)
   timeru <- parse_timer_seconds(fitu$Timer)
   
   timer <- c(timerc, timeru)
@@ -185,6 +190,12 @@ mongrel <- function(Y=NULL, X=NULL, upsilon=NULL, Theta=NULL, Gamma=NULL, Xi=NUL
   timer <- c(timer, 
              "Overall" = unname(timerc["Overall"]) +  unname(timeru["Overall"]), 
              "Uncollapse_Overall" = timeru["Overall"])
+  
+  
+  # Marginal Likelihood Computation
+  d <- D^2 + N*D + D*Q
+  logMarginalLikelihood <- fitc$LogLik+d/2*log(2*pi)+.5*fitc$logInvNegHessDet-d/2*log(N)
+  
   
   
   ## pretty output ##
@@ -198,6 +209,7 @@ mongrel <- function(Y=NULL, X=NULL, upsilon=NULL, Theta=NULL, Gamma=NULL, Xi=NUL
   if ("Sigma" %in% pars){
     out[["Sigma"]] <- fitu$Sigma
   }
+  
   # By default just returns all other parameters
   out$N <- N
   out$Q <- Q
@@ -217,11 +229,12 @@ mongrel <- function(Y=NULL, X=NULL, upsilon=NULL, Theta=NULL, Gamma=NULL, Xi=NUL
   out$coord_system <- "alr"
   out$alr_base <- D
   out$summary <- NULL
+  out$Timer <- timer
+  out$logMarginalLikelihood <- logMarginalLikelihood
   attr(out, "class") <- c("mongrelfit")
   # add names if present 
   if (use_names) out <- name(out)
   verify(out) # verify the mongrelfit object
-  out$Timer <- timer
   return(out)
 }
 

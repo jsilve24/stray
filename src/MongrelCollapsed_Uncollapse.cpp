@@ -1,7 +1,13 @@
+#ifdef _OPENMP
+  #include <omp.h>
+#endif
+
 #include <RcppEigen.h>
 #include <MatDist.h>
 #include <Rcpp/Benchmark/Timer.h>
 // [[Rcpp::depends(RcppEigen)]]
+// [[Rcpp::plugins(openmp)]]
+
 using namespace Rcpp;
 using Eigen::MatrixXd;
 using Eigen::VectorXd;
@@ -31,7 +37,9 @@ using Eigen::Lower;
 //'   corresponding to each sample of eta rather than sampling from 
 //'   posterior of Lambda and Sigma (useful if Laplace approximation
 //'   is not used (or fails) in optimMongrelCollapsed)
-//' 
+//' @param ncores (default:-1) number of cores to use, if ncores==-1 then 
+//' uses default from OpenMP typically to use all available cores. 
+//'  
 //' @details Notation: Let Z_j denote the J-th row of a matrix Z.
 //' While the collapsed model is given by:
 //'    \deqn{Y_j ~ Multinomial(Pi_j)}
@@ -74,7 +82,9 @@ List uncollapseMongrelCollapsed(const Eigen::Map<Eigen::VectorXd> eta, // note t
                     const Eigen::Map<Eigen::MatrixXd> Gamma, 
                     const Eigen::Map<Eigen::MatrixXd> Xi, 
                     const double upsilon, 
-                    bool ret_mean = false){
+                    bool ret_mean = false, 
+                    int ncores=-1){
+  if (ncores > 0) omp_set_num_threads(ncores);
   Timer timer;
   timer.step("Overall_start");
   List out(3);
@@ -109,11 +119,11 @@ List uncollapseMongrelCollapsed(const Eigen::Map<Eigen::VectorXd> eta, // note t
     VectorXd EtaV(eta.segment(i*N*(D-1),N*(D-1)));
     Map<MatrixXd> Eta(EtaV.data(), D-1, N);
     //Rcout << Eta.col(1).transpose() << std::endl;
-    LambdaN = Eta*XTGammaN+ThetaGammaInvGammaN;
+    LambdaN.noalias() = Eta*XTGammaN+ThetaGammaInvGammaN;
     //Rcout << LambdaN.row(1) << std::endl;
     ELambda = LambdaN-Theta;
-    EEta = Eta-LambdaN*X;
-    XiN = Xi+ EEta*EEta.transpose() + ELambda*GammaInv*ELambda.transpose();
+    EEta.noalias() = Eta-LambdaN*X;
+    XiN.noalias() = Xi+ EEta*EEta.transpose() + ELambda*GammaInv*ELambda.transpose();
     
     if (ret_mean){
       Map<VectorXd> LambdaNVec(LambdaN.data(), LambdaN.size());
@@ -129,7 +139,7 @@ List uncollapseMongrelCollapsed(const Eigen::Map<Eigen::VectorXd> eta, // note t
       // map output to vectors
       Map<VectorXd> LambdaDrawVec(LambdaDraw.data(), LambdaDraw.size());
       LambdaDrawO.col(i) = LambdaDrawVec;
-      SigmaDraw = LSigmaDraw*LSigmaDraw.transpose();
+      SigmaDraw.noalias() = LSigmaDraw*LSigmaDraw.transpose();
       Map<VectorXd> SigmaDrawVec(SigmaDraw.data(), SigmaDraw.size());
       SigmaDrawO.col(i) = SigmaDrawVec;
     }

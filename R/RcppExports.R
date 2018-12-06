@@ -65,7 +65,7 @@ conjugateLinearModel <- function(Y, X, Theta, Gamma, Xi, upsilon, n_samples = 20
 #'   iteration number
 #' @param verbose_rate (ADAM) rate to print verbose stats to screen
 #' @param decomp_method decomposition of hessian for Laplace approximation
-#'   'eigen' (more stable, slower, default) or 'cholesky' (less stable, faster)
+#'   'eigen' (more stable-slightly, slower) or 'cholesky' (less stable, faster, default)
 #' @param eigvalthresh threshold for negative eigenvalues in 
 #'   decomposition of negative inverse hessian (should be <=0)
 #' @param no_error if true will throw hessian warning rather than error if 
@@ -109,13 +109,15 @@ conjugateLinearModel <- function(Y, X, Theta, Gamma, Xi, upsilon, n_samples = 20
 #' 5. Samples - (D-1) x N x n_samples array containing posterior samples of eta 
 #'   based on Laplace approximation (if n_samples>0)
 #' 6. VCScale - value of e^ell_i at optima
+#' 7. logInvNegHessDet - the log determinant of the covariacne of the Laplace 
+#'    approximation, useful for calculating marginal likelihood 
 #' @md 
 #' @export
 #' @name optimMaltipooCollapsed
 #' @references S. Ruder (2016) \emph{An overview of gradient descent 
 #' optimization algorithms}. arXiv 1609.04747
 #' @seealso \code{\link{uncollapseMongrelCollapsed}}
-optimMaltipooCollapsed <- function(Y, upsilon, Theta, X, K, U, init, ellinit, n_samples = 2000L, calcGradHess = TRUE, b1 = 0.9, b2 = 0.99, step_size = 0.003, epsilon = 10e-7, eps_f = 1e-10, eps_g = 1e-4, max_iter = 10000L, verbose = FALSE, verbose_rate = 10L, decomp_method = "eigen", eigvalthresh = 0, jitter = 0, calcPartialHess = FALSE) {
+optimMaltipooCollapsed <- function(Y, upsilon, Theta, X, K, U, init, ellinit, n_samples = 2000L, calcGradHess = TRUE, b1 = 0.9, b2 = 0.99, step_size = 0.003, epsilon = 10e-7, eps_f = 1e-10, eps_g = 1e-4, max_iter = 10000L, verbose = FALSE, verbose_rate = 10L, decomp_method = "cholesky", eigvalthresh = 0, jitter = 0, calcPartialHess = FALSE) {
     .Call('_mongrel_optimMaltipooCollapsed', PACKAGE = 'mongrel', Y, upsilon, Theta, X, K, U, init, ellinit, n_samples, calcGradHess, b1, b2, step_size, epsilon, eps_f, eps_g, max_iter, verbose, verbose_rate, decomp_method, eigvalthresh, jitter, calcPartialHess)
 }
 
@@ -230,7 +232,8 @@ lineSearch <- function(Y, upsilon, ThetaX, K, A, eta, direction, rho, c) {
 #'   iteration number
 #' @param verbose_rate (ADAM) rate to print verbose stats to screen
 #' @param decomp_method decomposition of hessian for Laplace approximation
-#'   'eigen' (more stable, slower, default) or 'cholesky' (less stable, faster)
+#'   'eigen' (more stable-slightly, slower) or 'cholesky' (less stable, faster, default)
+#' @param optim_method (default:"adam") or "lbfgs"
 #' @param eigvalthresh threshold for negative eigenvalues in 
 #'   decomposition of negative inverse hessian (should be <=0)
 #' @param no_error if true will throw hessian warning rather than error if 
@@ -243,6 +246,8 @@ lineSearch <- function(Y, upsilon, ThetaX, K, A, eta, direction, rho, c) {
 #'  eta efficiently at MAP estimate from pseudo Multinomial-Dirichlet posterior.
 #' @param useSylv (default: true) if N<D-1 uses Sylvester Determinant Identity
 #'   to speed up calculation of log-likelihood and gradients. 
+#' @param ncores (default:-1) number of cores to use, if ncores==-1 then 
+#' uses default from OpenMP typically to use all available cores. 
 #'  
 #' @details Notation: Let Z_j denote the J-th row of a matrix Z.
 #' Model:
@@ -280,6 +285,8 @@ lineSearch <- function(Y, upsilon, ThetaX, K, A, eta, direction, rho, c) {
 #' 5. Samples - (D-1) x N x n_samples array containing posterior samples of eta 
 #'   based on Laplace approximation (if n_samples>0)
 #' 6. Timer - Vector of Execution Times
+#' 7. logInvNegHessDet - the log determinant of the covariacne of the Laplace 
+#'    approximation, useful for calculating marginal likelihood 
 #' @md 
 #' @export
 #' @name optimMongrelCollapsed
@@ -292,8 +299,8 @@ lineSearch <- function(Y, upsilon, ThetaX, K, A, eta, direction, rho, c) {
 #' # Fit model for eta
 #' fit <- optimMongrelCollapsed(sim$Y, sim$upsilon, sim$Theta%*%sim$X, sim$K, 
 #'                              sim$A, random_mongrel_init(sim$Y))  
-optimMongrelCollapsed <- function(Y, upsilon, ThetaX, K, A, init, n_samples = 2000L, calcGradHess = TRUE, b1 = 0.9, b2 = 0.99, step_size = 0.003, epsilon = 10e-7, eps_f = 1e-10, eps_g = 1e-4, max_iter = 10000L, verbose = FALSE, verbose_rate = 10L, decomp_method = "eigen", eigvalthresh = 0, jitter = 0, calcPartialHess = FALSE, multDirichletBoot = -1.0, useSylv = TRUE) {
-    .Call('_mongrel_optimMongrelCollapsed', PACKAGE = 'mongrel', Y, upsilon, ThetaX, K, A, init, n_samples, calcGradHess, b1, b2, step_size, epsilon, eps_f, eps_g, max_iter, verbose, verbose_rate, decomp_method, eigvalthresh, jitter, calcPartialHess, multDirichletBoot, useSylv)
+optimMongrelCollapsed <- function(Y, upsilon, ThetaX, K, A, init, n_samples = 2000L, calcGradHess = TRUE, b1 = 0.9, b2 = 0.99, step_size = 0.003, epsilon = 10e-7, eps_f = 1e-10, eps_g = 1e-4, max_iter = 10000L, verbose = FALSE, verbose_rate = 10L, decomp_method = "cholesky", optim_method = "adam", eigvalthresh = 0, jitter = 0, calcPartialHess = FALSE, multDirichletBoot = -1.0, useSylv = TRUE, ncores = -1L) {
+    .Call('_mongrel_optimMongrelCollapsed', PACKAGE = 'mongrel', Y, upsilon, ThetaX, K, A, init, n_samples, calcGradHess, b1, b2, step_size, epsilon, eps_f, eps_g, max_iter, verbose, verbose_rate, decomp_method, optim_method, eigvalthresh, jitter, calcPartialHess, multDirichletBoot, useSylv, ncores)
 }
 
 #' Uncollapse output from optimMongrelCollapsed to full Mongrel Model
@@ -315,7 +322,9 @@ optimMongrelCollapsed <- function(Y, upsilon, ThetaX, K, A, init, n_samples = 20
 #'   corresponding to each sample of eta rather than sampling from 
 #'   posterior of Lambda and Sigma (useful if Laplace approximation
 #'   is not used (or fails) in optimMongrelCollapsed)
-#' 
+#' @param ncores (default:-1) number of cores to use, if ncores==-1 then 
+#' uses default from OpenMP typically to use all available cores. 
+#'  
 #' @details Notation: Let Z_j denote the J-th row of a matrix Z.
 #' While the collapsed model is given by:
 #'    \deqn{Y_j ~ Multinomial(Pi_j)}
@@ -351,8 +360,8 @@ optimMongrelCollapsed <- function(Y, upsilon, ThetaX, K, A, init, n_samples = 20
 #' # Finally obtain samples from Lambda and Sigma
 #' fit2 <- uncollapseMongrelCollapsed(fit$Samples, sim$X, sim$Theta, 
 #'                                    sim$Gamma, sim$Xi, sim$upsilon)
-uncollapseMongrelCollapsed <- function(eta, X, Theta, Gamma, Xi, upsilon, ret_mean = FALSE) {
-    .Call('_mongrel_uncollapseMongrelCollapsed', PACKAGE = 'mongrel', eta, X, Theta, Gamma, Xi, upsilon, ret_mean)
+uncollapseMongrelCollapsed <- function(eta, X, Theta, Gamma, Xi, upsilon, ret_mean = FALSE, ncores = -1L) {
+    .Call('_mongrel_uncollapseMongrelCollapsed', PACKAGE = 'mongrel', eta, X, Theta, Gamma, Xi, upsilon, ret_mean, ncores)
 }
 
 rMatNormalCholesky_test <- function(M, LU, LV) {
@@ -413,5 +422,9 @@ MultDirichletBoot_test <- function(n_samples, eta, Y, pseudocount) {
 
 MongrelTruncatedEigen_mongrel_test <- function(Y, upsilon, ThetaX, K, A, etavec, r, nev, ncv) {
     .Call('_mongrel_MongrelTruncatedEigen_mongrel_test', PACKAGE = 'mongrel', Y, upsilon, ThetaX, K, A, etavec, r, nev, ncv)
+}
+
+fillUnitNormal_test <- function(Z) {
+    invisible(.Call('_mongrel_fillUnitNormal_test', PACKAGE = 'mongrel', Z))
 }
 

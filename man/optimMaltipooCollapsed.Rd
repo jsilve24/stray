@@ -8,7 +8,7 @@ optimMaltipooCollapsed(Y, upsilon, Theta, X, K, U, init, ellinit,
   n_samples = 2000L, calcGradHess = TRUE, b1 = 0.9, b2 = 0.99,
   step_size = 0.003, epsilon = 1e-06, eps_f = 1e-10, eps_g = 1e-04,
   max_iter = 10000L, verbose = FALSE, verbose_rate = 10L,
-  decomp_method = "eigen", eigvalthresh = 0, jitter = 0,
+  decomp_method = "cholesky", eigvalthresh = 0, jitter = 0,
   calcPartialHess = FALSE)
 }
 \arguments{
@@ -54,7 +54,7 @@ iteration number}
 \item{verbose_rate}{(ADAM) rate to print verbose stats to screen}
 
 \item{decomp_method}{decomposition of hessian for Laplace approximation
-'eigen' (more stable, slower, default) or 'cholesky' (less stable, faster)}
+'eigen' (more stable-slightly, slower) or 'cholesky' (less stable, faster, default)}
 
 \item{eigvalthresh}{threshold for negative eigenvalues in
 decomposition of negative inverse hessian (should be <=0)}
@@ -75,6 +75,8 @@ List containing (all with respect to found optima)
 \item Samples - (D-1) x N x n_samples array containing posterior samples of eta
 based on Laplace approximation (if n_samples>0)
 \item VCScale - value of e^ell_i at optima
+\item logInvNegHessDet - the log determinant of the covariacne of the Laplace
+approximation, useful for calculating marginal likelihood
 }
 }
 \description{

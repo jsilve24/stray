@@ -18,7 +18,7 @@ rDirichlet <- function(n_samples, alpha){
 }
 
 test_that("MultDirichletBoot is correct", {
-  n_samples <- 10000
+  n_samples <- 50000
   pi <- miniclo_array(matrix(1:5, 5, 1), parts=1)
   eta <- alr_array(pi, parts=1)
   depth <- 10

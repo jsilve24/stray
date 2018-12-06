@@ -3,17 +3,13 @@
 
 #include <MongrelModelClass.h>
 #include <MatrixAlgebra.h>
-#ifdef _OPENMP
-  #include <omp.h>
-#endif
+
 using namespace Rcpp;
 using Eigen::Map;
 using Eigen::MatrixXd;
 using Eigen::ArrayXXd;
 using Eigen::VectorXd;
 using Eigen::Ref;
-
-// [[Rcpp::plugins(openmp)]]
 
 /* Class implementing LogLik, Gradient, and Hessian calculations
  *  for the Multinomial Matrix-T collapsed model. 
@@ -42,7 +38,8 @@ class MongrelCollapsed : public mongrel::MongrelModel {
     Eigen::ArrayXd m;
     Eigen::RowVectorXd n;
     MatrixXd S;  // I_D-1 + KEAE'
-    Eigen::HouseholderQR<MatrixXd> Sdec;
+    //Eigen::HouseholderQR<MatrixXd> Sdec;
+    Eigen::PartialPivLU<MatrixXd> Sdec;
     MatrixXd E;  // eta-ThetaX
     ArrayXXd O;  // exp{eta}
     // only needed for gradient and hessian
@@ -110,7 +107,19 @@ class MongrelCollapsed : public mongrel::MongrelModel {
       // start with multinomial ll
       ll += (Y.topRows(D-1)*eta.array()).sum() - n*m.log().matrix();
       // Now compute collapsed prior ll
-      ll -= delta*Sdec.logAbsDeterminant();
+      //ll -= delta*Sdec.logAbsDeterminant();
+      // Following was adapted from : 
+      //   https://gist.github.com/redpony/fc8a0db6b20f7b1a3f23
+      double ld = 0.0;
+      double c = Sdec.permutationP().determinant();
+      VectorXd diagLU = Sdec.matrixLU().diagonal();
+      for (unsigned i = 0; i < diagLU.rows(); ++i) {
+        const double& lii = diagLU(i);
+        if (lii < 0.0) c *= -1;
+        ld += log(abs(lii));
+      }
+      ld += log(c);
+      ll -= delta*ld;
       return ll;
     }
     

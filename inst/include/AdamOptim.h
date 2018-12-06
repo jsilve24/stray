@@ -2,9 +2,7 @@
 #define MONGREL_ADAM_H
 
 #include <RcppNumerical.h>
-#ifdef _OPENMP
-  #include <omp.h>
-#endif
+
 using namespace Rcpp;
 using Eigen::Map;
 using Eigen::MatrixXd;
@@ -13,7 +11,6 @@ using Eigen::ArrayXd;
 using Eigen::VectorXd;
 using Eigen::Ref;
 
-// [[Rcpp::plugins(openmp)]]
 
 namespace adam{
 

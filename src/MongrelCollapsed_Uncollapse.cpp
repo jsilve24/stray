@@ -1,12 +1,6 @@
-#ifdef _OPENMP
-  #include <omp.h>
-#endif
-
-#include <RcppEigen.h>
-#include <MatDist.h>
+#include <mongrel.h>
 #include <Rcpp/Benchmark/Timer.h>
 // [[Rcpp::depends(RcppEigen)]]
-// [[Rcpp::plugins(openmp)]]
 
 using namespace Rcpp;
 using Eigen::MatrixXd;
@@ -84,7 +78,7 @@ List uncollapseMongrelCollapsed(const Eigen::Map<Eigen::VectorXd> eta, // note t
                     const double upsilon, 
                     bool ret_mean = false, 
                     int ncores=-1){
-  if (ncores > 0) omp_set_num_threads(ncores);
+  if (ncores > 0) Eigen::setNbThreads(ncores);
   Timer timer;
   timer.step("Overall_start");
   List out(3);
@@ -118,9 +112,7 @@ List uncollapseMongrelCollapsed(const Eigen::Map<Eigen::VectorXd> eta, // note t
     R_CheckUserInterrupt();
     VectorXd EtaV(eta.segment(i*N*(D-1),N*(D-1)));
     Map<MatrixXd> Eta(EtaV.data(), D-1, N);
-    //Rcout << Eta.col(1).transpose() << std::endl;
     LambdaN.noalias() = Eta*XTGammaN+ThetaGammaInvGammaN;
-    //Rcout << LambdaN.row(1) << std::endl;
     ELambda = LambdaN-Theta;
     EEta.noalias() = Eta-LambdaN*X;
     XiN.noalias() = Xi+ EEta*EEta.transpose() + ELambda*GammaInv*ELambda.transpose();

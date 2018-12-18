@@ -1,8 +1,4 @@
-#include <MatrixAlgebra.h>
-#include <MaltipooCollapsed.h>
-#include <AdamOptim.h>
-#include <LaplaceApproximation.h>
-#include <AdamOptimPerturb.h> // optional not fully implemented yet (or helpful)
+#include <mongrel.h>
 // [[Rcpp::depends(RcppNumerical)]]
 // [[Rcpp::depends(RcppEigen)]]
 
@@ -81,7 +77,7 @@ using Eigen::VectorXd;
 //' @return List containing (all with respect to found optima)
 //' 1. LogLik - Log Likelihood of collapsed model (up to proportionality constant)
 //' 2. Gradient - (if \code{calcGradHess}=true)
-//' 3. Hessian - (if \code{calcGradHess}=true)
+//' 3. Hessian - (if \code{calcGradHess}=true) of the POSITIVE log posterior
 //' 4. Pars - Parameter value of eta 
 //' 5. Samples - (D-1) x N x n_samples array containing posterior samples of eta 
 //'   based on Laplace approximation (if n_samples>0)
@@ -153,9 +149,9 @@ List optimMaltipooCollapsed(const Eigen::ArrayXXd Y,
     if (verbose) Rcout << "Calculating Hessian" << std::endl;
     grad = cm.calcGrad(ell); // should have eta at optima already
     if(calcPartialHess) {
-      hess = cm.calcPartialHess();
+      hess = -cm.calcPartialHess();
     } else {
-      hess = cm.calcHess(); // should have eta at optima already
+      hess = -cm.calcHess(); // should have eta at optima already
     }
     out[1] = grad;
     if ((N * (D-1)) > 44750){

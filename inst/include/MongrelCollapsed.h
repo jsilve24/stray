@@ -1,8 +1,8 @@
 #ifndef MONGREL_MMTC_H
 #define MONGREL_MMTC_H
 
-#include <MongrelModelClass.h>
 #include <MatrixAlgebra.h>
+#include <MongrelModelClass.h>
 
 using namespace Rcpp;
 using Eigen::Map;

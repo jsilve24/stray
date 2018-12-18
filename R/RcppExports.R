@@ -104,7 +104,7 @@ conjugateLinearModel <- function(Y, X, Theta, Gamma, Xi, upsilon, n_samples = 20
 #' @return List containing (all with respect to found optima)
 #' 1. LogLik - Log Likelihood of collapsed model (up to proportionality constant)
 #' 2. Gradient - (if \code{calcGradHess}=true)
-#' 3. Hessian - (if \code{calcGradHess}=true)
+#' 3. Hessian - (if \code{calcGradHess}=true) of the POSITIVE log posterior
 #' 4. Pars - Parameter value of eta 
 #' 5. Samples - (D-1) x N x n_samples array containing posterior samples of eta 
 #'   based on Laplace approximation (if n_samples>0)
@@ -280,7 +280,7 @@ lineSearch <- function(Y, upsilon, ThetaX, K, A, eta, direction, rho, c) {
 #' @return List containing (all with respect to found optima)
 #' 1. LogLik - Log Likelihood of collapsed model (up to proportionality constant)
 #' 2. Gradient - (if \code{calcGradHess}=true)
-#' 3. Hessian - (if \code{calcGradHess}=true)
+#' 3. Hessian - (if \code{calcGradHess}=true) of the POSITIVE LOG POSTERIOR
 #' 4. Pars - Parameter value of eta at optima
 #' 5. Samples - (D-1) x N x n_samples array containing posterior samples of eta 
 #'   based on Laplace approximation (if n_samples>0)

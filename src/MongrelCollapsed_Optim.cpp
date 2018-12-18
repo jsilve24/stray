@@ -1,16 +1,8 @@
-#ifdef _OPENMP
-  #include <omp.h>
-#endif
-#include <MatrixAlgebra.h>
-#include <MongrelCollapsed.h>
-#include <AdamOptim.h>
-#include <LaplaceApproximation.h>
-#include <MultDirichletBoot.h>
+#include <mongrel.h>
 #include <Rcpp/Benchmark/Timer.h>
 
 // [[Rcpp::depends(RcppNumerical)]]
 // [[Rcpp::depends(RcppEigen)]]
-// [[Rcpp::plugins(openmp)]]
 
 
 
@@ -97,7 +89,7 @@ using Eigen::VectorXd;
 //' @return List containing (all with respect to found optima)
 //' 1. LogLik - Log Likelihood of collapsed model (up to proportionality constant)
 //' 2. Gradient - (if \code{calcGradHess}=true)
-//' 3. Hessian - (if \code{calcGradHess}=true)
+//' 3. Hessian - (if \code{calcGradHess}=true) of the POSITIVE LOG POSTERIOR
 //' 4. Pars - Parameter value of eta at optima
 //' 5. Samples - (D-1) x N x n_samples array containing posterior samples of eta 
 //'   based on Laplace approximation (if n_samples>0)
@@ -142,7 +134,7 @@ List optimMongrelCollapsed(const Eigen::ArrayXXd Y,
                double multDirichletBoot = -1.0, 
                bool useSylv = true, 
                int ncores=-1){  
-  if (ncores > 0) omp_set_num_threads(ncores);
+  if (ncores > 0) Eigen::setNbThreads(ncores);
   Timer timer;
   timer.step("Overall_start");
   int N = Y.cols();
@@ -204,11 +196,11 @@ List optimMongrelCollapsed(const Eigen::ArrayXXd Y,
     
     if(calcPartialHess) {
       if (verbose) Rcout << "Calculating Partial Hessian" << std::endl;
-      hess = cm.calcPartialHess();
+      hess = -cm.calcPartialHess();
     } else {
       if (verbose) Rcout << "Calculating Hessian" << std::endl;
       timer.step("HessianCalculation_start");
-      hess = cm.calcHess(); // should have eta at optima already
+      hess = -cm.calcHess(); // should have eta at optima already
       timer.step("HessianCalculation_Stop");
     }
     out[1] = grad;

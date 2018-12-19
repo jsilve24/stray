@@ -134,6 +134,7 @@ List optimMongrelCollapsed(const Eigen::ArrayXXd Y,
                double multDirichletBoot = -1.0, 
                bool useSylv = true, 
                int ncores=-1){  
+  Eigen::initParallel();
   if (ncores > 0) Eigen::setNbThreads(ncores);
   Timer timer;
   timer.step("Overall_start");

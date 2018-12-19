@@ -78,6 +78,7 @@ List uncollapseMongrelCollapsed(const Eigen::Map<Eigen::VectorXd> eta, // note t
                     const double upsilon, 
                     bool ret_mean = false, 
                     int ncores=-1){
+  Eigen::initParallel();
   if (ncores > 0) Eigen::setNbThreads(ncores);
   Timer timer;
   timer.step("Overall_start");
@@ -88,13 +89,13 @@ List uncollapseMongrelCollapsed(const Eigen::Map<Eigen::VectorXd> eta, // note t
   int N = X.cols();
   int iter = eta.size()/(N*(D-1)); // assumes result is an integer !!!
   double upsilonN = upsilon + N;
-  MatrixXd GammaInv(Gamma.lu().inverse());
-  MatrixXd GammaInvN(GammaInv + X*X.transpose());
-  MatrixXd GammaN(GammaInvN.lu().inverse());
-  MatrixXd LGammaN(GammaN.llt().matrixL());
+  const MatrixXd GammaInv(Gamma.lu().inverse());
+  const MatrixXd GammaInvN(GammaInv + X*X.transpose());
+  const MatrixXd GammaN(GammaInvN.lu().inverse());
+  const MatrixXd LGammaN(GammaN.llt().matrixL());
   //const Map<const MatrixXd> Eta(NULL);
-  MatrixXd ThetaGammaInvGammaN(Theta*GammaInv*GammaN);
-  MatrixXd XTGammaN(X.transpose()*GammaN);
+  const MatrixXd ThetaGammaInvGammaN(Theta*GammaInv*GammaN);
+  const MatrixXd XTGammaN(X.transpose()*GammaN);
   // // Storage for computation
   MatrixXd LambdaN(D-1, Q);
   MatrixXd XiN(D-1, D-1);
@@ -106,10 +107,11 @@ List uncollapseMongrelCollapsed(const Eigen::Map<Eigen::VectorXd> eta, // note t
   // Storage for output
   MatrixXd LambdaDrawO((D-1)*Q, iter);
   MatrixXd SigmaDrawO((D-1)*(D-1), iter);
-
-  // iterate over all draws of eta
+  
+  
+  //iterate over all draws of eta
   for (int i=0; i < iter; i++){
-    R_CheckUserInterrupt();
+    //R_CheckUserInterrupt();
     VectorXd EtaV(eta.segment(i*N*(D-1),N*(D-1)));
     Map<MatrixXd> Eta(EtaV.data(), D-1, N);
     LambdaN.noalias() = Eta*XTGammaN+ThetaGammaInvGammaN;

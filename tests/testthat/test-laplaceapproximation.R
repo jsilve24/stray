@@ -56,13 +56,17 @@ test_that("LaplaceApproximation gets correct result for partial hessian", {
   
   S <- rbind(S1, S2)
   
-  z <- LaplaceApproximation_test(n_samples, m, S, "eigen", 0)
-  expect_equal(var(t(z)), solve(bdiag(S1, S2)), tolerance=0.005)
-  expect_equal(rowMeans(z), m, tolerance=.01)
+  # Below will cause crash if used with MKL setttings
+  # I want to remember this is broken
+  expect_false(TRUE)
   
-  z <- LaplaceApproximation_test(n_samples, m, S, "cholesky", 0)
-  expect_equal(var(t(z)), solve(bdiag(S1, S2)),  tolerance=0.005)
-  expect_equal(rowMeans(z), m, tolerance=.01)
+  # z <- LaplaceApproximation_test(n_samples, m, S, "eigen", 0)
+  # expect_equal(var(t(z)), solve(bdiag(S1, S2)), tolerance=0.005)
+  # expect_equal(rowMeans(z), m, tolerance=.01)
+  # 
+  # z <- LaplaceApproximation_test(n_samples, m, S, "cholesky", 0)
+  # expect_equal(var(t(z)), solve(bdiag(S1, S2)),  tolerance=0.005)
+  # expect_equal(rowMeans(z), m, tolerance=.01)
 })
 
 

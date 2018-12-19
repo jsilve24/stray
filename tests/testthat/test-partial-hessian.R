@@ -9,12 +9,16 @@ sim <- mongrel_sim(N=N, D=D, Q=Q, true_priors=TRUE)
 
 test_that("mongrel partial hessian optim runs", {
   init <- random_mongrel_init(sim$Y)
-  fit <- optimMongrelCollapsed(sim$Y, sim$upsilon, (sim$Theta%*%sim$X), sim$K, 
-                               sim$A, init,
-                               n_samples=1000,
-                               calcGradHess = TRUE,
-                               decomp_method="eigen",
-                               calcPartialHess = TRUE)
+  
+  # I want to remember that this is broken (gives shitty result and crashes 
+  # with MKL Settings)
+  expect_true(FALSE)
+  # fit <- optimMongrelCollapsed(sim$Y, sim$upsilon, (sim$Theta%*%sim$X), sim$K, 
+  #                              sim$A, init,
+  #                              n_samples=1000,
+  #                              calcGradHess = TRUE,
+  #                              decomp_method="eigen",
+  #                              calcPartialHess = TRUE)
 
   # mult_t_hessian <- function(x, nu, m, K, omegainv){
   #   p <- nrow(x)

@@ -189,8 +189,13 @@ List uncollapseMongrelCollapsed(const Eigen::Map<Eigen::VectorXd> eta, // note t
 // [[Rcpp::export]]
 Eigen::MatrixXd rMatNormalCholesky_test(Eigen::MatrixXd M, 
                                         Eigen::MatrixXd LU, 
-                                        Eigen::MatrixXd LV){
-  return rMatNormalCholesky(M, LU, LV);
+                                        Eigen::MatrixXd LV, 
+                                        int discard){
+  boost::random::mt19937 rng;
+  rng.discard(discard);
+  MatrixXd res(M.rows(), M.cols());
+  rMatNormalCholesky_thread_inplace(res, M, LU, LV, rng);
+  return res;
 }
 
 // [[Rcpp::export]]
@@ -201,7 +206,8 @@ Eigen::MatrixXd rInvWishRevCholesky_test(int v, Eigen::MatrixXd Psi){
 // [[Rcpp::export]]
 Eigen::MatrixXd rMatUnitNormal_test1(int n, int m){
   MatrixXd X(n,m);
-  fillUnitNormal(X);
+  boost::random::mt19937 rng;
+  fillUnitNormal_thread(X, rng);
   return X;
 }
 

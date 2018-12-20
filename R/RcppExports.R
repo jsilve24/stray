@@ -365,8 +365,8 @@ uncollapseMongrelCollapsed <- function(eta, X, Theta, Gamma, Xi, upsilon, ret_me
     .Call('_mongrel_uncollapseMongrelCollapsed', PACKAGE = 'mongrel', eta, X, Theta, Gamma, Xi, upsilon, ret_mean, seed, ncores)
 }
 
-rMatNormalCholesky_test <- function(M, LU, LV) {
-    .Call('_mongrel_rMatNormalCholesky_test', PACKAGE = 'mongrel', M, LU, LV)
+rMatNormalCholesky_test <- function(M, LU, LV, discard) {
+    .Call('_mongrel_rMatNormalCholesky_test', PACKAGE = 'mongrel', M, LU, LV, discard)
 }
 
 rInvWishRevCholesky_test <- function(v, Psi) {

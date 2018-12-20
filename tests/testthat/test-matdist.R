@@ -2,7 +2,7 @@ context("test-matdist.R")
 
 test_that("MVN handles non-square output", {
   Sigma <- matrix(c(1, -.5, -.5, 2),ncol=2, byrow = TRUE)
-  E <- rMatNormalCholesky_test(matrix(0, 10, 2), diag(10), Sigma)
+  E <- rMatNormalCholesky_test(matrix(0, 10, 2), diag(10), Sigma, discard=1)
   expect_equal(dim(E), c(10, 2))
 })
 
@@ -10,7 +10,7 @@ test_that("MVN correctness of Mean", {
   M <- matrix(c(1,2,3,4), ncol=2)
   X2 <- array(0, dim=c(2, 2, 1000))
   for (i in 1:1000){
-    X2[,,i] <- rMatNormalCholesky_test(M, diag(2), diag(2))
+    X2[,,i] <- rMatNormalCholesky_test(M, diag(2), diag(2), discard=i)
   }
 
   # Tol based on Standard error of the mean
@@ -26,7 +26,7 @@ test_that("MVN correctness of Covariances", {
   t <- 10000
   X2 <- array(0, dim=c(2, 2, t))
   for (i in 1:t){
-    X2[,,i] <- rMatNormalCholesky_test(M, LU,LV)
+    X2[,,i] <- rMatNormalCholesky_test(M, LU,LV, discard=i)
   }
   
   # Test U

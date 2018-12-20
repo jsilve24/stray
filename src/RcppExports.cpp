@@ -201,15 +201,16 @@ BEGIN_RCPP
 END_RCPP
 }
 // rMatNormalCholesky_test
-Eigen::MatrixXd rMatNormalCholesky_test(Eigen::MatrixXd M, Eigen::MatrixXd LU, Eigen::MatrixXd LV);
-RcppExport SEXP _mongrel_rMatNormalCholesky_test(SEXP MSEXP, SEXP LUSEXP, SEXP LVSEXP) {
+Eigen::MatrixXd rMatNormalCholesky_test(Eigen::MatrixXd M, Eigen::MatrixXd LU, Eigen::MatrixXd LV, int discard);
+RcppExport SEXP _mongrel_rMatNormalCholesky_test(SEXP MSEXP, SEXP LUSEXP, SEXP LVSEXP, SEXP discardSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< Eigen::MatrixXd >::type M(MSEXP);
     Rcpp::traits::input_parameter< Eigen::MatrixXd >::type LU(LUSEXP);
     Rcpp::traits::input_parameter< Eigen::MatrixXd >::type LV(LVSEXP);
-    rcpp_result_gen = Rcpp::wrap(rMatNormalCholesky_test(M, LU, LV));
+    Rcpp::traits::input_parameter< int >::type discard(discardSEXP);
+    rcpp_result_gen = Rcpp::wrap(rMatNormalCholesky_test(M, LU, LV, discard));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -403,7 +404,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_mongrel_lineSearch", (DL_FUNC) &_mongrel_lineSearch, 9},
     {"_mongrel_optimMongrelCollapsed", (DL_FUNC) &_mongrel_optimMongrelCollapsed, 25},
     {"_mongrel_uncollapseMongrelCollapsed", (DL_FUNC) &_mongrel_uncollapseMongrelCollapsed, 9},
-    {"_mongrel_rMatNormalCholesky_test", (DL_FUNC) &_mongrel_rMatNormalCholesky_test, 3},
+    {"_mongrel_rMatNormalCholesky_test", (DL_FUNC) &_mongrel_rMatNormalCholesky_test, 4},
     {"_mongrel_rInvWishRevCholesky_test", (DL_FUNC) &_mongrel_rInvWishRevCholesky_test, 2},
     {"_mongrel_rMatUnitNormal_test1", (DL_FUNC) &_mongrel_rMatUnitNormal_test1, 2},
     {"_mongrel_rMatUnitNormal_test2", (DL_FUNC) &_mongrel_rMatUnitNormal_test2, 1},

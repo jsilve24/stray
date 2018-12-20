@@ -54,6 +54,20 @@ of covariates, \code{iter} is the number of samples of \code{eta} (e.g.,
 the parameter \code{n_samples} in the function
 \code{\link{optimMongrelCollapsed}})
 }
+\details{
+the full model is given by:
+\deqn{Y_j ~ Multinomial(Pi_j)}
+\deqn{Pi_j = Phi^{-1}(Eta_j)}
+\deqn{Eta ~ MN_{D-1 x N}(Lambda*X, Sigma, I_N)}
+\deqn{Lambda ~ MN_{D-1 x Q}(Theta, Sigma, Gamma)}
+\deqn{Sigma ~ InvWish(upsilon, Xi)}
+Where A = (I_N + X * Gamma * X')^{-1}, K^{-1} = Xi is a (D-1)x(D-1)
+covariance matrix, Gamma is a Q x Q covariance matrix, and Phi^{-1} is
+ALRInv_D transform.
+
+Default behavior is to use MAP estimate for uncollaping collapsed mongrel
+model if laplace approximation is not preformed.
+}
 \examples{
 sim <- mongrel_sim()
 fit <- mongrel(sim$Y, sim$X)

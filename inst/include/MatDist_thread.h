@@ -76,7 +76,7 @@ inline void rMatNormalCholesky_thread_inplace(Eigen::MatrixBase<T>& A,
   int ncols = M.cols();
   MatrixXd Z(nrows, ncols);
   fillUnitNormal_thread(Z, rng);
-  A.noalias() =  M + LU*Z*LV.transpose();
+  A.template noalias() =  M + LU*Z*LV.transpose();
 }
 
 

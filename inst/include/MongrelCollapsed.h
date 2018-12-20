@@ -1,8 +1,12 @@
 #ifndef MONGREL_MMTC_H
 #define MONGREL_MMTC_H
 
-#include <MongrelModelClass.h>
 #include <MatrixAlgebra.h>
+#include <MongrelModelClass.h>
+
+#ifdef MONGREL_USE_MKL
+ #include <mkl.h>
+#endif 
 
 using namespace Rcpp;
 using Eigen::Map;
@@ -155,21 +159,32 @@ class MongrelCollapsed : public mongrel::MongrelModel {
       MatrixXd L(N*(D-1), N*(D-1));
       RCT.noalias() = R*C.transpose();
       CR.noalias() = C*R;
-      L.noalias() = krondense(C*RCT, R.transpose());
-      H.noalias() = krondense(A, R+R.transpose());
+      krondense_inplace(L, C*RCT, R.transpose());
+      //L.noalias() = krondense(C*RCT, R.transpose());
+      krondense_inplace(H, A, R+R.transpose());
+      //H.noalias() = krondense(A, R+R.transpose());
       H.noalias() -= L+L.transpose();
-      L.noalias() = krondense(RCT, RCT.transpose()); // reuse L
-      L.noalias() += krondense(CR.transpose(), CR); // reuse L
-      H.noalias() -= tveclmult(N, D-1, L);
+      krondense_inplace(L, RCT, RCT.transpose());
+      //L.noalias() = krondense(RCT, RCT.transpose()); // reuse L
+      krondense_inplace_add(L, CR.transpose(), CR);
+      //L.noalias() += krondense(CR.transpose(), CR); // reuse L
+      tveclmult_minus(N, D-1, L, H);
+      //H.noalias() -= tveclmult(N, D-1, L);
       H.noalias() = -delta * H;
+      
       // For Multinomial
+      #pragma omp parallel shared(rho, n)
+      {
       MatrixXd W(D-1, D-1);
-      VectorXd rhoseg(D-1);
+      //VectorXd rhoseg(D-1);
+      #pragma omp for 
       for (int j=0; j<N; j++){
-        rhoseg = rho.segment(j*(D-1), D-1);
+        //rhoseg = rho.segment(j*(D-1), D-1);
+        Eigen::Ref<VectorXd> rhoseg = rho.segment(j*(D-1), D-1);
         W.noalias() = rhoseg*rhoseg.transpose();
         W.diagonal() -= rhoseg;
         H.block(j*(D-1), j*(D-1), D-1, D-1).noalias()  += n(j)*W;
+      }
       }
       // Turn back on sylv option if it was wanted:
       this->sylv = tmp_sylv;

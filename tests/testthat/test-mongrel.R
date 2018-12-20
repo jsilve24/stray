@@ -160,12 +160,12 @@ test_that("eigen and cholesky get same result", {
   init <- random_mongrel_init(sim$Y)
   fitc <- optimMongrelCollapsed(sim$Y, sim$upsilon, (sim$Theta%*%sim$X), sim$K, 
                                sim$A, init,
-                               n_samples=50000,
+                               n_samples=500000,
                                calcGradHess = FALSE, 
                                decomp="cholesky")
   fite <- optimMongrelCollapsed(sim$Y, sim$upsilon, (sim$Theta%*%sim$X), sim$K, 
                                 sim$A, init,
-                                n_samples=50000,
+                                n_samples=500000,
                                 calcGradHess = FALSE, 
                                 decomp="eigen")
   

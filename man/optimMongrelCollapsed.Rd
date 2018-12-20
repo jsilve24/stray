@@ -82,7 +82,7 @@ List containing (all with respect to found optima)
 \enumerate{
 \item LogLik - Log Likelihood of collapsed model (up to proportionality constant)
 \item Gradient - (if \code{calcGradHess}=true)
-\item Hessian - (if \code{calcGradHess}=true)
+\item Hessian - (if \code{calcGradHess}=true) of the POSITIVE LOG POSTERIOR
 \item Pars - Parameter value of eta at optima
 \item Samples - (D-1) x N x n_samples array containing posterior samples of eta
 based on Laplace approximation (if n_samples>0)

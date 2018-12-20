@@ -56,7 +56,7 @@ the parameter \code{n_samples} in the function
 }
 \details{
 the full model is given by:
-\deqn{Y_j ~ Multinomial(Pi_j)} <-
+\deqn{Y_j ~ Multinomial(Pi_j)}
 \deqn{Pi_j = Phi^{-1}(Eta_j)}
 \deqn{Eta ~ MN_{D-1 x N}(Lambda*X, Sigma, I_N)}
 \deqn{Lambda ~ MN_{D-1 x Q}(Theta, Sigma, Gamma)}

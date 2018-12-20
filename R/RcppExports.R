@@ -104,7 +104,7 @@ conjugateLinearModel <- function(Y, X, Theta, Gamma, Xi, upsilon, n_samples = 20
 #' @return List containing (all with respect to found optima)
 #' 1. LogLik - Log Likelihood of collapsed model (up to proportionality constant)
 #' 2. Gradient - (if \code{calcGradHess}=true)
-#' 3. Hessian - (if \code{calcGradHess}=true)
+#' 3. Hessian - (if \code{calcGradHess}=true) of the POSITIVE log posterior
 #' 4. Pars - Parameter value of eta 
 #' 5. Samples - (D-1) x N x n_samples array containing posterior samples of eta 
 #'   based on Laplace approximation (if n_samples>0)
@@ -280,7 +280,7 @@ lineSearch <- function(Y, upsilon, ThetaX, K, A, eta, direction, rho, c) {
 #' @return List containing (all with respect to found optima)
 #' 1. LogLik - Log Likelihood of collapsed model (up to proportionality constant)
 #' 2. Gradient - (if \code{calcGradHess}=true)
-#' 3. Hessian - (if \code{calcGradHess}=true)
+#' 3. Hessian - (if \code{calcGradHess}=true) of the POSITIVE LOG POSTERIOR
 #' 4. Pars - Parameter value of eta at optima
 #' 5. Samples - (D-1) x N x n_samples array containing posterior samples of eta 
 #'   based on Laplace approximation (if n_samples>0)
@@ -322,6 +322,7 @@ optimMongrelCollapsed <- function(Y, upsilon, ThetaX, K, A, init, n_samples = 20
 #'   corresponding to each sample of eta rather than sampling from 
 #'   posterior of Lambda and Sigma (useful if Laplace approximation
 #'   is not used (or fails) in optimMongrelCollapsed)
+#' @param seed seed to use for random number generation (uses R seed by default)
 #' @param ncores (default:-1) number of cores to use, if ncores==-1 then 
 #' uses default from OpenMP typically to use all available cores. 
 #'  
@@ -360,12 +361,12 @@ optimMongrelCollapsed <- function(Y, upsilon, ThetaX, K, A, init, n_samples = 20
 #' # Finally obtain samples from Lambda and Sigma
 #' fit2 <- uncollapseMongrelCollapsed(fit$Samples, sim$X, sim$Theta, 
 #'                                    sim$Gamma, sim$Xi, sim$upsilon)
-uncollapseMongrelCollapsed <- function(eta, X, Theta, Gamma, Xi, upsilon, ret_mean = FALSE, ncores = -1L) {
-    .Call('_mongrel_uncollapseMongrelCollapsed', PACKAGE = 'mongrel', eta, X, Theta, Gamma, Xi, upsilon, ret_mean, ncores)
+uncollapseMongrelCollapsed <- function(eta, X, Theta, Gamma, Xi, upsilon, ret_mean = FALSE, seed = 55L, ncores = -1L) {
+    .Call('_mongrel_uncollapseMongrelCollapsed', PACKAGE = 'mongrel', eta, X, Theta, Gamma, Xi, upsilon, ret_mean, seed, ncores)
 }
 
-rMatNormalCholesky_test <- function(M, LU, LV) {
-    .Call('_mongrel_rMatNormalCholesky_test', PACKAGE = 'mongrel', M, LU, LV)
+rMatNormalCholesky_test <- function(M, LU, LV, discard) {
+    .Call('_mongrel_rMatNormalCholesky_test', PACKAGE = 'mongrel', M, LU, LV, discard)
 }
 
 rInvWishRevCholesky_test <- function(v, Psi) {

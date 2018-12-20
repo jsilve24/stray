@@ -53,7 +53,8 @@ nll_partial <- function(x) nll(x, sim$Y, sim$X, sim$upsilon,
 test_that("hessian agrees with finite differences", {
   hess.nd <- numDeriv::hessian(nll_partial, c(sim$Eta))
   A <- solve(diag(sim$N) + t(sim$X) %*% sim$Gamma %*% sim$X)
-  hess <- hessMongrelCollapsed(sim$Y, sim$upsilon, sim$Theta%*%sim$X, 
+  hess <- hessMongrelCollapsed(sim$Y, sim$upsilon, sim$Theta%*%sim$X,
                                solve(sim$Xi), A, sim$Eta)
   expect_equal(hess.nd, -hess, tolerance=1e-3)
+  expect_true(TRUE)
 })

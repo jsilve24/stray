@@ -1,6 +1,10 @@
 #include <mongrel.h>
 #include <Rcpp/Benchmark/Timer.h>
-// [[Rcpp::depends(RcppEigen)]]
+#include <boost/random/mersenne_twister.hpp>
+
+#ifdef MONGREL_USE_PARALLEL
+#include <omp.h>
+#endif 
 
 using namespace Rcpp;
 using Eigen::MatrixXd;
@@ -31,6 +35,7 @@ using Eigen::Lower;
 //'   corresponding to each sample of eta rather than sampling from 
 //'   posterior of Lambda and Sigma (useful if Laplace approximation
 //'   is not used (or fails) in optimMongrelCollapsed)
+//' @param seed seed to use for random number generation (uses R seed by default)
 //' @param ncores (default:-1) number of cores to use, if ncores==-1 then 
 //' uses default from OpenMP typically to use all available cores. 
 //'  
@@ -77,9 +82,17 @@ List uncollapseMongrelCollapsed(const Eigen::Map<Eigen::VectorXd> eta, // note t
                     const Eigen::Map<Eigen::MatrixXd> Xi, 
                     const double upsilon, 
                     bool ret_mean = false, 
+                    long seed= 55, 
                     int ncores=-1){
   Eigen::initParallel();
   if (ncores > 0) Eigen::setNbThreads(ncores);
+  #if defined(MONGREL_USE_PARALLEL)
+    if (ncores > 0) {
+      omp_set_num_threads(ncores);
+    } else {
+      omp_set_num_threads(omp_get_max_threads());
+    }
+  #endif 
   Timer timer;
   timer.step("Overall_start");
   List out(3);
@@ -96,24 +109,38 @@ List uncollapseMongrelCollapsed(const Eigen::Map<Eigen::VectorXd> eta, // note t
   //const Map<const MatrixXd> Eta(NULL);
   const MatrixXd ThetaGammaInvGammaN(Theta*GammaInv*GammaN);
   const MatrixXd XTGammaN(X.transpose()*GammaN);
-  // // Storage for computation
-  MatrixXd LambdaN(D-1, Q);
-  MatrixXd XiN(D-1, D-1);
-  MatrixXd LambdaDraw(D-1, Q);
-  MatrixXd LSigmaDraw(D-1, D-1);
-  MatrixXd SigmaDraw(D-1, D-1);
-  MatrixXd ELambda(D-1, Q);
-  MatrixXd EEta(D-1, N);
+
   // Storage for output
   MatrixXd LambdaDrawO((D-1)*Q, iter);
   MatrixXd SigmaDrawO((D-1)*(D-1), iter);
   
-  
-  //iterate over all draws of eta
+  //iterate over all draws of eta - embarrassingly parallel with parallel rng
+  #if defined(MONGREL_USE_PARALLEL) 
+    Eigen::setNbThreads(1);
+    //Rcout << "thread: "<< omp_get_max_threads() << std::endl;
+  #endif 
+  #pragma omp parallel shared(eta, XTGammaN, ThetaGammaInvGammaN, Theta, X, \
+                              GammaInv, D, N, Q, LambdaDraw0, SigmaDraw0)
+  {
+  #if defined(MONGREL_USE_PARALLEL)
+    boost::random::mt19937 rng(omp_get_thread_num()+seed);
+  #else 
+    boost::random::mt19937 rng(seed);
+  #endif 
+  // storage for computation
+  MatrixXd LambdaN(D-1, Q);
+  MatrixXd XiN(D-1, D-1);
+  //MatrixXd LambdaDraw(D-1, Q);
+  MatrixXd LSigmaDraw(D-1, D-1);
+  //MatrixXd SigmaDraw(D-1, D-1);
+  MatrixXd ELambda(D-1, Q);
+  MatrixXd EEta(D-1, N);
+  #pragma omp for 
   for (int i=0; i < iter; i++){
     //R_CheckUserInterrupt();
-    VectorXd EtaV(eta.segment(i*N*(D-1),N*(D-1)));
-    Map<MatrixXd> Eta(EtaV.data(), D-1, N);
+    //VectorXd EtaV(eta.segment(i*N*(D-1),N*(D-1)));
+    const Map<const MatrixXd> Eta(&eta(i*N*(D-1)),D-1, N);
+    //Map<MatrixXd> Eta(EtaV.data(), D-1, N);
     LambdaN.noalias() = Eta*XTGammaN+ThetaGammaInvGammaN;
     ELambda = LambdaN-Theta;
     EEta.noalias() = Eta-LambdaN*X;
@@ -125,19 +152,43 @@ List uncollapseMongrelCollapsed(const Eigen::Map<Eigen::VectorXd> eta, // note t
       LambdaDrawO.col(i) = LambdaNVec;
       SigmaDrawO.col(i) = (upsilonN-D)*XiNVec; // mean of inverse wishart
     } else {
+      // // Draw Random Component
+      // LSigmaDraw = rInvWishRevCholesky_thread(upsilonN, XiN, rng).matrix();
+      // // Note: Below is valid even though LSigmaDraw is reverse cholesky factor
+      // LambdaDraw = rMatNormalCholesky_thread(LambdaN, LSigmaDraw, 
+      //                                        LGammaN.matrix(), rng);
+      
       // Draw Random Component
-      LSigmaDraw = rInvWishRevCholesky(upsilonN, XiN).matrix();
+      rInvWishRevCholesky_thread_inplace(LSigmaDraw, upsilonN, XiN, rng);
       // Note: Below is valid even though LSigmaDraw is reverse cholesky factor
-      LambdaDraw = rMatNormalCholesky(LambdaN, LSigmaDraw, LGammaN.matrix());
+      Eigen::Ref<VectorXd> LambdaDraw_tmp = LambdaDrawO.col(i);
+      Eigen::Map<MatrixXd> LambdaDraw(LambdaDraw_tmp.data(), D-1, Q);
+      rMatNormalCholesky_thread_inplace(LambdaDraw, LambdaN, LSigmaDraw, 
+                                        LGammaN.matrix(), rng);
       
       // map output to vectors
-      Map<VectorXd> LambdaDrawVec(LambdaDraw.data(), LambdaDraw.size());
-      LambdaDrawO.col(i) = LambdaDrawVec;
-      SigmaDraw.noalias() = LSigmaDraw*LSigmaDraw.transpose();
-      Map<VectorXd> SigmaDrawVec(SigmaDraw.data(), SigmaDraw.size());
-      SigmaDrawO.col(i) = SigmaDrawVec;
+      //Map<VectorXd> LambdaDrawVec(LambdaDraw.data(), LambdaDraw.size());
+      //LambdaDrawO.col(i) = LambdaDrawVec;
+      
+      
+      Eigen::Ref<VectorXd> SigmaDraw_tmp = SigmaDrawO.col(i);
+      Eigen::Map<MatrixXd> SigmaDraw_tosquare(SigmaDraw_tmp.data(), D-1, D-1);
+      SigmaDraw_tosquare.noalias() = LSigmaDraw*LSigmaDraw.transpose();
+      
+      
+      //SigmaDraw.noalias() = LSigmaDraw*LSigmaDraw.transpose();
+      //Map<VectorXd> SigmaDrawVec(SigmaDraw.data(), SigmaDraw.size());
+      //SigmaDrawO.col(i) = SigmaDrawVec;
     }
   }
+  }
+  #if defined(MONGREL_USE_PARALLEL)
+  if (ncores > 0){
+    Eigen::setNbThreads(ncores);
+  } else {
+    Eigen::setNbThreads(omp_get_max_threads());  
+  }
+  #endif 
 
   IntegerVector dLambda = IntegerVector::create(D-1, Q, iter);
   IntegerVector dSigma = IntegerVector::create(D-1, D-1, iter);

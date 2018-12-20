@@ -182,8 +182,8 @@ BEGIN_RCPP
 END_RCPP
 }
 // uncollapseMongrelCollapsed
-List uncollapseMongrelCollapsed(const Eigen::Map<Eigen::VectorXd> eta, const Eigen::Map<Eigen::MatrixXd> X, const Eigen::Map<Eigen::MatrixXd> Theta, const Eigen::Map<Eigen::MatrixXd> Gamma, const Eigen::Map<Eigen::MatrixXd> Xi, const double upsilon, bool ret_mean, int ncores);
-RcppExport SEXP _mongrel_uncollapseMongrelCollapsed(SEXP etaSEXP, SEXP XSEXP, SEXP ThetaSEXP, SEXP GammaSEXP, SEXP XiSEXP, SEXP upsilonSEXP, SEXP ret_meanSEXP, SEXP ncoresSEXP) {
+List uncollapseMongrelCollapsed(const Eigen::Map<Eigen::VectorXd> eta, const Eigen::Map<Eigen::MatrixXd> X, const Eigen::Map<Eigen::MatrixXd> Theta, const Eigen::Map<Eigen::MatrixXd> Gamma, const Eigen::Map<Eigen::MatrixXd> Xi, const double upsilon, bool ret_mean, long seed, int ncores);
+RcppExport SEXP _mongrel_uncollapseMongrelCollapsed(SEXP etaSEXP, SEXP XSEXP, SEXP ThetaSEXP, SEXP GammaSEXP, SEXP XiSEXP, SEXP upsilonSEXP, SEXP ret_meanSEXP, SEXP seedSEXP, SEXP ncoresSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -194,8 +194,9 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< const Eigen::Map<Eigen::MatrixXd> >::type Xi(XiSEXP);
     Rcpp::traits::input_parameter< const double >::type upsilon(upsilonSEXP);
     Rcpp::traits::input_parameter< bool >::type ret_mean(ret_meanSEXP);
+    Rcpp::traits::input_parameter< long >::type seed(seedSEXP);
     Rcpp::traits::input_parameter< int >::type ncores(ncoresSEXP);
-    rcpp_result_gen = Rcpp::wrap(uncollapseMongrelCollapsed(eta, X, Theta, Gamma, Xi, upsilon, ret_mean, ncores));
+    rcpp_result_gen = Rcpp::wrap(uncollapseMongrelCollapsed(eta, X, Theta, Gamma, Xi, upsilon, ret_mean, seed, ncores));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -401,7 +402,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_mongrel_hessVectorProd", (DL_FUNC) &_mongrel_hessVectorProd, 9},
     {"_mongrel_lineSearch", (DL_FUNC) &_mongrel_lineSearch, 9},
     {"_mongrel_optimMongrelCollapsed", (DL_FUNC) &_mongrel_optimMongrelCollapsed, 25},
-    {"_mongrel_uncollapseMongrelCollapsed", (DL_FUNC) &_mongrel_uncollapseMongrelCollapsed, 8},
+    {"_mongrel_uncollapseMongrelCollapsed", (DL_FUNC) &_mongrel_uncollapseMongrelCollapsed, 9},
     {"_mongrel_rMatNormalCholesky_test", (DL_FUNC) &_mongrel_rMatNormalCholesky_test, 3},
     {"_mongrel_rInvWishRevCholesky_test", (DL_FUNC) &_mongrel_rInvWishRevCholesky_test, 2},
     {"_mongrel_rMatUnitNormal_test1", (DL_FUNC) &_mongrel_rMatUnitNormal_test1, 2},

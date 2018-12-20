@@ -11,9 +11,11 @@
   #endif
 #endif 
 // [[Rcpp::depends(RcppEigen)]]
+// [[Rcpp::depends(BH)]]
 
 
 #include "MatrixAlgebra.h"
+#include "MatDist_thread.h"
 #include "MatDist.h"
 #include "MultDirichletBoot.h"
 #include "SpecialFunctions.h"

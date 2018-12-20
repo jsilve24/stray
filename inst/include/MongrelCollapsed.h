@@ -173,13 +173,14 @@ class MongrelCollapsed : public mongrel::MongrelModel {
       H.noalias() = -delta * H;
       
       // For Multinomial
-      #pragma omp parallel
+      #pragma omp parallel shared(rho, n)
       {
       MatrixXd W(D-1, D-1);
-      VectorXd rhoseg(D-1);
-      #pragma omp parallel for 
+      //VectorXd rhoseg(D-1);
+      #pragma omp for 
       for (int j=0; j<N; j++){
-        rhoseg = rho.segment(j*(D-1), D-1);
+        //rhoseg = rho.segment(j*(D-1), D-1);
+        Eigen::Ref<VectorXd> rhoseg = rho.segment(j*(D-1), D-1);
         W.noalias() = rhoseg*rhoseg.transpose();
         W.diagonal() -= rhoseg;
         H.block(j*(D-1), j*(D-1), D-1, D-1).noalias()  += n(j)*W;

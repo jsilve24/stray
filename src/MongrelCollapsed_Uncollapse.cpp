@@ -130,17 +130,13 @@ List uncollapseMongrelCollapsed(const Eigen::Map<Eigen::VectorXd> eta, // note t
   // storage for computation
   MatrixXd LambdaN(D-1, Q);
   MatrixXd XiN(D-1, D-1);
-  //MatrixXd LambdaDraw(D-1, Q);
   MatrixXd LSigmaDraw(D-1, D-1);
-  //MatrixXd SigmaDraw(D-1, D-1);
   MatrixXd ELambda(D-1, Q);
   MatrixXd EEta(D-1, N);
   #pragma omp for 
   for (int i=0; i < iter; i++){
     //R_CheckUserInterrupt();
-    //VectorXd EtaV(eta.segment(i*N*(D-1),N*(D-1)));
     const Map<const MatrixXd> Eta(&eta(i*N*(D-1)),D-1, N);
-    //Map<MatrixXd> Eta(EtaV.data(), D-1, N);
     LambdaN.noalias() = Eta*XTGammaN+ThetaGammaInvGammaN;
     ELambda = LambdaN-Theta;
     EEta.noalias() = Eta-LambdaN*X;
@@ -152,12 +148,6 @@ List uncollapseMongrelCollapsed(const Eigen::Map<Eigen::VectorXd> eta, // note t
       LambdaDrawO.col(i) = LambdaNVec;
       SigmaDrawO.col(i) = (upsilonN-D)*XiNVec; // mean of inverse wishart
     } else {
-      // // Draw Random Component
-      // LSigmaDraw = rInvWishRevCholesky_thread(upsilonN, XiN, rng).matrix();
-      // // Note: Below is valid even though LSigmaDraw is reverse cholesky factor
-      // LambdaDraw = rMatNormalCholesky_thread(LambdaN, LSigmaDraw, 
-      //                                        LGammaN.matrix(), rng);
-      
       // Draw Random Component
       rInvWishRevCholesky_thread_inplace(LSigmaDraw, upsilonN, XiN, rng);
       // Note: Below is valid even though LSigmaDraw is reverse cholesky factor
@@ -165,20 +155,11 @@ List uncollapseMongrelCollapsed(const Eigen::Map<Eigen::VectorXd> eta, // note t
       Eigen::Map<MatrixXd> LambdaDraw(LambdaDraw_tmp.data(), D-1, Q);
       rMatNormalCholesky_thread_inplace(LambdaDraw, LambdaN, LSigmaDraw, 
                                         LGammaN.matrix(), rng);
-      
-      // map output to vectors
-      //Map<VectorXd> LambdaDrawVec(LambdaDraw.data(), LambdaDraw.size());
-      //LambdaDrawO.col(i) = LambdaDrawVec;
-      
-      
+
       Eigen::Ref<VectorXd> SigmaDraw_tmp = SigmaDrawO.col(i);
       Eigen::Map<MatrixXd> SigmaDraw_tosquare(SigmaDraw_tmp.data(), D-1, D-1);
       SigmaDraw_tosquare.noalias() = LSigmaDraw*LSigmaDraw.transpose();
       
-      
-      //SigmaDraw.noalias() = LSigmaDraw*LSigmaDraw.transpose();
-      //Map<VectorXd> SigmaDrawVec(SigmaDraw.data(), SigmaDraw.size());
-      //SigmaDrawO.col(i) = SigmaDrawVec;
     }
   }
   }

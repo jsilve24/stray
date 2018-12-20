@@ -5,7 +5,7 @@
 \title{Uncollapse output from optimMongrelCollapsed to full Mongrel Model}
 \usage{
 uncollapseMongrelCollapsed(eta, X, Theta, Gamma, Xi, upsilon,
-  ret_mean = FALSE, ncores = -1L)
+  ret_mean = FALSE, seed = 55L, ncores = -1L)
 }
 \arguments{
 \item{eta}{array of dimension (D-1) x N x iter (e.g., \code{Pars} output of
@@ -25,6 +25,8 @@ function optimMongrelCollapsed)}
 corresponding to each sample of eta rather than sampling from
 posterior of Lambda and Sigma (useful if Laplace approximation
 is not used (or fails) in optimMongrelCollapsed)}
+
+\item{seed}{seed to use for random number generation (uses R seed by default)}
 
 \item{ncores}{(default:-1) number of cores to use, if ncores==-1 then
 uses default from OpenMP typically to use all available cores.}

@@ -4,6 +4,9 @@
 #include <RcppEigen.h>
 #include <boost/random/normal_distribution.hpp>
 #include <boost/random/chi_squared_distribution.hpp>
+#if defined(MONGREL_USE_MKL)
+#include <mkl.h>
+#endif 
 
 using Eigen::MatrixXd;
 using Eigen::Map;
@@ -127,7 +130,7 @@ inline Eigen::MatrixXd rInvWishRevCholesky_thread(const int v,
 }
 
 template <typename T, typename RNG>
-inline void rInvWishRevCholesky_thread_inplace(Eigen::MatrixBase<T>& A, 
+inline void rInvWishRevCholesky_thread_inplace(Eigen::PlainObjectBase<T>& A, 
                                                   const int v,
                                                   const Eigen::Ref<const Eigen::MatrixXd>& Psi,
                                                   RNG& rng){
@@ -150,7 +153,13 @@ inline void rInvWishRevCholesky_thread_inplace(Eigen::MatrixBase<T>& A,
     }
   }
   A.template noalias() = PsiInv.llt().matrixL()*X;
-  A.template triangularView<Lower>().solveInPlace(MatrixXd::Identity(p,p)); // This line is causing problems
+  
+#if defined(MONGREL_USE_MKL)
+  LAPACKE_dtrtri(LAPACK_COL_MAJOR, 'L', 'N', A.cols(), A.data(), A.rows());
+#else 
+  MatrixXd I = MatrixXd::Identity(p,p);
+  A.template triangularView<Lower>().solveInPlace(I); 
+#endif 
   A.template transposeInPlace();
 }
 

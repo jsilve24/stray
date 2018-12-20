@@ -36,7 +36,7 @@ void krondense_inplace(Ref<MatrixXd> A, const Ref<const MatrixXd>& L,
   int rr = R.rows();
   int rc = R.cols();
 
-  #pragma omp parallel for
+  #pragma omp parallel for shared(R, A)
     for (int i=0; i < lr; i++){
       for (int j=0; j < lc; j++){
         A.block(i*rr, j*rc, rr, rc) = L(i,j)*R;
@@ -52,7 +52,7 @@ void krondense_inplace_add(Ref<MatrixXd> A, const Ref<const MatrixXd>& L,
   int rr = R.rows();
   int rc = R.cols();
   
-#pragma omp parallel for
+#pragma omp parallel for shared(R, A)
   for (int i=0; i < lr; i++){
     for (int j=0; j < lc; j++){
       A.block(i*rr, j*rc, rr, rc) += L(i,j)*R;
@@ -67,7 +67,7 @@ MatrixXd tveclmult(const int m, const int n, const Ref<const MatrixXd>& A){
   int ac = A.cols();
   MatrixXd out(ar, ac);
   
-  #pragma omp parallel for
+  #pragma omp parallel for shared(out, A)
   for (int i=0; i<m; i++){
     for (int j=0; j<n; j++){
       out.row(i*n+j) = A.row(j*m+i);
@@ -92,7 +92,7 @@ void tveclmult_minus(const int m, const int n, Ref<MatrixXd> A,
     LAPACKE_dlapmr(LAPACK_COL_MAJOR, true, ar, ac, A.data(), ar, k.data());
     B-=A;
   #else
-    #pragma omp parallel for
+    #pragma omp parallel for shared(B, A)
     for (int i=0; i<m; i++){
       for (int j=0; j<n; j++)
         B.row(i*n+j) -= A.row(j*m+i);

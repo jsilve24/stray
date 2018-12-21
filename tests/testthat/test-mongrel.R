@@ -11,7 +11,7 @@ test_that("optim and uncollapse correctnesss", {
   init <- random_mongrel_init(sim$Y)
   fit <- optimMongrelCollapsed(sim$Y, sim$upsilon, (sim$Theta%*%sim$X), sim$K, 
                                sim$A, init,
-                               n_samples=2000,
+                               n_samples=3000,
                                calcGradHess = FALSE)
   
   # check closeness of MAP
@@ -67,7 +67,7 @@ test_that("optim sylvester gets same result", {
 
 test_that("mongrel wrapper correctness", {
   fit <- mongrel(sim$Y, sim$X, upsilon = sim$upsilon, Theta = sim$Theta, Xi=sim$Xi, 
-                 Gamma=sim$Gamma)
+                 Gamma=sim$Gamma, n_samples=3000)
   
   # Laplace approximation contains true value # given the true value
   p0.25 <- apply(fit$Eta, c(1,2), function(x) quantile(x, probs=0.0025))

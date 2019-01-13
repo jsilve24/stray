@@ -130,7 +130,10 @@ class MongrelCollapsed : public mongrel::MongrelModel {
     // Must have called updateWithEtaLL and then updateWithEtaGH first 
     VectorXd calcGrad(){
       // For Multinomial
-      MatrixXd g = (Y - (rhomat.array().rowwise()*n.array())).matrix();
+      MatrixXd g = (Y.topRows(D-1) - (rhomat.array().rowwise()*n.array())).matrix();
+      //Rcout << "dim Y:" << Y.size() << std::endl;
+      //Rcout << "dim g multinomial: " << g.size() << std::endl;
+      //Rcout << "dim g t: " << (delta*C*(R+R.transpose()).eval()).size() << std::endl;
       // For MatrixVariate T
       if (sylv & (N < (D-1))){
         g.noalias() += -delta*C*(R+R.transpose());

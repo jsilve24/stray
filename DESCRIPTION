@@ -1,7 +1,7 @@
 Package: mongrel
 Type: Package
 Title: Bayesian Multinomial Logistic Normal Regression
-Version: 0.1.6
+Version: 0.1.7
 Date: 2018-06-26
 Author: Justin Silverman
 Authors@R: c(person("Justin", "Silverman", role=c("aut", "cre"),
@@ -10,8 +10,8 @@ Maintainer: Justin Silverman
     <Justin.Silverman@duke.edu>
 Description: Provides methods for fitting and inspection of Bayesian Multinomial 
  Logistic Normal Regression Models ("Mongrel Models") using MAP estimation 
- (with the ADAM optimizer) and Laplace Approximation. Key functionality is 
- implemented in C++ for scalability. 
+ and Laplace Approximation. Key functionality is implemented in C++ for 
+ scalability. 
 License: GPL-3
 Imports: Rcpp (>= 0.12.17), RcppEigen (>= 0.3.3.4.0), driver, dplyr, ggplot2, 
   purrr, tidybayes

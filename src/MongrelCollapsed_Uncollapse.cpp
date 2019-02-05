@@ -111,8 +111,8 @@ List uncollapseMongrelCollapsed(const Eigen::Map<Eigen::VectorXd> eta, // note t
   const MatrixXd XTGammaN(X.transpose()*GammaN);
 
   // Storage for output
-  MatrixXd LambdaDrawO((D-1)*Q, iter);
-  MatrixXd SigmaDrawO((D-1)*(D-1), iter);
+  MatrixXd LambdaDraw0((D-1)*Q, iter);
+  MatrixXd SigmaDraw0((D-1)*(D-1), iter);
   
   //iterate over all draws of eta - embarrassingly parallel with parallel rng
   #if defined(MONGREL_USE_PARALLEL) 
@@ -145,18 +145,18 @@ List uncollapseMongrelCollapsed(const Eigen::Map<Eigen::VectorXd> eta, // note t
     if (ret_mean){
       Map<VectorXd> LambdaNVec(LambdaN.data(), LambdaN.size());
       Map<VectorXd> XiNVec(XiN.data(), XiN.size());
-      LambdaDrawO.col(i) = LambdaNVec;
-      SigmaDrawO.col(i) = (upsilonN-D)*XiNVec; // mean of inverse wishart
+      LambdaDraw0.col(i) = LambdaNVec;
+      SigmaDraw0.col(i) = (upsilonN-D)*XiNVec; // mean of inverse wishart
     } else {
       // Draw Random Component
       rInvWishRevCholesky_thread_inplace(LSigmaDraw, upsilonN, XiN, rng);
       // Note: Below is valid even though LSigmaDraw is reverse cholesky factor
-      Eigen::Ref<VectorXd> LambdaDraw_tmp = LambdaDrawO.col(i);
+      Eigen::Ref<VectorXd> LambdaDraw_tmp = LambdaDraw0.col(i);
       Eigen::Map<MatrixXd> LambdaDraw(LambdaDraw_tmp.data(), D-1, Q);
       rMatNormalCholesky_thread_inplace(LambdaDraw, LambdaN, LSigmaDraw, 
                                         LGammaN.matrix(), rng);
 
-      Eigen::Ref<VectorXd> SigmaDraw_tmp = SigmaDrawO.col(i);
+      Eigen::Ref<VectorXd> SigmaDraw_tmp = SigmaDraw0.col(i);
       Eigen::Map<MatrixXd> SigmaDraw_tosquare(SigmaDraw_tmp.data(), D-1, D-1);
       SigmaDraw_tosquare.noalias() = LSigmaDraw*LSigmaDraw.transpose();
       
@@ -173,8 +173,8 @@ List uncollapseMongrelCollapsed(const Eigen::Map<Eigen::VectorXd> eta, // note t
 
   IntegerVector dLambda = IntegerVector::create(D-1, Q, iter);
   IntegerVector dSigma = IntegerVector::create(D-1, D-1, iter);
-  NumericVector nvLambda = wrap(LambdaDrawO);
-  NumericVector nvSigma = wrap(SigmaDrawO);
+  NumericVector nvLambda = wrap(LambdaDraw0);
+  NumericVector nvSigma = wrap(SigmaDraw0);
   nvLambda.attr("dim") = dLambda;
   nvSigma.attr("dim") = dSigma;
   out[0] = nvLambda;

@@ -373,6 +373,14 @@ rInvWishRevCholesky_test <- function(v, Psi) {
     .Call('_mongrel_rInvWishRevCholesky_test', PACKAGE = 'mongrel', v, Psi)
 }
 
+rInvWishRevCholesky_thread_test <- function(v, Psi, discard) {
+    .Call('_mongrel_rInvWishRevCholesky_thread_test', PACKAGE = 'mongrel', v, Psi, discard)
+}
+
+rInvWishRevCholesky_thread_inplace_test <- function(v, Psi, discard) {
+    .Call('_mongrel_rInvWishRevCholesky_thread_inplace_test', PACKAGE = 'mongrel', v, Psi, discard)
+}
+
 rMatUnitNormal_test1 <- function(n, m) {
     .Call('_mongrel_rMatUnitNormal_test1', PACKAGE = 'mongrel', n, m)
 }

@@ -226,6 +226,32 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// rInvWishRevCholesky_thread_test
+Eigen::MatrixXd rInvWishRevCholesky_thread_test(int v, Eigen::MatrixXd Psi, int discard);
+RcppExport SEXP _mongrel_rInvWishRevCholesky_thread_test(SEXP vSEXP, SEXP PsiSEXP, SEXP discardSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< int >::type v(vSEXP);
+    Rcpp::traits::input_parameter< Eigen::MatrixXd >::type Psi(PsiSEXP);
+    Rcpp::traits::input_parameter< int >::type discard(discardSEXP);
+    rcpp_result_gen = Rcpp::wrap(rInvWishRevCholesky_thread_test(v, Psi, discard));
+    return rcpp_result_gen;
+END_RCPP
+}
+// rInvWishRevCholesky_thread_inplace_test
+Eigen::MatrixXd rInvWishRevCholesky_thread_inplace_test(int v, Eigen::MatrixXd Psi, int discard);
+RcppExport SEXP _mongrel_rInvWishRevCholesky_thread_inplace_test(SEXP vSEXP, SEXP PsiSEXP, SEXP discardSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< int >::type v(vSEXP);
+    Rcpp::traits::input_parameter< Eigen::MatrixXd >::type Psi(PsiSEXP);
+    Rcpp::traits::input_parameter< int >::type discard(discardSEXP);
+    rcpp_result_gen = Rcpp::wrap(rInvWishRevCholesky_thread_inplace_test(v, Psi, discard));
+    return rcpp_result_gen;
+END_RCPP
+}
 // rMatUnitNormal_test1
 Eigen::MatrixXd rMatUnitNormal_test1(int n, int m);
 RcppExport SEXP _mongrel_rMatUnitNormal_test1(SEXP nSEXP, SEXP mSEXP) {
@@ -406,6 +432,8 @@ static const R_CallMethodDef CallEntries[] = {
     {"_mongrel_uncollapseMongrelCollapsed", (DL_FUNC) &_mongrel_uncollapseMongrelCollapsed, 9},
     {"_mongrel_rMatNormalCholesky_test", (DL_FUNC) &_mongrel_rMatNormalCholesky_test, 4},
     {"_mongrel_rInvWishRevCholesky_test", (DL_FUNC) &_mongrel_rInvWishRevCholesky_test, 2},
+    {"_mongrel_rInvWishRevCholesky_thread_test", (DL_FUNC) &_mongrel_rInvWishRevCholesky_thread_test, 3},
+    {"_mongrel_rInvWishRevCholesky_thread_inplace_test", (DL_FUNC) &_mongrel_rInvWishRevCholesky_thread_inplace_test, 3},
     {"_mongrel_rMatUnitNormal_test1", (DL_FUNC) &_mongrel_rMatUnitNormal_test1, 2},
     {"_mongrel_rMatUnitNormal_test2", (DL_FUNC) &_mongrel_rMatUnitNormal_test2, 1},
     {"_mongrel_lmvgamma", (DL_FUNC) &_mongrel_lmvgamma, 2},

@@ -204,6 +204,24 @@ Eigen::MatrixXd rInvWishRevCholesky_test(int v, Eigen::MatrixXd Psi){
 }
 
 // [[Rcpp::export]]
+Eigen::MatrixXd rInvWishRevCholesky_thread_test(int v, Eigen::MatrixXd Psi, 
+                                                        int discard){
+  boost::random::mt19937 rng;
+  rng.discard(discard);
+  return rInvWishRevCholesky_thread(v, Psi, rng);
+}
+
+// [[Rcpp::export]]
+Eigen::MatrixXd rInvWishRevCholesky_thread_inplace_test(int v, Eigen::MatrixXd Psi, 
+                                                        int discard){
+  boost::random::mt19937 rng;
+  rng.discard(discard);
+  MatrixXd res(Psi.rows(), Psi.cols());
+  rInvWishRevCholesky_thread_inplace(res, v, Psi, rng);
+  return res;
+}
+
+// [[Rcpp::export]]
 Eigen::MatrixXd rMatUnitNormal_test1(int n, int m){
   MatrixXd X(n,m);
   boost::random::mt19937 rng;

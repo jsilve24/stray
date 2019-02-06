@@ -156,11 +156,16 @@ inline void rInvWishRevCholesky_thread_inplace(Eigen::PlainObjectBase<T>& A,
   
 #if defined(MONGREL_USE_MKL)
   LAPACKE_dtrtri(LAPACK_COL_MAJOR, 'L', 'N', A.cols(), A.data(), A.rows());
+  A.transposeInPlace();
 #else 
   MatrixXd I = MatrixXd::Identity(p,p);
-  A.template triangularView<Lower>().solveInPlace(I); 
+  A.template triangularView<Lower>().solveInPlace(I);
+  A = I.transpose();
+  
+  // MatrixXd Y;
+  // Y.noalias() = A; // hack above commented code doesn't seem to work. 
+  // A = Y.triangularView<Lower>().solve(MatrixXd::Identity(p,p));
 #endif 
-  A.transposeInPlace();
 }
 
 

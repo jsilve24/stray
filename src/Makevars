@@ -6,7 +6,7 @@ CXX_STD = CXX11
 
 ## For standard
 PKG_CPPFLAGS =  -I../inst/include/ $(SHLIB_OPENMP_CXXFLAGS)
-#PKG_CXXFLAGS = -fopenmp -w
+####PKG_CXXFLAGS = -fopenmp -w
 PKG_LIBS = $(SHLIB_OPENMP_CXXFLAGS)
 
 ## For MKL - make sure you are using icc compiler in ~.R/Makevars 

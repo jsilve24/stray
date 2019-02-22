@@ -299,7 +299,7 @@ predict.mongrelfit <- function(object, newdata=NULL, response="LambdaX", size=NU
                                             NULL))
   if (response=="LambdaX"){
     if (transformed){
-      LambdaX <- alrInv_array(LambdaX, m$D, 1)
+      LambdaX <- alrInv_array(LambdaX, object$D, 1)
       if (l$coord_system == "clr") LambdaX <- clr_array(LambdaX, 1)
     }
   }

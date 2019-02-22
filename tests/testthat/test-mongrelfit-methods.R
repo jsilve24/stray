@@ -29,6 +29,13 @@ test_that("Plot works with focus.cooord and coord system change",{
   expect_error(print(p), NA)
 })
 
+
+test_that("Predict works in CLR", {
+  fit <- mongrel(sim$Y, sim$X)
+  fit <- mongrel_to_clr(fit)
+  expect_error(predict(fit), NA) 
+})
+
 # test_that("Plots work with iter=1", {
 #   fit <- mongrel(sim$Y, sim$X, n_samples=1)
 #   plot(fit, par="Sigma")

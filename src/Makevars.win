@@ -6,4 +6,3 @@ PKG_CPPFLAGS =  -I../inst/include/
 ## enable compilation with C++11 (or even C++14) where available
 #CXX_STD = CXX11
 
-PKG_LIBS += $(shell "${R_HOME}/bin${R_ARCH_BIN}/Rscript.exe" -e "rTRNG::LdFlags()")

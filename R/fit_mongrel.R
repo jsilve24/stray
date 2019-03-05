@@ -144,6 +144,7 @@ mongrel <- function(Y=NULL, X=NULL, upsilon=NULL, Theta=NULL, Gamma=NULL, Xi=NUL
   useSylv <- args_null("useSylv", args, TRUE)
   ncores <- args_null("ncores", args, -1)
   
+  
   if (calcPartialHess) warning("Cannot recoomend calcPartialHess at this time.")
   
   ## precomputation ## 
@@ -180,9 +181,10 @@ mongrel <- function(Y=NULL, X=NULL, upsilon=NULL, Theta=NULL, Gamma=NULL, Xi=NUL
     ret_mean <- args_null("ret_mean", args, FALSE)
   }
   
+  seed <- args_null("seed", args, sample(1:2^15, 1))
   ## uncollapse collapsed model ##
   fitu <- uncollapseMongrelCollapsed(fitc$Samples, X, Theta, Gamma, Xi, upsilon, 
-                                     ret_mean=ret_mean, ncores=ncores)
+                                     ret_mean=ret_mean, ncores=ncores, seed=seed)
   timeru <- parse_timer_seconds(fitu$Timer)
   
   timer <- c(timerc, timeru)

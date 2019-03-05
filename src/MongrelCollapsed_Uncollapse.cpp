@@ -35,7 +35,7 @@ using Eigen::Lower;
 //'   corresponding to each sample of eta rather than sampling from 
 //'   posterior of Lambda and Sigma (useful if Laplace approximation
 //'   is not used (or fails) in optimMongrelCollapsed)
-//' @param seed seed to use for random number generation (uses R seed by default)
+//' @param seed seed to use for random number generation 
 //' @param ncores (default:-1) number of cores to use, if ncores==-1 then 
 //' uses default from OpenMP typically to use all available cores. 
 //'  
@@ -81,8 +81,8 @@ List uncollapseMongrelCollapsed(const Eigen::Map<Eigen::VectorXd> eta, // note t
                     const Eigen::Map<Eigen::MatrixXd> Gamma, 
                     const Eigen::Map<Eigen::MatrixXd> Xi, 
                     const double upsilon, 
+                    long seed, 
                     bool ret_mean = false, 
-                    long seed= 55, 
                     int ncores=-1){
   Eigen::initParallel();
   if (ncores > 0) Eigen::setNbThreads(ncores);

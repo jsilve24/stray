@@ -150,8 +150,10 @@ maltipoo <- function(Y=NULL, X=NULL, upsilon=NULL, Theta=NULL, U=NULL,
   for (i in 1:P){
     Gamma <- Gamma + fitc$VCScale[i]*U[((i-1)*Q+1):(i*Q),]
   }
+  seed <- args_null("seed", args, sample(1:2^15, 1))
+  
   fitu <- uncollapseMongrelCollapsed(fitc$Samples, X, Theta, Gamma, Xi, upsilon, 
-                                     ret_mean=ret_mean)
+                                     ret_mean=ret_mean, seed=seed)
   
   ## pretty output ##
   out <- list()

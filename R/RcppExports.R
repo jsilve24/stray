@@ -322,7 +322,7 @@ optimMongrelCollapsed <- function(Y, upsilon, ThetaX, K, A, init, n_samples = 20
 #'   corresponding to each sample of eta rather than sampling from 
 #'   posterior of Lambda and Sigma (useful if Laplace approximation
 #'   is not used (or fails) in optimMongrelCollapsed)
-#' @param seed seed to use for random number generation (uses R seed by default)
+#' @param seed seed to use for random number generation 
 #' @param ncores (default:-1) number of cores to use, if ncores==-1 then 
 #' uses default from OpenMP typically to use all available cores. 
 #'  
@@ -361,8 +361,8 @@ optimMongrelCollapsed <- function(Y, upsilon, ThetaX, K, A, init, n_samples = 20
 #' # Finally obtain samples from Lambda and Sigma
 #' fit2 <- uncollapseMongrelCollapsed(fit$Samples, sim$X, sim$Theta, 
 #'                                    sim$Gamma, sim$Xi, sim$upsilon)
-uncollapseMongrelCollapsed <- function(eta, X, Theta, Gamma, Xi, upsilon, ret_mean = FALSE, seed = 55L, ncores = -1L) {
-    .Call('_mongrel_uncollapseMongrelCollapsed', PACKAGE = 'mongrel', eta, X, Theta, Gamma, Xi, upsilon, ret_mean, seed, ncores)
+uncollapseMongrelCollapsed <- function(eta, X, Theta, Gamma, Xi, upsilon, seed, ret_mean = FALSE, ncores = -1L) {
+    .Call('_mongrel_uncollapseMongrelCollapsed', PACKAGE = 'mongrel', eta, X, Theta, Gamma, Xi, upsilon, seed, ret_mean, ncores)
 }
 
 rMatNormalCholesky_test <- function(M, LU, LV, discard) {

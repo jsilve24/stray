@@ -1,7 +1,7 @@
 Package: mongrel
 Type: Package
 Title: Bayesian Multinomial Logistic Normal Regression
-Version: 0.1.7
+Version: 0.1.8
 Date: 2018-06-26
 Author: Justin Silverman
 Authors@R: c(person("Justin", "Silverman", role=c("aut", "cre"),
@@ -16,7 +16,7 @@ License: GPL-3
 Imports: Rcpp (>= 0.12.17), RcppEigen (>= 0.3.3.4.0), driver, dplyr, ggplot2, 
   purrr, tidybayes
 LinkingTo: Rcpp, RcppEigen, RcppNumerical, RSpectra, RcppZiggurat, BH
-RoxygenNote: 6.1.0
+RoxygenNote: 6.1.1
 Suggests: testthat, knitr, rmarkdown, phyloseq, ape, numDeriv, MCMCpack
 Remotes:
     jsilve24/driver,

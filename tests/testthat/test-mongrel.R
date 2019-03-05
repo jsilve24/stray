@@ -24,7 +24,7 @@ test_that("optim and uncollapse correctnesss", {
   
   # Now check uncollapsing for Lambda
   fit2 <- uncollapseMongrelCollapsed(fit$Samples, sim$X, sim$Theta, sim$Gamma, 
-                                     sim$Xi, sim$upsilon)
+                                     sim$Xi, sim$upsilon, 2234)
   
   expect_true(mean(abs(apply(fit2$Lambda, c(1,2), mean) - sim$Phi)) < 0.5)
   p0.25 <- apply(fit2$Lambda, c(1,2), function(x) quantile(x, probs=0.0025))
@@ -145,7 +145,7 @@ test_that("uncollapse correctnesss against double programming", {
   
   # Now check uncollapsing for Lambda
   fit2 <- uncollapseMongrelCollapsed(fit$Samples, sim$X, sim$Theta, sim$Gamma, 
-                                     sim$Xi, sim$upsilon, ret_mean = TRUE)
+                                     sim$Xi, sim$upsilon, ret_mean = TRUE, 2234)
   
   dpres <- uncollapse_mean_only(fit$Samples, sim$X, sim$upsilon, sim$Theta, sim$Xi, 
                       sim$Gamma)

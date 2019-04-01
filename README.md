@@ -25,7 +25,7 @@ devtools::install_github("jsilve24/stray", build_vignettes=TRUE)
 Or to download the development version
 
 ``` r
-devtools::install_github("jsilve24/mongrel", ref="develop", build_vignettes=TRUE)
+devtools::install_github("jsilve24/stray", ref="develop", build_vignettes=TRUE)
 ```
 
 

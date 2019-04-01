@@ -237,6 +237,21 @@ pibble <- function(Y=NULL, X=NULL, upsilon=NULL, Theta=NULL, Gamma=NULL, Xi=NULL
   return(out)
 }
 
+#' @title mongrel
+#' @inheritParams pibble
+#' @description This function is deprecated, please use \code{pibble} 
+#' instead. 
+#' @name mongrel-deprecated
+mongrel <- function(Y=NULL, X=NULL, upsilon=NULL, Theta=NULL, Gamma=NULL, Xi=NULL,
+                    init=NULL, 
+                    pars=c("Eta", "Lambda", "Sigma"),
+                    ...){
+  .Deprecated("pibble")
+  pibble(Y, X, upsilon, Theta, Gamma, Xi, init, pars, ...)
+}
+
+
+
 #' @rdname pibble_fit
 #' @export
 refit.mongrelfit <- function(m, pars=c("Eta", "Lambda", "Sigma"), ...){

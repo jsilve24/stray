@@ -17,7 +17,7 @@ CXXFLAGS = -O3 -march=native
 this will enable full compiler optimization and vectorization. 
 
 
-Whether or not this step is done, mongrel can be installed with the following:
+Whether or not this step is done, stray can be installed with the following:
 
 ``` r
 devtools::install_github("jsilve24/stray", build_vignettes=TRUE)

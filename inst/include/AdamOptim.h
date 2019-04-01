@@ -2,6 +2,7 @@
 #define MONGREL_ADAM_H
 
 #include <RcppNumerical.h>
+
 using namespace Rcpp;
 using Eigen::Map;
 using Eigen::MatrixXd;
@@ -9,6 +10,7 @@ using Eigen::ArrayXXd;
 using Eigen::ArrayXd;
 using Eigen::VectorXd;
 using Eigen::Ref;
+
 
 namespace adam{
 

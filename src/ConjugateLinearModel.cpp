@@ -17,12 +17,12 @@ using Eigen::Lower;
 //' \code{D} is the dimension of the response, \code{Q} is number
 //' of covariates. 
 //' 
-//' @param Y matrix of dimension (D-1) x N
+//' @param Y matrix of dimension D x N
 //' @param X matrix of covariates of dimension Q x N
-//' @param Theta matrix of prior mean of dimension (D-1) x Q
+//' @param Theta matrix of prior mean of dimension D x Q
 //' @param Gamma covariance matrix of dimension Q x Q
-//' @param Xi covariance matrix of dimension (D-1) x (D-1)
-//' @param upsilon scalar (must be > D) degrees of freedom for InvWishart prior
+//' @param Xi covariance matrix of dimension D x D
+//' @param upsilon scalar (must be > D-1) degrees of freedom for InvWishart prior
 //' @param n_samples number of samples to draw (default: 2000)
 //' 
 //' @details 
@@ -37,7 +37,7 @@ using Eigen::Lower;
 //' @export
 //' @md
 //' @examples
-//' sim <- mongrel_sim()
+//' sim <- pibble_sim()
 //' eta.hat <- t(driver::alr(t(sim$Y+0.65)))
 //' fit <- conjugateLinearModel(eta.hat, sim$X, sim$Theta, sim$Gamma, 
 //'                             sim$Xi, sim$upsilon, n_samples=2000)
@@ -52,42 +52,42 @@ List conjugateLinearModel(const Eigen::Map<Eigen::MatrixXd> Y,
   List out(2);
   out.names() = CharacterVector::create("Lambda", "Sigma");
   int Q = Gamma.rows();
-  int D = Xi.rows()+1;
+  int D = Xi.rows();
   int N = X.cols();
   int iter = n_samples; // assumes result is an integer !!!
   double upsilonN = upsilon + N;
-  MatrixXd GammaInv(Gamma.lu().inverse());
-  MatrixXd GammaInvN(GammaInv + X*X.transpose());
-  MatrixXd GammaN(GammaInvN.lu().inverse());
-  MatrixXd LGammaN(GammaN.llt().matrixL());
-  MatrixXd ThetaGammaInvGammaN(Theta*GammaInv*GammaN);
-  MatrixXd XTGammaN(X.transpose()*GammaN);
+  MatrixXd GammaInv = Gamma.lu().inverse();
+  MatrixXd GammaInvN = GammaInv + X*X.transpose(); 
+  MatrixXd GammaN = GammaInvN.lu().inverse();
+  MatrixXd LGammaN= GammaN.llt().matrixL();
+  MatrixXd ThetaGammaInvGammaN = Theta*GammaInv*GammaN;
+  MatrixXd XTGammaN = X.transpose()*GammaN;
   // // Storage for computation
-  MatrixXd LambdaN(D-1, Q);
-  MatrixXd XiN(D-1, D-1);
-  MatrixXd LambdaDraw(D-1, Q);
-  MatrixXd LSigmaDraw(D-1, D-1);
-  MatrixXd SigmaDraw(D-1, D-1);
-  MatrixXd ELambda(D-1, Q);
-  MatrixXd EY(D-1, N);
+  MatrixXd LambdaN(D, Q);
+  MatrixXd XiN(D, D);
+  MatrixXd LambdaDraw(D, Q);
+  MatrixXd LSigmaDraw(D, D);
+  MatrixXd SigmaDraw(D, D);
+  MatrixXd ELambda(D, Q);
+  MatrixXd EY(D, N);
   // Storage for output
-  MatrixXd LambdaDrawO((D-1)*Q, iter);
-  MatrixXd SigmaDrawO((D-1)*(D-1), iter);
+  MatrixXd LambdaDrawO(D*Q, iter);
+  MatrixXd SigmaDrawO(D*D, iter);
   
-  // computation out of for-loop compared to mongrelcollapsed_uncollapse
+  // computation out of for-loop compared to pibbleuncollapse
   LambdaN = Y*XTGammaN+ThetaGammaInvGammaN;
   ELambda = LambdaN-Theta;
   EY = Y-LambdaN*X;
-  XiN = Xi+ EY*EY.transpose() + ELambda*GammaInv*ELambda.transpose();
-  
+  XiN =  (EY*EY.transpose()).eval() + Xi + (ELambda*GammaInv*ELambda.transpose()).eval();
   
   // iterate over all draws of eta
   for (int i=0; i < iter; i++){
+      R_CheckUserInterrupt();
       // Draw Random Component
       LSigmaDraw = rInvWishRevCholesky(upsilonN, XiN).matrix();
       // Note: correct even though LSigmaDraw is reverse cholesky factor
       LambdaDraw = rMatNormalCholesky(LambdaN, LSigmaDraw, LGammaN.matrix());
-      
+
       // map output to vectors
       Map<VectorXd> LambdaDrawVec(LambdaDraw.data(), LambdaDraw.size());
       LambdaDrawO.col(i) = LambdaDrawVec;
@@ -95,9 +95,9 @@ List conjugateLinearModel(const Eigen::Map<Eigen::MatrixXd> Y,
       Map<VectorXd> SigmaDrawVec(SigmaDraw.data(), SigmaDraw.size());
       SigmaDrawO.col(i) = SigmaDrawVec;
   }
-  
-  IntegerVector dLambda = IntegerVector::create(D-1, Q, iter);
-  IntegerVector dSigma = IntegerVector::create(D-1, D-1, iter);
+
+  IntegerVector dLambda = IntegerVector::create(D, Q, iter);
+  IntegerVector dSigma = IntegerVector::create(D, D, iter);
   NumericVector nvLambda = wrap(LambdaDrawO);
   NumericVector nvSigma = wrap(SigmaDrawO);
   nvLambda.attr("dim") = dLambda;

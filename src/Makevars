@@ -1,7 +1,15 @@
-## With Rcpp 0.11.0 and later, we no longer need to set PKG_LIBS as there is
-## no user-facing library. The include path to headers is already set by R.
-PKG_CPPFLAGS =  -I../inst/include/
 
 ## With R 3.1.0 or later, you can uncomment the following line to tell R to 
 ## enable compilation with C++11 (or even C++14) where available
-#CXX_STD = CXX11
+CXX_STD = CXX11
+
+
+## For standard
+PKG_CPPFLAGS =  -I../inst/include/ $(SHLIB_OPENMP_CXXFLAGS)
+PKG_LIBS = $(SHLIB_OPENMP_CXXFLAGS)
+
+## For MKL - make sure you are using icc compiler in ~.R/Makevars 
+# Using GCC -- PREFERRED for MKL
+#PKG_CPPFLAGS =  -L/opt/intel/compilers_and_libraries_2019.1.144/mac/compiler/lib -m64 -I../inst/include/ -DMONGREL_USE_MKL
+#PKG_CXXFLAGS = -I/opt/intel/compilers_and_libraries_2019.1.144/mac/mkl/include -w
+#PKG_LIBS = -L/opt/intel/compilers_and_libraries_2019.1.144/mac/mkl/lib -Wl,-rpath,/opt/intel/compilers_and_libraries_2019.1.144/mac/mkl/lib -lmkl_rt -lpthread -lm -ldl 

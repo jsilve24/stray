@@ -7,17 +7,17 @@
 conjugateLinearModel(Y, X, Theta, Gamma, Xi, upsilon, n_samples = 2000L)
 }
 \arguments{
-\item{Y}{matrix of dimension (D-1) x N}
+\item{Y}{matrix of dimension D x N}
 
 \item{X}{matrix of covariates of dimension Q x N}
 
-\item{Theta}{matrix of prior mean of dimension (D-1) x Q}
+\item{Theta}{matrix of prior mean of dimension D x Q}
 
 \item{Gamma}{covariance matrix of dimension Q x Q}
 
-\item{Xi}{covariance matrix of dimension (D-1) x (D-1)}
+\item{Xi}{covariance matrix of dimension D x D}
 
-\item{upsilon}{scalar (must be > D) degrees of freedom for InvWishart prior}
+\item{upsilon}{scalar (must be > D-1) degrees of freedom for InvWishart prior}
 
 \item{n_samples}{number of samples to draw (default: 2000)}
 }
@@ -41,7 +41,7 @@ This function provides a means of sampling from the posterior distribution of
 \code{Lambda} and \code{Sigma}.
 }
 \examples{
-sim <- mongrel_sim()
+sim <- pibble_sim()
 eta.hat <- t(driver::alr(t(sim$Y+0.65)))
 fit <- conjugateLinearModel(eta.hat, sim$X, sim$Theta, sim$Gamma, 
                             sim$Xi, sim$upsilon, n_samples=2000)

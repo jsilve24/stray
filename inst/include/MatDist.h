@@ -2,22 +2,26 @@
 #define MONGREL_MATDIST_H
 
 #include <RcppEigen.h>
+#include <ZigguratMT.h>
 using namespace Rcpp;
 using Eigen::MatrixXd;
 using Eigen::VectorXd;
 using Eigen::Lower;
 using Eigen::Map;
 
+static Ziggurat::MT::ZigguratMT ziggmt;
+
+
 // fills passed dense objects with unit normal random variables
+// Uses RcppZiggurat for ~ 10x speed-up
 template <typename Derived>
-void fillUnitNormal(Eigen::DenseBase<Derived>& Z){
+inline void fillUnitNormal(Eigen::DenseBase<Derived>& Z){
   int m = Z.rows();
   int n = Z.cols();
-  NumericVector r(m*n);
-  r = rnorm(m*n, 0, 1); // using vectorization from Rcpp sugar
-  Map<VectorXd> rvec(as<Map<VectorXd> >(r));
-  Map<MatrixXd> rmat(rvec.data(), m, n);
-  Z = rmat;
+  for (int i=0; i<m; i++){
+    for (int j=0; j<n; j++)
+    Z(i,j) = ziggmt.norm();
+  }
 }
 
 
@@ -53,7 +57,7 @@ inline Eigen::MatrixXd rMatNormalCholesky(const Eigen::Ref<const Eigen::MatrixXd
   MatrixXd X(nrows, ncols);
   
   fillUnitNormal(Z);
-  X = M + LU*Z*LV.transpose();
+  X.noalias() =  M + LU*Z*LV.transpose();
   return X;
 }
 

@@ -1,8 +1,4 @@
-#include <MatrixAlgebra.h>
-#include <MaltipooCollapsed.h>
-#include <AdamOptim.h>
-#include <LaplaceApproximation.h>
-#include <AdamOptimPerturb.h> // optional not fully implemented yet (or helpful)
+#include <stray.h>
 // [[Rcpp::depends(RcppNumerical)]]
 // [[Rcpp::depends(RcppEigen)]]
 
@@ -42,7 +38,7 @@ using Eigen::VectorXd;
 //'   iteration number
 //' @param verbose_rate (ADAM) rate to print verbose stats to screen
 //' @param decomp_method decomposition of hessian for Laplace approximation
-//'   'eigen' (more stable, slower, default) or 'cholesky' (less stable, faster)
+//'   'eigen' (more stable-slightly, slower) or 'cholesky' (less stable, faster, default)
 //' @param eigvalthresh threshold for negative eigenvalues in 
 //'   decomposition of negative inverse hessian (should be <=0)
 //' @param no_error if true will throw hessian warning rather than error if 
@@ -81,11 +77,13 @@ using Eigen::VectorXd;
 //' @return List containing (all with respect to found optima)
 //' 1. LogLik - Log Likelihood of collapsed model (up to proportionality constant)
 //' 2. Gradient - (if \code{calcGradHess}=true)
-//' 3. Hessian - (if \code{calcGradHess}=true)
+//' 3. Hessian - (if \code{calcGradHess}=true) of the POSITIVE log posterior
 //' 4. Pars - Parameter value of eta 
 //' 5. Samples - (D-1) x N x n_samples array containing posterior samples of eta 
 //'   based on Laplace approximation (if n_samples>0)
 //' 6. VCScale - value of e^ell_i at optima
+//' 7. logInvNegHessDet - the log determinant of the covariacne of the Laplace 
+//'    approximation, useful for calculating marginal likelihood 
 //' @md 
 //' @export
 //' @name optimMaltipooCollapsed
@@ -112,10 +110,9 @@ List optimMaltipooCollapsed(const Eigen::ArrayXXd Y,
                int max_iter=10000,      
                bool verbose=false,      
                int verbose_rate=10,
-               String decomp_method="eigen",
+               String decomp_method="cholesky",
                double eigvalthresh=0, 
-               double jitter=0, 
-               bool calcPartialHess = false){  
+               double jitter=0){  
   int N = Y.cols();
   int D = Y.rows();
   MaltipooCollapsed cm(Y, upsilon, Theta, X, K, U);
@@ -124,9 +121,9 @@ List optimMaltipooCollapsed(const Eigen::ArrayXXd Y,
   pars.head(init.size()) = eta;
   pars.tail(ellinit.size()) = ellinit;
   double nllopt; // NEGATIVE LogLik at optim
-  List out(6);
+  List out(8);
   out.names() = CharacterVector::create("LogLik", "Gradient", "Hessian",
-            "Pars", "Samples", "VCScale");
+            "Pars", "Samples", "VCScale", "Timer", "logInvNegHessDet");
   
   // Pick optimizer (ADAM - without perturbation appears to be best)
   //   ADAM with perturbations not fully implemented
@@ -150,11 +147,7 @@ List optimMaltipooCollapsed(const Eigen::ArrayXXd Y,
     VectorXd grad(N*(D-1));
     if (verbose) Rcout << "Calculating Hessian" << std::endl;
     grad = cm.calcGrad(ell); // should have eta at optima already
-    if(calcPartialHess) {
-      hess = cm.calcPartialHess();
-    } else {
-      hess = cm.calcHess(); // should have eta at optima already
-    }
+    hess = -cm.calcHess(); // should have eta at optima already
     out[1] = grad;
     if ((N * (D-1)) > 44750){
       Rcpp::warning("Hessian is to large to return to R");
@@ -167,13 +160,16 @@ List optimMaltipooCollapsed(const Eigen::ArrayXXd Y,
       // Laplace Approximation
       int status;
       MatrixXd samp = MatrixXd::Zero(N*(D-1), n_samples);
+      double logInvNegHessDet;
       status = lapap::LaplaceApproximation(samp, eta, hess, 
                                            decomp_method, eigvalthresh, 
-                                           jitter);
+                                           jitter, 
+                                           logInvNegHessDet);
       if (status != 0){
         Rcpp::warning("Decomposition of Hessian Failed, returning MAP Estimate only");
         return out;
       }
+      out[7] = logInvNegHessDet;
       
       IntegerVector d = IntegerVector::create(D-1, N, n_samples);
       NumericVector samples = wrap(samp);
@@ -181,5 +177,6 @@ List optimMaltipooCollapsed(const Eigen::ArrayXXd Y,
       out[4] = samples;
     } // endif n_samples || calcGradHess
   } // endif n_samples || calcGradHess
+  out[6] = R_NilValue; // timer currently not implemented for maltipoo
   return out;
 }

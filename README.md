@@ -1,8 +1,7 @@
-<img align="left" width="160" height="160" src="inst/mongrel.png" />
+<img align="left" width="160" height="160" src="inst/stray.png" />
 
-# mongrel
-Multinomial Logistic-Normal Linear Regression Models <br/>
-(*A Little* __*tar*__*Ball of Joy*)
+# stray
+Multinomial Logistic-Normal Linear Regression Models
 
 ## Citation ##
 The paper is currently being written. Cite how you like till then :)
@@ -12,10 +11,10 @@ All source code freely availale under [GPL-3 License](https://www.gnu.org/licens
 
 ## Installation ##
 ``` r
-devtools::install_github("jsilve24/mongrel", build_vignettes=TRUE)
+devtools::install_github("jsilve24/stray", build_vignettes=TRUE)
 ```
 
 ## Bugs/Feature requests ##
-I appreciate bug reports and feature requests. Please post to the github issue tracker [here](https://github.com/jsilve24/mongrel/issues). 
+I appreciate bug reports and feature requests. Please post to the github issue tracker [here](https://github.com/jsilve24/stray/issues). 
 
 

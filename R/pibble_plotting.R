@@ -16,7 +16,7 @@
 #' @export
 #' @examples
 #' \dontrun{
-#' fit <- mongrel(Y, X)
+#' fit <- pibble(Y, X)
 #' plot(fit, par="Lambda")
 #' plot(fit, par="Sigma")
 #' plot(fit, par="Sigma", focus.coord=c("s1", "s2", "s3"))
@@ -117,7 +117,7 @@ plot_mf_sigma <- function(m, focus.coord=NULL, use_names=TRUE){
 #' @export
 #' @examples 
 #' \dontrun{
-#' fit <- mongrel(Y, X)
+#' fit <- pibble(Y, X)
 #' ppc(fit)
 #' }
 ppc.mongrelfit <- function(m, type="bounds", iter=NULL){

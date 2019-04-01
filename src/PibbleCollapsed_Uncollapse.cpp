@@ -1,4 +1,4 @@
-#include <mongrel.h>
+#include <stray.h>
 #include <Rcpp/Benchmark/Timer.h>
 #include <boost/random/mersenne_twister.hpp>
 
@@ -16,16 +16,16 @@ using Eigen::Lower;
 //Eta should be array with dim [D-1, N, iter]
 
 
-//' Uncollapse output from optimMongrelCollapsed to full Mongrel Model
+//' Uncollapse output from optimPibbleCollapsed to full pibble Model
 //' 
 //' See details for model. Should likely be called following 
-//' \code{\link{optimMongrelCollapsed}}. Notation: \code{N} is number of samples,
+//' \code{\link{optimPibbleCollapsed}}. Notation: \code{N} is number of samples,
 //' \code{D} is number of multinomial categories, \code{Q} is number
 //' of covariates, \code{iter} is the number of samples of \code{eta} (e.g., 
-//' the parameter \code{n_samples} in the function \code{optimMongrelCollapsed})
+//' the parameter \code{n_samples} in the function \code{optimPibbleCollapsed})
 //' 
 //' @param eta array of dimension (D-1) x N x iter (e.g., \code{Pars} output of 
-//'   function optimMongrelCollapsed)
+//'   function optimPibbleCollapsed)
 //' @param X matrix of covariates of dimension Q x N
 //' @param Theta matrix of prior mean of dimension (D-1) x Q
 //' @param Gamma covariance matrix of dimension Q x Q
@@ -34,7 +34,7 @@ using Eigen::Lower;
 //' @param ret_mean if true then uses posterior mean of Lambda and Sigma 
 //'   corresponding to each sample of eta rather than sampling from 
 //'   posterior of Lambda and Sigma (useful if Laplace approximation
-//'   is not used (or fails) in optimMongrelCollapsed)
+//'   is not used (or fails) in optimPibbleCollapsed)
 //' @param seed seed to use for random number generation 
 //' @param ncores (default:-1) number of cores to use, if ncores==-1 then 
 //' uses default from OpenMP typically to use all available cores. 
@@ -48,7 +48,7 @@ using Eigen::Lower;
 //' matrix, Gamma is a Q x Q covariance matrix, and Phi^{-1} is ALRInv_D 
 //' transform. 
 //' 
-//' The uncollapsed model (Full Mongrel model) is given by:
+//' The uncollapsed model (Full pibble model) is given by:
 //'    \deqn{Y_j ~ Multinomial(Pi_j)}
 //'    \deqn{Pi_j = Phi^{-1}(Eta_j)}
 //'    \deqn{Eta ~ MN_{D-1 x N}(Lambda*X, Sigma, I_N)}
@@ -63,19 +63,19 @@ using Eigen::Lower;
 //' 3. Timer
 //' @export
 //' @md
-//' @seealso \code{\link{optimMongrelCollapsed}}
+//' @seealso \code{\link{optimPibbleCollapsed}}
 //' @examples
-//' sim <- mongrel_sim()
+//' sim <- pibble_sim()
 //' 
 //' # Fit model for eta
-//' fit <- optimMongrelCollapsed(sim$Y, sim$upsilon, sim$Theta%*%sim$X, sim$K, 
-//'                              sim$A, random_mongrel_init(sim$Y))  
+//' fit <- optimPibbleCollapsed(sim$Y, sim$upsilon, sim$Theta%*%sim$X, sim$K, 
+//'                              sim$A, random_pibble_init(sim$Y))  
 //' 
 //' # Finally obtain samples from Lambda and Sigma
-//' fit2 <- uncollapseMongrelCollapsed(fit$Samples, sim$X, sim$Theta, 
+//' fit2 <- uncollapsePibble(fit$Samples, sim$X, sim$Theta, 
 //'                                    sim$Gamma, sim$Xi, sim$upsilon)
 // [[Rcpp::export]]
-List uncollapseMongrelCollapsed(const Eigen::Map<Eigen::VectorXd> eta, // note this is essentially eta
+List uncollapsePibble(const Eigen::Map<Eigen::VectorXd> eta, // note this is essentially eta
                     const Eigen::Map<Eigen::MatrixXd> X, 
                     const Eigen::Map<Eigen::MatrixXd> Theta,
                     const Eigen::Map<Eigen::MatrixXd> Gamma, 

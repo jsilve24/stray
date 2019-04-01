@@ -1,15 +1,15 @@
-context("test-mongrel.R")
+context("test-pibble.R")
 library(driver)
 set.seed(4)
 
 
-sim <- mongrel_sim(true_priors=TRUE)
+sim <- pibble_sim(true_priors=TRUE)
 
 
 test_that("optim and uncollapse correctnesss", {
  
-  init <- random_mongrel_init(sim$Y)
-  fit <- optimMongrelCollapsed(sim$Y, sim$upsilon, (sim$Theta%*%sim$X), sim$K, 
+  init <- random_pibble_init(sim$Y)
+  fit <- optimPibbleCollapsed(sim$Y, sim$upsilon, (sim$Theta%*%sim$X), sim$K, 
                                sim$A, init,
                                n_samples=3000,
                                calcGradHess = FALSE)
@@ -23,7 +23,7 @@ test_that("optim and uncollapse correctnesss", {
   #expect_true(sum(!((p0.25 <= Eta) & (p99.75 >= Eta))) < 0.2*N*(D-1))
   
   # Now check uncollapsing for Lambda
-  fit2 <- uncollapseMongrelCollapsed(fit$Samples, sim$X, sim$Theta, sim$Gamma, 
+  fit2 <- uncollapsePibble(fit$Samples, sim$X, sim$Theta, sim$Gamma, 
                                      sim$Xi, sim$upsilon, 2234)
   
   expect_true(mean(abs(apply(fit2$Lambda, c(1,2), mean) - sim$Phi)) < 0.5)
@@ -39,10 +39,10 @@ test_that("optim and uncollapse correctnesss", {
 
 
 test_that("optim sylvester gets same result", {
-  sim <- mongrel_sim(D=30, N=10, true_priors = TRUE)
-  init <- random_mongrel_init(sim$Y)
+  sim <- pibble_sim(D=30, N=10, true_priors = TRUE)
+  init <- random_pibble_init(sim$Y)
   start <- Sys.time()
-  fit <- optimMongrelCollapsed(sim$Y, sim$upsilon, (sim$Theta%*%sim$X), sim$K, 
+  fit <- optimPibbleCollapsed(sim$Y, sim$upsilon, (sim$Theta%*%sim$X), sim$K, 
                                sim$A, init,
                                n_samples=2000,
                                calcGradHess = FALSE, 
@@ -50,7 +50,7 @@ test_that("optim sylvester gets same result", {
   end <- Sys.time()
   plain <- end-start
   start <- Sys.time()
-  fitsylv <- optimMongrelCollapsed(sim$Y, sim$upsilon, (sim$Theta%*%sim$X), sim$K, 
+  fitsylv <- optimPibbleCollapsed(sim$Y, sim$upsilon, (sim$Theta%*%sim$X), sim$K, 
                                sim$A, init,
                                n_samples=2000,
                                calcGradHess = FALSE, 
@@ -65,8 +65,8 @@ test_that("optim sylvester gets same result", {
 })
 
 
-test_that("mongrel wrapper correctness", {
-  fit <- mongrel(sim$Y, sim$X, upsilon = sim$upsilon, Theta = sim$Theta, Xi=sim$Xi, 
+test_that("pibble wrapper correctness", {
+  fit <- pibble(sim$Y, sim$X, upsilon = sim$upsilon, Theta = sim$Theta, Xi=sim$Xi, 
                  Gamma=sim$Gamma, n_samples=3000)
   
   # Laplace approximation contains true value # given the true value
@@ -137,14 +137,14 @@ uncollapse_mean_only <- function(eta, X, upsilon, Theta, Xi, Gamma){
 
 
 test_that("uncollapse correctnesss against double programming", {
-  init <- random_mongrel_init(sim$Y)
-  fit <- optimMongrelCollapsed(sim$Y, sim$upsilon, (sim$Theta%*%sim$X), sim$K, 
+  init <- random_pibble_init(sim$Y)
+  fit <- optimPibbleCollapsed(sim$Y, sim$upsilon, (sim$Theta%*%sim$X), sim$K, 
                                sim$A, init,
                                n_samples=2000,
                                calcGradHess = FALSE)
   
   # Now check uncollapsing for Lambda
-  fit2 <- uncollapseMongrelCollapsed(fit$Samples, sim$X, sim$Theta, sim$Gamma, 
+  fit2 <- uncollapsePibble(fit$Samples, sim$X, sim$Theta, sim$Gamma, 
                                      sim$Xi, sim$upsilon, ret_mean = TRUE, 2234)
   
   dpres <- uncollapse_mean_only(fit$Samples, sim$X, sim$upsilon, sim$Theta, sim$Xi, 
@@ -156,14 +156,14 @@ test_that("uncollapse correctnesss against double programming", {
 
 
 test_that("eigen and cholesky get same result", {
-  sim <- mongrel_sim(true_priors=TRUE, N=2, D=4)
-  init <- random_mongrel_init(sim$Y)
-  fitc <- optimMongrelCollapsed(sim$Y, sim$upsilon, (sim$Theta%*%sim$X), sim$K, 
+  sim <- pibble_sim(true_priors=TRUE, N=2, D=4)
+  init <- random_pibble_init(sim$Y)
+  fitc <- optimPibbleCollapsed(sim$Y, sim$upsilon, (sim$Theta%*%sim$X), sim$K, 
                                sim$A, init,
                                n_samples=500000,
                                calcGradHess = FALSE, 
                                decomp="cholesky")
-  fite <- optimMongrelCollapsed(sim$Y, sim$upsilon, (sim$Theta%*%sim$X), sim$K, 
+  fite <- optimPibbleCollapsed(sim$Y, sim$upsilon, (sim$Theta%*%sim$X), sim$K, 
                                 sim$A, init,
                                 n_samples=500000,
                                 calcGradHess = FALSE, 
@@ -181,8 +181,8 @@ test_that("eigen and cholesky get same result", {
 })
 
 test_that("logInvNegHessDet correct", {
-  init <- random_mongrel_init(sim$Y)
-  fitc <- optimMongrelCollapsed(sim$Y, sim$upsilon, (sim$Theta%*%sim$X), sim$K, 
+  init <- random_pibble_init(sim$Y)
+  fitc <- optimPibbleCollapsed(sim$Y, sim$upsilon, (sim$Theta%*%sim$X), sim$K, 
                                 sim$A, init,
                                 n_samples=1,
                                 calcGradHess = TRUE, 
@@ -192,6 +192,6 @@ test_that("logInvNegHessDet correct", {
 
 
 test_that("max_iter leads to warning not error", {
-  expect_warning(mongrel(sim$Y, sim$X, max_iter=3))
+  expect_warning(pibble(sim$Y, sim$X, max_iter=3))
 })
 

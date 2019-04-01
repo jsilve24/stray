@@ -31,7 +31,7 @@
 #' @return object of class mongrelfit
 #'
 #' @export 
-#' @seealso \code{\link{mongrel}}
+#' @seealso \code{\link{pibble}}
 mongrelfit <- function(D, N, Q, coord_system, iter=NULL,  
                        alr_base=NULL, ilr_base=NULL,
                        Eta=NULL, Lambda=NULL, Sigma=NULL, Sigma_default=NULL, 

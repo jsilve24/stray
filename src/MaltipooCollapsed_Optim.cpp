@@ -1,4 +1,4 @@
-#include <mongrel.h>
+#include <stray.h>
 // [[Rcpp::depends(RcppNumerical)]]
 // [[Rcpp::depends(RcppEigen)]]
 
@@ -112,8 +112,7 @@ List optimMaltipooCollapsed(const Eigen::ArrayXXd Y,
                int verbose_rate=10,
                String decomp_method="cholesky",
                double eigvalthresh=0, 
-               double jitter=0, 
-               bool calcPartialHess = false){  
+               double jitter=0){  
   int N = Y.cols();
   int D = Y.rows();
   MaltipooCollapsed cm(Y, upsilon, Theta, X, K, U);
@@ -148,11 +147,7 @@ List optimMaltipooCollapsed(const Eigen::ArrayXXd Y,
     VectorXd grad(N*(D-1));
     if (verbose) Rcout << "Calculating Hessian" << std::endl;
     grad = cm.calcGrad(ell); // should have eta at optima already
-    if(calcPartialHess) {
-      hess = -cm.calcPartialHess();
-    } else {
-      hess = -cm.calcHess(); // should have eta at optima already
-    }
+    hess = -cm.calcHess(); // should have eta at optima already
     out[1] = grad;
     if ((N * (D-1)) > 44750){
       Rcpp::warning("Hessian is to large to return to R");

@@ -84,7 +84,7 @@ ppc <- function(m, ...){
 #' @name access_dims
 #' @examples 
 #' \dontrun{
-#' m <- mongrel(Y, X)
+#' m <- pibble(Y, X)
 #' ncategories(m)
 #' nsamples(m)
 #' ncovariates(m)

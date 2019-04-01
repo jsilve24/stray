@@ -41,7 +41,7 @@ This function provides a means of sampling from the posterior distribution of
 \code{Lambda} and \code{Sigma}.
 }
 \examples{
-sim <- mongrel_sim()
+sim <- pibble_sim()
 eta.hat <- t(driver::alr(t(sim$Y+0.65)))
 fit <- conjugateLinearModel(eta.hat, sim$X, sim$Theta, sim$Gamma, 
                             sim$Xi, sim$upsilon, n_samples=2000)

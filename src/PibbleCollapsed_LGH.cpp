@@ -1,4 +1,4 @@
-#include <MongrelCollapsed.h>
+#include <PibbleCollapsed.h>
 // [[Rcpp::depends(RcppNumerical)]] 
 // [[Rcpp::depends(RcppEigen)]]
 
@@ -9,25 +9,25 @@ using Eigen::ArrayXXd;
 using Eigen::VectorXd;
 
 
-//' Calculations for the Collapsed Mongrel Model
+//' Calculations for the Collapsed Pibble Model
 //' 
 //' Functions providing access to the Log Likelihood, Gradient, and Hessian 
-//' of the collapsed mongrel model. Note: These are convenience functions
-//' but are not as optimized as direct coding of the MongrelCollapsed 
-//' C++ class due to a lack of Memoization. By contrast function optimMongrelCollapsed 
+//' of the collapsed pibble model. Note: These are convenience functions
+//' but are not as optimized as direct coding of the PibbleCollapsed 
+//' C++ class due to a lack of Memoization. By contrast function optimPibbleCollapsed 
 //' is much more optimized and massively cuts down on repeated calculations. 
 //' A more efficient Rcpp module based implementation of these functions
-//' may following if the future. For model details see \code{\link{optimMongrelCollapsed}} 
+//' may following if the future. For model details see \code{\link{optimPibbleCollapsed}} 
 //' documentation
 //' 
-//' @inheritParams optimMongrelCollapsed
+//' @inheritParams optimPibbleCollapsed
 //' @param eta matrix (D-1)xN of parameter values at which to calculate quantities
 //' @param sylv (default:false) if true and if N < D-1 will use sylvester determinant
 //'   identity to speed computation
 //' @return see below
-//' * loglikMongrelCollapsed - double 
-//' * gradMongrelCollapsed - vector
-//' * hessMongrelCollapsed- matrix
+//' * loglikPibbleCollapsed - double 
+//' * gradPibbleCollapsed - vector
+//' * hessPibbleCollapsed- matrix
 //' @md
 //' @export
 //' @examples
@@ -58,52 +58,52 @@ using Eigen::VectorXd;
 //' ThetaX <- Theta%*%X
 //' 
 //' 
-//' loglikMongrelCollapsed(Y, upsilon, ThetaX, K, A, Eta)
-//' gradMongrelCollapsed(Y, upsilon, ThetaX, K, A, Eta)
-//' hessMongrelCollapsed(Y, upsilon, ThetaX, K, A, Eta)
+//' loglikPibbleCollapsed(Y, upsilon, ThetaX, K, A, Eta)
+//' gradPibbleCollapsed(Y, upsilon, ThetaX, K, A, Eta)
+//' hessPibbleCollapsed(Y, upsilon, ThetaX, K, A, Eta)
 // [[Rcpp::export]]
-double loglikMongrelCollapsed(const Eigen::ArrayXXd Y,
+double loglikPibbleCollapsed(const Eigen::ArrayXXd Y,
                   const double upsilon,
                   const Eigen::MatrixXd ThetaX,
                   const Eigen::MatrixXd K,
                   const Eigen::MatrixXd A,
                   Eigen::MatrixXd eta, 
                   bool sylv=false){
-  MongrelCollapsed cm(Y, upsilon, ThetaX, K, A, sylv);
+  PibbleCollapsed cm(Y, upsilon, ThetaX, K, A, sylv);
   Map<VectorXd> etavec(eta.data(), eta.size());
   cm.updateWithEtaLL(etavec);
   return cm.calcLogLik(etavec);
 }
 
 
-//' @rdname loglikMongrelCollapsed
+//' @rdname loglikPibbleCollapsed
 //' @export
 // [[Rcpp::export]]
-Eigen::VectorXd gradMongrelCollapsed(const Eigen::ArrayXXd Y,
+Eigen::VectorXd gradPibbleCollapsed(const Eigen::ArrayXXd Y,
                          const double upsilon,
                          const Eigen::MatrixXd ThetaX,
                          const Eigen::MatrixXd K,
                          const Eigen::MatrixXd A,
                          Eigen::MatrixXd eta, 
                          bool sylv=false){
-  MongrelCollapsed cm(Y, upsilon, ThetaX, K, A, sylv);
+  PibbleCollapsed cm(Y, upsilon, ThetaX, K, A, sylv);
   Map<VectorXd> etavec(eta.data(), eta.size());
   cm.updateWithEtaLL(etavec);
   cm.updateWithEtaGH();
   return cm.calcGrad();
 }
 
-//' @rdname loglikMongrelCollapsed
+//' @rdname loglikPibbleCollapsed
 //' @export
 // [[Rcpp::export]]
-Eigen::MatrixXd hessMongrelCollapsed(const Eigen::ArrayXXd Y,
+Eigen::MatrixXd hessPibbleCollapsed(const Eigen::ArrayXXd Y,
                          const double upsilon,
                          const Eigen::MatrixXd ThetaX,
                          const Eigen::MatrixXd K,
                          const Eigen::MatrixXd A,
                          Eigen::MatrixXd eta, 
                          bool sylv=false){
-  MongrelCollapsed cm(Y, upsilon, ThetaX, K, A, sylv);
+  PibbleCollapsed cm(Y, upsilon, ThetaX, K, A, sylv);
   Map<VectorXd> etavec(eta.data(), eta.size());
   cm.updateWithEtaLL(etavec);
   cm.updateWithEtaGH();
@@ -123,7 +123,7 @@ Eigen::VectorXd hessVectorProd(const Eigen::ArrayXXd Y,
                          Eigen::VectorXd v,
                          double r, 
                          bool sylv=false){
-  MongrelCollapsed cm(Y, upsilon, ThetaX, K, A, sylv);
+  PibbleCollapsed cm(Y, upsilon, ThetaX, K, A, sylv);
   Map<VectorXd> etavec(eta.data(), eta.size());
   return cm.calcHessVectorProd(etavec, v, r);
 }
@@ -145,7 +145,7 @@ Eigen::VectorXd lineSearch(const Eigen::ArrayXXd Y,
   // rho: the backtrack step between (0,1) usually 0.5
   // c: parameter between 0 and 1, usually 0.0001
   // calculate gradient at current eta
-  Eigen::VectorXd grad = gradMongrelCollapsed(Y, upsilon, ThetaX, K, A, eta);
+  Eigen::VectorXd grad = gradPibbleCollapsed(Y, upsilon, ThetaX, K, A, eta);
   // choose d
   Eigen::VectorXd d = Eigen::VectorXd::Zero(eta.size());
   // R indexing to C indexing?
@@ -155,16 +155,16 @@ Eigen::VectorXd lineSearch(const Eigen::ArrayXXd Y,
   }
   // how to set initial forward step size?
   double step = 100;
-  double f0 = loglikMongrelCollapsed(Y, upsilon, ThetaX, K, A, eta);
+  double f0 = loglikPibbleCollapsed(Y, upsilon, ThetaX, K, A, eta);
   // printf("Original likelihood: %f\n", f0);
   VectorXd new_eta = eta + step*d;
-  double f1 = loglikMongrelCollapsed(Y, upsilon, ThetaX, K, A, new_eta);
+  double f1 = loglikPibbleCollapsed(Y, upsilon, ThetaX, K, A, new_eta);
   // printf("New likelihood: %f\n", f1);
   // we want an increase in llik, hence the stopping condition
   while (f1 < f0 + c*step*grad.transpose()*d) {
     step = step*rho;
     new_eta = eta + step*d;
-    f1 = loglikMongrelCollapsed(Y, upsilon, ThetaX, K, A, new_eta);
+    f1 = loglikPibbleCollapsed(Y, upsilon, ThetaX, K, A, new_eta);
     // printf("New likelihood: %f\n", f1);
   }
   // terminates with an optimal step size

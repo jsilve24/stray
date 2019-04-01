@@ -1,5 +1,5 @@
 ---
-title: "Introduction to Mongrel"
+title: "Introduction to Stray"
 author: "Justin Silverman"
 date: "`r Sys.Date()`"
 output: 
@@ -21,16 +21,16 @@ knitr::opts_chunk$set(
 )
 ```
 
-# An introduction to *mongrel*
-*mongrel* is a loose accronym for **"(Bayesian) Multinomial Logistic-Normal Linear Model"**. 
+# An introduction to *stray*
+*stray* is a loose accronym for **"(Bayesian) Multinomial Logistic-Normal Linear Model"**. 
 It is a model that is closely related to the MALLARD framework for time-series 
 anaysis of sequence count data [@silverman2018]. In particular the development of 
-*mongrel* stems from the need for fast inference for time-invariant MALLARD models. 
-*mongrel* is very fast! It uses closed form solutions for model gradients and hessian written
+*stray* stems from the need for fast inference for time-invariant MALLARD models. 
+*stray* is very fast! It uses closed form solutions for model gradients and hessian written
 in C++ to preform [MAP estimation](https://en.wikipedia.org/wiki/Maximum_a_posteriori_estimation)
 in combination with parameter uncertainty estimation using a [Laplace Approximation](http://www.sumsar.net/blog/2013/11/easy-laplace-approximation/). 
 
-**So what is a *mongrel* model exactly?** First let me give the broad description
+**So what is a *stray* model exactly?** First let me give the broad description
 from 10,000ft up: Basically its a model for multinomial count
 data (e.g., each sample contains the counts of $D$ "types of things"). Importantly, 
 unlike the more common Poisson count models, the multinomial models a "competition to
@@ -57,7 +57,7 @@ and the number of different types of transcripts are counted. The important part
 is that sequencing only samples a small portion of the total genetic material 
 available and leads to similar competition to be counted. 
 
-## The *mongrel* model
+## The *pibble* model
 Let $Y$ denote an $D\times N$ matrix of counts. Let us denote the $j$-th 
 column of $Y$ as $Y_j$. Thus each "sample" in the dataset is a measurement
 of the relative amount of $D$ "types of things" (see above). Suppose we also 
@@ -65,7 +65,7 @@ have have covariate information in the form of a $Q\times N$ matrix $X$. Also
 let $n_j$ denote the total number of counts in sample $j$ 
 (i.e., $n_j=\sum_i Y_{ij}$). 
 
-The following is the mongrel model including likelihood and priors:
+The following is the pibble model including likelihood and priors:
 $$
 \begin{align}
 Y_j & \sim \text{Multinomial}\left(\pi_j, n_j\right)  \\
@@ -96,8 +96,8 @@ centered log-ratio transform or the identity transformation (e.g., modeling $\pi
 directly). 
 
 
-Before moving on, I would like to give **a more intuitive description of *mongrel***.
-Essentially the main modeling component of *mongrel* is the third equation above 
+Before moving on, I would like to give **a more intuitive description of *pibble***.
+Essentially the main modeling component of *pibble* is the third equation above 
 ($\eta_j \sim N(\Lambda X_j, \Sigma)$) which is just a multivariate linear model. 
 That is, $X$ are your covariates (which can be continuous, discrete, binary, etc...), 
 and $\Sigma$ is the covariance matrix for the regression residuals.  
@@ -112,7 +112,7 @@ Introduce microbiome data
 ```{r message=FALSE, warning=FALSE}
 library(MicrobeDS)
 library(phyloseq)
-library(mongrel)
+library(stray)
 library(dplyr)
 library(ape)
 
@@ -171,31 +171,31 @@ Gamma <- diag(nrow(X))
 image(Xi)
 ```
 
-The function `mongrel` is the main function in the *mongrel* package. It is 
+The function `pibble` is the main function in the *stray* package. It is 
 fairly flexible allowing sampling from the model posterior as well as prior. 
 Since we already have our priors we are going to investigate them to see what 
 they look like before fitting the data; we do this by simply leaving the 
-data out of the call to mongrel or by passing `Y=NULL`^[X however must be passed
+data out of the call to pibble or by passing `Y=NULL`^[X however must be passed
 if sampling $\eta$ from the prior is desired.]  
 
 ```{r}
-priors <- mongrel(NULL, X, upsilon, Theta, Gamma, Xi)  
+priors <- pibble(NULL, X, upsilon, Theta, Gamma, Xi)  
 priors
 ```
 
-Except for the main function `mongrel`, most functions in the *mongrel* package
+Except for the main function `pibble`, most functions in the *stray* package
 work with `mongrelfit` objects (essentially just a list with some extra features).
 The default print method provides a brief summary of the mongrelfit object and 
 adds a note reminding us that this was based on priors only (e.g., prior samples
 not posterior samples). 
 The default print method  also gives basic information regarding the dimensions of the 
 object and a note about the coordinate system that the object is currently represented in. The function 
-`mongrel` takes expects inputs and outputs in the "default" coordinate system;
+`pibble` takes expects inputs and outputs in the "default" coordinate system;
 this is simply the ALR coordinate system where the last category (`160` above) is taken as 
 reference. More specifically for a vector $x$ representing the proportions of 
 categories $\{1, \dots, D}$ we can write 
 $$x^* = \left( \log \frac{x_1}{x_D}, \dots, \log \frac{x_{D-1}}{x_D}\right).$$
-As mentioned above however, I have designed *mongrel* to work with many 
+As mentioned above however, I have designed *stray* to work with many 
 different coordinate systems including the ALR (with respect to any category), CLR, 
 ILR, or proportions. To help transform things between these coordinate systems
 I have written a series of transformation functions that transform any `mongrelfit` 
@@ -210,7 +210,7 @@ very large objects with many posterior samples, so it can take a little time to 
 Faster implementations of summary may be included as a future update if need arises]. 
 
 ```{r}
-priors <- mongrel_to_clr(priors)  
+priors <- to_clr(priors)  
 summary(priors, pars="Lambda")  
 ```
 
@@ -237,7 +237,7 @@ initial phylogenetic prior was pretty weird and implied much higher covariance
 for a few categories (taxa) and much lower covariance for others. For illustrative 
 purposes we are going to instead just specify a much simpler prior, a prior that 
 implies a particular type of independence between taxa and move on to fitting the model. 
-Also rather than refitting the model using the `mongrel` function, we will 
+Also rather than refitting the model using the `pibble` function, we will 
 demonstrate the use of the `refit` method which can be called to refit a 
 `mongrelfit` object, saving some typing and allowing us to simply add data to the 
 `priors` object.
@@ -255,7 +255,7 @@ names_categories(fit) <- tax
 fit 
 ```
 
-Note unlike the main *mongrel* function, the `refit` method can be called
+Note unlike the main *pibble* function, the `refit` method can be called
 on objects in any coordinate system and all transfrormations to and from the
 default coordinate system are handled internally^[That said, due to the need to transform
 back and forth from the default coordinate system, it is fastest to call refit on 
@@ -272,7 +272,7 @@ analysis with the Eigen decomposition I know its safe and chose the cholesky thi
 
 Also, if you want to sample from the prior of the fitted object (even though it 
 has data stored) you can do it by calling `sample_prior(fit)` and it returns
-the same object as if you had called `mongrel` with just the priors. 
+the same object as if you had called `pibble` with just the priors. 
 
 Before doing anything else lets look at the posterior predictive distribution
 to assess model fit. This can be accessed through the method `ppc`^[This can also 
@@ -296,7 +296,7 @@ level is. In fact, the model places most of its weight on the fact that
 these counts are zero (if you zoom in you will see the median value is at zero for 
 these). It just looks weird because zero is the lowest value you can have
 and so the plot looks skewed to higher values. While these plots can be helpful 
-*mongrel* also has a simpler function that summarizes the poterior predictive check. 
+*stray* also has a simpler function that summarizes the poterior predictive check. 
 
 ```{r}
 ppc_summary(fit)
@@ -359,7 +359,7 @@ tax_table(dat)[taxa_names(dat)[which(names_coords(fit) %in% focus)]][,c("Phylum"
 # More Technical Details 
 ## A few notes on model inference and parameter collapsing
 
-Along with some algorithmic speed-ups enabled by the C++ Eigen library *mongrel* uses conjugate priors for the regression component of the model allowing the last three lines of the model to be
+Along with some algorithmic speed-ups enabled by the C++ Eigen library *stray* uses conjugate priors for the regression component of the model allowing the last three lines of the model to be
 collapsed into 1 line. Afer this the last three lines of the model can be reexanded using fully conjugate sampling schemes
 that do not require optimization or MCMC (only matrix operations). 
 
@@ -373,7 +373,7 @@ Y_j & \sim \text{Multinomial}\left(\pi_j, n_j\right)  \\
 $$
 where $A=(I_N + X^T \Gamma, X)^{-1}$ and $T_{(D-1)\times N}$ refers to the Matrix T-distribution the $(D-1)\times N$ matrix $\eta$ with log density given by 
 $$\log T_{(D-1)\times N}(\eta | \upsilon, \Theta X, \Xi, A) \propto -\frac{\upsilon+N-D-2}{2}\log | I_{D-1}+\Xi^{-1}(\eta-\Theta X)A(\eta-\Theta X)^T |.$$
-Rather than using MCMC to sample $\eta$ mongrel uses MAP estimation (using a custom C++ Eigen based implmentation of the ADAM optimizer and closed form solutions for gradient and hessian of the collapsed model)^[Which we found preformed substantially better than L-BFGS, which we also tried.]. Additionally, *mongrel* allows quantification of uncertainty in MAP estimates using a Laplace approximation. We found that in practice this MAP based Laplace approximation produced 
+Rather than using MCMC to sample $\eta$ stray uses MAP estimation (using a custom C++ Eigen based implmentation of the ADAM optimizer and closed form solutions for gradient and hessian of the collapsed model)^[Which we found preformed substantially better than L-BFGS, which we also tried.]. Additionally, *stray* allows quantification of uncertainty in MAP estimates using a Laplace approximation. We found that in practice this MAP based Laplace approximation produced 
 comparable results to a full MCMC sampler but with tremendous improvements in compute time. 
 
 Once samples of $\eta$ are produced using the Laplace approximation closed form 
@@ -392,13 +392,13 @@ p(\Lambda | \Sigma, \eta, X) &= MN_{(D-1)\times Q}(\Lambda_N, \Sigma, \Gamma_N).
 \end{align}
 $$
 If Laplace approximation is too slow, unstable (see below) or simply not needed, 
-the default behavior of *mongrel* is to preform the above matrix calcualtions and
+the default behavior of *pibble* is to preform the above matrix calcualtions and
 produce a single point estimate of $\Sigma$ and $\Lambda$ based on the posterior
 means of $p(\Sigma | \eta, X)$ and $(\Lambda | \Sigma, \eta, X)$. 
 
 
 ## A Note on the Laplace Approximation and Hessian warnings/errors
-By default *mongrel* tries to approximate the posterior distribution using a Laplace approximation. This Laplace approximation is typically the most computationally intensive component of the entire model as it requires inversion of the hessian matrix calculated at the MAP estimate^[Acctually it doesn't require inversion exactly, for numerical stability it uses a decomposition to calculate the matrix square root and then backsubstitution to produce samples from the Laplace Approximation.]. Through many many hours of pain-staking matrix calculus I have calculated closed form solutions for the hessian of the collapsed model so this part is quite fast; it is the matrix inversion that is slow and by default uses an eigen decomposition for numerical accuracy and stability (although a somewhat less safe but much faster Cholesky LLT decomposition is also available). Despite these safety measures, for large datasets (e.g., where $N\times D > 50,000$) the (negative) inverse hessian may not be possitive definite. This can result from a few causes. 
+By default *stray* tries to approximate the posterior distribution using a Laplace approximation. This Laplace approximation is typically the most computationally intensive component of the entire model as it requires inversion of the hessian matrix calculated at the MAP estimate^[Acctually it doesn't require inversion exactly, for numerical stability it uses a decomposition to calculate the matrix square root and then backsubstitution to produce samples from the Laplace Approximation.]. Through many many hours of pain-staking matrix calculus I have calculated closed form solutions for the hessian of the collapsed model so this part is quite fast; it is the matrix inversion that is slow and by default uses an eigen decomposition for numerical accuracy and stability (although a somewhat less safe but much faster Cholesky LLT decomposition is also available). Despite these safety measures, for large datasets (e.g., where $N\times D > 50,000$) the (negative) inverse hessian may not be possitive definite. This can result from a few causes. 
 
 1. The optimization failed to find a local optima and instead terminated at a saddle point. 
 2. Numerical precision errors in combination with a poorly conditioned hessian at the MAP estiamte leads to a non-positive definite matrix. 

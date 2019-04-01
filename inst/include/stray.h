@@ -20,7 +20,6 @@
 #include "MultDirichletBoot.h"
 #include "SpecialFunctions.h"
 #include "LaplaceApproximation.h"
-#include "MongrelCollapsed.h"
+#include "PibbleCollapsed.h"
 #include "MaltipooCollapsed.h"
 #include "AdamOptim.h"
-#include "TruncatedLaplaceApproximation.h"

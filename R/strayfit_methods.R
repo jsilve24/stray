@@ -1,4 +1,4 @@
-#' Convert mongrel samples of Eta Lambda and Sigma to tidy format
+#' Convert pibble samples of Eta Lambda and Sigma to tidy format
 #' 
 #' Combines them all into a single tibble, see example for formatting and 
 #' column headers. Primarily designed to be used by 
@@ -14,8 +14,8 @@
 #' @export
 #' @return tibble
 #' @examples 
-#' sim <- mongrel_sim()
-#' fit <- mongrel(sim$Y, sim$X)
+#' sim <- pibble_sim()
+#' fit <- pibble(sim$Y, sim$X)
 #' fit_tidy <- mongrel_tidy_samples(fit, use_names=TRUE)
 #' head(fit_tidy)
 mongrel_tidy_samples<- function(m, use_names=FALSE, as_factor=FALSE){
@@ -77,7 +77,7 @@ summary_check_precomputed <- function(m, pars){
 #' @export
 #' @examples 
 #' \dontrun{
-#' fit <- mongrel(Y, X)
+#' fit <- pibble(Y, X)
 #' summary(fit, pars="Eta", median = median(val))
 #' 
 #' # Some later functions make use of precomputation
@@ -126,7 +126,7 @@ summary.mongrelfit <- function(object, pars=NULL, use_names=TRUE, as_factor=FALS
 #' @export
 #' @examples 
 #' \dontrun{
-#' fit <- mongrel(Y, X)
+#' fit <- pibble(Y, X)
 #' print(fit)
 #' }
 #' @seealso \code{\link{summary.mongrelfit}} summarizes posterior intervals 
@@ -174,14 +174,14 @@ print.mongrelfit <- function(x, summary=FALSE, ...){
 #' 
 #' @param object an object of class mongrelfit
 #' @param use_names if column and row names were passed for Y and X in 
-#' call to \code{\link{mongrel}}, should these names be applied to output 
+#' call to \code{\link{pibble}}, should these names be applied to output 
 #' array. 
 #' @return Array of dimension (D-1) x Q x iter
 #' 
 #' @export
 #' @examples 
 #' \dontrun{
-#' fit <- mongrel(Y, X)
+#' fit <- pibble(Y, X)
 #' coef(fit)
 #' }
 coef.mongrelfit <- function(object, use_names=TRUE){
@@ -199,7 +199,7 @@ coef.mongrelfit <- function(object, use_names=TRUE){
 #' @export
 #' @examples 
 #' \dontrun{
-#' fit <- mongrel(Y, X)
+#' fit <- pibble(Y, X)
 #' as.list(fit)
 #' }
 as.list.mongrelfit <- function(x,...){
@@ -233,15 +233,15 @@ as.list.mongrelfit <- function(x,...){
 #' @export
 #' @importFrom stats median predict runif
 #' @examples 
-#' sim <- mongrel_sim()
-#' fit <- mongrel(sim$Y, sim$X)
+#' sim <- pibble_sim()
+#' fit <- pibble(sim$Y, sim$X)
 #' predict(fit)
 predict.mongrelfit <- function(object, newdata=NULL, response="LambdaX", size=NULL, 
                                use_names=TRUE, summary=FALSE, iter=NULL, ...){
   
   l <- store_coord(object)
   if (!(object$coord_system %in% c("alr", "ilr"))){
-    object <- mongrel_to_alr(object, ncategories(object))
+    object <- to_alr(object, ncategories(object))
     transformed <- TRUE
   } else {
     transformed <- FALSE
@@ -340,7 +340,7 @@ predict.mongrelfit <- function(object, newdata=NULL, response="LambdaX", size=NU
   if (is.null(object$Eta)) stop("mongrelfit object does not contain samples of Eta")
   
   com <- names(object)[!(names(object) %in% c("Lambda", "Sigma"))] # to save computation
-  Pi <- mongrel_to_proportions(object[com])$Eta
+  Pi <- to_proportions(object[com])$Eta
   Ypred <- array(0, dim=c(object$D, nnew, iter))
   for (i in 1:iter){
     for (j in 1:nnew){
@@ -464,9 +464,9 @@ names_coords.mongrelfit <- function(m){
 #' header in this library - see MatDist.h).  
 #' @examples 
 #' # Sample prior of already fitted  mongrelfit object
-#' sim <- mongrel_sim()
+#' sim <- pibble_sim()
 #' attach(sim)
-#' fit <- mongrel(Y, X)
+#' fit <- pibble(Y, X)
 #' sample_prior(fit)
 #' 
 #' # Sample prior as part of model fitting
@@ -482,7 +482,7 @@ sample_prior.mongrelfit <- function(m, n_samples=2000,
   
   # Convert to default ALR for computation
   l <- store_coord(m)
-  m <- mongrel_to_alr(m, m$D)
+  m <- to_alr(m, m$D)
   
   # Sample Priors - Sigma
   USigmaInv <- rWishart(n_samples, m$upsilon, solve(m$Xi))

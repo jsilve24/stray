@@ -28,7 +28,7 @@ using Eigen::Ref;
  *  Where A = (I_N + X*Gamma*X')^{-1}, K^{-1} =Xi is a D-1xD-1 covariance 
  *  matrix, and Gamma is a Q x Q covariance matrix
  */
-class MongrelCollapsed : public mongrel::MongrelModel {
+class PibbleCollapsed : public mongrel::MongrelModel {
   private:
     const ArrayXXd Y;
     const double upsilon;
@@ -57,7 +57,7 @@ class MongrelCollapsed : public mongrel::MongrelModel {
     
     
   public:
-    MongrelCollapsed(const ArrayXXd Y_,          // constructor
+    PibbleCollapsed(const ArrayXXd Y_,          // constructor
                         const double upsilon_,
                         const MatrixXd ThetaX_,
                         const MatrixXd K_,
@@ -71,7 +71,7 @@ class MongrelCollapsed : public mongrel::MongrelModel {
       delta = 0.5*(upsilon + N + D - 2.0);
       this->sylv = sylv;
     }
-    ~MongrelCollapsed(){}                      // destructor
+    ~PibbleCollapsed(){}                      // destructor
     
     // Update with Eta when it comes in as a vector
     void updateWithEtaLL(const Ref<const VectorXd>& etavec){
@@ -191,40 +191,6 @@ class MongrelCollapsed : public mongrel::MongrelModel {
       }
       // Turn back on sylv option if it was wanted:
       this->sylv = tmp_sylv;
-      return H;
-    }
-
-    // should return blocks of size D-1 x D-1 stacked in a N(D-1) x D-1 matrix
-    MatrixXd calcPartialHess(){
-      if (sylv) Rcpp::stop("Partial Hessian not Updated to Take advantage of Sylv option");
-      MatrixXd H = ArrayXXd::Zero(N*(D-1), D-1);
-      VectorXd gamma = A.diagonal();
-      VectorXd pC(D-1);
-      MatrixXd L(D-1, D-1);
-      Eigen::Matrix<double, 1, 1> s;
-      Eigen::Matrix<double, 1, 1> one;
-      double pR;
-      one << 1.0;
-      double pdelta = upsilon + D -1.0;
-      
-      // for multivariate ts
-      for (int j=0; j<N; j++){
-        s.noalias() = one+gamma(j)*E.col(j).transpose()*K*E.col(j);
-        pC.noalias() = K*E.col(j);
-        pR = gamma(j)/s.value();
-        L.noalias() = pow(pR, 2) * pC * pC.transpose();
-        H.block(j*(D-1), 0, D-1, D-1).noalias() += -pdelta *pR*K + pdelta*2.0*L;
-      }
-      
-      // For Multinomial only
-      MatrixXd W(D-1, D-1);
-      VectorXd rhoseg(D-1);
-      for (int j=0; j<N; j++){
-        rhoseg = rho.segment(j*(D-1), D-1); // rho calculated in updateWithEtaGH()
-        W.noalias() = rhoseg*rhoseg.transpose();
-        W.diagonal() -= rhoseg;
-        H.block(j*(D-1), 0, D-1, D-1).noalias() += n(j)*W;
-      }
       return H;
     }
     

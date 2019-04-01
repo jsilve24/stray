@@ -1,4 +1,4 @@
-#' Provide random initialization for mongrel model 
+#' Provide random initialization for pibble model 
 #' 
 #' Randomly initializes based on ALR transform of counts
 #' plus random pseudocounts uniformily distributed between 
@@ -15,8 +15,8 @@
 #'
 #' @examples
 #' Y <- matrix(sample(1:100, 100), 10, 10)
-#' random_mongrel_init(Y)
-random_mongrel_init <- function(Y){
+#' random_pibble_init(Y)
+random_pibble_init <- function(Y){
   N <- ncol(Y)
   D <- nrow(Y)
   t(driver::alr(t(Y)+runif(N*D)))

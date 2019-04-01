@@ -1,38 +1,38 @@
-#' Transform Fit Mongrel Parameters to other representations
+#' Transform Fit Stray Parameters to other representations
 #' 
 #' These are a collection of convenience functions for transforming
-#' mongrel fit objects to a number of different representations including
+#' stray fit objects to a number of different representations including
 #' ILR bases, CLR coordinates, ALR coordinates, and proportions. 
 #'
-#' @param m object of class mongrelfit (e.g., output of \code{\link{mongrel}})
+#' @param m object of class mongrelfit (e.g., output of \code{\link{pibble}})
 #' @param d (integer) multinomial category to take as new alr reference
 #' @param V (matrix) contrast matrix for ILR basis to transform into to (defaults to 
 #'   \code{driver::create_default_ilr_base(D)})
 #'
 #' @details Note: that there is a degeneracy of representations for a covariance 
 #' matrix represented in terms of proportions. As such the function 
-#' \code{mongrel_to_proportions} does not attempt to transform parameters Sigma
+#' \code{to_proportions} does not attempt to transform parameters Sigma
 #' or prior Xi and instead just removes them from the mongrelfit object returned. 
 #' 
 #' @return mongrelfit object
-#' @name mongrel_transforms
+#' @name stray_transforms
 #' @import driver 
 #' @examples
 #' \dontrun{
-#' m <- mongrel(Y, X)
-#' m.prop <- mongrel_to_proportions(m)
+#' m <- pibble(Y, X)
+#' m.prop <- to_proportions(m)
 #' # convert back to default coordinates (alr with D-th part as reference)
-#' m <- mongrel_to_alr(m.prop, ncategories(m))
+#' m <- to_alr(m.prop, ncategories(m))
 #' V <- driver::create_default_ilr_base(ncategories(m))
-#' m.ilr <- mongrel_to_ilr(m, V)
-#' m.clr <- mongrel_to_clr(m)
+#' m.ilr <- to_ilr(m, V)
+#' m.clr <- to_clr(m)
 #' }
 NULL
 
 
-#' @rdname mongrel_transforms
+#' @rdname stray_transforms
 #' @export
-mongrel_to_proportions <- function(m){
+to_proportions <- function(m){
   if (m$coord_system == "alr"){
     if (!is.null(m$Eta)) m$Eta <- alrInv_array(m$Eta, m$alr_base, 1)
     if (!is.null(m$Lambda)) m$Lambda <- alrInv_array(m$Lambda, m$alr_base, 1)
@@ -102,13 +102,13 @@ mongrel_to_proportions <- function(m){
 
 
 
-#' @rdname mongrel_transforms
+#' @rdname stray_transforms
 #' @export
-mongrel_to_alr <- function(m, d){
+to_alr <- function(m, d){
   if (m$coord_system=="alr"){
     if (m$alr_base == d) return(m)
   }
-  m <- mongrel_to_proportions(m)
+  m <- to_proportions(m)
   
   if (!is.null(m$Eta)) m$Eta <- alr_array(m$Eta, d, 1)
   if (!is.null(m$Lambda)) m$Lambda <- alr_array(m$Lambda, d, 1)
@@ -131,14 +131,14 @@ mongrel_to_alr <- function(m, d){
   return(m)
 }
 
-#' @rdname mongrel_transforms
+#' @rdname stray_transforms
 #' @export
-mongrel_to_ilr <- function(m, V=NULL){
+to_ilr <- function(m, V=NULL){
   if (m$coord_system=="ilr"){
     if (all.equal(m$ilr_base, V)) return(m)
   }
   if (is.null(V)) V <- driver::create_default_ilr_base(m$D)
-  m <- mongrel_to_proportions(m)
+  m <- to_proportions(m)
   
   if (!is.null(m$Eta)) m$Eta <- ilr_array(m$Eta, V, 1)
   if (!is.null(m$Lambda)) m$Lambda <- ilr_array(m$Lambda, V, 1)
@@ -161,11 +161,11 @@ mongrel_to_ilr <- function(m, V=NULL){
   return(m)
 }
 
-#' @rdname mongrel_transforms
+#' @rdname stray_transforms
 #' @export
-mongrel_to_clr <- function(m){
+to_clr <- function(m){
   if (m$coord_system=="clr") return(m)
-  m <- mongrel_to_proportions(m)
+  m <- to_proportions(m)
 
   if (!is.null(m$Eta)) m$Eta <- clr_array(m$Eta, 1)
   if (!is.null(m$Lambda)) m$Lambda <- clr_array(m$Lambda, 1)
@@ -218,9 +218,9 @@ store_coord <- function(m){
 #' @rdname store_coord
 #' @export
 reapply_coord <- function(m, l){
-  if (l$coord_system == "proportions") return(mongrel_to_proportions(m))
-  if (l$coord_system == "clr") return(mongrel_to_clr(m))
-  if (l$coord_system == "alr") return(mongrel_to_alr(m, l$alr_base))
-  if (l$coord_system == "ilr") return(mongrel_to_ilr(m, l$ilr_base))
+  if (l$coord_system == "proportions") return(to_proportions(m))
+  if (l$coord_system == "clr") return(to_clr(m))
+  if (l$coord_system == "alr") return(to_alr(m, l$alr_base))
+  if (l$coord_system == "ilr") return(to_ilr(m, l$ilr_base))
   stop("not a recognized coordinate system")
 }

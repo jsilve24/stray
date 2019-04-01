@@ -1,14 +1,14 @@
-#' Interface to fit mongrel models 
+#' Interface to fit pibble models 
 #' 
 #' This function is largely a more user friendly wrapper around 
-#' \code{\link{optimMongrelCollapsed}} and 
-#' \code{\link{uncollapseMongrelCollapsed}}. 
+#' \code{\link{optimPibbleCollapsed}} and 
+#' \code{\link{uncollapsePibble}}. 
 #' See details for model specification. 
 #'  Notation: \code{N} is number of samples,
 #'  \code{D} is number of multinomial categories, \code{Q} is number
 #'  of covariates, \code{iter} is the number of samples of \code{eta} (e.g.,
 #'  the parameter \code{n_samples} in the function 
-#'  \code{\link{optimMongrelCollapsed}})
+#'  \code{\link{optimPibbleCollapsed}})
 #' @param Y D x N matrix of counts (if NULL uses priors only)
 #' @param X Q x N matrix of covariates (design matrix) (if NULL uses priors only, must
 #' be present to sample Eta)
@@ -24,8 +24,8 @@
 #' @param init (D-1) x Q initialization for Eta for optimization
 #' @param pars character vector of posterior parameters to return
 #' @param m object of class mongrelfit 
-#' @param ... arguments passed to \code{\link{optimMongrelCollapsed}} and 
-#'   \code{\link{uncollapseMongrelCollapsed}}
+#' @param ... arguments passed to \code{\link{optimPibbleCollapsed}} and 
+#'   \code{\link{uncollapsePibble}}
 #' 
 #' @details the full model is given by:
 #'    \deqn{Y_j ~ Multinomial(Pi_j)} 
@@ -37,14 +37,14 @@
 #'  covariance matrix, Gamma is a Q x Q covariance matrix, and Phi^{-1} is 
 #'  ALRInv_D transform. 
 #'  
-#'  Default behavior is to use MAP estimate for uncollaping collapsed mongrel 
+#'  Default behavior is to use MAP estimate for uncollaping the LTP 
 #'  model if laplace approximation is not preformed. 
 #' @return an object of class mongrelfit
 #' @md
-#' @name mongrel_fit
+#' @name pibble_fit
 #' @examples 
-#' sim <- mongrel_sim()
-#' fit <- mongrel(sim$Y, sim$X)
+#' sim <- pibble_sim()
+#' fit <- pibble(sim$Y, sim$X)
 #' @seealso \code{\link{mongrel_transforms}} provide convenience methods for 
 #'  transforming the representation of mongrelfit objects (e.g., conversion to 
 #'  proportions, alr, clr, or ilr coordinates.)
@@ -66,9 +66,9 @@
 #' and \code{\link[=ppc.mongrelfit]{ppc}} (posterior predictive checks)
 NULL
 
-#' @rdname mongrel_fit
+#' @rdname pibble_fit
 #' @export
-mongrel <- function(Y=NULL, X=NULL, upsilon=NULL, Theta=NULL, Gamma=NULL, Xi=NULL,
+pibble <- function(Y=NULL, X=NULL, upsilon=NULL, Theta=NULL, Gamma=NULL, Xi=NULL,
                     init=NULL, 
                     pars=c("Eta", "Lambda", "Sigma"),
                     ...){
@@ -119,7 +119,7 @@ mongrel <- function(Y=NULL, X=NULL, upsilon=NULL, Theta=NULL, Gamma=NULL, Xi=NUL
     return(out)
   } else {
     if (is.null(X)) stop("X must be given to fit model")
-    if(is.null(init)) init <- random_mongrel_init(Y)   # initialize init 
+    if(is.null(init)) init <- random_pibble_init(Y)   # initialize init 
   }
 
 
@@ -138,25 +138,22 @@ mongrel <- function(Y=NULL, X=NULL, upsilon=NULL, Theta=NULL, Gamma=NULL, Xi=NUL
   decomp_method <- args_null("decomp_method", args, "cholesky")
   eigvalthresh <- args_null("eigvalthresh", args, 0)
   jitter <- args_null("jitter", args, 0)
-  calcPartialHess <- args_null("calcPartialHess", args, FALSE)
   multDirichletBoot <- args_null("multDirichletBoot", args, -1.0)
   optim_method <- args_null("optim_method", args, "adam")
   useSylv <- args_null("useSylv", args, TRUE)
   ncores <- args_null("ncores", args, -1)
   
-  
-  if (calcPartialHess) warning("Cannot recoomend calcPartialHess at this time.")
-  
+
   ## precomputation ## 
   K <- solve(Xi)
   A <- solve(diag(N) + t(X) %*% Gamma %*% X)
 
   ## fit collapsed model ##
-  fitc <- optimMongrelCollapsed(Y, upsilon, Theta%*%X, K, A, init, n_samples, 
+  fitc <- optimPibbleCollapsed(Y, upsilon, Theta%*%X, K, A, init, n_samples, 
                                 calcGradHess, b1, b2, step_size, epsilon, eps_f, 
                                 eps_g, max_iter, verbose, verbose_rate, 
                                 decomp_method, optim_method, eigvalthresh, 
-                                jitter, calcPartialHess, multDirichletBoot, 
+                                jitter, multDirichletBoot, 
                                 useSylv, ncores)
   timerc <- parse_timer_seconds(fitc$Timer)
   
@@ -183,7 +180,7 @@ mongrel <- function(Y=NULL, X=NULL, upsilon=NULL, Theta=NULL, Gamma=NULL, Xi=NUL
   
   seed <- args_null("seed", args, sample(1:2^15, 1))
   ## uncollapse collapsed model ##
-  fitu <- uncollapseMongrelCollapsed(fitc$Samples, X, Theta, Gamma, Xi, upsilon, 
+  fitu <- uncollapsePibble(fitc$Samples, X, Theta, Gamma, Xi, upsilon, 
                                      ret_mean=ret_mean, ncores=ncores, seed=seed)
   timeru <- parse_timer_seconds(fitu$Timer)
   
@@ -240,25 +237,25 @@ mongrel <- function(Y=NULL, X=NULL, upsilon=NULL, Theta=NULL, Gamma=NULL, Xi=NUL
   return(out)
 }
 
-#' @rdname mongrel_fit
+#' @rdname pibble_fit
 #' @export
 refit.mongrelfit <- function(m, pars=c("Eta", "Lambda", "Sigma"), ...){
   # Store coordinates and tranfsorm to cannonical representation
   l <- store_coord(m)
-  m <- mongrel_to_alr(m, m$D)
+  m <- to_alr(m, m$D)
   
-  # Concatenate parameters to pass to mongrel function
+  # Concatenate parameters to pass to pibble function
   argl <- list(...)
   argl$pars <- pars
   ml <- as.list(m)
   argl <- c(ml, argl)
   
   # Need to handle iter as part of m but no n_samples passed
-  # in this situation should pull iter from m and pass as n_samples to mongrel 
+  # in this situation should pull iter from m and pass as n_samples to pibble 
   if (is.null(argl[["n_samples"]]) & !is.null(m$iter)) argl[["n_samples"]] <- m$iter 
   
-  # pass to mongrel function
-  m <- do.call(mongrel, argl)
+  # pass to pibble function
+  m <- do.call(pibble, argl)
   
   # Reapply original coordinates
   m <- reapply_coord(m, l)

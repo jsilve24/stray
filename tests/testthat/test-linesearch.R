@@ -3,7 +3,7 @@ context("test-linesearch")
 test_that("linesearch terminates with nonridiculous output", {
   N <- 20
   D <- 20
-  sim <- mongrel_sim(D=D, N=N, true_priors=FALSE)
+  sim <- pibble_sim(D=D, N=N, true_priors=FALSE)
   Z <- runif(N*(D-1))
   ThetaX <- sim$Theta%*%sim$X
   element <- 1

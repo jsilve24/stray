@@ -1,4 +1,4 @@
-#include <mongrel.h>
+#include <stray.h>
 #include <Rcpp/Benchmark/Timer.h>
 
 // [[Rcpp::depends(RcppNumerical)]]
@@ -12,10 +12,10 @@ using Eigen::MatrixXd;
 using Eigen::ArrayXXd;
 using Eigen::VectorXd;
 
-//' Function to Optimize the Collapsed Mongrel Model
+//' Function to Optimize the Collapsed Pibble Model
 //' 
 //' See details for model. Should likely be followed by function 
-//' \code{\link{uncollapseMongrelCollapsed}}. Notation: \code{N} is number of samples,
+//' \code{\link{uncollapsePibble}}. Notation: \code{N} is number of samples,
 //' \code{D} is number of multinomial categories, and \code{Q} is number
 //' of covariates. 
 //' 
@@ -49,8 +49,6 @@ using Eigen::VectorXd;
 //'   not positive definite. 
 //' @param jitter (default: 0) if >=0 then adds that factor to diagonal of Hessian 
 //' before decomposition (to improve matrix conditioning)
-//' @param calcPartialHess if true only calculates hessian of multinomial 
-//'   much more computationaly and memory efficient but it is an approximation. 
 //' @param multDirichletBoot if >0 (overrides laplace approximation) and samples
 //'  eta efficiently at MAP estimate from pseudo Multinomial-Dirichlet posterior.
 //' @param useSylv (default: true) if N<D-1 uses Sylvester Determinant Identity
@@ -98,18 +96,18 @@ using Eigen::VectorXd;
 //'    approximation, useful for calculating marginal likelihood 
 //' @md 
 //' @export
-//' @name optimMongrelCollapsed
+//' @name optimPibbleCollapsed
 //' @references S. Ruder (2016) \emph{An overview of gradient descent 
 //' optimization algorithms}. arXiv 1609.04747
-//' @seealso \code{\link{uncollapseMongrelCollapsed}}
+//' @seealso \code{\link{uncollapsePibble}}
 //' @examples
-//' sim <- mongrel_sim()
+//' sim <- pibble_sim()
 //' 
 //' # Fit model for eta
-//' fit <- optimMongrelCollapsed(sim$Y, sim$upsilon, sim$Theta%*%sim$X, sim$K, 
-//'                              sim$A, random_mongrel_init(sim$Y))  
+//' fit <- optimPibbleCollapsed(sim$Y, sim$upsilon, sim$Theta%*%sim$X, sim$K, 
+//'                              sim$A, random_pibble_init(sim$Y))  
 // [[Rcpp::export]]
-List optimMongrelCollapsed(const Eigen::ArrayXXd Y, 
+List optimPibbleCollapsed(const Eigen::ArrayXXd Y, 
                const double upsilon, 
                const Eigen::MatrixXd ThetaX, 
                const Eigen::MatrixXd K, 
@@ -130,7 +128,6 @@ List optimMongrelCollapsed(const Eigen::ArrayXXd Y,
                String optim_method="adam",
                double eigvalthresh=0, 
                double jitter=0,
-               bool calcPartialHess = false, 
                double multDirichletBoot = -1.0, 
                bool useSylv = true, 
                int ncores=-1){  
@@ -140,7 +137,7 @@ List optimMongrelCollapsed(const Eigen::ArrayXXd Y,
   timer.step("Overall_start");
   int N = Y.cols();
   int D = Y.rows();
-  MongrelCollapsed cm(Y, upsilon, ThetaX, K, A, useSylv);
+  PibbleCollapsed cm(Y, upsilon, ThetaX, K, A, useSylv);
   Map<VectorXd> eta(init.data(), init.size()); // will rewrite by optim
   double nllopt; // NEGATIVE LogLik at optim
   List out(7);
@@ -194,16 +191,10 @@ List optimMongrelCollapsed(const Eigen::ArrayXXd Y,
       return out;
     }
     // "Multinomial-Dirchlet" option 
-    
-    if(calcPartialHess) {
-      if (verbose) Rcout << "Calculating Partial Hessian" << std::endl;
-      hess = -cm.calcPartialHess();
-    } else {
-      if (verbose) Rcout << "Calculating Hessian" << std::endl;
-      timer.step("HessianCalculation_start");
-      hess = -cm.calcHess(); // should have eta at optima already
-      timer.step("HessianCalculation_Stop");
-    }
+    if (verbose) Rcout << "Calculating Hessian" << std::endl;
+    timer.step("HessianCalculation_start");
+    hess = -cm.calcHess(); // should have eta at optima already
+    timer.step("HessianCalculation_Stop");
     out[1] = grad;
     if ((N * (D-1)) > 44750){
       Rcpp::warning("Hessian is to large to return to R");

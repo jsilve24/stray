@@ -1,4 +1,4 @@
-#' Simulate simple mongrel dataset and priors (for testing)
+#' Simulate simple pibble dataset and priors (for testing)
 #' 
 #' @param D number of multinomial categories
 #' @param N number of samples
@@ -11,8 +11,8 @@
 #' @importFrom driver alrInv
 #' @importFrom stats rnorm rmultinom
 #' @examples 
-#' sim <- mongrel_sim()
-mongrel_sim <- function(D=10, N=30, Q=2, use_names=TRUE, true_priors=FALSE){
+#' sim <- pibble_sim()
+pibble_sim <- function(D=10, N=30, Q=2, use_names=TRUE, true_priors=FALSE){
   
   # Simulate Data
   Sigma <- diag(sample(1:8, D-1, replace=TRUE))

@@ -4,7 +4,7 @@
 Multinomial Logistic-Normal Linear Regression Models
 
 ## Citation ##
-The paper is currently being written. Cite how you like till then :)
+Silverman, JD, Roche, K, Holmes, ZC, David, LA, and Mukherjee, S. Bayesian Multinomial Logistic Normal Models through Marginally Latent Matrix-T Processes. 2019, arXiv e-prints, arXiv:1903.11695
 
 ## License ##
 All source code freely availale under [GPL-3 License](https://www.gnu.org/licenses/gpl-3.0.en.html). 

@@ -1,0 +1,16 @@
+citHeader("To cite stray in publications use:")
+
+citEntry(
+  entry = "article",
+  title = "Bayesian Multinomial Logistic Normal Models through Marginally Latent Matrix-T Processes",
+  author = c("Justin D Silverman",
+  "Kim Roche",
+  "Zachary C Holmes",
+  "Lawrence A David",
+  "Sayan Mukherjee"),
+  year = 2019,
+  journal = "arXiv e-prints",
+  url = "https://arxiv.org/abs/1903.11695",
+
+  textVersion = "Silverman, JD, Roche, K, Holmes, ZC, David, LA, and Mukherjee, S. Bayesian Multinomial Logistic Normal Models through Marginally Latent Matrix-T Processes. 2019, arXiv e-prints, arXiv:1903.11695"
+)

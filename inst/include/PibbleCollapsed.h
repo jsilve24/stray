@@ -4,7 +4,7 @@
 #include <MatrixAlgebra.h>
 #include <MongrelModelClass.h>
 
-#ifdef MONGREL_USE_MKL
+#ifdef STRAY_USE_MKL
  #include <mkl.h>
 #endif 
 

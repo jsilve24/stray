@@ -10,6 +10,6 @@ PKG_LIBS = $(SHLIB_OPENMP_CXXFLAGS)
 
 ## For MKL - make sure you are using icc compiler in ~.R/Makevars 
 # Using GCC -- PREFERRED for MKL
-#PKG_CPPFLAGS =  -L/opt/intel/compilers_and_libraries_2019.1.144/mac/compiler/lib -m64 -I../inst/include/ -DMONGREL_USE_MKL
+#PKG_CPPFLAGS =  -L/opt/intel/compilers_and_libraries_2019.1.144/mac/compiler/lib -m64 -I../inst/include/ -DSTRAY_USE_MKL
 #PKG_CXXFLAGS = -I/opt/intel/compilers_and_libraries_2019.1.144/mac/mkl/include -w
 #PKG_LIBS = -L/opt/intel/compilers_and_libraries_2019.1.144/mac/mkl/lib -Wl,-rpath,/opt/intel/compilers_and_libraries_2019.1.144/mac/mkl/lib -lmkl_rt -lpthread -lm -ldl 

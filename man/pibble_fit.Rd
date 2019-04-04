@@ -61,8 +61,7 @@ the full model is given by:
 \deqn{Eta ~ MN_{D-1 x N}(Lambda*X, Sigma, I_N)}
 \deqn{Lambda ~ MN_{D-1 x Q}(Theta, Sigma, Gamma)}
 \deqn{Sigma ~ InvWish(upsilon, Xi)}
-Where A = (I_N + X * Gamma * X')^{-1}, K^{-1} = Xi is a (D-1)x(D-1)
-covariance matrix, Gamma is a Q x Q covariance matrix, and Phi^{-1} is
+Where Gamma is a Q x Q covariance matrix, and Phi^{-1} is
 ALRInv_D transform.
 
 Default behavior is to use MAP estimate for uncollaping the LTP
@@ -71,6 +70,11 @@ model if laplace approximation is not preformed.
 \examples{
 sim <- pibble_sim()
 fit <- pibble(sim$Y, sim$X)
+}
+\references{
+JD Silverman K Roche, ZC Holmes, LA David, S Mukherjee. 
+  Bayesian Multinomial Logistic Normal Models through Marginally Latent Matrix-T Processes. 
+  2019, arXiv e-prints, arXiv:1903.11695
 }
 \seealso{
 \code{\link{mongrel_transforms}} provide convenience methods for

@@ -46,7 +46,7 @@ conjugateLinearModel <- function(Y, X, Theta, Gamma, Xi, upsilon, n_samples = 20
 #' @param upsilon (must be > D)
 #' @param Theta D-1 x Q matrix the prior mean for regression coefficients
 #' @param X Q x N matrix of covariates
-#' @param K D-1 x D-1 precision matrix (inverse of Xi)
+#' @param KInv D-1 x D-1 symmetric positive-definite matrix
 #' @param U a PQxQ matrix of stacked variance components 
 #' @param init D-1 x N matrix of initial guess for eta used for optimization
 #' @param ellinit P vector of initial guess for ell used for optimization
@@ -77,10 +77,10 @@ conjugateLinearModel <- function(Y, X, Theta, Gamma, Xi, upsilon, n_samples = 20
 #' Model:
 #'    \deqn{Y_j ~ Multinomial(Pi_j)}
 #'    \deqn{Pi_j = Phi^{-1}(Eta_j)}
-#'    \deqn{Eta ~ T_{D-1, N}(upsilon, Theta*X, K^{-1}, A^{-1})}
+#'    \deqn{Eta ~ T_{D-1, N}(upsilon, Theta*X, K, A)}
 #'    
-#'  Where A = (I_N + e^{ell_1}*X*U_1*X' + ... + e^{ell_P}*X*U_P*X' )^{-1},
-#'  K^{-1} =Xi is a D-1xD-1 covariance and Phi^{-1} is ALRInv_D transform. 
+#'  Where A = (I_N + e^{ell_1}*X*U_1*X' + ... + e^{ell_P}*X*U_P*X' ),
+#'  K is a D-1xD-1 covariance and Phi is ALRInv_D transform. 
 #' 
 #' Gradient and Hessian calculations are fast as they are computed using closed
 #' form solutions. That said, the Hessian matrix can be quite large 
@@ -89,7 +89,7 @@ conjugateLinearModel <- function(Y, X, Theta, Gamma, Xi, upsilon, n_samples = 20
 #' Note: Warnings about large negative eigenvalues can either signal 
 #' that the optimizer did not reach an optima or (more commonly in my experience)
 #' that the prior / degrees of freedom for the covariance (given by parameters
-#' \code{upsilon} and \code{K}) were too specific and at odds with the observed data.
+#' \code{upsilon} and \code{KInv}) were too specific and at odds with the observed data.
 #' If you get this warning try the following. 
 #' 1. Try restarting the optimization using a different initial guess for eta
 #' 2. Try decreasing (or even increasing)\code{step_size} (by increments of 0.001 or 0.002) 
@@ -117,8 +117,8 @@ conjugateLinearModel <- function(Y, X, Theta, Gamma, Xi, upsilon, n_samples = 20
 #' @references S. Ruder (2016) \emph{An overview of gradient descent 
 #' optimization algorithms}. arXiv 1609.04747
 #' @seealso \code{\link{uncollapseMongrelCollapsed}}
-optimMaltipooCollapsed <- function(Y, upsilon, Theta, X, K, U, init, ellinit, n_samples = 2000L, calcGradHess = TRUE, b1 = 0.9, b2 = 0.99, step_size = 0.003, epsilon = 10e-7, eps_f = 1e-10, eps_g = 1e-4, max_iter = 10000L, verbose = FALSE, verbose_rate = 10L, decomp_method = "cholesky", eigvalthresh = 0, jitter = 0) {
-    .Call('_stray_optimMaltipooCollapsed', PACKAGE = 'stray', Y, upsilon, Theta, X, K, U, init, ellinit, n_samples, calcGradHess, b1, b2, step_size, epsilon, eps_f, eps_g, max_iter, verbose, verbose_rate, decomp_method, eigvalthresh, jitter)
+optimMaltipooCollapsed <- function(Y, upsilon, Theta, X, KInv, U, init, ellinit, n_samples = 2000L, calcGradHess = TRUE, b1 = 0.9, b2 = 0.99, step_size = 0.003, epsilon = 10e-7, eps_f = 1e-10, eps_g = 1e-4, max_iter = 10000L, verbose = FALSE, verbose_rate = 10L, decomp_method = "cholesky", eigvalthresh = 0, jitter = 0) {
+    .Call('_stray_optimMaltipooCollapsed', PACKAGE = 'stray', Y, upsilon, Theta, X, KInv, U, init, ellinit, n_samples, calcGradHess, b1, b2, step_size, epsilon, eps_f, eps_g, max_iter, verbose, verbose_rate, decomp_method, eigvalthresh, jitter)
 }
 
 #' Calculations for the Collapsed Pibble Model
@@ -214,8 +214,8 @@ lineSearch <- function(Y, upsilon, ThetaX, K, A, eta, direction, rho, c) {
 #' @param upsilon (must be > D)
 #' @param ThetaX D-1 x N matrix formed by Theta*X (Theta is Prior mean 
 #'    for regression coefficients) 
-#' @param K D-1 x D-1 precision matrix (inverse of Xi)
-#' @param A N x N precision matrix given by (I_N + X'*Gamma*X)^{-1}]
+#' @param KInv D-1 x D-1 precision matrix (inverse of Xi)
+#' @param AInv N x N precision matrix given by (I_N + X'*Gamma*X)^{-1}
 #' @param init D-1 x N matrix of initial guess for eta used for optimization
 #' @param n_samples number of samples for Laplace Approximation (=0 very fast
 #'    as no inversion or decomposition of Hessian is required)
@@ -251,8 +251,8 @@ lineSearch <- function(Y, upsilon, ThetaX, K, A, eta, direction, rho, c) {
 #' Model:
 #'    \deqn{Y_j ~ Multinomial(Pi_j)}
 #'    \deqn{Pi_j = Phi^{-1}(Eta_j)}
-#'    \deqn{Eta ~ T_{D-1, N}(upsilon, Theta*X, K^{-1}, A^{-1})}
-#' Where A = (I_N + X * Gamma * X')^{-1}, K^{-1} = Xi is a (D-1)x(D-1) covariance 
+#'    \deqn{Eta ~ T_{D-1, N}(upsilon, Theta*X, K, A)}
+#' Where A = I_N + X * Gamma * X', K is a (D-1)x(D-1) covariance 
 #' matrix, Gamma is a Q x Q covariance matrix, and Phi^{-1} is ALRInv_D 
 #' transform. 
 #' 
@@ -263,7 +263,7 @@ lineSearch <- function(Y, upsilon, ThetaX, K, A, eta, direction, rho, c) {
 #' Note: Warnings about large negative eigenvalues can either signal 
 #' that the optimizer did not reach an optima or (more commonly in my experience)
 #' that the prior / degrees of freedom for the covariance (given by parameters
-#' \code{upsilon} and \code{K}) were too specific and at odds with the observed data.
+#' \code{upsilon} and \code{KInv}) were too specific and at odds with the observed data.
 #' If you get this warning try the following. 
 #' 1. Try restarting the optimization using a different initial guess for eta
 #' 2. Try decreasing (or even increasing )\code{step_size} (by increments of 0.001 or 0.002) 
@@ -290,15 +290,19 @@ lineSearch <- function(Y, upsilon, ThetaX, K, A, eta, direction, rho, c) {
 #' @name optimPibbleCollapsed
 #' @references S. Ruder (2016) \emph{An overview of gradient descent 
 #' optimization algorithms}. arXiv 1609.04747
+#' 
+#' JD Silverman K Roche, ZC Holmes, LA David, S Mukherjee. 
+#'   \emph{Bayesian Multinomial Logistic Normal Models through Marginally Latent Matrix-T Processes}. 
+#'   2019, arXiv e-prints, arXiv:1903.11695
 #' @seealso \code{\link{uncollapsePibble}}
 #' @examples
 #' sim <- pibble_sim()
 #' 
 #' # Fit model for eta
-#' fit <- optimPibbleCollapsed(sim$Y, sim$upsilon, sim$Theta%*%sim$X, sim$K, 
-#'                              sim$A, random_pibble_init(sim$Y))  
-optimPibbleCollapsed <- function(Y, upsilon, ThetaX, K, A, init, n_samples = 2000L, calcGradHess = TRUE, b1 = 0.9, b2 = 0.99, step_size = 0.003, epsilon = 10e-7, eps_f = 1e-10, eps_g = 1e-4, max_iter = 10000L, verbose = FALSE, verbose_rate = 10L, decomp_method = "cholesky", optim_method = "adam", eigvalthresh = 0, jitter = 0, multDirichletBoot = -1.0, useSylv = TRUE, ncores = -1L) {
-    .Call('_stray_optimPibbleCollapsed', PACKAGE = 'stray', Y, upsilon, ThetaX, K, A, init, n_samples, calcGradHess, b1, b2, step_size, epsilon, eps_f, eps_g, max_iter, verbose, verbose_rate, decomp_method, optim_method, eigvalthresh, jitter, multDirichletBoot, useSylv, ncores)
+#' fit <- optimPibbleCollapsed(sim$Y, sim$upsilon, sim$Theta%*%sim$X, sim$KInv, 
+#'                              sim$AInv, random_pibble_init(sim$Y))  
+optimPibbleCollapsed <- function(Y, upsilon, ThetaX, KInv, AInv, init, n_samples = 2000L, calcGradHess = TRUE, b1 = 0.9, b2 = 0.99, step_size = 0.003, epsilon = 10e-7, eps_f = 1e-10, eps_g = 1e-4, max_iter = 10000L, verbose = FALSE, verbose_rate = 10L, decomp_method = "cholesky", optim_method = "adam", eigvalthresh = 0, jitter = 0, multDirichletBoot = -1.0, useSylv = TRUE, ncores = -1L) {
+    .Call('_stray_optimPibbleCollapsed', PACKAGE = 'stray', Y, upsilon, ThetaX, KInv, AInv, init, n_samples, calcGradHess, b1, b2, step_size, epsilon, eps_f, eps_g, max_iter, verbose, verbose_rate, decomp_method, optim_method, eigvalthresh, jitter, multDirichletBoot, useSylv, ncores)
 }
 
 #' Uncollapse output from optimPibbleCollapsed to full pibble Model
@@ -328,8 +332,8 @@ optimPibbleCollapsed <- function(Y, upsilon, ThetaX, K, A, init, n_samples = 200
 #' While the collapsed model is given by:
 #'    \deqn{Y_j ~ Multinomial(Pi_j)}
 #'    \deqn{Pi_j = Phi^{-1}(Eta_j)}
-#'    \deqn{Eta ~ T_{D-1, N}(upsilon, Theta*X, K^{-1}, A^{-1})}
-#' Where A = (I_N + X * Gamma * X')^{-1}, K^{-1} = Xi is a (D-1)x(D-1) covariance 
+#'    \deqn{Eta ~ T_{D-1, N}(upsilon, Theta*X, K, A)}
+#' Where A = I_N + X * Gamma * X', K = Xi is a (D-1)x(D-1) covariance 
 #' matrix, Gamma is a Q x Q covariance matrix, and Phi^{-1} is ALRInv_D 
 #' transform. 
 #' 
@@ -349,12 +353,15 @@ optimPibbleCollapsed <- function(Y, upsilon, ThetaX, K, A, init, n_samples = 200
 #' @export
 #' @md
 #' @seealso \code{\link{optimPibbleCollapsed}}
+#' @references JD Silverman K Roche, ZC Holmes, LA David, S Mukherjee. 
+#'   Bayesian Multinomial Logistic Normal Models through Marginally Latent Matrix-T Processes. 
+#'   2019, arXiv e-prints, arXiv:1903.11695
 #' @examples
 #' sim <- pibble_sim()
 #' 
 #' # Fit model for eta
-#' fit <- optimPibbleCollapsed(sim$Y, sim$upsilon, sim$Theta%*%sim$X, sim$K, 
-#'                              sim$A, random_pibble_init(sim$Y))  
+#' fit <- optimPibbleCollapsed(sim$Y, sim$upsilon, sim$Theta%*%sim$X, sim$KInv, 
+#'                              sim$AInv, random_pibble_init(sim$Y))  
 #' 
 #' # Finally obtain samples from Lambda and Sigma
 #' fit2 <- uncollapsePibble(fit$Samples, sim$X, sim$Theta, 

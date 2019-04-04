@@ -7,7 +7,7 @@ test_that("linesearch terminates with nonridiculous output", {
   Z <- runif(N*(D-1))
   ThetaX <- sim$Theta%*%sim$X
   element <- 1
-  new_eta <- lineSearch(sim$Y, sim$upsilon, ThetaX, sim$K, sim$A, sim$Eta, element, 0.5, 0.0001)
+  new_eta <- lineSearch(sim$Y, sim$upsilon, ThetaX, sim$KInv, sim$AInv, sim$Eta, element, 0.5, 0.0001)
   vec_eta <- c(sim$Eta)
   compare <- rep(TRUE, N*(D-1))
   compare[element] <- FALSE

@@ -23,9 +23,9 @@ using Eigen::Ref;
  *  Model:
  *    Y_j ~ Multinomial(Pi_j)
  *    Pi_j = Phi^{-1}(Eta_j)   // Phi^{-1} is ALRInv_D transform
- *    Eta ~ T_{D-1, N}(upsilon, Theta*X, K^{-1}, A^{-1})
+ *    Eta ~ T_{D-1, N}(upsilon, Theta*X, K, A)
  *
- *  Where A = (I_N + X*Gamma*X')^{-1}, K^{-1} =Xi is a D-1xD-1 covariance 
+ *  Where A = (I_N + X*Gamma*X'), K = Xi is a D-1xD-1 covariance 
  *  matrix, and Gamma is a Q x Q covariance matrix
  */
 class PibbleCollapsed : public mongrel::MongrelModel {
@@ -33,8 +33,8 @@ class PibbleCollapsed : public mongrel::MongrelModel {
     const ArrayXXd Y;
     const double upsilon;
     const MatrixXd ThetaX;
-    const MatrixXd K;
-    const MatrixXd A;
+    const MatrixXd KInv;
+    const MatrixXd AInv;
     // computed quantities 
     int D;
     int N;
@@ -60,10 +60,10 @@ class PibbleCollapsed : public mongrel::MongrelModel {
     PibbleCollapsed(const ArrayXXd Y_,          // constructor
                         const double upsilon_,
                         const MatrixXd ThetaX_,
-                        const MatrixXd K_,
-                        const MatrixXd A_, 
+                        const MatrixXd KInv_,
+                        const MatrixXd AInv_, 
                         bool sylv=false) :
-    Y(Y_), upsilon(upsilon_), ThetaX(ThetaX_), K(K_), A(A_)
+    Y(Y_), upsilon(upsilon_), ThetaX(ThetaX_), KInv(KInv_), AInv(AInv_)
     {
       D = Y.rows();           // number of multinomial categories
       N = Y.cols();           // number of samples
@@ -78,10 +78,10 @@ class PibbleCollapsed : public mongrel::MongrelModel {
       const Map<const MatrixXd> eta(etavec.data(), D-1, N);
       E = eta - ThetaX;
       if (sylv & (N < (D-1))){
-        S.noalias() = A*E.transpose()*K*E;
+        S.noalias() = AInv*E.transpose()*KInv*E;
         S.diagonal() += VectorXd::Ones(1, N);
       } else {
-        S.noalias() = K*E*A*E.transpose();
+        S.noalias() = KInv*E*AInv*E.transpose();
         S.diagonal() += VectorXd::Ones(1, D-1);  
       }
       Sdec.compute(S);
@@ -96,11 +96,11 @@ class PibbleCollapsed : public mongrel::MongrelModel {
       Map<VectorXd> rhovec(rhomat.data() , rhomat.size());
       rho = rhovec; // probably could be done in one line rather than 2 (above)
       if (sylv & (N < (D-1))){
-        C.noalias() = K*E;
-        R.noalias() = Sdec.solve(A); // S^{-1}A
+        C.noalias() = KInv*E;
+        R.noalias() = Sdec.solve(AInv); // S^{-1}AInv
       } else {
-        C.noalias() = A*E.transpose();
-        R.noalias() = Sdec.solve(K); // S^{-1}K    
+        C.noalias() = AInv*E.transpose();
+        R.noalias() = Sdec.solve(KInv); // S^{-1}KInv    
       }
     }
     
@@ -164,8 +164,8 @@ class PibbleCollapsed : public mongrel::MongrelModel {
       CR.noalias() = C*R;
       krondense_inplace(L, C*RCT, R.transpose());
       //L.noalias() = krondense(C*RCT, R.transpose());
-      krondense_inplace(H, A, R+R.transpose());
-      //H.noalias() = krondense(A, R+R.transpose());
+      krondense_inplace(H, AInv, R+R.transpose());
+      //H.noalias() = krondense(AInv, R+R.transpose());
       H.noalias() -= L+L.transpose();
       krondense_inplace(L, RCT, RCT.transpose());
       //L.noalias() = krondense(RCT, RCT.transpose()); // reuse L

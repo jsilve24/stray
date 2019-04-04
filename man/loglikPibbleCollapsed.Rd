@@ -20,10 +20,6 @@ hessPibbleCollapsed(Y, upsilon, ThetaX, K, A, eta, sylv = FALSE)
 \item{ThetaX}{D-1 x N matrix formed by Theta*X (Theta is Prior mean
 for regression coefficients)}
 
-\item{K}{D-1 x D-1 precision matrix (inverse of Xi)}
-
-\item{A}{N x N precision matrix given by (I_N + X'\emph{Gamma}X)^{-1}]}
-
 \item{eta}{matrix (D-1)xN of parameter values at which to calculate quantities}
 
 \item{sylv}{(default:false) if true and if N < D-1 will use sylvester determinant

@@ -19,7 +19,7 @@ using Eigen::VectorXd;
 //' @param upsilon (must be > D)
 //' @param Theta D-1 x Q matrix the prior mean for regression coefficients
 //' @param X Q x N matrix of covariates
-//' @param K D-1 x D-1 precision matrix (inverse of Xi)
+//' @param KInv D-1 x D-1 symmetric positive-definite matrix
 //' @param U a PQxQ matrix of stacked variance components 
 //' @param init D-1 x N matrix of initial guess for eta used for optimization
 //' @param ellinit P vector of initial guess for ell used for optimization
@@ -50,10 +50,10 @@ using Eigen::VectorXd;
 //' Model:
 //'    \deqn{Y_j ~ Multinomial(Pi_j)}
 //'    \deqn{Pi_j = Phi^{-1}(Eta_j)}
-//'    \deqn{Eta ~ T_{D-1, N}(upsilon, Theta*X, K^{-1}, A^{-1})}
+//'    \deqn{Eta ~ T_{D-1, N}(upsilon, Theta*X, K, A)}
 //'    
-//'  Where A = (I_N + e^{ell_1}*X*U_1*X' + ... + e^{ell_P}*X*U_P*X' )^{-1},
-//'  K^{-1} =Xi is a D-1xD-1 covariance and Phi^{-1} is ALRInv_D transform. 
+//'  Where A = (I_N + e^{ell_1}*X*U_1*X' + ... + e^{ell_P}*X*U_P*X' ),
+//'  K is a D-1xD-1 covariance and Phi is ALRInv_D transform. 
 //' 
 //' Gradient and Hessian calculations are fast as they are computed using closed
 //' form solutions. That said, the Hessian matrix can be quite large 
@@ -62,7 +62,7 @@ using Eigen::VectorXd;
 //' Note: Warnings about large negative eigenvalues can either signal 
 //' that the optimizer did not reach an optima or (more commonly in my experience)
 //' that the prior / degrees of freedom for the covariance (given by parameters
-//' \code{upsilon} and \code{K}) were too specific and at odds with the observed data.
+//' \code{upsilon} and \code{KInv}) were too specific and at odds with the observed data.
 //' If you get this warning try the following. 
 //' 1. Try restarting the optimization using a different initial guess for eta
 //' 2. Try decreasing (or even increasing)\code{step_size} (by increments of 0.001 or 0.002) 
@@ -95,7 +95,7 @@ List optimMaltipooCollapsed(const Eigen::ArrayXXd Y,
                const double upsilon, 
                const Eigen::MatrixXd Theta,
                const Eigen::MatrixXd X,
-               const Eigen::MatrixXd K, 
+               const Eigen::MatrixXd KInv, 
                const Eigen::MatrixXd U, 
                Eigen::MatrixXd init, 
                Eigen::VectorXd ellinit, 
@@ -115,7 +115,7 @@ List optimMaltipooCollapsed(const Eigen::ArrayXXd Y,
                double jitter=0){  
   int N = Y.cols();
   int D = Y.rows();
-  MaltipooCollapsed cm(Y, upsilon, Theta, X, K, U);
+  MaltipooCollapsed cm(Y, upsilon, Theta, X, KInv, U);
   Map<VectorXd> eta(init.data(), init.size()); // will rewrite by optim
   VectorXd pars(init.size()+ellinit.size());
   pars.head(init.size()) = eta;

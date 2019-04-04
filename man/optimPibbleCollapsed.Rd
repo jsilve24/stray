@@ -4,12 +4,13 @@
 \alias{optimPibbleCollapsed}
 \title{Function to Optimize the Collapsed Pibble Model}
 \usage{
-optimPibbleCollapsed(Y, upsilon, ThetaX, K, A, init, n_samples = 2000L,
-  calcGradHess = TRUE, b1 = 0.9, b2 = 0.99, step_size = 0.003,
-  epsilon = 1e-06, eps_f = 1e-10, eps_g = 1e-04, max_iter = 10000L,
-  verbose = FALSE, verbose_rate = 10L, decomp_method = "cholesky",
-  optim_method = "adam", eigvalthresh = 0, jitter = 0,
-  multDirichletBoot = -1, useSylv = TRUE, ncores = -1L)
+optimPibbleCollapsed(Y, upsilon, ThetaX, KInv, AInv, init,
+  n_samples = 2000L, calcGradHess = TRUE, b1 = 0.9, b2 = 0.99,
+  step_size = 0.003, epsilon = 1e-06, eps_f = 1e-10, eps_g = 1e-04,
+  max_iter = 10000L, verbose = FALSE, verbose_rate = 10L,
+  decomp_method = "cholesky", optim_method = "adam",
+  eigvalthresh = 0, jitter = 0, multDirichletBoot = -1,
+  useSylv = TRUE, ncores = -1L)
 }
 \arguments{
 \item{Y}{D x N matrix of counts}
@@ -19,9 +20,9 @@ optimPibbleCollapsed(Y, upsilon, ThetaX, K, A, init, n_samples = 2000L,
 \item{ThetaX}{D-1 x N matrix formed by Theta*X (Theta is Prior mean
 for regression coefficients)}
 
-\item{K}{D-1 x D-1 precision matrix (inverse of Xi)}
+\item{KInv}{D-1 x D-1 precision matrix (inverse of Xi)}
 
-\item{A}{N x N precision matrix given by (I_N + X'\emph{Gamma}X)^{-1}]}
+\item{AInv}{N x N precision matrix given by (I_N + X'\emph{Gamma}X)^{-1}}
 
 \item{init}{D-1 x N matrix of initial guess for eta used for optimization}
 
@@ -98,8 +99,8 @@ Notation: Let Z_j denote the J-th row of a matrix Z.
 Model:
 \deqn{Y_j ~ Multinomial(Pi_j)}
 \deqn{Pi_j = Phi^{-1}(Eta_j)}
-\deqn{Eta ~ T_{D-1, N}(upsilon, Theta*X, K^{-1}, A^{-1})}
-Where A = (I_N + X * Gamma * X')^{-1}, K^{-1} = Xi is a (D-1)x(D-1) covariance
+\deqn{Eta ~ T_{D-1, N}(upsilon, Theta*X, K, A)}
+Where A = I_N + X * Gamma * X', K is a (D-1)x(D-1) covariance
 matrix, Gamma is a Q x Q covariance matrix, and Phi^{-1} is ALRInv_D
 transform.
 
@@ -110,7 +111,7 @@ form solutions. That said, the Hessian matrix can be quite large
 Note: Warnings about large negative eigenvalues can either signal
 that the optimizer did not reach an optima or (more commonly in my experience)
 that the prior / degrees of freedom for the covariance (given by parameters
-\code{upsilon} and \code{K}) were too specific and at odds with the observed data.
+\code{upsilon} and \code{KInv}) were too specific and at odds with the observed data.
 If you get this warning try the following.
 \enumerate{
 \item Try restarting the optimization using a different initial guess for eta
@@ -129,12 +130,16 @@ potential floating point errors.
 sim <- pibble_sim()
 
 # Fit model for eta
-fit <- optimPibbleCollapsed(sim$Y, sim$upsilon, sim$Theta\%*\%sim$X, sim$K, 
-                             sim$A, random_pibble_init(sim$Y))  
+fit <- optimPibbleCollapsed(sim$Y, sim$upsilon, sim$Theta\%*\%sim$X, sim$KInv, 
+                             sim$AInv, random_pibble_init(sim$Y))  
 }
 \references{
 S. Ruder (2016) \emph{An overview of gradient descent
 optimization algorithms}. arXiv 1609.04747
+
+JD Silverman K Roche, ZC Holmes, LA David, S Mukherjee.
+\emph{Bayesian Multinomial Logistic Normal Models through Marginally Latent Matrix-T Processes}.
+2019, arXiv e-prints, arXiv:1903.11695
 }
 \seealso{
 \code{\link{uncollapsePibble}}

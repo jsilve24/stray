@@ -33,8 +33,7 @@
 #'    \deqn{Eta ~ MN_{D-1 x N}(Lambda*X, Sigma, I_N)}
 #'    \deqn{Lambda ~ MN_{D-1 x Q}(Theta, Sigma, Gamma)}
 #'    \deqn{Sigma ~ InvWish(upsilon, Xi)}
-#'  Where A = (I_N + X * Gamma * X')^{-1}, K^{-1} = Xi is a (D-1)x(D-1) 
-#'  covariance matrix, Gamma is a Q x Q covariance matrix, and Phi^{-1} is 
+#'  Where Gamma is a Q x Q covariance matrix, and Phi^{-1} is 
 #'  ALRInv_D transform. 
 #'  
 #'  Default behavior is to use MAP estimate for uncollaping the LTP 
@@ -68,6 +67,9 @@ NULL
 
 #' @rdname pibble_fit
 #' @export
+#' @references JD Silverman K Roche, ZC Holmes, LA David, S Mukherjee. 
+#'   Bayesian Multinomial Logistic Normal Models through Marginally Latent Matrix-T Processes. 
+#'   2019, arXiv e-prints, arXiv:1903.11695
 pibble <- function(Y=NULL, X=NULL, upsilon=NULL, Theta=NULL, Gamma=NULL, Xi=NULL,
                     init=NULL, 
                     pars=c("Eta", "Lambda", "Sigma"),
@@ -145,11 +147,11 @@ pibble <- function(Y=NULL, X=NULL, upsilon=NULL, Theta=NULL, Gamma=NULL, Xi=NULL
   
 
   ## precomputation ## 
-  K <- solve(Xi)
-  A <- solve(diag(N) + t(X) %*% Gamma %*% X)
+  KInv <- solve(Xi)
+  AInv <- solve(diag(N) + t(X) %*% Gamma %*% X)
 
   ## fit collapsed model ##
-  fitc <- optimPibbleCollapsed(Y, upsilon, Theta%*%X, K, A, init, n_samples, 
+  fitc <- optimPibbleCollapsed(Y, upsilon, Theta%*%X, KInv, AInv, init, n_samples, 
                                 calcGradHess, b1, b2, step_size, epsilon, eps_f, 
                                 eps_g, max_iter, verbose, verbose_rate, 
                                 decomp_method, optim_method, eigvalthresh, 

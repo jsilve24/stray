@@ -23,8 +23,8 @@ using Eigen::VectorXd;
 //' @param upsilon (must be > D)
 //' @param ThetaX D-1 x N matrix formed by Theta*X (Theta is Prior mean 
 //'    for regression coefficients) 
-//' @param K D-1 x D-1 precision matrix (inverse of Xi)
-//' @param A N x N precision matrix given by (I_N + X'*Gamma*X)^{-1}]
+//' @param KInv D-1 x D-1 precision matrix (inverse of Xi)
+//' @param AInv N x N precision matrix given by (I_N + X'*Gamma*X)^{-1}
 //' @param init D-1 x N matrix of initial guess for eta used for optimization
 //' @param n_samples number of samples for Laplace Approximation (=0 very fast
 //'    as no inversion or decomposition of Hessian is required)
@@ -60,8 +60,8 @@ using Eigen::VectorXd;
 //' Model:
 //'    \deqn{Y_j ~ Multinomial(Pi_j)}
 //'    \deqn{Pi_j = Phi^{-1}(Eta_j)}
-//'    \deqn{Eta ~ T_{D-1, N}(upsilon, Theta*X, K^{-1}, A^{-1})}
-//' Where A = (I_N + X * Gamma * X')^{-1}, K^{-1} = Xi is a (D-1)x(D-1) covariance 
+//'    \deqn{Eta ~ T_{D-1, N}(upsilon, Theta*X, K, A)}
+//' Where A = I_N + X * Gamma * X', K is a (D-1)x(D-1) covariance 
 //' matrix, Gamma is a Q x Q covariance matrix, and Phi^{-1} is ALRInv_D 
 //' transform. 
 //' 
@@ -72,7 +72,7 @@ using Eigen::VectorXd;
 //' Note: Warnings about large negative eigenvalues can either signal 
 //' that the optimizer did not reach an optima or (more commonly in my experience)
 //' that the prior / degrees of freedom for the covariance (given by parameters
-//' \code{upsilon} and \code{K}) were too specific and at odds with the observed data.
+//' \code{upsilon} and \code{KInv}) were too specific and at odds with the observed data.
 //' If you get this warning try the following. 
 //' 1. Try restarting the optimization using a different initial guess for eta
 //' 2. Try decreasing (or even increasing )\code{step_size} (by increments of 0.001 or 0.002) 
@@ -99,19 +99,23 @@ using Eigen::VectorXd;
 //' @name optimPibbleCollapsed
 //' @references S. Ruder (2016) \emph{An overview of gradient descent 
 //' optimization algorithms}. arXiv 1609.04747
+//' 
+//' JD Silverman K Roche, ZC Holmes, LA David, S Mukherjee. 
+//'   \emph{Bayesian Multinomial Logistic Normal Models through Marginally Latent Matrix-T Processes}. 
+//'   2019, arXiv e-prints, arXiv:1903.11695
 //' @seealso \code{\link{uncollapsePibble}}
 //' @examples
 //' sim <- pibble_sim()
 //' 
 //' # Fit model for eta
-//' fit <- optimPibbleCollapsed(sim$Y, sim$upsilon, sim$Theta%*%sim$X, sim$K, 
-//'                              sim$A, random_pibble_init(sim$Y))  
+//' fit <- optimPibbleCollapsed(sim$Y, sim$upsilon, sim$Theta%*%sim$X, sim$KInv, 
+//'                              sim$AInv, random_pibble_init(sim$Y))  
 // [[Rcpp::export]]
 List optimPibbleCollapsed(const Eigen::ArrayXXd Y, 
                const double upsilon, 
                const Eigen::MatrixXd ThetaX, 
-               const Eigen::MatrixXd K, 
-               const Eigen::MatrixXd A, 
+               const Eigen::MatrixXd KInv, 
+               const Eigen::MatrixXd AInv, 
                Eigen::MatrixXd init, 
                int n_samples=2000, 
                bool calcGradHess = true,
@@ -137,7 +141,7 @@ List optimPibbleCollapsed(const Eigen::ArrayXXd Y,
   timer.step("Overall_start");
   int N = Y.cols();
   int D = Y.rows();
-  PibbleCollapsed cm(Y, upsilon, ThetaX, K, A, useSylv);
+  PibbleCollapsed cm(Y, upsilon, ThetaX, KInv, AInv, useSylv);
   Map<VectorXd> eta(init.data(), init.size()); // will rewrite by optim
   double nllopt; // NEGATIVE LogLik at optim
   List out(7);

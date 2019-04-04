@@ -51,8 +51,8 @@ Notation: Let Z_j denote the J-th row of a matrix Z.
 While the collapsed model is given by:
 \deqn{Y_j ~ Multinomial(Pi_j)}
 \deqn{Pi_j = Phi^{-1}(Eta_j)}
-\deqn{Eta ~ T_{D-1, N}(upsilon, Theta*X, K^{-1}, A^{-1})}
-Where A = (I_N + X * Gamma * X')^{-1}, K^{-1} = Xi is a (D-1)x(D-1) covariance
+\deqn{Eta ~ T_{D-1, N}(upsilon, Theta*X, K, A)}
+Where A = I_N + X * Gamma * X', K = Xi is a (D-1)x(D-1) covariance
 matrix, Gamma is a Q x Q covariance matrix, and Phi^{-1} is ALRInv_D
 transform.
 
@@ -70,12 +70,17 @@ the collapsed model.
 sim <- pibble_sim()
 
 # Fit model for eta
-fit <- optimPibbleCollapsed(sim$Y, sim$upsilon, sim$Theta\%*\%sim$X, sim$K, 
-                             sim$A, random_pibble_init(sim$Y))  
+fit <- optimPibbleCollapsed(sim$Y, sim$upsilon, sim$Theta\%*\%sim$X, sim$KInv, 
+                             sim$AInv, random_pibble_init(sim$Y))  
 
 # Finally obtain samples from Lambda and Sigma
 fit2 <- uncollapsePibble(fit$Samples, sim$X, sim$Theta, 
                                    sim$Gamma, sim$Xi, sim$upsilon)
+}
+\references{
+JD Silverman K Roche, ZC Holmes, LA David, S Mukherjee.
+Bayesian Multinomial Logistic Normal Models through Marginally Latent Matrix-T Processes.
+2019, arXiv e-prints, arXiv:1903.11695
 }
 \seealso{
 \code{\link{optimPibbleCollapsed}}

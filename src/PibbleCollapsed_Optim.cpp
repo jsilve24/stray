@@ -135,8 +135,10 @@ List optimPibbleCollapsed(const Eigen::ArrayXXd Y,
                double multDirichletBoot = -1.0, 
                bool useSylv = true, 
                int ncores=-1){  
-  Eigen::initParallel();
-  if (ncores > 0) Eigen::setNbThreads(ncores);
+  #ifdef STRAY_USE_PARALLEL 
+    Eigen::initParallel();
+    if (ncores > 0) Eigen::setNbThreads(ncores);
+  #endif 
   Timer timer;
   timer.step("Overall_start");
   int N = Y.cols();

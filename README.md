@@ -29,6 +29,8 @@ Or to download the development version
 devtools::install_github("jsilve24/stray", ref="develop", build_vignettes=TRUE)
 ```
 
+If you are having trouble with installation take a look at [the wiki page](https://github.com/jsilve24/stray/wiki/Installation-Problems)
+
 
 ## Bugs/Feature requests ##
 I appreciate bug reports and feature requests. Please post to the github issue tracker [here](https://github.com/jsilve24/stray/issues). 

@@ -79,10 +79,10 @@ class PibbleCollapsed : public mongrel::MongrelModel {
       E = eta - ThetaX;
       if (sylv & (N < (D-1))){
         S.noalias() = AInv*E.transpose()*KInv*E;
-        S.diagonal() += VectorXd::Ones(1, N);
+        S.diagonal() += VectorXd::Ones(N);
       } else {
         S.noalias() = KInv*E*AInv*E.transpose();
-        S.diagonal() += VectorXd::Ones(1, D-1);  
+        S.diagonal() += VectorXd::Ones(D-1);  
       }
       Sdec.compute(S);
       O = eta.array().exp();

@@ -99,7 +99,7 @@ class MaltipooCollapsed : public Numer::MFuncGrad
       A = Ainvdec.inverse(); 
         
       S.noalias() = K*E*A*E.transpose();
-      S.diagonal() += VectorXd::Ones(1, D-1);
+      S.diagonal() += VectorXd::Ones(D-1);
       Sdec.compute(S);
       O = eta.array().exp();
       m = O.colwise().sum();

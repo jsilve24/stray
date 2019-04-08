@@ -122,8 +122,7 @@ List uncollapsePibble(const Eigen::Map<Eigen::VectorXd> eta, // note this is ess
     Eigen::setNbThreads(1);
     //Rcout << "thread: "<< omp_get_max_threads() << std::endl;
   #endif 
-  #pragma omp parallel shared(eta, XTGammaN, ThetaGammaInvGammaN, Theta, X, \
-                              GammaInv, D, N, Q, LambdaDraw0, SigmaDraw0)
+  #pragma omp parallel shared(D, N, Q, LambdaDraw0, SigmaDraw0)
   {
   #if defined(STRAY_USE_PARALLEL)
     boost::random::mt19937 rng(omp_get_thread_num()+seed);

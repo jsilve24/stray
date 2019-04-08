@@ -96,25 +96,31 @@ summary.mongrelfit <- function(object, pars=NULL, use_names=TRUE, as_factor=FALS
   
   mtidy <- dplyr::filter(mongrel_tidy_samples(object, use_names, as_factor), 
                          Parameter %in% pars)
-  if (object$coord_system != "proportions") {
-    mtidy <- dplyr::group_by(mtidy, Parameter, coord, coord2, sample, covariate) 
-  } else {
-    mtidy <- dplyr::group_by(mtidy, Parameter, coord, sample, covariate)
-  }
-  if (!gather_prob){
-    mtidy <- mtidy %>% 
-      driver::summarise_posterior(val, ...) %>%
-      dplyr::ungroup() %>%
-      split(.$Parameter) %>% 
-      purrr::map(~dplyr::select_if(.x, ~!all(is.na(.x))))  
-  } else if (gather_prob){
-    mtidy <- mtidy %>% 
-      dplyr::select(-iter) %>% 
-      tidybayes::mean_qi(val, .width=c(.5, .8, .95, .99)) %>% 
-      dplyr::ungroup() %>% 
-      split(.$Parameter) %>% 
-      purrr::map(~dplyr::select_if(.x, ~!all(is.na(.x))))  
-  }
+  # Suppress warnings about stupid implict NAs, this is on purpose. 
+  suppressWarnings({
+  
+    if (object$coord_system != "proportions") {
+      mtidy <- dplyr::group_by(mtidy, Parameter, coord, coord2, sample, covariate) 
+    } else {
+      mtidy <- dplyr::group_by(mtidy, Parameter, coord, sample, covariate)
+    }
+    if (!gather_prob){
+      mtidy <- mtidy %>% 
+        driver::summarise_posterior(val, ...) %>%
+        dplyr::ungroup() %>%
+        split(.$Parameter) %>% 
+        purrr::map(~dplyr::select_if(.x, ~!all(is.na(.x))))  
+    } else if (gather_prob){
+      mtidy <- mtidy %>% 
+        dplyr::select(-iter) %>% 
+        tidybayes::mean_qi(val, .width=c(.5, .8, .95, .99)) %>% 
+        dplyr::ungroup() %>% 
+        split(.$Parameter) %>% 
+        purrr::map(~dplyr::select_if(.x, ~!all(is.na(.x))))  
+    }
+      
+  })
+  
   return(mtidy)
 }
 

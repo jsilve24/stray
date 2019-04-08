@@ -13,6 +13,7 @@ All source code freely availale under [GPL-3 License](https://www.gnu.org/licens
 While not strictly necessary, we recommend you edit the default Makevars (on Unix systems) located at `~/.R/Makevars` to include the following line
 ```
 CXXFLAGS = -O3 -march=native
+CXX11FLAGS = -03 -march=native
 ```
 this will enable full compiler optimization and vectorization. 
 

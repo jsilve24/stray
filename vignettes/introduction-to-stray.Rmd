@@ -1,5 +1,5 @@
 ---
-title: "Introduction to Stray"
+title: "Introduction to Stray::Pibble"
 author: "Justin Silverman"
 date: "`r Sys.Date()`"
 output: 
@@ -22,15 +22,16 @@ knitr::opts_chunk$set(
 ```
 
 # An introduction to *stray*
-*stray* is a loose accronym for **"(Bayesian) Multinomial Logistic-Normal Linear Model"**. 
-It is a model that is closely related to the MALLARD framework for time-series 
-anaysis of sequence count data [@silverman2018]. In particular the development of 
-*stray* stems from the need for fast inference for time-invariant MALLARD models. 
+*stray* [@silverman2019] is a loose accronym for **"(Bayesian) Multinomial Logistic-Normal Model"**. 
+In particular the development of 
+*stray* stems from the need for fast inference for time-invariant MALLARD models[@silverman2018]. 
 *stray* is very fast! It uses closed form solutions for model gradients and hessian written
 in C++ to preform [MAP estimation](https://en.wikipedia.org/wiki/Maximum_a_posteriori_estimation)
-in combination with parameter uncertainty estimation using a [Laplace Approximation](http://www.sumsar.net/blog/2013/11/easy-laplace-approximation/). 
+in combination with parameter uncertainty estimation using a [Laplace Approximation](http://www.sumsar.net/blog/2013/11/easy-laplace-approximation/).
+One of the main models in *stray* is the function *pibble* which fits a Multinomial
+Logistic-Normal **Linear Regerssion** model. 
 
-**So what is a *stray* model exactly?** First let me give the broad description
+**So what is a *pibble* model exactly?** First let me give the broad description
 from 10,000ft up: Basically its a model for multinomial count
 data (e.g., each sample contains the counts of $D$ "types of things"). Importantly, 
 unlike the more common Poisson count models, the multinomial models a "competition to
@@ -104,10 +105,7 @@ and $\Sigma$ is the covariance matrix for the regression residuals.
 
 
 # Example analysis of microbiome data
-Lets consider a simple analysis of the HMP dataset. We are going to look at whether
-at whether the RUN_CENTER variable is influences the microbiome composition. 
-
-Introduce microbiome data 
+This analysis is the same as that presented in the *stray* manuscript [@silverman2019]. 
 
 ```{r message=FALSE, warning=FALSE}
 library(MicrobeDS)
@@ -120,33 +118,24 @@ set.seed(91)
 
 data("RISK_CCFA")
 
-# drop any super low abundant taxa and samples
+# Start by defining which samples to analyze also
+#   drop any super low abundant taxa and samples
 dat <- RISK_CCFA %>% 
   subset_samples(disease_stat!="missing", 
                  immunosup!="missing") %>% 
-  subset_samples(diseasesubtype %in% c("no", "CD")) %>%
+  #subset_samples(diseasesubtype %!in% c("UC", "control")) %>%
+  subset_samples(diagnosis %in% c("no", "CD")) %>% 
   subset_samples(steroids=="false") %>% 
   subset_samples(antibiotics=="false") %>% 
   subset_samples(biologics=="false") %>% 
   subset_samples(biopsy_location=="Terminal ileum") %>% 
   tax_glom("Family") %>% 
   prune_samples(sample_sums(.) >= 5000,.) %>%
-  filter_taxa(function(x) sum(x > 5) > 0.05*length(x), TRUE)
-
-
-## Huge
-# dat <- RISK_CCFA %>% 
-#     subset_samples(disease_stat!="missing", 
-#                    immunosup!="missing") %>% 
-#     subset_samples(steroids=="false") %>% 
-#     subset_samples(antibiotics=="false") %>% 
-#     subset_samples(biologics=="false") %>% 
-#     prune_samples(sample_sums(.) >= 5000,.) %>%
-#     filter_taxa(function(x) sum(x > 3) > 5, TRUE)
-
+  filter_taxa(function(x) sum(x > 3) > 0.10*length(x), TRUE)
 ```
 
-First we are going to look at XXX
+We are going to fit a *pibble* model (multinomial logistic-normal linear regression model) to 
+investigate the relationship between Crohn's disease (CD) and microbial composition. 
 
 Create Design Matrix and OTU Table
 ```{r}
@@ -157,12 +146,22 @@ sample_dat <- as.data.frame(as(sample_data(dat),"matrix")) %>%
 
 X <- t(model.matrix(~disease_stat+age, data=sample_dat))
 Y <- otu_table(dat)
+
+# Investigate X and Y look like
+X[,1:5]
+Y[1:5,1:5]
 ```
 
-Next specify priors, in particular use weak phylogeneticly
-informed prior
+Next specify priors. We are going to start by specifying 
+a prior on the covariance between log-ratios $\Sigma$. Note that the prior mean
+for $\Sigma$ is given by $\frac{\Xi}{\upsilon + D - 2}$. From Aitchison (1986), 
+we know that if we assume that the taxa are uncorrelation in terms of log-absolute
+abundance then their correlation in the ALR space is given by [fill in]. 
+
+`upsilon` essentially specifies how much confidence we have 
+in our specification of `Xi`. Note 
 ```{r fig.height=5, fig.width=7}
-upsilon <- ntaxa(dat)+3
+upsilon <- ntaxa(dat)+3 
 m <- diag(ntaxa(dat)) + 0.5*vcv.phylo(phy_tree(dat), corr=TRUE) # Weak Phylo Prior
 GG <- cbind(diag(ntaxa(dat)-1), -1)
 Xi <- (upsilon-ntaxa(dat)-2)*GG%*%m%*%t(GG)

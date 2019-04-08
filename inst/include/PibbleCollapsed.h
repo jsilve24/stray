@@ -79,10 +79,10 @@ class PibbleCollapsed : public mongrel::MongrelModel {
       E = eta - ThetaX;
       if (sylv & (N < (D-1))){
         S.noalias() = AInv*E.transpose()*KInv*E;
-        S.diagonal() += VectorXd::Ones(1, N);
+        S.diagonal() += VectorXd::Ones(N);
       } else {
         S.noalias() = KInv*E*AInv*E.transpose();
-        S.diagonal() += VectorXd::Ones(1, D-1);  
+        S.diagonal() += VectorXd::Ones(D-1);  
       }
       Sdec.compute(S);
       O = eta.array().exp();
@@ -176,17 +176,22 @@ class PibbleCollapsed : public mongrel::MongrelModel {
       H.noalias() = -delta * H;
       
       // For Multinomial
-      #pragma omp parallel shared(rho, n)
+      VectorXd rho_parallel;
+      VectorXd n_parallel;
+      rho_parallel = rho; 
+      n_parallel = n;
+      
+      #pragma omp parallel shared(rho_parallel, n_parallel)
       {
       MatrixXd W(D-1, D-1);
       //VectorXd rhoseg(D-1);
       #pragma omp for 
       for (int j=0; j<N; j++){
         //rhoseg = rho.segment(j*(D-1), D-1);
-        Eigen::Ref<VectorXd> rhoseg = rho.segment(j*(D-1), D-1);
+        Eigen::Ref<VectorXd> rhoseg = rho_parallel.segment(j*(D-1), D-1);
         W.noalias() = rhoseg*rhoseg.transpose();
         W.diagonal() -= rhoseg;
-        H.block(j*(D-1), j*(D-1), D-1, D-1).noalias()  += n(j)*W;
+        H.block(j*(D-1), j*(D-1), D-1, D-1).noalias()  += n_parallel(j)*W;
       }
       }
       // Turn back on sylv option if it was wanted:

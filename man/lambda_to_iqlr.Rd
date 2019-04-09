@@ -7,7 +7,7 @@
 lambda_to_iqlr(m, focus.cov, probs = c(0.25, 0.75))
 }
 \arguments{
-\item{m}{object of class mongrelfit (e.g., output of \code{\link{pibble}})}
+\item{m}{object of class pibblefit (e.g., output of \code{\link{pibble}})}
 
 \item{focus.cov}{vector of integers or characters specifying columns (covariates)
 of Lambda to include in calculating IQLR}

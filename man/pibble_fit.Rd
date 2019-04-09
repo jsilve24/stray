@@ -3,14 +3,14 @@
 \name{pibble_fit}
 \alias{pibble_fit}
 \alias{pibble}
-\alias{refit.mongrelfit}
+\alias{refit.pibblefit}
 \title{Interface to fit pibble models}
 \usage{
 pibble(Y = NULL, X = NULL, upsilon = NULL, Theta = NULL,
   Gamma = NULL, Xi = NULL, init = NULL, pars = c("Eta", "Lambda",
   "Sigma"), ...)
 
-\method{refit}{mongrelfit}(m, pars = c("Eta", "Lambda", "Sigma"), ...)
+\method{refit}{pibblefit}(m, pars = c("Eta", "Lambda", "Sigma"), ...)
 }
 \arguments{
 \item{Y}{D x N matrix of counts (if NULL uses priors only)}
@@ -38,10 +38,10 @@ essentially iid on "base scale" using Aitchison terminology)}
 \item{...}{arguments passed to \code{\link{optimPibbleCollapsed}} and
 \code{\link{uncollapsePibble}}}
 
-\item{m}{object of class mongrelfit}
+\item{m}{object of class pibblefit}
 }
 \value{
-an object of class mongrelfit
+an object of class pibblefit
 }
 \description{
 This function is largely a more user friendly wrapper around
@@ -78,22 +78,22 @@ JD Silverman K Roche, ZC Holmes, LA David, S Mukherjee.
 }
 \seealso{
 \code{\link{mongrel_transforms}} provide convenience methods for
-transforming the representation of mongrelfit objects (e.g., conversion to
+transforming the representation of pibblefit objects (e.g., conversion to
 proportions, alr, clr, or ilr coordinates.)
 
 \code{\link{access_dims}} provides convenience methods for accessing
-dimensions of mongrelfit object
+dimensions of pibblefit object
 
-Generic functions including \code{\link[=summary.mongrelfit]{summary}},
-\code{\link[=print.mongrelfit]{print}},
-\code{\link[=coef.mongrelfit]{coef}},
-\code{\link[=as.list.mongrelfit]{as.list}},
-\code{\link[=predict.mongrelfit]{predict}},
-\code{\link[=model.matrix.mongrelfit]{model.matrix}},
-\code{\link[=name.mongrelfit]{name}}, and
-\code{\link[=sample_prior.mongrelfit]{sample_prior}}
+Generic functions including \code{\link[=summary.pibblefit]{summary}},
+\code{\link[=print.pibblefit]{print}},
+\code{\link[=coef.pibblefit]{coef}},
+\code{\link[=as.list.pibblefit]{as.list}},
+\code{\link[=predict.pibblefit]{predict}},
+\code{\link[=model.matrix.pibblefit]{model.matrix}},
+\code{\link[=name.pibblefit]{name}}, and
+\code{\link[=sample_prior.pibblefit]{sample_prior}}
 \code{\link{name_dims}}
 
-Plotting functions provided by \code{\link[=plot.mongrelfit]{plot}}
-and \code{\link[=ppc.mongrelfit]{ppc}} (posterior predictive checks)
+Plotting functions provided by \code{\link[=plot.pibblefit]{plot}}
+and \code{\link[=ppc.pibblefit]{ppc}} (posterior predictive checks)
 }

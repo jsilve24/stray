@@ -23,7 +23,7 @@
 #'   essentially iid on "base scale" using Aitchison terminology)
 #' @param init (D-1) x Q initialization for Eta for optimization
 #' @param pars character vector of posterior parameters to return
-#' @param m object of class mongrelfit 
+#' @param m object of class pibblefit 
 #' @param ... arguments passed to \code{\link{optimPibbleCollapsed}} and 
 #'   \code{\link{uncollapsePibble}}
 #' 
@@ -38,31 +38,31 @@
 #'  
 #'  Default behavior is to use MAP estimate for uncollaping the LTP 
 #'  model if laplace approximation is not preformed. 
-#' @return an object of class mongrelfit
+#' @return an object of class pibblefit
 #' @md
 #' @name pibble_fit
 #' @examples 
 #' sim <- pibble_sim()
 #' fit <- pibble(sim$Y, sim$X)
 #' @seealso \code{\link{mongrel_transforms}} provide convenience methods for 
-#'  transforming the representation of mongrelfit objects (e.g., conversion to 
+#'  transforming the representation of pibblefit objects (e.g., conversion to 
 #'  proportions, alr, clr, or ilr coordinates.)
 #'  
 #' \code{\link{access_dims}} provides convenience methods for accessing
-#'   dimensions of mongrelfit object
+#'   dimensions of pibblefit object
 #'   
-#' Generic functions including \code{\link[=summary.mongrelfit]{summary}},  
-#' \code{\link[=print.mongrelfit]{print}}, 
-#'  \code{\link[=coef.mongrelfit]{coef}},  
-#'  \code{\link[=as.list.mongrelfit]{as.list}},  
-#'  \code{\link[=predict.mongrelfit]{predict}}, 
-#'  \code{\link[=model.matrix.mongrelfit]{model.matrix}},
-#'  \code{\link[=name.mongrelfit]{name}}, and
-#'  \code{\link[=sample_prior.mongrelfit]{sample_prior}}
+#' Generic functions including \code{\link[=summary.pibblefit]{summary}},  
+#' \code{\link[=print.pibblefit]{print}}, 
+#'  \code{\link[=coef.pibblefit]{coef}},  
+#'  \code{\link[=as.list.pibblefit]{as.list}},  
+#'  \code{\link[=predict.pibblefit]{predict}}, 
+#'  \code{\link[=model.matrix.pibblefit]{model.matrix}},
+#'  \code{\link[=name.pibblefit]{name}}, and
+#'  \code{\link[=sample_prior.pibblefit]{sample_prior}}
 #'  \code{\link{name_dims}}
 #' 
-#' Plotting functions provided by \code{\link[=plot.mongrelfit]{plot}} 
-#' and \code{\link[=ppc.mongrelfit]{ppc}} (posterior predictive checks)
+#' Plotting functions provided by \code{\link[=plot.pibblefit]{plot}} 
+#' and \code{\link[=ppc.pibblefit]{ppc}} (posterior predictive checks)
 NULL
 
 #' @rdname pibble_fit
@@ -109,8 +109,8 @@ pibble <- function(Y=NULL, X=NULL, upsilon=NULL, Theta=NULL, Gamma=NULL, Xi=NULL
   # This is the signal to sample the prior only
   if (is.null(Y)){
     if (("Eta" %in% pars) & (is.null(X))) stop("X must be given if Eta is to be sampled")
-    # create mongrelfit object and pass to sample_prior then return
-    out <- mongrelfit(N=N, D=D, Q=Q, coord_system="alr", alr_base=D, 
+    # create pibblefit object and pass to sample_prior then return
+    out <- pibblefit(N=N, D=D, Q=Q, coord_system="alr", alr_base=D, 
                       upsilon=upsilon, Theta=Theta, 
                       Gamma=Gamma, Xi=Xi, 
                       # names_categories=rownames(Y), # these won't be present... 
@@ -232,10 +232,10 @@ pibble <- function(Y=NULL, X=NULL, upsilon=NULL, Theta=NULL, Gamma=NULL, Xi=NULL
   out$summary <- NULL
   out$Timer <- timer
   out$logMarginalLikelihood <- logMarginalLikelihood
-  attr(out, "class") <- c("mongrelfit")
+  attr(out, "class") <- c("pibblefit")
   # add names if present 
   if (use_names) out <- name(out)
-  verify(out) # verify the mongrelfit object
+  verify(out) # verify the pibblefit object
   return(out)
 }
 
@@ -256,7 +256,7 @@ mongrel <- function(Y=NULL, X=NULL, upsilon=NULL, Theta=NULL, Gamma=NULL, Xi=NUL
 
 #' @rdname pibble_fit
 #' @export
-refit.mongrelfit <- function(m, pars=c("Eta", "Lambda", "Sigma"), ...){
+refit.pibblefit <- function(m, pars=c("Eta", "Lambda", "Sigma"), ...){
   # Store coordinates and tranfsorm to cannonical representation
   l <- store_coord(m)
   m <- to_alr(m, m$D)

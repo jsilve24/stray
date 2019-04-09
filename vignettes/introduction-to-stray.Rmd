@@ -183,8 +183,8 @@ priors
 ```
 
 Except for the main function `pibble`, most functions in the *stray* package
-work with `mongrelfit` objects (essentially just a list with some extra features).
-The default print method provides a brief summary of the mongrelfit object and 
+work with `pibblefit` objects (essentially just a list with some extra features).
+The default print method provides a brief summary of the pibblefit object and 
 adds a note reminding us that this was based on priors only (e.g., prior samples
 not posterior samples). 
 The default print method  also gives basic information regarding the dimensions of the 
@@ -197,12 +197,12 @@ $$x^* = \left( \log \frac{x_1}{x_D}, \dots, \log \frac{x_{D-1}}{x_D}\right).$$
 As mentioned above however, I have designed *stray* to work with many 
 different coordinate systems including the ALR (with respect to any category), CLR, 
 ILR, or proportions. To help transform things between these coordinate systems
-I have written a series of transformation functions that transform any `mongrelfit` 
-object into a desired coordinate system. Importantly, `mongrelfit` objects
+I have written a series of transformation functions that transform any `pibblefit` 
+object into a desired coordinate system. Importantly, `pibblefit` objects
 keep track of what coordinate system they are currently in so as a user you only
 need to specify the coordinate system that you want to change into. A note however is that
 covariance matricies cannot be represented in proportions and so visualizations
-or summaries based on covariance matricies will be suppressed when `mongrelfit` objects
+or summaries based on covariance matricies will be suppressed when `pibblefit` objects
 are in the proportions coordinate system. As an example, lets look at viewing
 a summary of the prior for $\Lambda$ with respect to the CLR coordinate system^[These are 
 very large objects with many posterior samples, so it can take a little time to compute. 
@@ -216,13 +216,13 @@ summary(priors, pars="Lambda")
 By default the `summary` function returns a list (with possible elements `Lambda`, 
 `Sigma`, and `Eta`) summarizing each posterior parameter based on quantiles and mean (e.g., 
 p2.5 is the 0.025 percentile of the posterior distribution). As this type of 
-table may be hard to take in due to how large it is `mongrelfit` objects also come with a default
+table may be hard to take in due to how large it is `pibblefit` objects also come with a default
 plotting option for each of the parameters. However, as we have `r ncategories(priors)` 
 categories the basic plot would be slightly overwhelming as well. Therefore
 we can use the `focus` options in the plot function to just show a few selected
 categories which we will pick at random. Also the returned plot objects
 are `ggplot` objects so normal `ggplot2` commands work on them. Before doing that
-though we are going to use one of the `names` functions for `mongrelfit` objects
+though we are going to use one of the `names` functions for `pibblefit` objects
 to provide some more specific names for the covariates (helpful when we then plot). 
 
 ```{r fig.height=5, fig.width=7}
@@ -238,14 +238,14 @@ purposes we are going to instead just specify a much simpler prior, a prior that
 implies a particular type of independence between taxa and move on to fitting the model. 
 Also rather than refitting the model using the `pibble` function, we will 
 demonstrate the use of the `refit` method which can be called to refit a 
-`mongrelfit` object, saving some typing and allowing us to simply add data to the 
+`pibblefit` object, saving some typing and allowing us to simply add data to the 
 `priors` object.
 
 ```{r fig.height=5, fig.width=7}
 priors$Y <- Y # add data to priors object
 Xi <- (upsilon-ntaxa(dat)-2)*GG%*% diag(ntaxa(dat)) %*%t(GG) # update Xi prior
 Xi_clr <- driver::alrvar2clrvar(Xi, ntaxa(dat)) # need to add it in CLR coords
-priors$Xi <- Xi_clr # add new prior to mongrelfit object
+priors$Xi <- Xi_clr # add new prior to pibblefit object
 verify(priors) # run internal checks to make sure modified object is okay
 fit <- refit(priors, step_size=0.005, b1=0.99, decomp_method="cholesky")
 tax <- tax_table(dat)[,c("Class", "Family")]
@@ -258,9 +258,9 @@ Note unlike the main *pibble* function, the `refit` method can be called
 on objects in any coordinate system and all transfrormations to and from the
 default coordinate system are handled internally^[That said, due to the need to transform
 back and forth from the default coordinate system, it is fastest to call refit on 
-`mongrelfit` objects in the default coordinate system bypassing these transforms.]. 
+`pibblefit` objects in the default coordinate system bypassing these transforms.]. 
 This is one nice thing about
-using the `refit` method. That said, new objects added to the `mongrelfit` object 
+using the `refit` method. That said, new objects added to the `pibblefit` object 
 need to be added in the proper basis. For example, we had to transform our prior
 for `Xi` to CLR coordinates before adding it to the `priors` object. 
 Also note that above I used the Cholesky (LLT) decomposition of the Hessian to produce samples

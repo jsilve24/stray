@@ -3,7 +3,7 @@
 #' Primarily intended for doing differential expression analysis under 
 #' assumption that only small group of categories (e.g., taxa / genes) are changing 
 #' 
-#' @param m object of class mongrelfit (e.g., output of \code{\link{pibble}})
+#' @param m object of class pibblefit (e.g., output of \code{\link{pibble}})
 #' @param focus.cov vector of integers or characters specifying columns (covariates)
 #'   of Lambda to include in calculating IQLR
 #' @param probs bounds for categories (i.e., features / genes / taxa) to include in 

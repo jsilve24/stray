@@ -1,6 +1,6 @@
 #' Create maltipoofit object 
 #' 
-#' @inheritParams mongrelfit
+#' @inheritParams pibblefit
 #' @inheritParams maltipoo_fit
 #' @param VCScale scale factors (delta) for variance components 
 #' @return object of class maltipoofit
@@ -30,7 +30,7 @@ new_maltipoofit <- function(D, N, Q, P, coord_system, iter=NULL,
                             Theta=NULL, Xi=NULL,Xi_default=NULL, Gamma=NULL, 
                             init=NULL, deltainit=NULL, names_categories=NULL, names_samples=NULL, 
                             names_covariates=NULL, VCScale=NULL, U=NULL){
-  m <- new_mongrelfit(D, N, Q, coord_system, iter, alr_base, ilr_base,
+  m <- new_pibblefit(D, N, Q, coord_system, iter, alr_base, ilr_base,
                       Eta, Lambda, Sigma, Sigma_default, 
                       Y, X, upsilon, Theta, Xi,Xi_default, Gamma, 
                       init, deltainit, names_categories, names_samples, 
@@ -39,7 +39,7 @@ new_maltipoofit <- function(D, N, Q, P, coord_system, iter=NULL,
   m$U <- U
   m$deltainit <- deltainit
   m$P <- P
-  class(m) <- c("maltipoofit", "mongrelfit")
+  class(m) <- c("maltipoofit", "pibblefit")
 }
 
 #' Simple verification of passed multipoo object
@@ -48,7 +48,7 @@ new_maltipoofit <- function(D, N, Q, P, coord_system, iter=NULL,
 #' @return throws error if any verification tests fail
 #' @export 
 verify.multipoo <- function(m,...){
-  verify.mongrelfit(m)
+  verify.pibblefit(m)
   stopifnot(is.integer(m$P))
   P <- m$P
   ifnotnull(m$VCScale, check_dims(m$VCScale, P))
@@ -56,7 +56,7 @@ verify.multipoo <- function(m,...){
   ifnotnull(m$deltainit, chec_dims(m$P))
 }
 
-#' require elements to be non-null in mongrelfit or throw error
+#' require elements to be non-null in pibblefit or throw error
 #' @inheritParams req
 #' @export 
 req.maltipoo<- function(m, r){

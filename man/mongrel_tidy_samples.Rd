@@ -7,7 +7,7 @@
 mongrel_tidy_samples(m, use_names = FALSE, as_factor = FALSE)
 }
 \arguments{
-\item{m}{an object of class mongrelfit}
+\item{m}{an object of class pibblefit}
 
 \item{use_names}{should dimension indices be replaced by
 dimension names if provided in data used to fit mongrel model.}
@@ -20,7 +20,7 @@ tibble
 \description{
 Combines them all into a single tibble, see example for formatting and 
 column headers. Primarily designed to be used by 
-\code{\link{summary.mongrelfit}}.
+\code{\link{summary.pibblefit}}.
 }
 \examples{
 sim <- pibble_sim()

@@ -1,6 +1,6 @@
-#' Plot Summaries of Posterior Distribution of Mongrelfit Parameters
+#' Plot Summaries of Posterior Distribution of pibblefit Parameters
 #' 
-#' @param m an object of class mongrelfit
+#' @param m an object of class pibblefit
 #' @param par parameter to plot (options: Lambda, Eta, and Sigma) 
 #'   (default="Lambda")
 #' @param focus.cov vector of covariates to include in plot (plots all if NULL)
@@ -21,22 +21,22 @@
 #' plot(fit, par="Sigma")
 #' plot(fit, par="Sigma", focus.coord=c("s1", "s2", "s3"))
 #' }
-plot.mongrelfit <- function(m, par="Lambda", focus.cov=NULL, focus.coord=NULL, 
+plot.pibblefit <- function(m, par="Lambda", focus.cov=NULL, focus.coord=NULL, 
                             focus.sample=NULL, use_names=TRUE){
- if (is.null(m[[par]])) stop("mongrelfit object does not contain samples for specified parameter")
+ if (is.null(m[[par]])) stop("pibblefit object does not contain samples for specified parameter")
  if (par %in% c("Lambda", "Eta")) {
    return(plot_mf_lambdaeta(m, par, focus.cov, focus.coord, 
                             focus.sample, use_names))
  } else if (par=="Sigma"){
    return(plot_mf_sigma(m, focus.coord, use_names))
  } else {
-   stop("only parameters Lambda, Sigma, and Eta are recognized by plot.mongrelfit")
+   stop("only parameters Lambda, Sigma, and Eta are recognized by plot.pibblefit")
  }
 }
 
 plot_mf_lambdaeta <- function(m, par, focus.cov=NULL, focus.coord=NULL, 
                               focus.sample=NULL, use_names=TRUE){
-  data <- summary.mongrelfit(m, pars=par, use_names=use_names, 
+  data <- summary.pibblefit(m, pars=par, use_names=use_names, 
                              as_factor=TRUE, gather_prob=TRUE)
   data <- data[[par]]
     
@@ -106,7 +106,7 @@ plot_mf_sigma <- function(m, focus.coord=NULL, use_names=TRUE){
 
 #' Visualization of Posterior Predictive Check of fit model
 #' 
-#' @param m an object of class mongrelfit
+#' @param m an object of class pibblefit
 #' @param type type of plot (options "lines" or "ribbon")
 #' @param iter number of samples from posterior predictive distribution to plot
 #'   (currently must be <= m$iter) if type=="lines" default is 50, if type=="ribbon"
@@ -120,7 +120,7 @@ plot_mf_sigma <- function(m, focus.coord=NULL, use_names=TRUE){
 #' fit <- pibble(Y, X)
 #' ppc(fit)
 #' }
-ppc.mongrelfit <- function(m, type="bounds", iter=NULL){
+ppc.pibblefit <- function(m, type="bounds", iter=NULL){
   msg <- paste("No observed count data (Y) to check against", 
                "perhaps you are looking for the function `predict`?")
   if (is.null(m$Y)) stop(msg)

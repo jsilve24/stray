@@ -10,17 +10,17 @@ store_coord(m)
 reapply_coord(m, l)
 }
 \arguments{
-\item{m}{object of class mongrelfit}
+\item{m}{object of class pibblefit}
 
 \item{l}{object returned by function \code{store_coord}}
 }
 \value{
 \code{store_coord} list with important information to identify c
- coordinate system of mongrelfit object. \code{reapply_coord} mongrelfit object
+ coordinate system of pibblefit object. \code{reapply_coord} pibblefit object
  in coordinate system previously stored.
 }
 \description{
-\code{store_coord} stores coordinate information for mongrelfit object
+\code{store_coord} stores coordinate information for pibblefit object
 and can be reapplied with function \code{reapply_coord}. Some coordinate
 systems are not useful for computation and this makes it simple keep 
 returned object from computations in the same coordinate system as the input. 

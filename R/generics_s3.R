@@ -74,9 +74,9 @@ ppc <- function(m, ...){
 
 #' Generic method for accessing model fit dimensions
 #'
-#' @param m An object of class mongrelfit 
+#' @param m An object of class pibblefit 
 #' @details An alternative approach to accessing these dimensions is to 
-#'   access them directly from the mongrelfit object using list indexing. 
+#'   access them directly from the pibblefit object using list indexing. 
 #' * \code{ncategories} is equivalent to \code{m$D}
 #' * \code{nsamples} is equivalent to \code{m$N}
 #' * \code{ncovariates} is equivalent to \code{m$Q}

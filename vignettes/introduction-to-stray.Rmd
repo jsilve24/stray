@@ -372,7 +372,7 @@ Y_j & \sim \text{Multinomial}\left(\pi_j, n_j\right)  \\
 $$
 where $A=(I_N + X^T \Gamma, X)^{-1}$ and $T_{(D-1)\times N}$ refers to the Matrix T-distribution the $(D-1)\times N$ matrix $\eta$ with log density given by 
 $$\log T_{(D-1)\times N}(\eta | \upsilon, \Theta X, \Xi, A) \propto -\frac{\upsilon+N-D-2}{2}\log | I_{D-1}+\Xi^{-1}(\eta-\Theta X)A(\eta-\Theta X)^T |.$$
-Rather than using MCMC to sample $\eta$ stray uses MAP estimation (using a custom C++ Eigen based implmentation of the ADAM optimizer and closed form solutions for gradient and hessian of the collapsed model)^[Which we found preformed substantially better than L-BFGS, which we also tried.]. Additionally, *stray* allows quantification of uncertainty in MAP estimates using a Laplace approximation. We found that in practice this MAP based Laplace approximation produced 
+Rather than using MCMC to sample $\eta$ stray uses MAP estimation (using a custom C++ Eigen based implementation of the ADAM optimizer and closed form solutions for gradient and hessian of the collapsed model)^[Which we found preformed substantially better than L-BFGS, which we also tried.]. Additionally, *stray* allows quantification of uncertainty in MAP estimates using a Laplace approximation. We found that in practice this MAP based Laplace approximation produced 
 comparable results to a full MCMC sampler but with tremendous improvements in compute time. 
 
 Once samples of $\eta$ are produced using the Laplace approximation closed form 
@@ -400,7 +400,7 @@ means of $p(\Sigma | \eta, X)$ and $(\Lambda | \Sigma, \eta, X)$.
 By default *stray* tries to approximate the posterior distribution using a Laplace approximation. This Laplace approximation is typically the most computationally intensive component of the entire model as it requires inversion of the hessian matrix calculated at the MAP estimate^[Actually it doesn't require inversion exactly, for numerical stability it uses a decomposition to calculate the matrix square root and then backsubstitution to produce samples from the Laplace Approximation.]. Through many many hours of pain-staking matrix calculus I have calculated closed form solutions for the hessian of the collapsed model so this part is quite fast; it is the matrix inversion that is slow and by default uses an eigen decomposition for numerical accuracy and stability (although a somewhat less safe but much faster Cholesky LLT decomposition is also available). Despite these safety measures, for large datasets (e.g., where $N\times D > 50,000$) the (negative) inverse hessian may not be possitive definite. This can result from a few causes. 
 
 1. The optimization failed to find a local optima and instead terminated at a saddle point. 
-2. Numerical precision errors in combination with a poorly conditioned hessian at the MAP estiamte leads to a non-positive definite matrix. 
+2. Numerical precision errors in combination with a poorly conditioned hessian at the MAP estimate leads to a non-positive definite matrix. 
 
 In practice we find that (typically) issues with non-positive definite hessians result from poorly chosen priors for $\Sigma$. In particular, note that the prior $\Sigma \sim W^{-1}(\upsilon, \Xi)$ ...with independence is not independent... 
 

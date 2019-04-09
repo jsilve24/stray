@@ -122,22 +122,22 @@ optimMaltipooCollapsed <- function(Y, upsilon, Theta, X, KInv, U, init, ellinit,
 }
 
 #' Calculations for the Collapsed Pibble Model
-#' 
-#' Functions providing access to the Log Likelihood, Gradient, and Hessian 
+#'
+#' Functions providing access to the Log Likelihood, Gradient, and Hessian
 #' of the collapsed pibble model. Note: These are convenience functions
-#' but are not as optimized as direct coding of the PibbleCollapsed 
-#' C++ class due to a lack of Memoization. By contrast function optimPibbleCollapsed 
-#' is much more optimized and massively cuts down on repeated calculations. 
+#' but are not as optimized as direct coding of the PibbleCollapsed
+#' C++ class due to a lack of Memoization. By contrast function optimPibbleCollapsed
+#' is much more optimized and massively cuts down on repeated calculations.
 #' A more efficient Rcpp module based implementation of these functions
-#' may following if the future. For model details see \code{\link{optimPibbleCollapsed}} 
+#' may following if the future. For model details see \code{\link{optimPibbleCollapsed}}
 #' documentation
-#' 
+#'
 #' @inheritParams optimPibbleCollapsed
 #' @param eta matrix (D-1)xN of parameter values at which to calculate quantities
 #' @param sylv (default:false) if true and if N < D-1 will use sylvester determinant
 #'   identity to speed computation
 #' @return see below
-#' * loglikPibbleCollapsed - double 
+#' * loglikPibbleCollapsed - double
 #' * gradPibbleCollapsed - vector
 #' * hessPibbleCollapsed- matrix
 #' @md
@@ -146,7 +146,7 @@ optimMaltipooCollapsed <- function(Y, upsilon, Theta, X, KInv, U, init, ellinit,
 #' D <- 10
 #' Q <- 2
 #' N <- 30
-#' 
+#'
 #' # Simulate Data
 #' Sigma <- diag(sample(1:8, D-1, replace=TRUE))
 #' Sigma[2, 3] <- Sigma[3,2] <- -1
@@ -159,17 +159,17 @@ optimMaltipooCollapsed <- function(Y, upsilon, Theta, X, KInv, U, init, ellinit,
 #' Pi <- t(driver::alrInv(t(Eta)))
 #' Y <- matrix(0, D, N)
 #' for (i in 1:N) Y[,i] <- rmultinom(1, sample(5000:10000), prob = Pi[,i])
-#' 
+#'
 #' # Priors
 #' upsilon <- D+10
 #' Xi <- Sigma*(upsilon-D)
-#' 
+#'
 #' # Precompute
 #' K <- solve(Xi)
 #' A <- solve(diag(N)+ t(X)%*%Gamma%*%X)
 #' ThetaX <- Theta%*%X
-#' 
-#' 
+#'
+#'
 #' loglikPibbleCollapsed(Y, upsilon, ThetaX, K, A, Eta)
 #' gradPibbleCollapsed(Y, upsilon, ThetaX, K, A, Eta)
 #' hessPibbleCollapsed(Y, upsilon, ThetaX, K, A, Eta)
@@ -189,18 +189,11 @@ hessPibbleCollapsed <- function(Y, upsilon, ThetaX, K, A, eta, sylv = FALSE) {
     .Call('_stray_hessPibbleCollapsed', PACKAGE = 'stray', Y, upsilon, ThetaX, K, A, eta, sylv)
 }
 
-#' Hessian Vector Product using Finite Differences 
+#' Hessian Vector Product using Finite Differences
 #' @rdname hessVectorProd
 #' @export
 hessVectorProd <- function(Y, upsilon, ThetaX, K, A, eta, v, r, sylv = FALSE) {
     .Call('_stray_hessVectorProd', PACKAGE = 'stray', Y, upsilon, ThetaX, K, A, eta, v, r, sylv)
-}
-
-#' Backtracking line search
-#' @rdname lineSearch
-#' @export
-lineSearch <- function(Y, upsilon, ThetaX, K, A, eta, direction, rho, c) {
-    .Call('_stray_lineSearch', PACKAGE = 'stray', Y, upsilon, ThetaX, K, A, eta, direction, rho, c)
 }
 
 #' Function to Optimize the Collapsed Pibble Model

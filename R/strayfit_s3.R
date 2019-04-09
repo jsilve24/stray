@@ -1,4 +1,4 @@
-#' Create mongrelfit object
+#' Create pibblefit object
 #'
 #' @param D number of multinomial categories 
 #' @param N number of samples
@@ -28,18 +28,18 @@
 #' @param names_samples character vector
 #' @param names_covariates character vector
 #'
-#' @return object of class mongrelfit
+#' @return object of class pibblefit
 #'
 #' @export 
 #' @seealso \code{\link{pibble}}
-mongrelfit <- function(D, N, Q, coord_system, iter=NULL,  
+pibblefit <- function(D, N, Q, coord_system, iter=NULL,  
                        alr_base=NULL, ilr_base=NULL,
                        Eta=NULL, Lambda=NULL, Sigma=NULL, Sigma_default=NULL, 
                        Y=NULL, X=NULL, upsilon=NULL, 
                        Theta=NULL, Xi=NULL,Xi_default=NULL, Gamma=NULL, 
                        init=NULL, names_categories=NULL, names_samples=NULL, 
                        names_covariates=NULL){
-  m <- new_mongrelfit(D, N, Q, coord_system, iter, alr_base, ilr_base,
+  m <- new_pibblefit(D, N, Q, coord_system, iter, alr_base, ilr_base,
                       Eta, Lambda, Sigma, Sigma_default, 
                       Y, X, upsilon, Theta, Xi,Xi_default, Gamma, 
                       init, names_categories, names_samples, 
@@ -49,7 +49,7 @@ mongrelfit <- function(D, N, Q, coord_system, iter=NULL,
 }
 
 
-new_mongrelfit <- function(D, N, Q, coord_system, iter=NULL, 
+new_pibblefit <- function(D, N, Q, coord_system, iter=NULL, 
                            alr_base=NULL, ilr_base=NULL,
                            Eta=NULL, Lambda=NULL,Sigma=NULL, Sigma_default=NULL, 
                            Y=NULL, X=NULL, upsilon=NULL, 
@@ -73,7 +73,7 @@ new_mongrelfit <- function(D, N, Q, coord_system, iter=NULL,
       init=init, names_categories=names_categories, names_samples=names_samples, 
       names_covariates=names_covariates
     ),
-    class=c("mongrelfit")
+    class=c("pibblefit")
   )
 }
 
@@ -87,12 +87,12 @@ ifnotnull <- function(x, y){
   else(return(x))
 }
 
-#' Simple verification of passed mongrelfit object
-#' @param m an object of class mongrelfit
+#' Simple verification of passed pibblefit object
+#' @param m an object of class pibblefit
 #' @param ... not used
 #' @return throws error if any verification tests fail
 #' @export 
-verify.mongrelfit <- function(m,...){
+verify.pibblefit <- function(m,...){
   # check basic dimensions that must always be present
   stopifnot(is.integer(m$N), is.integer(m$Q),
             is.integer(m$D))
@@ -109,30 +109,30 @@ verify.mongrelfit <- function(m,...){
   if (is.null(m$iter)) stopifnot(is.null(m$Eta), is.null(m$Lambda), 
                                  is.null(m$Sigma), is.null(m$Sigma_default))
   ifnotnull(m$iter, stopifnot(is.integer(m$iter)))
-  ifnotnull(m$Eta,check_dims(m$Eta, c(Dm1, N, iter), "mongrelfit param Eta"))
-  ifnotnull(m$Lambda,check_dims(m$Lambda, c(Dm1, Q, iter), "mongrelfit param Lambda"))
-  ifnotnull(m$Sigma,check_dims(m$Sigma, c(Dm1, Dm1, iter), "mongrelfit param Sigma"))
-  ifnotnull(m$Sigma_default,check_dims(m$Sigma_default, c(D-1, D-1, iter), "mongrelfit param Sigma_default"))
-  ifnotnull(m$Y,check_dims(m$Y, c(D, N), "mongrelfit param Y"))
-  ifnotnull(m$X,check_dims(m$X, c(Q, N), "mongrelfit param X"))
-  ifnotnull(m$upsilon,check_dims(m$upsilon, c(1), "mongrelfit param upsilon"))
-  ifnotnull(m$Theta,check_dims(m$Theta, c(Dm1, Q), "mongrelfit param Theta"))
-  ifnotnull(m$Xi,check_dims(m$Xi, c(Dm1,Dm1), "mongrelfit param Xi"))
-  ifnotnull(m$Xi_default,check_dims(m$Xi_default, c(D-1, D-1), "mongrelfit param Xi_default"))
-  ifnotnull(m$Gamma,check_dims(m$Gamma, c(Q, Q), "mongrelfit param Gamma"))
-  ifnotnull(m$init,check_dims(m$init, c(Dm1, N), "mongrelfit param init"))
-  ifnotnull(m$names_categories,check_dims(m$names_categories, c(D), "mongrelfit param names_categories"))
-  ifnotnull(m$names_samples,check_dims(m$names_samples, c(N), "mongrelfit param names_samples"))
-  ifnotnull(m$names_covariates,check_dims(m$names_covariates, c(Q), "mongrelfit param names_covariates"))
+  ifnotnull(m$Eta,check_dims(m$Eta, c(Dm1, N, iter), "pibblefit param Eta"))
+  ifnotnull(m$Lambda,check_dims(m$Lambda, c(Dm1, Q, iter), "pibblefit param Lambda"))
+  ifnotnull(m$Sigma,check_dims(m$Sigma, c(Dm1, Dm1, iter), "pibblefit param Sigma"))
+  ifnotnull(m$Sigma_default,check_dims(m$Sigma_default, c(D-1, D-1, iter), "pibblefit param Sigma_default"))
+  ifnotnull(m$Y,check_dims(m$Y, c(D, N), "pibblefit param Y"))
+  ifnotnull(m$X,check_dims(m$X, c(Q, N), "pibblefit param X"))
+  ifnotnull(m$upsilon,check_dims(m$upsilon, c(1), "pibblefit param upsilon"))
+  ifnotnull(m$Theta,check_dims(m$Theta, c(Dm1, Q), "pibblefit param Theta"))
+  ifnotnull(m$Xi,check_dims(m$Xi, c(Dm1,Dm1), "pibblefit param Xi"))
+  ifnotnull(m$Xi_default,check_dims(m$Xi_default, c(D-1, D-1), "pibblefit param Xi_default"))
+  ifnotnull(m$Gamma,check_dims(m$Gamma, c(Q, Q), "pibblefit param Gamma"))
+  ifnotnull(m$init,check_dims(m$init, c(Dm1, N), "pibblefit param init"))
+  ifnotnull(m$names_categories,check_dims(m$names_categories, c(D), "pibblefit param names_categories"))
+  ifnotnull(m$names_samples,check_dims(m$names_samples, c(N), "pibblefit param names_samples"))
+  ifnotnull(m$names_covariates,check_dims(m$names_covariates, c(Q), "pibblefit param names_covariates"))
 }
 
 
-#' require elements to be non-null in mongrelfit or throw error
+#' require elements to be non-null in pibblefit or throw error
 #' @inheritParams req
 #' @export 
-req.mongrelfit<- function(m, r){
+req.pibblefit<- function(m, r){
   present <- sapply(m[r], is.null)
   if(any(present)){
-    stop("mongrelfit object does not contain required components:", r[present])
+    stop("pibblefit object does not contain required components:", r[present])
   }
 }

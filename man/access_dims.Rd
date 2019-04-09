@@ -6,10 +6,10 @@
 \alias{nsamples}
 \alias{ncovariates}
 \alias{niter}
-\alias{ncategories.mongrelfit}
-\alias{nsamples.mongrelfit}
-\alias{ncovariates.mongrelfit}
-\alias{niter.mongrelfit}
+\alias{ncategories.pibblefit}
+\alias{nsamples.pibblefit}
+\alias{ncovariates.pibblefit}
+\alias{niter.pibblefit}
 \title{Generic method for accessing model fit dimensions}
 \usage{
 ncategories(m)
@@ -20,16 +20,16 @@ ncovariates(m)
 
 niter(m)
 
-\method{ncategories}{mongrelfit}(m)
+\method{ncategories}{pibblefit}(m)
 
-\method{nsamples}{mongrelfit}(m)
+\method{nsamples}{pibblefit}(m)
 
-\method{ncovariates}{mongrelfit}(m)
+\method{ncovariates}{pibblefit}(m)
 
-\method{niter}{mongrelfit}(m)
+\method{niter}{pibblefit}(m)
 }
 \arguments{
-\item{m}{An object of class mongrelfit}
+\item{m}{An object of class pibblefit}
 }
 \value{
 integer
@@ -39,7 +39,7 @@ Generic method for accessing model fit dimensions
 }
 \details{
 An alternative approach to accessing these dimensions is to 
-  access them directly from the mongrelfit object using list indexing. 
+  access them directly from the pibblefit object using list indexing. 
 * \code{ncategories} is equivalent to \code{m$D}
 * \code{nsamples} is equivalent to \code{m$N}
 * \code{ncovariates} is equivalent to \code{m$Q}

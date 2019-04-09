@@ -4,7 +4,7 @@
 #' stray fit objects to a number of different representations including
 #' ILR bases, CLR coordinates, ALR coordinates, and proportions. 
 #'
-#' @param m object of class mongrelfit (e.g., output of \code{\link{pibble}})
+#' @param m object of class pibblefit (e.g., output of \code{\link{pibble}})
 #' @param d (integer) multinomial category to take as new alr reference
 #' @param V (matrix) contrast matrix for ILR basis to transform into to (defaults to 
 #'   \code{driver::create_default_ilr_base(D)})
@@ -12,9 +12,9 @@
 #' @details Note: that there is a degeneracy of representations for a covariance 
 #' matrix represented in terms of proportions. As such the function 
 #' \code{to_proportions} does not attempt to transform parameters Sigma
-#' or prior Xi and instead just removes them from the mongrelfit object returned. 
+#' or prior Xi and instead just removes them from the pibblefit object returned. 
 #' 
-#' @return mongrelfit object
+#' @return pibblefit object
 #' @name stray_transforms
 #' @import driver 
 #' @examples
@@ -189,18 +189,18 @@ to_clr <- function(m){
 
 #' Holds information on coordinates system to later be reapplied
 #' 
-#' \code{store_coord} stores coordinate information for mongrelfit object
+#' \code{store_coord} stores coordinate information for pibblefit object
 #' and can be reapplied with function \code{reapply_coord}. Some coordinate
 #' systems are not useful for computation and this makes it simple keep 
 #' returned object from computations in the same coordinate system as the input. 
 #' (Likely most useful inside of a package)
 #' 
 #' 
-#' @param m object of class mongrelfit
+#' @param m object of class pibblefit
 #' @param l object returned by function \code{store_coord}
 #' @name store_coord
 #' @return \code{store_coord} list with important information to identify c
-#'  coordinate system of mongrelfit object. \code{reapply_coord} mongrelfit object
+#'  coordinate system of pibblefit object. \code{reapply_coord} pibblefit object
 #'  in coordinate system previously stored. 
 NULL
 

@@ -1,4 +1,4 @@
-context("test-mongrelfit-methods.R")
+context("test-pibblefit-methods.R")
 
 sim <-   pibble_sim()
 

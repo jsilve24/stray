@@ -17,7 +17,7 @@ to_ilr(m, V = NULL)
 to_clr(m)
 }
 \arguments{
-\item{m}{object of class mongrelfit (e.g., output of \code{\link{pibble}})}
+\item{m}{object of class pibblefit (e.g., output of \code{\link{pibble}})}
 
 \item{d}{(integer) multinomial category to take as new alr reference}
 
@@ -25,7 +25,7 @@ to_clr(m)
 \code{driver::create_default_ilr_base(D)})}
 }
 \value{
-mongrelfit object
+pibblefit object
 }
 \description{
 These are a collection of convenience functions for transforming
@@ -36,7 +36,7 @@ ILR bases, CLR coordinates, ALR coordinates, and proportions.
 Note: that there is a degeneracy of representations for a covariance 
 matrix represented in terms of proportions. As such the function 
 \code{to_proportions} does not attempt to transform parameters Sigma
-or prior Xi and instead just removes them from the mongrelfit object returned.
+or prior Xi and instead just removes them from the pibblefit object returned.
 }
 \examples{
 \dontrun{

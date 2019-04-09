@@ -2,9 +2,9 @@
 #' 
 #' Combines them all into a single tibble, see example for formatting and 
 #' column headers. Primarily designed to be used by 
-#' \code{\link{summary.mongrelfit}}. 
+#' \code{\link{summary.pibblefit}}. 
 #' 
-#' @param m an object of class mongrelfit
+#' @param m an object of class pibblefit
 #' @param use_names should dimension indices be replaced by
 #'   dimension names if provided in data used to fit mongrel model.  
 #' @param as_factor if use_names should names be returned as factor?
@@ -55,13 +55,13 @@ summary_check_precomputed <- function(m, pars){
   return(FALSE)
 }
 
-#' Summarise mongrelfit object and print posterior quantiles
+#' Summarise pibblefit object and print posterior quantiles
 #' 
 #' Default calculates median, mean, 50\% and 95\% credible interval
 #' 
-#' @param object an object of class mongrelfit 
+#' @param object an object of class pibblefit 
 #' @param pars character vector (default: c("Eta", "Lambda", "Sigma"))
-#' @param use_names should summary replace dimension indices with mongrelfit 
+#' @param use_names should summary replace dimension indices with pibblefit 
 #'   names if names Y and X were named in call to \code{\link{mongrel}}
 #' @param as_factor if use_names and as_factor then returns names as factors 
 #'   (useful for maintaining orderings when plotting)
@@ -83,7 +83,7 @@ summary_check_precomputed <- function(m, pars){
 #' # Some later functions make use of precomputation
 #' fit$summary <- summary(fit)
 #' }
-summary.mongrelfit <- function(object, pars=NULL, use_names=TRUE, as_factor=FALSE, 
+summary.pibblefit <- function(object, pars=NULL, use_names=TRUE, as_factor=FALSE, 
                                gather_prob=FALSE, ...){
   if (is.null(pars)) {
     pars <- c("Eta", "Lambda", "Sigma")
@@ -124,9 +124,9 @@ summary.mongrelfit <- function(object, pars=NULL, use_names=TRUE, as_factor=FALS
   return(mtidy)
 }
 
-#' Print dimensions and coordinate system information for mongrelfit object. 
+#' Print dimensions and coordinate system information for pibblefit object. 
 #'
-#' @param x an object of class mongrelfit
+#' @param x an object of class pibblefit
 #' @param summary if true also calculates and prints summary
 #' @param ... other arguments to pass to summary function
 #' @export
@@ -135,12 +135,12 @@ summary.mongrelfit <- function(object, pars=NULL, use_names=TRUE, as_factor=FALS
 #' fit <- pibble(Y, X)
 #' print(fit)
 #' }
-#' @seealso \code{\link{summary.mongrelfit}} summarizes posterior intervals 
-print.mongrelfit <- function(x, summary=FALSE, ...){
+#' @seealso \code{\link{summary.pibblefit}} summarizes posterior intervals 
+print.pibblefit <- function(x, summary=FALSE, ...){
   if (is.null(x$Y)) {
-    cat(" Mongrelfit Object (Priors Only): \n")
+    cat(" pibblefit Object (Priors Only): \n")
   } else {
-    cat("Mongrelfit Object: \n" )  
+    cat("pibblefit Object: \n" )  
   }
   
   cat(paste("  Number of Samples:\t\t", x$N, "\n"))
@@ -174,11 +174,11 @@ print.mongrelfit <- function(x, summary=FALSE, ...){
 }
 
 
-#' Return regression coefficients of mongrelfit object
+#' Return regression coefficients of pibblefit object
 #' 
 #' Returned as array of dimension (D-1) x Q x iter.
 #' 
-#' @param object an object of class mongrelfit
+#' @param object an object of class pibblefit
 #' @param use_names if column and row names were passed for Y and X in 
 #' call to \code{\link{pibble}}, should these names be applied to output 
 #' array. 
@@ -190,16 +190,16 @@ print.mongrelfit <- function(x, summary=FALSE, ...){
 #' fit <- pibble(Y, X)
 #' coef(fit)
 #' }
-coef.mongrelfit <- function(object, use_names=TRUE){
-  if (is.null(object$Lambda)) stop("mongrelfit object does not contain samples of Lambda")
+coef.pibblefit <- function(object, use_names=TRUE){
+  if (is.null(object$Lambda)) stop("pibblefit object does not contain samples of Lambda")
   x <- object$Lambda
   if (use_names) return(name_array(x, object, list("cat", "cov", NULL)))
   return(x)
 }
 
-#' Convert object of class mongrelfit to a list
+#' Convert object of class pibblefit to a list
 #' 
-#' @param x an object of class mongrelfit
+#' @param x an object of class pibblefit
 #' @param ... currently unused
 #' 
 #' @export
@@ -208,7 +208,7 @@ coef.mongrelfit <- function(object, use_names=TRUE){
 #' fit <- pibble(Y, X)
 #' as.list(fit)
 #' }
-as.list.mongrelfit <- function(x,...){
+as.list.pibblefit <- function(x,...){
   attr(x, "class") <- "list"
   return(x)
 }
@@ -216,7 +216,7 @@ as.list.mongrelfit <- function(x,...){
 #' Predict response from new data
 #' 
 #' 
-#' @param object An object of class mongrelfit
+#' @param object An object of class pibblefit
 #' @param newdata An optional matrix for which to evaluate predictions. If NULL
 #'   (default), the original data of the model is used. 
 #' @param response Options = "LambdaX":Mean of regression, "Eta", "Y": counts
@@ -230,7 +230,7 @@ as.list.mongrelfit <- function(x,...){
 #' @param iter number of iterations to return if NULL uses object$iter
 #' @param ... other arguments passed to summarise_posterior
 #' 
-#' @details currently only implemented for mongrelfit objects in coord_system "default"
+#' @details currently only implemented for pibblefit objects in coord_system "default"
 #' "alr", or "ilr". 
 #' 
 #' @return (if summary==FALSE) array D x N x iter; (if summary==TRUE) 
@@ -242,7 +242,7 @@ as.list.mongrelfit <- function(x,...){
 #' sim <- pibble_sim()
 #' fit <- pibble(sim$Y, sim$X)
 #' predict(fit)
-predict.mongrelfit <- function(object, newdata=NULL, response="LambdaX", size=NULL, 
+predict.pibblefit <- function(object, newdata=NULL, response="LambdaX", size=NULL, 
                                use_names=TRUE, summary=FALSE, iter=NULL, ...){
   
   l <- store_coord(object)
@@ -295,7 +295,7 @@ predict.mongrelfit <- function(object, newdata=NULL, response="LambdaX", size=NU
   nnew <- ncol(newdata)
   
   # Draw LambdaX
-  if (is.null(object$Lambda)) stop("mongrelfit object does not contain samples of Lambda")
+  if (is.null(object$Lambda)) stop("pibblefit object does not contain samples of Lambda")
   LambdaX <- array(0, dim = c(object$D-1, nnew, iter))
   for (i in 1:iter){
     LambdaX[,,i] <- object$Lambda[,,i] %*% newdata
@@ -343,7 +343,7 @@ predict.mongrelfit <- function(object, newdata=NULL, response="LambdaX", size=NU
   if (response=="Eta") return(Eta)
   
   # Draw Y
-  if (is.null(object$Eta)) stop("mongrelfit object does not contain samples of Eta")
+  if (is.null(object$Eta)) stop("pibblefit object does not contain samples of Eta")
   
   com <- names(object)[!(names(object) %in% c("Lambda", "Sigma"))] # to save computation
   Pi <- to_proportions(object[com])$Eta
@@ -374,19 +374,19 @@ predict.mongrelfit <- function(object, newdata=NULL, response="LambdaX", size=NU
 
 #' @rdname access_dims
 #' @export
-ncategories.mongrelfit <- function(m){ m$D }
+ncategories.pibblefit <- function(m){ m$D }
 
 #' @rdname access_dims
 #' @export
-nsamples.mongrelfit <- function(m){ m$N }
+nsamples.pibblefit <- function(m){ m$N }
 
 #' @rdname access_dims
 #' @export
-ncovariates.mongrelfit <- function(m){ m$Q }
+ncovariates.pibblefit <- function(m){ m$Q }
 
 #' @rdname access_dims
 #' @export
-niter.mongrelfit <- function(m){ m$iter }
+niter.pibblefit <- function(m){ m$iter }
 
 
 
@@ -394,13 +394,13 @@ niter.mongrelfit <- function(m){ m$iter }
 
 #' @rdname name_dims
 #' @export
-names_covariates.mongrelfit <- function(m){
+names_covariates.pibblefit <- function(m){
   return(m$names_covariates)
 }
 
 #' @rdname name_dims
 #' @export
-names_samples.mongrelfit <- function(m){
+names_samples.pibblefit <- function(m){
   return(m$names_samples)
   
 }
@@ -408,14 +408,14 @@ names_samples.mongrelfit <- function(m){
 
 #' @rdname name_dims
 #' @export
-names_categories.mongrelfit <- function(m){
+names_categories.pibblefit <- function(m){
   return(m$names_categories)
   
 }
 
 #' @rdname name_dims
 #' @export
-names_coords.mongrelfit <- function(m){
+names_coords.pibblefit <- function(m){
   return(assign_cat_names(m))
 }
 
@@ -423,7 +423,7 @@ names_coords.mongrelfit <- function(m){
 
 #' @rdname name_dims
 #' @export
-`names_covariates<-.mongrelfit` <- function(m, value){
+`names_covariates<-.pibblefit` <- function(m, value){
   if (!is.null(value)) stopifnot(m$Q == length(value))
   m$names_covariates <- value
   m <- name(m)
@@ -432,7 +432,7 @@ names_coords.mongrelfit <- function(m){
 
 #' @rdname name_dims
 #' @export
-`names_samples<-.mongrelfit` <- function(m, value){
+`names_samples<-.pibblefit` <- function(m, value){
   if (!is.null(value)) stopifnot(m$N == length(value))
   m$names_samples <- value
   m <- name(m)
@@ -442,7 +442,7 @@ names_coords.mongrelfit <- function(m){
 
 #' @rdname name_dims
 #' @export
-`names_categories<-.mongrelfit` <- function(m, value){
+`names_categories<-.pibblefit` <- function(m, value){
   if (!is.null(value)) stopifnot(m$D == length(value))
   m$names_categories <- value
   m <- name(m)
@@ -452,12 +452,12 @@ names_coords.mongrelfit <- function(m){
 
 # sample_prior ------------------------------------------------------------
 
-#' Sample from the prior distribution of mongrelfit object
+#' Sample from the prior distribution of pibblefit object
 #' 
 #' Note this can be used to sample from prior and then predict can
-#' be called to get counts or LambdaX (\code{\link{predict.mongrelfit}})
+#' be called to get counts or LambdaX (\code{\link{predict.pibblefit}})
 #' 
-#' @param m object of class mongrelfit
+#' @param m object of class pibblefit
 #' @param n_samples number of samples to produce
 #' @param pars parameters to sample
 #' @param use_names should names be used if available
@@ -469,19 +469,19 @@ names_coords.mongrelfit <- function(m){
 #' directly from cholesky form of inverse wishart (currently implemented as 
 #' header in this library - see MatDist.h).  
 #' @examples 
-#' # Sample prior of already fitted  mongrelfit object
+#' # Sample prior of already fitted  pibblefit object
 #' sim <- pibble_sim()
 #' attach(sim)
 #' fit <- pibble(Y, X)
 #' sample_prior(fit)
 #' 
 #' # Sample prior as part of model fitting
-#' m <- mongrelfit(N=N, D=D, Q=Q, iter=2000, upsilon=upsilon, 
+#' m <- pibblefit(N=N, D=D, Q=Q, iter=2000, upsilon=upsilon, 
 #'                 Xi=Xi, Gamma=Gamma, Theta=Theta, X=X, 
 #'                 coord_system="alr", alr_base=D)
-#' m <- sample_prior(mongrelfit)
+#' m <- sample_prior(pibblefit)
 #' plot(m) # plot prior distribution (defaults to parameter Lambda) 
-sample_prior.mongrelfit <- function(m, n_samples=2000, 
+sample_prior.pibblefit <- function(m, n_samples=2000, 
                                     pars=c("Eta", "Lambda", "Sigma"), 
                                     use_names=TRUE, ...){
   req(m, c("upsilon", "Theta", "Gamma", "Xi"))
@@ -521,8 +521,8 @@ sample_prior.mongrelfit <- function(m, n_samples=2000,
     }
   }
   
-  # Convert to object of class mongrelfit
-  out <- mongrelfit(m$D, m$N, m$Q, iter=as.integer(n_samples),
+  # Convert to object of class pibblefit
+  out <- pibblefit(m$D, m$N, m$Q, iter=as.integer(n_samples),
                     coord_system="alr", 
                     alr_base=m$D, 
                     Eta = mifelse("Eta" %in% pars, Eta, NULL), 
@@ -550,7 +550,7 @@ sample_prior.mongrelfit <- function(m, n_samples=2000,
 
 #' @rdname ppc_summary
 #' @export
-ppc_summary.mongrelfit <- function(m, ...){
+ppc_summary.pibblefit <- function(m, ...){
   if (!is.null(m$Y)) {
     o <- order(m$Y, decreasing=TRUE)
   } else {

@@ -2,12 +2,12 @@
 % Please edit documentation in R/generics_s3.R, R/strayfit_methods.R
 \name{ppc_summary}
 \alias{ppc_summary}
-\alias{ppc_summary.mongrelfit}
+\alias{ppc_summary.pibblefit}
 \title{Generic Method to Plot Posterior Predictive Summaries}
 \usage{
 ppc_summary(m, ...)
 
-\method{ppc_summary}{mongrelfit}(m, ...)
+\method{ppc_summary}{pibblefit}(m, ...)
 }
 \arguments{
 \item{m}{model object}

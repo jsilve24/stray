@@ -9,13 +9,13 @@
 \alias{names_covariates<-}
 \alias{names_samples<-}
 \alias{names_categories<-}
-\alias{names_covariates.mongrelfit}
-\alias{names_samples.mongrelfit}
-\alias{names_categories.mongrelfit}
-\alias{names_coords.mongrelfit}
-\alias{names_covariates<-.mongrelfit}
-\alias{names_samples<-.mongrelfit}
-\alias{names_categories<-.mongrelfit}
+\alias{names_covariates.pibblefit}
+\alias{names_samples.pibblefit}
+\alias{names_categories.pibblefit}
+\alias{names_coords.pibblefit}
+\alias{names_covariates<-.pibblefit}
+\alias{names_samples<-.pibblefit}
+\alias{names_categories<-.pibblefit}
 \title{Generic method for getting and setting dimension names of fit object}
 \usage{
 names_covariates(m)
@@ -32,19 +32,19 @@ names_samples(m) <- value
 
 names_categories(m) <- value
 
-\method{names_covariates}{mongrelfit}(m)
+\method{names_covariates}{pibblefit}(m)
 
-\method{names_samples}{mongrelfit}(m)
+\method{names_samples}{pibblefit}(m)
 
-\method{names_categories}{mongrelfit}(m)
+\method{names_categories}{pibblefit}(m)
 
-\method{names_coords}{mongrelfit}(m)
+\method{names_coords}{pibblefit}(m)
 
-\method{names_covariates}{mongrelfit}(m) <- value
+\method{names_covariates}{pibblefit}(m) <- value
 
-\method{names_samples}{mongrelfit}(m) <- value
+\method{names_samples}{pibblefit}(m) <- value
 
-\method{names_categories}{mongrelfit}(m) <- value
+\method{names_categories}{pibblefit}(m) <- value
 }
 \arguments{
 \item{m}{object}

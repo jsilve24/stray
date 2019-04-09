@@ -1,6 +1,6 @@
 // File used to import others in order
 
-#ifdef STRAY_USE_MKL
+#ifdef STRAY_USE_MKL // requres openmp support
   #define STRAY_USE_PARALLEL
   #define EIGEN_USE_MKL_ALL
   // #define EIGEN_DONT_PARALLELIZE

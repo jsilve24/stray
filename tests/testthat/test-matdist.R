@@ -51,7 +51,7 @@ test_that("MVN correctness of Covariances", {
 test_that("InvWishart Correctness of Mean", {
   Psi <- matrix(c(1,.5,.5, 2), ncol=2)
   v <- 4
-  t <- 10000
+  t <- 100000
   Sigma <- array(0, dim=c(2,2,t))
   for (i in 1:t){
     Sigma[,,i] <- rInvWishRevCholesky_test(v, Psi)

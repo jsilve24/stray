@@ -1,0 +1,9 @@
+#' Check if stray was compiled with OpenMP
+#' 
+#' hopefully helpful when first installing stray
+#' 
+#' @return boolean
+#' @export
+compiled_with_openmp <- function(){
+  return(@OPENMP_TF@)
+}

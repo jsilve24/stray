@@ -88,7 +88,7 @@ namespace lapap{
   inline int cholesky_lap(Eigen::PlainObjectBase<T1>& z, Eigen::MatrixBase<T2>& m, 
                    Eigen::PlainObjectBase<T3>& S,  
                    lappars &pars){ 
-    #if defined(STRAY_USE_MKL)
+    #ifdef STRAY_USE_MKL
       LAPACKE_dpotrf(LAPACK_COL_MAJOR, 'U', S.rows(), S.data() , S.cols());
       pars.logInvNegHessDet -=  2.0*S.diagonal().array().log().sum();
       fillUnitNormal(z);

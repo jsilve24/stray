@@ -1,5 +1,5 @@
 #include <PibbleCollapsed.h>
-// [[Rcpp::depends(RcppNumerical)]] 
+// [[Rcpp::depends(RcppNumerical)]]
 // [[Rcpp::depends(RcppEigen)]]
 
 using namespace Rcpp;
@@ -10,22 +10,22 @@ using Eigen::VectorXd;
 
 
 //' Calculations for the Collapsed Pibble Model
-//' 
-//' Functions providing access to the Log Likelihood, Gradient, and Hessian 
+//'
+//' Functions providing access to the Log Likelihood, Gradient, and Hessian
 //' of the collapsed pibble model. Note: These are convenience functions
-//' but are not as optimized as direct coding of the PibbleCollapsed 
-//' C++ class due to a lack of Memoization. By contrast function optimPibbleCollapsed 
-//' is much more optimized and massively cuts down on repeated calculations. 
+//' but are not as optimized as direct coding of the PibbleCollapsed
+//' C++ class due to a lack of Memoization. By contrast function optimPibbleCollapsed
+//' is much more optimized and massively cuts down on repeated calculations.
 //' A more efficient Rcpp module based implementation of these functions
-//' may following if the future. For model details see \code{\link{optimPibbleCollapsed}} 
+//' may following if the future. For model details see \code{\link{optimPibbleCollapsed}}
 //' documentation
-//' 
+//'
 //' @inheritParams optimPibbleCollapsed
 //' @param eta matrix (D-1)xN of parameter values at which to calculate quantities
 //' @param sylv (default:false) if true and if N < D-1 will use sylvester determinant
 //'   identity to speed computation
 //' @return see below
-//' * loglikPibbleCollapsed - double 
+//' * loglikPibbleCollapsed - double
 //' * gradPibbleCollapsed - vector
 //' * hessPibbleCollapsed- matrix
 //' @md
@@ -34,7 +34,7 @@ using Eigen::VectorXd;
 //' D <- 10
 //' Q <- 2
 //' N <- 30
-//' 
+//'
 //' # Simulate Data
 //' Sigma <- diag(sample(1:8, D-1, replace=TRUE))
 //' Sigma[2, 3] <- Sigma[3,2] <- -1
@@ -47,17 +47,17 @@ using Eigen::VectorXd;
 //' Pi <- t(driver::alrInv(t(Eta)))
 //' Y <- matrix(0, D, N)
 //' for (i in 1:N) Y[,i] <- rmultinom(1, sample(5000:10000), prob = Pi[,i])
-//' 
+//'
 //' # Priors
 //' upsilon <- D+10
 //' Xi <- Sigma*(upsilon-D)
-//' 
+//'
 //' # Precompute
 //' K <- solve(Xi)
 //' A <- solve(diag(N)+ t(X)%*%Gamma%*%X)
 //' ThetaX <- Theta%*%X
-//' 
-//' 
+//'
+//'
 //' loglikPibbleCollapsed(Y, upsilon, ThetaX, K, A, Eta)
 //' gradPibbleCollapsed(Y, upsilon, ThetaX, K, A, Eta)
 //' hessPibbleCollapsed(Y, upsilon, ThetaX, K, A, Eta)
@@ -67,7 +67,7 @@ double loglikPibbleCollapsed(const Eigen::ArrayXXd Y,
                   const Eigen::MatrixXd ThetaX,
                   const Eigen::MatrixXd K,
                   const Eigen::MatrixXd A,
-                  Eigen::MatrixXd eta, 
+                  Eigen::MatrixXd eta,
                   bool sylv=false){
   PibbleCollapsed cm(Y, upsilon, ThetaX, K, A, sylv);
   Map<VectorXd> etavec(eta.data(), eta.size());
@@ -84,7 +84,7 @@ Eigen::VectorXd gradPibbleCollapsed(const Eigen::ArrayXXd Y,
                          const Eigen::MatrixXd ThetaX,
                          const Eigen::MatrixXd K,
                          const Eigen::MatrixXd A,
-                         Eigen::MatrixXd eta, 
+                         Eigen::MatrixXd eta,
                          bool sylv=false){
   PibbleCollapsed cm(Y, upsilon, ThetaX, K, A, sylv);
   Map<VectorXd> etavec(eta.data(), eta.size());
@@ -101,7 +101,7 @@ Eigen::MatrixXd hessPibbleCollapsed(const Eigen::ArrayXXd Y,
                          const Eigen::MatrixXd ThetaX,
                          const Eigen::MatrixXd K,
                          const Eigen::MatrixXd A,
-                         Eigen::MatrixXd eta, 
+                         Eigen::MatrixXd eta,
                          bool sylv=false){
   PibbleCollapsed cm(Y, upsilon, ThetaX, K, A, sylv);
   Map<VectorXd> etavec(eta.data(), eta.size());
@@ -110,7 +110,7 @@ Eigen::MatrixXd hessPibbleCollapsed(const Eigen::ArrayXXd Y,
   return cm.calcHess();
 }
 
-//' Hessian Vector Product using Finite Differences 
+//' Hessian Vector Product using Finite Differences
 //' @rdname hessVectorProd
 //' @export
 // [[Rcpp::export]]
@@ -121,52 +121,52 @@ Eigen::VectorXd hessVectorProd(const Eigen::ArrayXXd Y,
                          const Eigen::MatrixXd A,
                          Eigen::MatrixXd eta,
                          Eigen::VectorXd v,
-                         double r, 
+                         double r,
                          bool sylv=false){
   PibbleCollapsed cm(Y, upsilon, ThetaX, K, A, sylv);
   Map<VectorXd> etavec(eta.data(), eta.size());
   return cm.calcHessVectorProd(etavec, v, r);
 }
 
-//' Backtracking line search
-//' @rdname lineSearch
-//' @export
-// [[Rcpp::export]]
-Eigen::VectorXd lineSearch(const Eigen::ArrayXXd Y,
-                         const double upsilon,
-                         const Eigen::MatrixXd ThetaX,
-                         const Eigen::MatrixXd K,
-                         const Eigen::MatrixXd A,
-                         Eigen::MatrixXd eta,
-                         int direction,
-                         double rho,
-                         double c) {
-  // direction: element of eta to step gradient along; (+)
-  // rho: the backtrack step between (0,1) usually 0.5
-  // c: parameter between 0 and 1, usually 0.0001
-  // calculate gradient at current eta
-  Eigen::VectorXd grad = gradPibbleCollapsed(Y, upsilon, ThetaX, K, A, eta);
-  // choose d
-  Eigen::VectorXd d = Eigen::VectorXd::Zero(eta.size());
-  // R indexing to C indexing?
-  d(direction-1) = 1;
-  if(grad(direction-1) < 0) {
-    d(direction-1) = -1;
-  }
-  // how to set initial forward step size?
-  double step = 100;
-  double f0 = loglikPibbleCollapsed(Y, upsilon, ThetaX, K, A, eta);
-  // printf("Original likelihood: %f\n", f0);
-  VectorXd new_eta = eta + step*d;
-  double f1 = loglikPibbleCollapsed(Y, upsilon, ThetaX, K, A, new_eta);
-  // printf("New likelihood: %f\n", f1);
-  // we want an increase in llik, hence the stopping condition
-  while (f1 < f0 + c*step*grad.transpose()*d) {
-    step = step*rho;
-    new_eta = eta + step*d;
-    f1 = loglikPibbleCollapsed(Y, upsilon, ThetaX, K, A, new_eta);
-    // printf("New likelihood: %f\n", f1);
-  }
-  // terminates with an optimal step size
-  return (new_eta);
-}
+// //' Backtracking line search
+// //' @rdname lineSearch
+// //' @export
+// // [[Rcpp::export]]
+// Eigen::VectorXd lineSearch(const Eigen::ArrayXXd Y,
+//                          const double upsilon,
+//                          const Eigen::MatrixXd ThetaX,
+//                          const Eigen::MatrixXd K,
+//                          const Eigen::MatrixXd A,
+//                          Eigen::MatrixXd eta,
+//                          int direction,
+//                          double rho,
+//                          double c) {
+//   // direction: element of eta to step gradient along; (+)
+//   // rho: the backtrack step between (0,1) usually 0.5
+//   // c: parameter between 0 and 1, usually 0.0001
+//   // calculate gradient at current eta
+//   Eigen::VectorXd grad = gradPibbleCollapsed(Y, upsilon, ThetaX, K, A, eta);
+//   // choose d
+//   Eigen::VectorXd d = Eigen::VectorXd::Zero(eta.size());
+//   // R indexing to C indexing?
+//   d(direction-1) = 1;
+//   if(grad(direction-1) < 0) {
+//     d(direction-1) = -1;
+//   }
+//   // how to set initial forward step size?
+//   double step = 100;
+//   double f0 = loglikPibbleCollapsed(Y, upsilon, ThetaX, K, A, eta);
+//   // printf("Original likelihood: %f\n", f0);
+//   VectorXd new_eta = eta + step*d;
+//   double f1 = loglikPibbleCollapsed(Y, upsilon, ThetaX, K, A, new_eta);
+//   // printf("New likelihood: %f\n", f1);
+//   // we want an increase in llik, hence the stopping condition
+//   while (f1 < f0 + c*step*grad.transpose()*d) {
+//     step = step*rho;
+//     new_eta = eta + step*d;
+//     f1 = loglikPibbleCollapsed(Y, upsilon, ThetaX, K, A, new_eta);
+//     // printf("New likelihood: %f\n", f1);
+//   }
+//   // terminates with an optimal step size
+//   return (new_eta);
+// }

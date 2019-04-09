@@ -87,9 +87,9 @@ List uncollapsePibble(const Eigen::Map<Eigen::VectorXd> eta, // note this is ess
                     long seed, 
                     bool ret_mean = false, 
                     int ncores=-1){
-  Eigen::initParallel();
-  if (ncores > 0) Eigen::setNbThreads(ncores);
-  #if defined(STRAY_USE_PARALLEL)
+  #ifdef STRAY_USE_PARALLEL
+    Eigen::initParallel();
+    if (ncores > 0) Eigen::setNbThreads(ncores);
     if (ncores > 0) {
       omp_set_num_threads(ncores);
     } else {
@@ -118,13 +118,13 @@ List uncollapsePibble(const Eigen::Map<Eigen::VectorXd> eta, // note this is ess
   MatrixXd SigmaDraw0((D-1)*(D-1), iter);
   
   //iterate over all draws of eta - embarrassingly parallel with parallel rng
-  #if defined(STRAY_USE_PARALLEL) 
+  #ifdef STRAY_USE_PARALLEL
     Eigen::setNbThreads(1);
     //Rcout << "thread: "<< omp_get_max_threads() << std::endl;
   #endif 
   #pragma omp parallel shared(D, N, Q, LambdaDraw0, SigmaDraw0)
   {
-  #if defined(STRAY_USE_PARALLEL)
+  #ifdef STRAY_USE_PARALLEL
     boost::random::mt19937 rng(omp_get_thread_num()+seed);
   #else 
     boost::random::mt19937 rng(seed);
@@ -165,7 +165,7 @@ List uncollapsePibble(const Eigen::Map<Eigen::VectorXd> eta, // note this is ess
     }
   }
   }
-  #if defined(STRAY_USE_PARALLEL)
+  #ifdef STRAY_USE_PARALLEL
   if (ncores > 0){
     Eigen::setNbThreads(ncores);
   } else {

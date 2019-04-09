@@ -15,6 +15,7 @@ Description: Provides methods for fitting and inspection of Bayesian Multinomial
  and Laplace Approximation. Key functionality is implemented in C++ for 
  scalability. 
 License: GPL-3
+URL: https://jsilve24.github.io/stray/
 Imports: Rcpp (>= 0.12.17), RcppEigen (>= 0.3.3.4.0), driver, dplyr, ggplot2, 
   purrr, tidybayes
 LinkingTo: Rcpp, RcppEigen, RcppNumerical, RcppZiggurat, BH

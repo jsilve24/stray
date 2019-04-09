@@ -10,15 +10,6 @@ Silverman, JD, Roche, K, Holmes, ZC, David, LA, and Mukherjee, S. Bayesian Multi
 All source code freely availale under [GPL-3 License](https://www.gnu.org/licenses/gpl-3.0.en.html). 
 
 ## Installation ##
-While not strictly necessary, we recommend you edit the default Makevars (on Unix systems) located at `~/.R/Makevars` to include the following line
-```
-CXXFLAGS = -O3 -march=native
-CXX11FLAGS = -03 -march=native
-```
-this will enable full compiler optimization and vectorization. 
-
-
-Whether or not this step is done, stray can be installed with the following:
 
 ``` r
 devtools::install_github("jsilve24/stray", build_vignettes=TRUE)
@@ -28,8 +19,9 @@ Or to download the development version
 ``` r
 devtools::install_github("jsilve24/stray", ref="develop", build_vignettes=TRUE)
 ```
+There are a few installation options that can greatly speed stray up (often by as much as 10-50 fold). For a more detailed description of installation, take a look at [the installation page](https://github.com/jsilve24/stray/wiki/Installation-Details). 
 
-If you are having trouble with installation take a look at [the wiki page](https://github.com/jsilve24/stray/wiki/Installation-Problems)
+Note: We are currently experiencing difficulties with installation on Windows machines. We will be back shortly with solutions. 
 
 
 ## Bugs/Feature requests ##

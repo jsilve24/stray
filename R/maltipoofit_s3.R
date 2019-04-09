@@ -47,7 +47,7 @@ new_maltipoofit <- function(D, N, Q, P, coord_system, iter=NULL,
 #' @param ... not used
 #' @return throws error if any verification tests fail
 #' @export 
-verify.multipoo <- function(m,...){
+verify.maltipoofit <- function(m,...){
   verify.pibblefit(m)
   stopifnot(is.integer(m$P))
   P <- m$P
@@ -59,7 +59,7 @@ verify.multipoo <- function(m,...){
 #' require elements to be non-null in pibblefit or throw error
 #' @inheritParams req
 #' @export 
-req.maltipoo<- function(m, r){
+req.maltipoofit <- function(m, r){
   present <- sapply(m[r], is.null)
   if(any(present)){
     stop("maltipoofit object does not contain required components:", r[present])

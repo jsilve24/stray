@@ -192,7 +192,7 @@ object and a note about the coordinate system that the object is currently repre
 `pibble` takes expects inputs and outputs in the "default" coordinate system;
 this is simply the ALR coordinate system where the last category (`160` above) is taken as 
 reference. More specifically for a vector $x$ representing the proportions of 
-categories $\{1, \dots, D}$ we can write 
+categories $\{1, \dots, D\}$ we can write 
 $$x^* = \left( \log \frac{x_1}{x_D}, \dots, \log \frac{x_{D-1}}{x_D}\right).$$
 As mentioned above however, I have designed *stray* to work with many 
 different coordinate systems including the ALR (with respect to any category), CLR, 
@@ -359,7 +359,7 @@ tax_table(dat)[taxa_names(dat)[which(names_coords(fit) %in% focus)]][,c("Phylum"
 ## A few notes on model inference and parameter collapsing
 
 Along with some algorithmic speed-ups enabled by the C++ Eigen library *stray* uses conjugate priors for the regression component of the model allowing the last three lines of the model to be
-collapsed into 1 line. Afer this the last three lines of the model can be reexanded using fully conjugate sampling schemes
+collapsed into 1 line. After this the last three lines of the model can be reexpanded using fully conjugate sampling schemes
 that do not require optimization or MCMC (only matrix operations). 
 
 **Here are the details:** The collapsed model is given by 
@@ -397,7 +397,7 @@ means of $p(\Sigma | \eta, X)$ and $(\Lambda | \Sigma, \eta, X)$.
 
 
 ## A Note on the Laplace Approximation and Hessian warnings/errors
-By default *stray* tries to approximate the posterior distribution using a Laplace approximation. This Laplace approximation is typically the most computationally intensive component of the entire model as it requires inversion of the hessian matrix calculated at the MAP estimate^[Acctually it doesn't require inversion exactly, for numerical stability it uses a decomposition to calculate the matrix square root and then backsubstitution to produce samples from the Laplace Approximation.]. Through many many hours of pain-staking matrix calculus I have calculated closed form solutions for the hessian of the collapsed model so this part is quite fast; it is the matrix inversion that is slow and by default uses an eigen decomposition for numerical accuracy and stability (although a somewhat less safe but much faster Cholesky LLT decomposition is also available). Despite these safety measures, for large datasets (e.g., where $N\times D > 50,000$) the (negative) inverse hessian may not be possitive definite. This can result from a few causes. 
+By default *stray* tries to approximate the posterior distribution using a Laplace approximation. This Laplace approximation is typically the most computationally intensive component of the entire model as it requires inversion of the hessian matrix calculated at the MAP estimate^[Actually it doesn't require inversion exactly, for numerical stability it uses a decomposition to calculate the matrix square root and then backsubstitution to produce samples from the Laplace Approximation.]. Through many many hours of pain-staking matrix calculus I have calculated closed form solutions for the hessian of the collapsed model so this part is quite fast; it is the matrix inversion that is slow and by default uses an eigen decomposition for numerical accuracy and stability (although a somewhat less safe but much faster Cholesky LLT decomposition is also available). Despite these safety measures, for large datasets (e.g., where $N\times D > 50,000$) the (negative) inverse hessian may not be possitive definite. This can result from a few causes. 
 
 1. The optimization failed to find a local optima and instead terminated at a saddle point. 
 2. Numerical precision errors in combination with a poorly conditioned hessian at the MAP estiamte leads to a non-positive definite matrix. 

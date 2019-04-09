@@ -288,14 +288,14 @@ focus &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocum
 <div id="a-few-notes-on-model-inference-and-parameter-collapsing" class="section level2">
 <h2 class="hasAnchor">
 <a href="#a-few-notes-on-model-inference-and-parameter-collapsing" class="anchor"></a>A few notes on model inference and parameter collapsing</h2>
-<p>Along with some algorithmic speed-ups enabled by the C++ Eigen library <em>stray</em> uses conjugate priors for the regression component of the model allowing the last three lines of the model to be collapsed into 1 line. Afer this the last three lines of the model can be reexpanded using fully conjugate sampling schemes that do not require optimization or MCMC (only matrix operations).</p>
+<p>Along with some algorithmic speed-ups enabled by the C++ Eigen library <em>stray</em> uses conjugate priors for the regression component of the model allowing the last three lines of the model to be collapsed into 1 line. After this the last three lines of the model can be reexpanded using fully conjugate sampling schemes that do not require optimization or MCMC (only matrix operations).</p>
 <p><strong>Here are the details:</strong> The collapsed model is given by <span class="math display">\[
 \begin{align}
 Y_j &amp; \sim \text{Multinomial}\left(\pi_j, n_j\right)  \\
 \pi_j &amp; = \phi^{-1}(\eta_j) \\
 \eta_j &amp;\sim T_{(D-1)\times N}(\upsilon, \Theta X, \Xi, I_N + X^T \Gamma X)
 \end{align}
-\]</span> where <span class="math inline">\(A=(I_N + X^T \Gamma, X)\)</span> and <span class="math inline">\(T_{(D-1)\times N}\)</span> refers to the Matrix T-distribution the <span class="math inline">\((D-1)\times N\)</span> matrix <span class="math inline">\(\eta\)</span> with log density given by <span class="math display">\[\log T_{(D-1)\times N}(\eta | \upsilon, \Theta X, \Xi, A) \propto -\frac{\upsilon+N-D-2}{2}\log | I_{D-1}+\Xi^{-1}(\eta-\Theta X)A^{-1}(\eta-\Theta X)^T |.\]</span> Rather than using MCMC to sample <span class="math inline">\(\eta\)</span> stray uses MAP estimation (using a custom C++ Eigen based implmentation of the ADAM optimizer and closed form solutions for gradient and hessian of the collapsed model)<a href="#fn4" class="footnoteRef" id="fnref4"><sup>4</sup></a>. Additionally, <em>stray</em> allows quantification of uncertainty in MAP estimates using a Laplace approximation. We found that in practice this MAP based Laplace approximation produced comparable results to a full MCMC sampler but with tremendous improvements in compute time.</p>
+\]</span> where <span class="math inline">\(A=(I_N + X^T \Gamma, X)^{-1}\)</span> and <span class="math inline">\(T_{(D-1)\times N}\)</span> refers to the Matrix T-distribution the <span class="math inline">\((D-1)\times N\)</span> matrix <span class="math inline">\(\eta\)</span> with log density given by <span class="math display">\[\log T_{(D-1)\times N}(\eta | \upsilon, \Theta X, \Xi, A) \propto -\frac{\upsilon+N-D-2}{2}\log | I_{D-1}+\Xi^{-1}(\eta-\Theta X)A(\eta-\Theta X)^T |.\]</span> Rather than using MCMC to sample <span class="math inline">\(\eta\)</span> stray uses MAP estimation (using a custom C++ Eigen based implementation of the ADAM optimizer and closed form solutions for gradient and hessian of the collapsed model)<a href="#fn4" class="footnoteRef" id="fnref4"><sup>4</sup></a>. Additionally, <em>stray</em> allows quantification of uncertainty in MAP estimates using a Laplace approximation. We found that in practice this MAP based Laplace approximation produced comparable results to a full MCMC sampler but with tremendous improvements in compute time.</p>
 <p>Once samples of <span class="math inline">\(\eta\)</span> are produced using the Laplace approximation closed form solutions for the conditional density of <span class="math inline">\(\Lambda\)</span> and <span class="math inline">\(\Sigma\)</span> given <span class="math inline">\(\eta\)</span> are used to “uncollapse” the collapsed model and produce posterior samples from the target model. This uncollapsing is fast and given by the following matrix equations:</p>
 <p><span class="math display">\[
 \begin{align}
@@ -307,6 +307,16 @@ p(\Sigma | \eta, X) &amp;= W^{-1}(\Xi_N, \upsilon_N)\\
 p(\Lambda | \Sigma, \eta, X) &amp;= MN_{(D-1)\times Q}(\Lambda_N, \Sigma, \Gamma_N).
 \end{align}
 \]</span> If Laplace approximation is too slow, unstable (see below) or simply not needed, the default behavior of <em>pibble</em> is to preform the above matrix calcualtions and produce a single point estimate of <span class="math inline">\(\Sigma\)</span> and <span class="math inline">\(\Lambda\)</span> based on the posterior means of <span class="math inline">\(p(\Sigma | \eta, X)\)</span> and <span class="math inline">\((\Lambda | \Sigma, \eta, X)\)</span>.</p>
+</div>
+<div id="a-note-on-the-laplace-approximation-and-hessian-warningserrors" class="section level2">
+<h2 class="hasAnchor">
+<a href="#a-note-on-the-laplace-approximation-and-hessian-warningserrors" class="anchor"></a>A Note on the Laplace Approximation and Hessian warnings/errors</h2>
+<p>By default <em>stray</em> tries to approximate the posterior distribution using a Laplace approximation. This Laplace approximation is typically the most computationally intensive component of the entire model as it requires inversion of the hessian matrix calculated at the MAP estimate<a href="#fn5" class="footnoteRef" id="fnref5"><sup>5</sup></a>. Through many many hours of pain-staking matrix calculus I have calculated closed form solutions for the hessian of the collapsed model so this part is quite fast; it is the matrix inversion that is slow and by default uses an eigen decomposition for numerical accuracy and stability (although a somewhat less safe but much faster Cholesky LLT decomposition is also available). Despite these safety measures, for large datasets (e.g., where <span class="math inline">\(N\times D &gt; 50,000\)</span>) the (negative) inverse hessian may not be possitive definite. This can result from a few causes.</p>
+<ol style="list-style-type: decimal">
+<li>The optimization failed to find a local optima and instead terminated at a saddle point.</li>
+<li>Numerical precision errors in combination with a poorly conditioned hessian at the MAP estimate leads to a non-positive definite matrix.</li>
+</ol>
+<p>In practice we find that (typically) issues with non-positive definite hessians result from poorly chosen priors for <span class="math inline">\(\Sigma\)</span>. In particular, note that the prior <span class="math inline">\(\Sigma \sim W^{-1}(\upsilon, \Xi)\)</span> …with independence is not independent…</p>
 </div>
 </div>
 <div id="references" class="section level1 unnumbered">
@@ -334,6 +344,7 @@ p(\Lambda | \Sigma, \eta, X) &amp;= MN_{(D-1)\times Q}(\Lambda_N, \Sigma, \Gamma
 <li id="fn2"><p>That said, due to the need to transform back and forth from the default coordinate system, it is fastest to call refit on <code>pibblefit</code> objects in the default coordinate system bypassing these transforms.<a href="#fnref2">↩</a></p></li>
 <li id="fn3"><p>This can also be used to plot samples of the prior predictive distribution if Y is null in the object as in our <code>priors</code> object<a href="#fnref3">↩</a></p></li>
 <li id="fn4"><p>Which we found preformed substantially better than L-BFGS, which we also tried.<a href="#fnref4">↩</a></p></li>
+<li id="fn5"><p>Actually it doesn’t require inversion exactly, for numerical stability it uses a decomposition to calculate the matrix square root and then backsubstitution to produce samples from the Laplace Approximation.<a href="#fnref5">↩</a></p></li>
 </ol>
 </div>
   </div>
@@ -352,6 +363,7 @@ p(\Lambda | \Sigma, \eta, X) &amp;= MN_{(D-1)\times Q}(\Lambda_N, \Sigma, \Gamma
       <li>
 <a href="#more-technical-details">More Technical Details</a><ul class="nav nav-pills nav-stacked">
 <li><a href="#a-few-notes-on-model-inference-and-parameter-collapsing">A few notes on model inference and parameter collapsing</a></li>
+      <li><a href="#a-note-on-the-laplace-approximation-and-hessian-warningserrors">A Note on the Laplace Approximation and Hessian warnings/errors</a></li>
       </ul>
 </li>
       <li><a href="#references">References</a></li>

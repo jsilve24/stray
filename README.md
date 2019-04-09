@@ -1,7 +1,8 @@
-<img align="left" width="160" height="160" src="inst/stray.png" />
+<img width="160" height="160" src="https://raw.githubusercontent.com/jsilve24/stray/master/inst/stray.png" />
 
 # stray
-Multinomial Logistic-Normal Linear Regression Models
+Multinomial Logistic-Normal Models (really fast) <br>
+*its a little **tar**-ball of joy*
 
 ## Citation ##
 Silverman, JD, Roche, K, Holmes, ZC, David, LA, and Mukherjee, S. Bayesian Multinomial Logistic Normal Models through Marginally Latent Matrix-T Processes. 2019, arXiv e-prints, arXiv:1903.11695

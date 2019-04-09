@@ -22,16 +22,16 @@ knitr::opts_chunk$set(
 ```
 
 # An introduction to *stray*
-*stray* [@silverman2019] is a loose accronym for **"(Bayesian) Multinomial Logistic-Normal Model"**. 
+*stray* [@silverman2019] is a loose accronym for **"(Bayesian) Multinomial Logistic-Normal Models"**. 
 In particular the development of 
 *stray* stems from the need for fast inference for time-invariant MALLARD models[@silverman2018]. 
-*stray* is very fast! It uses closed form solutions for model gradients and hessian written
+*stray* is very fast! It uses closed form solutions for model gradients and hessians written
 in C++ to preform [MAP estimation](https://en.wikipedia.org/wiki/Maximum_a_posteriori_estimation)
 in combination with parameter uncertainty estimation using a [Laplace Approximation](http://www.sumsar.net/blog/2013/11/easy-laplace-approximation/).
 One of the main models in *stray* is the function *pibble* which fits a Multinomial
 Logistic-Normal **Linear Regerssion** model. 
 
-**So what is a *pibble* model exactly?** First let me give the broad description
+**So what is a *stray* model exactly?** First let me give the broad description
 from 10,000ft up: Basically its a model for multinomial count
 data (e.g., each sample contains the counts of $D$ "types of things"). Importantly, 
 unlike the more common Poisson count models, the multinomial models a "competition to
@@ -59,17 +59,18 @@ is that sequencing only samples a small portion of the total genetic material
 available and leads to similar competition to be counted. 
 
 ## The *pibble* model
+*Pibble* is one type of *stray* model. In particular its a *stray* model for 
+multivariate linear regression. 
+
 Let $Y$ denote an $D\times N$ matrix of counts. Let us denote the $j$-th 
 column of $Y$ as $Y_j$. Thus each "sample" in the dataset is a measurement
-of the relative amount of $D$ "types of things" (see above). Suppose we also 
-have have covariate information in the form of a $Q\times N$ matrix $X$. Also
-let $n_j$ denote the total number of counts in sample $j$ 
-(i.e., $n_j=\sum_i Y_{ij}$). 
+of the relative amount of $D$ "types of things". Suppose we also 
+have have covariate information in the form of a $Q\times N$ matrix $X$. 
 
 The following is the pibble model including likelihood and priors:
 $$
 \begin{align}
-Y_j & \sim \text{Multinomial}\left(\pi_j, n_j\right)  \\
+Y_j & \sim \text{Multinomial}\left(\pi_j \right)  \\
 \pi_j & = \phi^{-1}(\eta_j) \\
 \eta_j &\sim N(\Lambda X_j, \Sigma) \\
 \Lambda &\sim  MN_{(D-1) \times Q}(\Theta, \Sigma, \Gamma) \\
@@ -90,11 +91,10 @@ we define $\phi^{-1}$ to be the [inverse additive log ratio transform](http://ww
 imples that $\eta_j = ALR(\pi_j)$) also known as the identified softmax transform
 (as it is more commonly known in the Machine Learning community). While 
 I will say more on this later in this tutorial, one thing to know is that
-I simply have the model implemented using the ALR transform as it is computationally
+I have the model implemented using the ALR transform as it is computationally
 simple and fast; the results of the model can be viewed as if any number of 
-transforms had been used (instead of the ALR) including the isometric log-ratio transform, the 
-centered log-ratio transform or the identity transformation (e.g., modeling $\pi$ 
-directly). 
+transforms had been used (instead of the ALR) including the isometric log-ratio transform, or the 
+centered log-ratio transform. 
 
 
 Before moving on, I would like to give **a more intuitive description of *pibble***.
@@ -106,24 +106,23 @@ and $\Sigma$ is the covariance matrix for the regression residuals.
 
 # Example analysis of microbiome data
 This analysis is the same as that presented in the *stray* manuscript [@silverman2019]. 
+I will reanalyze a previously published study comparing microbial composition in the terminal ileum of subjects with 
+Crohn's Disease (CD) to healthly contols [@gevers2014]. To do this I will fit a pibble model using 
+CD status, inflamation status and age as covariates (plus a constatn intercept term). 
 
 ```{r message=FALSE, warning=FALSE}
 library(MicrobeDS)
 library(phyloseq)
-library(stray)
 library(dplyr)
-library(ape)
+library(stray)
 
-set.seed(91)
+set.seed(899)
 
 data("RISK_CCFA")
-
-# Start by defining which samples to analyze also
-#   drop any super low abundant taxa and samples
+# drop low abundant taxa and samples
 dat <- RISK_CCFA %>% 
   subset_samples(disease_stat!="missing", 
                  immunosup!="missing") %>% 
-  #subset_samples(diseasesubtype %!in% c("UC", "control")) %>%
   subset_samples(diagnosis %in% c("no", "CD")) %>% 
   subset_samples(steroids=="false") %>% 
   subset_samples(antibiotics=="false") %>% 
@@ -134,17 +133,14 @@ dat <- RISK_CCFA %>%
   filter_taxa(function(x) sum(x > 3) > 0.10*length(x), TRUE)
 ```
 
-We are going to fit a *pibble* model (multinomial logistic-normal linear regression model) to 
-investigate the relationship between Crohn's disease (CD) and microbial composition. 
 
 Create Design Matrix and OTU Table
 ```{r}
 sample_dat <- as.data.frame(as(sample_data(dat),"matrix")) %>% 
-  mutate(age = as.numeric(as.character(age)), 
-         diseasesubtype=relevel(diseasesubtype, ref="no"), 
+  mutate(age = as.numeric(as.character(age)),
+         diagnosis = relevel(diagnosis, ref="no"), 
          disease_stat = relevel(disease_stat, ref="non-inflamed"))
-
-X <- t(model.matrix(~disease_stat+age, data=sample_dat))
+X <- t(model.matrix(~diagnosis + disease_stat+age, data=sample_dat))
 Y <- otu_table(dat)
 
 # Investigate X and Y look like
@@ -153,46 +149,58 @@ Y[1:5,1:5]
 ```
 
 Next specify priors. We are going to start by specifying 
-a prior on the covariance between log-ratios $\Sigma$. Note that the prior mean
-for $\Sigma$ is given by $\frac{\Xi}{\upsilon + D - 2}$. From Aitchison (1986), 
-we know that if we assume that the taxa are uncorrelation in terms of log-absolute
-abundance then their correlation in the ALR space is given by [fill in]. 
-
-`upsilon` essentially specifies how much confidence we have 
-in our specification of `Xi`. Note 
+a prior on the covariance between log-ratios $\Sigma$. I like to do this by 
+thinking about a prior on the covariance between taxa on the log-scale (i.e.,
+between the log of their absolute abundances not the log-ratios). I will refer
+to this covariance on log-absolute abundances $\Omega$. For example, 
+here I will build a prior that states that the mean of $\Omega$ is the identity matrix
+$I_D$. From From @aitchison1986, 
+we know that if we assume that the taxa have a covariance $\Omega$ in terms of log-absolute
+abundance then their correlation in the $\text{ALR}_D$ is given by 
+$$ \Sigma = G \Omega G^T $$
+where $G$ is a $D-1 \times D$ matrix given by $G = [I_{D-1}; -1_{D-1}]$ (i.e.,
+$G$ is the $\text{ALR}_D$ contrast matrix). Additionally, we know that
+the Inverse wishart mode is given by $\frac{\Xi}{\upsilon + D}$. Finally, 
+note that $\upsilon$ essentially controls our uncertainty in $\Sigma$ about
+this prior mean. Here I will take $\upsilon = D+3$. This then gives us 
+$\Xi = (\upsilon - D) GIG^T$. We scale $\Xi$ by a factor of 1/2 to make $Tr(\Xi)=D-1$. 
 ```{r fig.height=5, fig.width=7}
 upsilon <- ntaxa(dat)+3 
-m <- diag(ntaxa(dat)) + 0.5*vcv.phylo(phy_tree(dat), corr=TRUE) # Weak Phylo Prior
-GG <- cbind(diag(ntaxa(dat)-1), -1)
-Xi <- (upsilon-ntaxa(dat)-2)*GG%*%m%*%t(GG)
+Omega <- diag(ntaxa(dat))
+G <- cbind(diag(ntaxa(dat)-1), -1)
+Xi <- (upsilon-ntaxa(dat))*G%*%Omega%*%t(G)
+```
+
+Finally I specify my priors for $\Theta$ (mean of $\Lambda$) and $\Gamma$ (covariance
+between columns of $\Lambda$; i.e., covariance between the covariates). I will
+center my prior for $\Lambda$ about zero, and assume that the covariates are independent. 
+```{r fig.height=5, fig.width=7}
 Theta <- matrix(0, ntaxa(dat)-1, nrow(X))
 Gamma <- diag(nrow(X))
-image(Xi)
 ```
 
-The function `pibble` is the main function in the *stray* package. It is 
-fairly flexible allowing sampling from the model posterior as well as prior. 
-Since we already have our priors we are going to investigate them to see what 
-they look like before fitting the data; we do this by simply leaving the 
-data out of the call to pibble or by passing `Y=NULL`^[X however must be passed
-if sampling $\eta$ from the prior is desired.]  
-
+I strongly recomend users perform prior predictive checks to make sure their
+priors make sense to them. *stray* makes this easy, all the main fitting functions 
+(e.g., `pibble`) will automatically sample from the prior predictive 
+distribution if `Y` is left as `NULL` (e.g., without data your posterior is
+just your prior). 
 ```{r}
 priors <- pibble(NULL, X, upsilon, Theta, Gamma, Xi)  
-priors
+print(priors)
 ```
 
-Except for the main function `pibble`, most functions in the *stray* package
-work with `pibblefit` objects (essentially just a list with some extra features).
-The default print method provides a brief summary of the pibblefit object and 
-adds a note reminding us that this was based on priors only (e.g., prior samples
-not posterior samples). 
-The default print method  also gives basic information regarding the dimensions of the 
-object and a note about the coordinate system that the object is currently represented in. The function 
-`pibble` takes expects inputs and outputs in the "default" coordinate system;
-this is simply the ALR coordinate system where the last category (`160` above) is taken as 
-reference. More specifically for a vector $x$ representing the proportions of 
-categories $\{1, \dots, D}$ we can write 
+The main fitting functions in the *stray* package output special fit objects (e.g.,
+`pibble` outputs an object of class `pibblefit`). These fit objects
+are just lists with some extra metadata that allows special method dispatch. For 
+example, if you call print on a `pibblefit` object you will get a nice 
+summary of what is in the object. 
+
+
+*Note:* Currently, the function `pibble` takes expects inputs and outputs in the "default" coordinate system;
+this is simply the ALR coordinate system where the last category (`r ncategories(priors)` above) is taken as 
+reference (this will be generalized in future versions). 
+More specifically for a vector $x$ representing the proportions of 
+categories $\{1, \dots, D\}$ we can write 
 $$x^* = \left( \log \frac{x_1}{x_D}, \dots, \log \frac{x_{D-1}}{x_D}\right).$$
 As mentioned above however, I have designed *stray* to work with many 
 different coordinate systems including the ALR (with respect to any category), CLR, 
@@ -200,7 +208,7 @@ ILR, or proportions. To help transform things between these coordinate systems
 I have written a series of transformation functions that transform any `pibblefit` 
 object into a desired coordinate system. Importantly, `pibblefit` objects
 keep track of what coordinate system they are currently in so as a user you only
-need to specify the coordinate system that you want to change into. A note however is that
+need to specify the coordinate system that you want to change into. Keep in mind that
 covariance matricies cannot be represented in proportions and so visualizations
 or summaries based on covariance matricies will be suppressed when `pibblefit` objects
 are in the proportions coordinate system. As an example, lets look at viewing
@@ -216,11 +224,8 @@ summary(priors, pars="Lambda")
 By default the `summary` function returns a list (with possible elements `Lambda`, 
 `Sigma`, and `Eta`) summarizing each posterior parameter based on quantiles and mean (e.g., 
 p2.5 is the 0.025 percentile of the posterior distribution). As this type of 
-table may be hard to take in due to how large it is `pibblefit` objects also come with a default
-plotting option for each of the parameters. However, as we have `r ncategories(priors)` 
-categories the basic plot would be slightly overwhelming as well. Therefore
-we can use the `focus` options in the plot function to just show a few selected
-categories which we will pick at random. Also the returned plot objects
+table may be hard to take in due to how large it is, `pibblefit` objects also come with a default
+plotting option for each of the parameters. Also the returned plot objects
 are `ggplot` objects so normal `ggplot2` commands work on them. Before doing that
 though we are going to use one of the `names` functions for `pibblefit` objects
 to provide some more specific names for the covariates (helpful when we then plot). 
@@ -228,50 +233,35 @@ to provide some more specific names for the covariates (helpful when we then plo
 ```{r fig.height=5, fig.width=7}
 names_covariates(priors) <- rownames(X)
 plot(priors, par="Lambda") + ggplot2::xlim(c(-10, 10))  
-
 ```
 
-Woah! That looks weird! By investigating the priors I found that our 
-initial phylogenetic prior was pretty weird and implied much higher covariance
-for a few categories (taxa) and much lower covariance for others. For illustrative 
-purposes we are going to instead just specify a much simpler prior, a prior that 
-implies a particular type of independence between taxa and move on to fitting the model. 
-Also rather than refitting the model using the `pibble` function, we will 
-demonstrate the use of the `refit` method which can be called to refit a 
-`pibblefit` object, saving some typing and allowing us to simply add data to the 
-`priors` object.
+This looks fairly reasonable to me. So I am going to go ahead and 
+fit the model with data. `stray` provides a helper method called `refit` 
+that we will use to avoid passing prior parameters again. 
 
-```{r fig.height=5, fig.width=7}
-priors$Y <- Y # add data to priors object
-Xi <- (upsilon-ntaxa(dat)-2)*GG%*% diag(ntaxa(dat)) %*%t(GG) # update Xi prior
-Xi_clr <- driver::alrvar2clrvar(Xi, ntaxa(dat)) # need to add it in CLR coords
-priors$Xi <- Xi_clr # add new prior to pibblefit object
-verify(priors) # run internal checks to make sure modified object is okay
-fit <- refit(priors, step_size=0.005, b1=0.99, decomp_method="cholesky")
-tax <- tax_table(dat)[,c("Class", "Family")]
-tax <- apply(tax, 1, paste, collapse="_")
-names_categories(fit) <- tax
-fit 
+```{r}
+priors$Y <- Y # remember pibblefit objects are just lists
+posterior <- refit(priors)
 ```
 
-Note unlike the main *pibble* function, the `refit` method can be called
+Unlike the main *pibble* function, the `refit` method can be called
 on objects in any coordinate system and all transfrormations to and from the
 default coordinate system are handled internally^[That said, due to the need to transform
 back and forth from the default coordinate system, it is fastest to call refit on 
 `pibblefit` objects in the default coordinate system bypassing these transforms.]. 
 This is one nice thing about
 using the `refit` method. That said, new objects added to the `pibblefit` object 
-need to be added in the proper basis. For example, we had to transform our prior
-for `Xi` to CLR coordinates before adding it to the `priors` object. 
-Also note that above I used the Cholesky (LLT) decomposition of the Hessian to produce samples
-from the Laplace approximation as it is faster than the default Eigen decompostion. 
-The downside to the Cholesky is that it is less safe and may give incorrect results
-if the negative Hessian is not positive definite. However, having already ran this
-analysis with the Eigen decomposition I know its safe and chose the cholesky this time. 
+need to be added in the proper coordinates For example, if we wanted to 
+replace our prior for $\Xi$ for an object in CLR coordinates, we would
+had to transform our prior for `Xi` to CLR coordinates before adding it to the `priors` object. 
 
-Also, if you want to sample from the prior of the fitted object (even though it 
-has data stored) you can do it by calling `sample_prior(fit)` and it returns
-the same object as if you had called `pibble` with just the priors. 
+Now I are also going to add in the taxa names to make it easier to 
+interpret the results. 
+```{r}
+tax <- tax_table(dat)[,c("Class", "Family")]
+tax <- apply(tax, 1, paste, collapse="_")
+names_categories(posterior) <- tax
+```
 
 Before doing anything else lets look at the posterior predictive distribution
 to assess model fit. This can be accessed through the method `ppc`^[This can also 
@@ -279,31 +269,22 @@ be used to plot samples of the prior predictive distribution if Y is null in the
 object as in our `priors` object].
 
 ```{r fig.height=5, fig.width=7}
-ppc(fit) + ggplot2::coord_cartesian(ylim=c(0, 30000))
+ppc(posterior) + ggplot2::coord_cartesian(ylim=c(0, 30000))
 ```
 
 There are a few things to note about this plot. First, when zoomed out like this
 it looks it is hard to make much of it. This is a fairly large dataset we are 
 analyzing and its hard to view an uncertainty interval; in this case its plotting
 the median and 95% confidence interval in grey and black and the observed counts in green.
-Also notice that there is a large number of very small counts (right side) of the image
-that look like they have large posterior proability at unreasonably large values. 
-This is a common feature I see in models even when they fit well. The reason
-is that the model has little certainty about many small (or zero counts). This is 
-a feature of multinomial counting, if you don't see it its hard to know what its true 
-level is. In fact, the model places most of its weight on the fact that 
-these counts are zero (if you zoom in you will see the median value is at zero for 
-these). It just looks weird because zero is the lowest value you can have
-and so the plot looks skewed to higher values. While these plots can be helpful 
 *stray* also has a simpler function that summarizes the poterior predictive check. 
 
 ```{r}
-ppc_summary(fit)
+ppc_summary(posterior)
 ```
 
 Here we see that the model appears to be fitting well (at least based on the posterior
-predictive check) and that only  about 5% of observations fall outside of the 95% 
-posterior predictive density. 
+predictive check) and that only about 1.5% of observations fall outside of the 95% 
+posterior predictive density (this is good). 
 
 Now we are going to finally look at the posterior distribution of our regression
 parameters, but because there are so many we will focus on just those 
@@ -312,54 +293,32 @@ the model is fairly certain are non-zero). We are also going to ignore the
 intercept term and just look at parameters associated with age and disease status. 
 
 ```{r fig.height=5, fig.width=7}
-fit_summary <- summary(fit, pars="Lambda")$Lambda
-focus <- fit_summary[sign(fit_summary$p2.5) == sign(fit_summary$p97.5),]
+posterior_summary <- summary(posterior, pars="Lambda")$Lambda
+focus <- posterior_summary[sign(posterior_summary$p2.5) == sign(posterior_summary$p97.5),]
 focus <- unique(focus$coord)
-plot(fit, par="Lambda", focus.coord = focus, focus.cov = rownames(X)[2:3])
+plot(posterior, par="Lambda", focus.coord = focus, focus.cov = rownames(X)[2:4])
 ```
 
 The first, and most obvious ting to notice is that the covariate `age` has pretty 
 much no effect at all, whatever effect it may have is incredibly weak. So 
-we are going to remove age from the plot.
+we are going to remove age from the plot and just look at those 
+coordinates with non-zero effect for diagnosisCD
 
 ```{r fig.height=5, fig.width=7}
-fit_summary <- filter(fit_summary, covariate=="disease_statinflamed") 
-focus <- fit_summary[sign(fit_summary$p2.5) == sign(fit_summary$p97.5),]
+posterior_summary <- filter(posterior_summary, covariate=="diagnosisCD") 
+focus <- posterior_summary[sign(posterior_summary$p2.5) == sign(posterior_summary$p97.5),]
 focus <- unique(focus$coord)
 
-tax_table(dat)[taxa_names(dat)[which(names_coords(fit) %in% focus)]]
-plot(fit, par="Lambda", focus.coord = focus, focus.cov = rownames(X)[2])
+tax_table(dat)[taxa_names(dat)[which(names_coords(posterior) %in% focus)]]
+plot(posterior, par="Lambda", focus.coord = focus, focus.cov = rownames(X)[2])
 ```
-
-
-What if we looked at just those with large medians. 
-```{r}
-fit_summary <- filter(fit_summary, abs(mean) > 1)
-focus <- fit_summary$coord
-tax_table(dat)[taxa_names(dat)[which(names_coords(fit) %in% focus)]][,c("Phylum", "Class", "Family")]
-```
-
-
-<!-- ```{r} -->
-<!-- otu_table(dat)[taxa_names(dat)[which(names_coords(fit) %in% focus)],] %>%  -->
-<!--   t() %>%  -->
-<!--   as("matrix") %>%  -->
-<!--   cbind(sample_data(dat)[,"disease_stat"]) %>%  -->
-<!--   as.data.frame() %>%  -->
-<!--   tidyr::gather(otu, count, -disease_stat) %>%  -->
-<!--   group_by(otu, disease_stat) %>%  -->
-<!--   summarise_posterior(count) %>%  -->
-<!--   select(otu, disease_stat, mean) %>%  -->
-<!--   tidyr::spread(disease_stat, mean) -->
-<!-- ``` -->
-
 
 
 # More Technical Details 
 ## A few notes on model inference and parameter collapsing
 
 Along with some algorithmic speed-ups enabled by the C++ Eigen library *stray* uses conjugate priors for the regression component of the model allowing the last three lines of the model to be
-collapsed into 1 line. Afer this the last three lines of the model can be reexanded using fully conjugate sampling schemes
+collapsed into 1 line. Afer this the last three lines of the model can be reexpanded using fully conjugate sampling schemes
 that do not require optimization or MCMC (only matrix operations). 
 
 **Here are the details:** The collapsed model is given by 
@@ -367,11 +326,11 @@ $$
 \begin{align}
 Y_j & \sim \text{Multinomial}\left(\pi_j, n_j\right)  \\
 \pi_j & = \phi^{-1}(\eta_j) \\
-\eta_j &\sim T_{(D-1)\times N}(\upsilon, \Theta X, \Xi, A)
+\eta_j &\sim T_{(D-1)\times N}(\upsilon, \Theta X, \Xi, I_N + X^T \Gamma X)
 \end{align}
 $$
-where $A=(I_N + X^T \Gamma, X)^{-1}$ and $T_{(D-1)\times N}$ refers to the Matrix T-distribution the $(D-1)\times N$ matrix $\eta$ with log density given by 
-$$\log T_{(D-1)\times N}(\eta | \upsilon, \Theta X, \Xi, A) \propto -\frac{\upsilon+N-D-2}{2}\log | I_{D-1}+\Xi^{-1}(\eta-\Theta X)A(\eta-\Theta X)^T |.$$
+where $A=(I_N + X^T \Gamma, X)$ and $T_{(D-1)\times N}$ refers to the Matrix T-distribution the $(D-1)\times N$ matrix $\eta$ with log density given by 
+$$\log T_{(D-1)\times N}(\eta | \upsilon, \Theta X, \Xi, A) \propto -\frac{\upsilon+N-D-2}{2}\log | I_{D-1}+\Xi^{-1}(\eta-\Theta X)A^{-1}(\eta-\Theta X)^T |.$$
 Rather than using MCMC to sample $\eta$ stray uses MAP estimation (using a custom C++ Eigen based implmentation of the ADAM optimizer and closed form solutions for gradient and hessian of the collapsed model)^[Which we found preformed substantially better than L-BFGS, which we also tried.]. Additionally, *stray* allows quantification of uncertainty in MAP estimates using a Laplace approximation. We found that in practice this MAP based Laplace approximation produced 
 comparable results to a full MCMC sampler but with tremendous improvements in compute time. 
 
@@ -394,16 +353,6 @@ If Laplace approximation is too slow, unstable (see below) or simply not needed,
 the default behavior of *pibble* is to preform the above matrix calcualtions and
 produce a single point estimate of $\Sigma$ and $\Lambda$ based on the posterior
 means of $p(\Sigma | \eta, X)$ and $(\Lambda | \Sigma, \eta, X)$. 
-
-
-## A Note on the Laplace Approximation and Hessian warnings/errors
-By default *stray* tries to approximate the posterior distribution using a Laplace approximation. This Laplace approximation is typically the most computationally intensive component of the entire model as it requires inversion of the hessian matrix calculated at the MAP estimate^[Acctually it doesn't require inversion exactly, for numerical stability it uses a decomposition to calculate the matrix square root and then backsubstitution to produce samples from the Laplace Approximation.]. Through many many hours of pain-staking matrix calculus I have calculated closed form solutions for the hessian of the collapsed model so this part is quite fast; it is the matrix inversion that is slow and by default uses an eigen decomposition for numerical accuracy and stability (although a somewhat less safe but much faster Cholesky LLT decomposition is also available). Despite these safety measures, for large datasets (e.g., where $N\times D > 50,000$) the (negative) inverse hessian may not be possitive definite. This can result from a few causes. 
-
-1. The optimization failed to find a local optima and instead terminated at a saddle point. 
-2. Numerical precision errors in combination with a poorly conditioned hessian at the MAP estiamte leads to a non-positive definite matrix. 
-
-In practice we find that (typically) issues with non-positive definite hessians result from poorly chosen priors for $\Sigma$. In particular, note that the prior $\Sigma \sim W^{-1}(\upsilon, \Xi)$ ...with independence is not independent... 
-
 
 
 # References

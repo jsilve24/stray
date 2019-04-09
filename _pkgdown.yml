@@ -1,6 +1,8 @@
 navbar:
   title: "stray"
   left: 
+    - text: "Installation"
+      href: https://github.com/jsilve24/stray/wiki/Installation-Details
     - text: "Vignettes"
       menu:
         - text: "Intro stray::pibble"

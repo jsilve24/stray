@@ -36,6 +36,9 @@
 
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
+<li>
+  <a href="https://github.com/jsilve24/stray/wiki/Installation-Details">Installation</a>
+</li>
 <li class="dropdown">
   <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
     Vignettes
@@ -308,16 +311,6 @@ p(\Lambda | \Sigma, \eta, X) &amp;= MN_{(D-1)\times Q}(\Lambda_N, \Sigma, \Gamma
 \end{align}
 \]</span> If Laplace approximation is too slow, unstable (see below) or simply not needed, the default behavior of <em>pibble</em> is to preform the above matrix calcualtions and produce a single point estimate of <span class="math inline">\(\Sigma\)</span> and <span class="math inline">\(\Lambda\)</span> based on the posterior means of <span class="math inline">\(p(\Sigma | \eta, X)\)</span> and <span class="math inline">\((\Lambda | \Sigma, \eta, X)\)</span>.</p>
 </div>
-<div id="a-note-on-the-laplace-approximation-and-hessian-warningserrors" class="section level2">
-<h2 class="hasAnchor">
-<a href="#a-note-on-the-laplace-approximation-and-hessian-warningserrors" class="anchor"></a>A Note on the Laplace Approximation and Hessian warnings/errors</h2>
-<p>By default <em>stray</em> tries to approximate the posterior distribution using a Laplace approximation. This Laplace approximation is typically the most computationally intensive component of the entire model as it requires inversion of the hessian matrix calculated at the MAP estimate<a href="#fn5" class="footnoteRef" id="fnref5"><sup>5</sup></a>. Through many many hours of pain-staking matrix calculus I have calculated closed form solutions for the hessian of the collapsed model so this part is quite fast; it is the matrix inversion that is slow and by default uses an eigen decomposition for numerical accuracy and stability (although a somewhat less safe but much faster Cholesky LLT decomposition is also available). Despite these safety measures, for large datasets (e.g., where <span class="math inline">\(N\times D &gt; 50,000\)</span>) the (negative) inverse hessian may not be possitive definite. This can result from a few causes.</p>
-<ol style="list-style-type: decimal">
-<li>The optimization failed to find a local optima and instead terminated at a saddle point.</li>
-<li>Numerical precision errors in combination with a poorly conditioned hessian at the MAP estimate leads to a non-positive definite matrix.</li>
-</ol>
-<p>In practice we find that (typically) issues with non-positive definite hessians result from poorly chosen priors for <span class="math inline">\(\Sigma\)</span>. In particular, note that the prior <span class="math inline">\(\Sigma \sim W^{-1}(\upsilon, \Xi)\)</span> …with independence is not independent…</p>
-</div>
 </div>
 <div id="references" class="section level1 unnumbered">
 <h1 class="hasAnchor">
@@ -344,7 +337,6 @@ p(\Lambda | \Sigma, \eta, X) &amp;= MN_{(D-1)\times Q}(\Lambda_N, \Sigma, \Gamma
 <li id="fn2"><p>That said, due to the need to transform back and forth from the default coordinate system, it is fastest to call refit on <code>pibblefit</code> objects in the default coordinate system bypassing these transforms.<a href="#fnref2">↩</a></p></li>
 <li id="fn3"><p>This can also be used to plot samples of the prior predictive distribution if Y is null in the object as in our <code>priors</code> object<a href="#fnref3">↩</a></p></li>
 <li id="fn4"><p>Which we found preformed substantially better than L-BFGS, which we also tried.<a href="#fnref4">↩</a></p></li>
-<li id="fn5"><p>Actually it doesn’t require inversion exactly, for numerical stability it uses a decomposition to calculate the matrix square root and then backsubstitution to produce samples from the Laplace Approximation.<a href="#fnref5">↩</a></p></li>
 </ol>
 </div>
   </div>
@@ -363,7 +355,6 @@ p(\Lambda | \Sigma, \eta, X) &amp;= MN_{(D-1)\times Q}(\Lambda_N, \Sigma, \Gamma
       <li>
 <a href="#more-technical-details">More Technical Details</a><ul class="nav nav-pills nav-stacked">
 <li><a href="#a-few-notes-on-model-inference-and-parameter-collapsing">A few notes on model inference and parameter collapsing</a></li>
-      <li><a href="#a-note-on-the-laplace-approximation-and-hessian-warningserrors">A Note on the Laplace Approximation and Hessian warnings/errors</a></li>
       </ul>
 </li>
       <li><a href="#references">References</a></li>

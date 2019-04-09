@@ -5,7 +5,9 @@ Version: 0.1.9
 Date: 2018-06-26
 Author: Justin Silverman
 Authors@R: c(person("Justin", "Silverman", role=c("aut", "cre"),
-                     email = "Justin.Silverman@duke.edu"))
+                     email = "Justin.Silverman@duke.edu"), 
+             person("Kim", "Roche", role=("ctb"), 
+                     email = "kimberly.roche@duke.edu"))
 Maintainer: Justin Silverman
     <Justin.Silverman@duke.edu>
 Description: Provides methods for fitting and inspection of Bayesian Multinomial 
@@ -13,6 +15,7 @@ Description: Provides methods for fitting and inspection of Bayesian Multinomial
  and Laplace Approximation. Key functionality is implemented in C++ for 
  scalability. 
 License: GPL-3
+URL: https://jsilve24.github.io/stray/
 Imports: Rcpp (>= 0.12.17), RcppEigen (>= 0.3.3.4.0), driver, dplyr, ggplot2, 
   purrr, tidybayes
 LinkingTo: Rcpp, RcppEigen, RcppNumerical, RcppZiggurat, BH

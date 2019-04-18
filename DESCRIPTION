@@ -25,3 +25,4 @@ Remotes:
     jsilve24/driver,
     twbattaglia/MicrobeDS
 VignetteBuilder: knitr
+LazyData: true

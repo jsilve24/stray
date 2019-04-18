@@ -2,7 +2,7 @@ context("test-kernels")
 
 test_that("RBF works", {
   X <- matrix(rnorm(10), 2, 5)
-  G <- RBF(X, 2, .2)
+  G <- SE(X, 2, .2)
   expect_true(all(eigen(G)$values>0))
   expect(all(diag(G)-4 < .000001))
 })

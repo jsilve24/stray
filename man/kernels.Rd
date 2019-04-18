@@ -2,13 +2,13 @@
 % Please edit documentation in R/kernels.R
 \name{kernels}
 \alias{kernels}
-\alias{RBF}
+\alias{SE}
 \alias{LINEAR}
 \title{Multivariate RBF Kernel}
 \usage{
-RBF(X, sigma = 1, rho = median(dist))
+SE(X, sigma = 1, rho = median(as.matrix(dist(t(X)))), jitter = 1e-10)
 
-LINEAR(X, sigma = 1, c = rowMeans(X))
+LINEAR(X, sigma = 1, c = rep(0, nrow(X)))
 }
 \arguments{
 \item{X}{covariate (dimension Q x N; i.e., covariates x samples)}
@@ -16,6 +16,9 @@ LINEAR(X, sigma = 1, c = rowMeans(X))
 \item{sigma}{scalar parameter}
 
 \item{rho}{scalar bandwidth parameter}
+
+\item{jitter}{small scalar to add to off-diagonal of gram matrix 
+(for numerical underflow issues)}
 
 \item{c}{vector parameter defining intercept for linear kernel}
 }
@@ -29,7 +32,7 @@ Designed to be partially specified. (see examples)
 \details{
 Gram matrix G is given by 
 
-RBF:
+SE (squared exponential):
 \deqn{G = \sigma^2 * exp(-[(X-c)'(X-c)]/(s*\rho^2))}
 
 LINEAR:
@@ -37,7 +40,7 @@ LINEAR:
 }
 \examples{
   # Create Partial for use with basset
-  K <- function(X) RBF(X, 2, .2)
+  K <- function(X) SE(X, 2, .2)
   
   # Example use
   X <- matrix(rnorm(10), 2, 5)

@@ -1,0 +1,6 @@
+load("/Users/Justin/Research/src/stray/data/mallard.rds")
+foo <- readRDS("/Users/Justin/Research/src/stray/data/mallard.rds")
+foo
+mallard <- foo
+save(mallard, "~/Research/src/stray/data/mallard.RData")
+save(mallard, file="~/Research/src/stray/data/mallard.RData")

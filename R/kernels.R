@@ -10,7 +10,7 @@
 #' 
 #' @details Gram matrix G is given by 
 #' 
-#' RBF:
+#' SE (squared exponential):
 #' \deqn{G = \sigma^2 * exp(-[(X-c)'(X-c)]/(s*\rho^2))}
 #' 
 #' LINEAR:
@@ -22,7 +22,7 @@
 #' @name kernels
 #' @examples
 #'   # Create Partial for use with basset
-#'   K <- function(X) RBF(X, 2, .2)
+#'   K <- function(X) SE(X, 2, .2)
 #'   
 #'   # Example use
 #'   X <- matrix(rnorm(10), 2, 5)
@@ -32,7 +32,7 @@ NULL
 
 #' @rdname kernels
 #' @export 
-RBF <- function(X, sigma=1, rho=median(as.matrix(dist(t(X)))), jitter=1e-10){
+SE <- function(X, sigma=1, rho=median(as.matrix(dist(t(X)))), jitter=1e-10){
   dist <- as.matrix(dist(t(X)))
   G <- sigma^2 * exp(-dist^2/(2*rho^2)) + jitter*diag(ncol(dist))
   return(G)

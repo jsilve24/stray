@@ -119,7 +119,7 @@ name_tidy <- function(X, m, dimvars, as_factor=FALSE){
   return(X)
 }
 
-#' S3 for pibblefit apply names to mongrel object
+#' S3 for pibblefit apply names to pibblefit object
 #' @param m object of class pibblefit
 #' @param ... currently ignored
 #' @return object of class pibblefit

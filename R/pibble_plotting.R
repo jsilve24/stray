@@ -78,7 +78,7 @@ plot_mf_lambdaeta <- function(m, par, focus.cov=NULL, focus.coord=NULL,
 }
 
 plot_mf_sigma <- function(m, focus.coord=NULL, use_names=TRUE){
-  data <- mongrel_tidy_samples(m, use_names, as_factor=TRUE)
+  data <- pibble_tidy_samples(m, use_names, as_factor=TRUE)
   if (!is.null(focus.coord)) data <- filter(data, 
                                             coord %in% focus.coord, 
                                             coord2 %in% focus.coord)

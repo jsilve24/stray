@@ -1,4 +1,4 @@
-#' mongrel: Fitting and Analysis of Multinomial Logistic Normal Regression Models
+#' stray: Fitting and Analysis of Multinomial Logistic Normal  Models
 #' 
 #'  Provides methods for fitting and inspection of Bayesian Multinomial 
 #'  Logistic Normal Models using MAP estimation 

@@ -2,7 +2,7 @@
 % Please edit documentation in R/stray_utils.R
 \name{name.pibblefit}
 \alias{name.pibblefit}
-\title{S3 for pibblefit apply names to mongrel object}
+\title{S3 for pibblefit apply names to pibblefit object}
 \usage{
 \method{name}{pibblefit}(m, ...)
 }
@@ -15,5 +15,5 @@
 object of class pibblefit
 }
 \description{
-S3 for pibblefit apply names to mongrel object
+S3 for pibblefit apply names to pibblefit object
 }

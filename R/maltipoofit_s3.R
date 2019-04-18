@@ -51,9 +51,9 @@ verify.maltipoofit <- function(m,...){
   verify.pibblefit(m)
   stopifnot(is.integer(m$P))
   P <- m$P
-  ifnotnull(m$VCScale, check_dims(m$VCScale, P))
-  ifnotnull(m$U, check_dims(m$U, P*Q, Q))
-  ifnotnull(m$deltainit, chec_dims(m$P))
+  ifnotnull(m$VCScale, check_dims(m$VCScale, P, "VCScale"))
+  ifnotnull(m$U, check_dims(m$U, c(P*m$Q, m$Q), "U"))
+  ifnotnull(m$ellinit, check_dims(m$P, P, "ellinit"))
 }
 
 #' require elements to be non-null in pibblefit or throw error

@@ -6,7 +6,7 @@
 #' 
 #' @param m an object of class pibblefit
 #' @param use_names should dimension indices be replaced by
-#'   dimension names if provided in data used to fit mongrel model.  
+#'   dimension names if provided in data used to fit pibble model.  
 #' @param as_factor if use_names should names be returned as factor?
 #' 
 #' @importFrom driver gather_array
@@ -16,9 +16,9 @@
 #' @examples 
 #' sim <- pibble_sim()
 #' fit <- pibble(sim$Y, sim$X)
-#' fit_tidy <- mongrel_tidy_samples(fit, use_names=TRUE)
+#' fit_tidy <- pibble_tidy_samples(fit, use_names=TRUE)
 #' head(fit_tidy)
-mongrel_tidy_samples<- function(m, use_names=FALSE, as_factor=FALSE){
+pibble_tidy_samples<- function(m, use_names=FALSE, as_factor=FALSE){
   l <- list()
   if (!is.null(m$Eta)) l$Eta <- driver::gather_array(m$Eta, val, coord, sample, iter)
   if (!is.null(m$Lambda)) l$Lambda <- driver::gather_array(m$Lambda, val, coord, covariate, iter)
@@ -62,7 +62,7 @@ summary_check_precomputed <- function(m, pars){
 #' @param object an object of class pibblefit 
 #' @param pars character vector (default: c("Eta", "Lambda", "Sigma"))
 #' @param use_names should summary replace dimension indices with pibblefit 
-#'   names if names Y and X were named in call to \code{\link{mongrel}}
+#'   names if names Y and X were named in call to \code{\link{pibble}}
 #' @param as_factor if use_names and as_factor then returns names as factors 
 #'   (useful for maintaining orderings when plotting)
 #' @param gather_prob if TRUE then prints quantiles in long format rather than 
@@ -94,7 +94,7 @@ summary.pibblefit <- function(object, pars=NULL, use_names=TRUE, as_factor=FALSE
   # if already calculated
   if (summary_check_precomputed(object, pars)) return(object$summary[pars])
   
-  mtidy <- dplyr::filter(mongrel_tidy_samples(object, use_names, as_factor), 
+  mtidy <- dplyr::filter(pibble_tidy_samples(object, use_names, as_factor), 
                          Parameter %in% pars)
   # Suppress warnings about stupid implict NAs, this is on purpose. 
   suppressWarnings({

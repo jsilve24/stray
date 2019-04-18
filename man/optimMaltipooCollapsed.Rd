@@ -80,7 +80,7 @@ approximation, useful for calculating marginal likelihood
 }
 \description{
 See details for model. Should likely be followed by function
-\code{\link{uncollapseMongrelCollapsed}}. Notation: \code{N} is number of samples,
+\code{\link{uncollapsePibble}}. Notation: \code{N} is number of samples,
 \code{D} is number of multinomial categories, and \code{Q} is number
 of covariates.
 }
@@ -121,5 +121,5 @@ S. Ruder (2016) \emph{An overview of gradient descent
 optimization algorithms}. arXiv 1609.04747
 }
 \seealso{
-\code{\link{uncollapseMongrelCollapsed}}
+\code{\link{uncollapsePibble}}
 }

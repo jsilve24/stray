@@ -116,11 +116,15 @@
 <div id="installation" class="section level2">
 <h2 class="hasAnchor">
 <a href="#installation" class="anchor"></a>Installation</h2>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">devtools<span class="op">::</span><span class="kw"><a href="https://www.rdocumentation.org/packages/devtools/topics/reexports">install_github</a></span>(<span class="st">"jsilve24/stray"</span>, <span class="dt">build_vignettes=</span><span class="ot">TRUE</span>)</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">devtools<span class="op">::</span><span class="kw"><a href="https://www.rdocumentation.org/packages/devtools/topics/reexports">install_github</a></span>(<span class="st">"jsilve24/stray"</span>)</code></pre></div>
 <p>Or to download the development version</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">devtools<span class="op">::</span><span class="kw"><a href="https://www.rdocumentation.org/packages/devtools/topics/reexports">install_github</a></span>(<span class="st">"jsilve24/stray"</span>, <span class="dt">ref=</span><span class="st">"develop"</span>, <span class="dt">build_vignettes=</span><span class="ot">TRUE</span>)</code></pre></div>
-<p>There are a few installation options that can greatly speed stray up (often by as much as 10-50 fold). For a more detailed description of installation, take a look at <a href="https://github.com/jsilve24/stray/wiki/Installation-Details">the installation page</a>.</p>
-<p>Note: We are currently experiencing difficulties with installation on Windows machines. We will be back shortly with solutions.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">devtools<span class="op">::</span><span class="kw"><a href="https://www.rdocumentation.org/packages/devtools/topics/reexports">install_github</a></span>(<span class="st">"jsilve24/stray"</span>, <span class="dt">ref=</span><span class="st">"develop"</span>)</code></pre></div>
+<p>A few notes:</p>
+<ul>
+<li>There are a few installation options that can greatly speed stray up (often by as much as 10-50 fold). For a more detailed description of installation, take a look at <a href="https://github.com/jsilve24/stray/wiki/Installation-Details">the installation page</a>.</li>
+<li>We are currently experiencing difficulties with installation on Windows machines. We will be back shortly with solutions.</li>
+<li>Vignettes are prebuilt on the <a href="https://jsilve24.github.io/stray/"><em>stray</em> webpage</a>. If you want vignettes to build locally during package installation you must also pass the <code>build=TRUE</code> and <code>build_opts = c("--no-resave-data", "--no-manual")</code> options to <code>install_github</code>.</li>
+</ul>
 </div>
 <div id="bugsfeature-requests" class="section level2">
 <h2 class="hasAnchor">

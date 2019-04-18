@@ -38,7 +38,7 @@ conjugateLinearModel <- function(Y, X, Theta, Gamma, Xi, upsilon, n_samples = 20
 #' Function to Optimize the Collapsed Maltipoo Model
 #' 
 #' See details for model. Should likely be followed by function 
-#' \code{\link{uncollapseMongrelCollapsed}}. Notation: \code{N} is number of samples,
+#' \code{\link{uncollapsePibble}}. Notation: \code{N} is number of samples,
 #' \code{D} is number of multinomial categories, and \code{Q} is number
 #' of covariates. 
 #' 
@@ -116,7 +116,7 @@ conjugateLinearModel <- function(Y, X, Theta, Gamma, Xi, upsilon, n_samples = 20
 #' @name optimMaltipooCollapsed
 #' @references S. Ruder (2016) \emph{An overview of gradient descent 
 #' optimization algorithms}. arXiv 1609.04747
-#' @seealso \code{\link{uncollapseMongrelCollapsed}}
+#' @seealso \code{\link{uncollapsePibble}}
 optimMaltipooCollapsed <- function(Y, upsilon, Theta, X, KInv, U, init, ellinit, n_samples = 2000L, calcGradHess = TRUE, b1 = 0.9, b2 = 0.99, step_size = 0.003, epsilon = 10e-7, eps_f = 1e-10, eps_g = 1e-4, max_iter = 10000L, verbose = FALSE, verbose_rate = 10L, decomp_method = "cholesky", eigvalthresh = 0, jitter = 0) {
     .Call('_stray_optimMaltipooCollapsed', PACKAGE = 'stray', Y, upsilon, Theta, X, KInv, U, init, ellinit, n_samples, calcGradHess, b1, b2, step_size, epsilon, eps_f, eps_g, max_iter, verbose, verbose_rate, decomp_method, eigvalthresh, jitter)
 }

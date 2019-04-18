@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Provide random initialization for pibble model — random_pibble_init • stray</title>
+<title>Convert pibble samples of Eta Lambda and Sigma to tidy format — pibble_tidy_samples • stray</title>
 
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
@@ -30,11 +30,11 @@
 
 
 
-<meta property="og:title" content="Provide random initialization for pibble model — random_pibble_init" />
+<meta property="og:title" content="Convert pibble samples of Eta Lambda and Sigma to tidy format — pibble_tidy_samples" />
 
-<meta property="og:description" content="Randomly initializes based on ALR transform of counts
-plus random pseudocounts uniformily distributed between 
-0 and 1." />
+<meta property="og:description" content="Combines them all into a single tibble, see example for formatting and 
+column headers. Primarily designed to be used by 
+summary.pibblefit." />
 <meta name="twitter:card" content="summary" />
 
 
@@ -131,62 +131,55 @@ plus random pseudocounts uniformily distributed between
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Provide random initialization for pibble model</h1>
+    <h1>Convert pibble samples of Eta Lambda and Sigma to tidy format</h1>
     
-    <div class="hidden name"><code>random_pibble_init.Rd</code></div>
+    <div class="hidden name"><code>pibble_tidy_samples.Rd</code></div>
     </div>
 
     <div class="ref-description">
     
-    <p>Randomly initializes based on ALR transform of counts
-plus random pseudocounts uniformily distributed between 
-0 and 1.</p>
+    <p>Combines them all into a single tibble, see example for formatting and 
+column headers. Primarily designed to be used by 
+<code><a href='summary.pibblefit.html'>summary.pibblefit</a></code>.</p>
     
     </div>
 
-    <pre class="usage"><span class='fu'>random_pibble_init</span>(<span class='no'>Y</span>)</pre>
+    <pre class="usage"><span class='fu'>pibble_tidy_samples</span>(<span class='no'>m</span>, <span class='kw'>use_names</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>as_factor</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>Y</th>
-      <td><p>matrix (D x N) of counts</p></td>
+      <th>m</th>
+      <td><p>an object of class pibblefit</p></td>
+    </tr>
+    <tr>
+      <th>use_names</th>
+      <td><p>should dimension indices be replaced by
+dimension names if provided in data used to fit pibble model.</p></td>
+    </tr>
+    <tr>
+      <th>as_factor</th>
+      <td><p>if use_names should names be returned as factor?</p></td>
     </tr>
     </table>
     
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>(D-1) x N matrix</p>
-    
-    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
-
-    <p>Notation: <code>N</code> is number of samples and
-<code>D</code> is number of multinomial categories</p>
+    <p>tibble</p>
     
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='no'>Y</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/matrix'>matrix</a></span>(<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/sample'>sample</a></span>(<span class='fl'>1</span>:<span class='fl'>100</span>, <span class='fl'>100</span>), <span class='fl'>10</span>, <span class='fl'>10</span>)
-<span class='fu'>random_pibble_init</span>(<span class='no'>Y</span>)</div><div class='output co'>#&gt;             [,1]        [,2]      [,3]       [,4]        [,5]       [,6]
-#&gt;  [1,]  1.5700247  0.03789731 1.5602679  1.0717015  0.25069798 -0.3263849
-#&gt;  [2,] -0.5811060  0.95498589 1.8937516  1.1395619  0.03641884  1.1039679
-#&gt;  [3,]  1.5051570  0.79304333 1.2318650 -0.5505858 -0.57515410 -2.9958897
-#&gt;  [4,]  1.7413801  0.93320880 2.1975871  0.3333560  0.29045052  0.7464481
-#&gt;  [5,]  1.6799355  0.77602811 2.5669074  0.4626330  0.35304580  1.0783853
-#&gt;  [6,]  1.7863894 -0.40481671 0.2547208 -0.2151110  0.60203828  0.8182953
-#&gt;  [7,]  0.8059828  0.69958379 1.3899562  0.2808580  0.45228805  0.3547464
-#&gt;  [8,]  0.8541769  0.42880065 2.6631464  1.4384931  0.25793921 -0.2690744
-#&gt;  [9,]  0.4413422  0.06232570 1.1591563 -0.5131116  0.42745036  0.1482068
-#&gt;             [,7]        [,8]       [,9]      [,10]
-#&gt;  [1,] -0.5640016 -0.21571268  0.7782404  1.3631580
-#&gt;  [2,] -0.4965449  0.55312057 -1.1472769 -1.0085424
-#&gt;  [3,] -0.6804946  0.49337838  0.1706701 -0.5616520
-#&gt;  [4,] -0.5105969  0.32645227  0.8079886 -0.3134474
-#&gt;  [5,] -0.6537150  0.08377502 -2.6949114  1.0795971
-#&gt;  [6,] -0.7264294  0.24450287 -2.6113329  1.4806584
-#&gt;  [7,] -2.2851113  0.11006655  0.6794487  0.5851689
-#&gt;  [8,] -0.8786904  0.15382721 -0.3589520 -1.5229536
-#&gt;  [9,] -0.6970551  0.48077251  0.5435531  0.8559960</div></pre>
+    <pre class="examples"><div class='input'><span class='no'>sim</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='pibble_sim.html'>pibble_sim</a></span>()
+<span class='no'>fit</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='pibble_fit.html'>pibble</a></span>(<span class='no'>sim</span>$<span class='no'>Y</span>, <span class='no'>sim</span>$<span class='no'>X</span>)
+<span class='no'>fit_tidy</span> <span class='kw'>&lt;-</span> <span class='fu'>pibble_tidy_samples</span>(<span class='no'>fit</span>, <span class='kw'>use_names</span><span class='kw'>=</span><span class='fl'>TRUE</span>)
+<span class='fu'><a href='https://www.rdocumentation.org/packages/utils/topics/head'>head</a></span>(<span class='no'>fit_tidy</span>)</div><div class='output co'>#&gt;   Parameter       coord sample iter         val covariate coord2
+#&gt; 1       Eta log(c1/c10)     s1    1 -1.07623254      &lt;NA&gt;   &lt;NA&gt;
+#&gt; 2       Eta log(c2/c10)     s1    1 -1.06200358      &lt;NA&gt;   &lt;NA&gt;
+#&gt; 3       Eta log(c3/c10)     s1    1  2.47753551      &lt;NA&gt;   &lt;NA&gt;
+#&gt; 4       Eta log(c4/c10)     s1    1 -3.10773765      &lt;NA&gt;   &lt;NA&gt;
+#&gt; 5       Eta log(c5/c10)     s1    1  0.46459118      &lt;NA&gt;   &lt;NA&gt;
+#&gt; 6       Eta log(c6/c10)     s1    1 -0.07081525      &lt;NA&gt;   &lt;NA&gt;</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
@@ -194,8 +187,6 @@ plus random pseudocounts uniformily distributed between
       <li><a href="#arguments">Arguments</a></li>
       
       <li><a href="#value">Value</a></li>
-
-      <li><a href="#details">Details</a></li>
       
       <li><a href="#examples">Examples</a></li>
     </ul>

@@ -13,7 +13,7 @@
 \item{pars}{character vector (default: c("Eta", "Lambda", "Sigma"))}
 
 \item{use_names}{should summary replace dimension indices with pibblefit 
-names if names Y and X were named in call to \code{\link{mongrel}}}
+names if names Y and X were named in call to \code{\link{pibble}}}
 
 \item{as_factor}{if use_names and as_factor then returns names as factors 
 (useful for maintaining orderings when plotting)}

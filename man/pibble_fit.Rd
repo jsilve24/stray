@@ -77,7 +77,7 @@ JD Silverman K Roche, ZC Holmes, LA David, S Mukherjee.
   2019, arXiv e-prints, arXiv:1903.11695
 }
 \seealso{
-\code{\link{mongrel_transforms}} provide convenience methods for
+\code{\link{stray_transforms}} provide convenience methods for
 transforming the representation of pibblefit objects (e.g., conversion to
 proportions, alr, clr, or ilr coordinates.)
 

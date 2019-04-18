@@ -141,7 +141,7 @@ pibble <- function(Y=NULL, X=NULL, upsilon=NULL, Theta=NULL, Gamma=NULL, Xi=NULL
   eigvalthresh <- args_null("eigvalthresh", args, 0)
   jitter <- args_null("jitter", args, 0)
   multDirichletBoot <- args_null("multDirichletBoot", args, -1.0)
-  optim_method <- args_null("optim_method", args, "adam")
+  optim_method <- args_null("optim_method", args, "lbfgs")
   useSylv <- args_null("useSylv", args, TRUE)
   ncores <- args_null("ncores", args, -1)
   

@@ -283,14 +283,10 @@ predict.pibblefit <- function(object, newdata=NULL, response="LambdaX", size=NUL
   if (is.null(iter)){ iter <- object$iter }
   
   # if size is a scalar, replicate it to a vector 
-  if ((response=="Y") && (length(size)==1)) { size <- replicate(object$N, size) }
+  if ((response=="Y") && (length(size)==1)) { size <- replicate(ncol(newdata), size) }
   # If size is a vector, replicate it to a matrix
   if ((response=="Y") && is.vector(size)){ size <- replicate(iter, size) }
 
-  
-  # # Try to match rownames of newdata to avoid possible errors...
-  # if (!is.null(rownames(newdata))) newdata <- newdata[object$names_covariates,]
-  # would have error if names_covariates is NULL
   
   nnew <- ncol(newdata)
   
@@ -343,10 +339,7 @@ predict.pibblefit <- function(object, newdata=NULL, response="LambdaX", size=NUL
   if (response=="Eta") return(Eta)
   
   # Draw Y
-  if (is.null(object$Eta)) stop("pibblefit object does not contain samples of Eta")
-  
-  com <- names(object)[!(names(object) %in% c("Lambda", "Sigma"))] # to save computation
-  Pi <- to_proportions(object[com])$Eta
+  Pi <- alrInv_array(Eta, d=l$alr_base, coords=1)
   Ypred <- array(0, dim=c(object$D, nnew, iter))
   for (i in 1:iter){
     for (j in 1:nnew){

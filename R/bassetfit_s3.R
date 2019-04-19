@@ -50,6 +50,8 @@ verify.bassetfit <- function(m, ...){
 #' @param summary if TRUE, posterior summary of predictions are returned rather
 #'   than samples
 #' @param iter number of iterations to return if NULL uses object$iter
+#' @param from_scratch should predictions of Y come from fitted Eta or from 
+#'   predictions of Eta from posterior of Lambda? (default: false)
 #' @param ... other arguments passed to summarise_posterior
 #' 
 #' @details currently only implemented for pibblefit objects in coord_system "default"
@@ -61,8 +63,10 @@ verify.bassetfit <- function(m, ...){
 #' @export
 #' @importFrom stats median predict runif
 predict.bassetfit <- function(object, newdata, response="Lambda", size=NULL, 
-                              use_names=TRUE, summary=FALSE, iter=NULL, ...){
+                              use_names=TRUE, summary=FALSE, iter=NULL,
+                              from_scratch=FALSE, ...){
   req(object, c("Lambda", "Sigma"))
+  newdata <- vec_to_mat(newdata)
   
   l <- store_coord(object)
   if (!(object$coord_system %in% c("alr", "ilr"))){
@@ -104,8 +108,8 @@ predict.bassetfit <- function(object, newdata, response="Lambda", size=NULL,
   Gamma_oo <- Gamma[obs, obs, drop=F]
   Gamma_ou <- Gamma[obs, !obs, drop=F]
   Gamma_uu <- Gamma[!obs, !obs, drop=F]
-  Gamma_ooIou <- solve(Gamma_oo) %*% Gamma_ou
-  Gamma_schur <- Gamma_uu - t(Gamma_ou) %*% Gamma_ooIou
+  Gamma_ooIou <- solve(Gamma_oo, Gamma_ou)
+  Gamma_schur <- Gamma_uu - t(Gamma_ou) %*% Gamma_ooIou 
   U_Gamma_schur <- chol(Gamma_schur)
   Theta_o <- Theta[,obs, drop=F]
   Theta_u <- Theta[,!obs, drop=F]
@@ -166,7 +170,15 @@ predict.bassetfit <- function(object, newdata, response="Lambda", size=NULL,
   if (response=="Eta") return(Eta)
   
   # Draw Y
-  Pi <- alrInv_array(Eta, d=l$alr_base, coords=1)
+  if (!from_scratch){
+    Pi <- alrInv_array(Eta, d=nrow(Eta)+1, coords=1)
+  } else {
+    if (is.null(object$Eta)) stop("pibblefit object does not contain samples of Eta")
+    
+    com <- names(object)[!(names(object) %in% c("Lambda", "Sigma"))] # to save computation
+    Pi <- to_proportions(object[com])$Eta
+    Pi <- alrInv_array(Eta, d=nrow(Eta)+1, coords=1)
+  }
   Ypred <- array(0, dim=c(object$D, nnew, iter))
   for (i in 1:iter){
     for (j in 1:nnew){

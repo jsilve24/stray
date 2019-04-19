@@ -228,6 +228,8 @@ as.list.pibblefit <- function(x,...){
 #' @param summary if TRUE, posterior summary of predictions are returned rather
 #'   than samples
 #' @param iter number of iterations to return if NULL uses object$iter
+#' @param from_scratch should predictions of Y come from fitted Eta or from 
+#'   predictions of Eta from posterior of Lambda? (default: false)
 #' @param ... other arguments passed to summarise_posterior
 #' 
 #' @details currently only implemented for pibblefit objects in coord_system "default"
@@ -243,7 +245,7 @@ as.list.pibblefit <- function(x,...){
 #' fit <- pibble(sim$Y, sim$X)
 #' predict(fit)
 predict.pibblefit <- function(object, newdata=NULL, response="LambdaX", size=NULL, 
-                               use_names=TRUE, summary=FALSE, iter=NULL, ...){
+                               use_names=TRUE, summary=FALSE, iter=NULL, from_scratch=FALSE, ...){
   
   l <- store_coord(object)
   if (!(object$coord_system %in% c("alr", "ilr"))){
@@ -339,7 +341,15 @@ predict.pibblefit <- function(object, newdata=NULL, response="LambdaX", size=NUL
   if (response=="Eta") return(Eta)
   
   # Draw Y
-  Pi <- alrInv_array(Eta, d=l$alr_base, coords=1)
+  if (!from_scratch){
+    Pi <- alrInv_array(Eta, d=nrow(Eta)+1, coords=1)
+  } else {
+    if (is.null(object$Eta)) stop("pibblefit object does not contain samples of Eta")
+    
+    com <- names(object)[!(names(object) %in% c("Lambda", "Sigma"))] # to save computation
+    Pi <- to_proportions(object[com])$Eta
+    Pi <- alrInv_array(Eta, d=nrow(Eta)+1, coords=1)
+  }
   Ypred <- array(0, dim=c(object$D, nnew, iter))
   for (i in 1:iter){
     for (j in 1:nnew){

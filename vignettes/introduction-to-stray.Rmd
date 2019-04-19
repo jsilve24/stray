@@ -241,7 +241,7 @@ that we will use to avoid passing prior parameters again.
 
 ```{r}
 priors$Y <- Y # remember pibblefit objects are just lists
-posterior <- refit(priors)
+posterior <- refit(priors, optim_method="adam")
 ```
 
 Unlike the main *pibble* function, the `refit` method can be called

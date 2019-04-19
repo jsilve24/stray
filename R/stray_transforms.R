@@ -51,7 +51,7 @@ to_proportions <- function(m){
     }
     m$Xi_default <- m$Xi
     m$Xi <- NULL
-    m$Theta <- alrInv_array(m$Theta, m$alr_base, 1)
+    if (!inherits(m, "bassetfit")) m$Theta <- alrInv_array(m$Theta, m$alr_base, 1)
     if (!is.null(m$init)) m$init <- alrInv_array(m$init, m$alr_base, 1)
   }
   if (m$coord_system == "ilr"){
@@ -69,7 +69,7 @@ to_proportions <- function(m){
     m$Xi <- ilrvar2alrvar(m$Xi, m$ilr_base, m$D)
     m$Xi_default <- m$Xi
     m$Xi <- NULL
-    m$Theta <- ilrInv_array(m$Theta, m$ilr_base, 1)
+    if (!inherits(m, "bassetfit")) m$Theta <- ilrInv_array(m$Theta, m$ilr_base, 1)
     if (!is.null(m$init)) m$init <- ilrInv_array(m$init, m$ilr_base, 1)
   }
   if (m$coord_system == "clr"){
@@ -86,7 +86,7 @@ to_proportions <- function(m){
     # Transform priors as well
     m$Xi_default <- clrvar2alrvar(m$Xi, m$D)
     m$Xi <- NULL
-    m$Theta <- clrInv_array(m$Theta, 1)
+    if (!inherits(m, "bassetfit")) m$Theta <- clrInv_array(m$Theta, 1)
     if (!is.null(m$init)) m$init <- clrInv_array(m$init, 1)
   }
   if (m$coord_system=="proportions"){
@@ -122,7 +122,7 @@ to_alr <- function(m, d){
   # Transform priors as well 
   m$Xi <- alrvar2alrvar(m$Xi_default, m$D, d)
   m$Xi_default <- NULL
-  m$Theta <- alr_array(m$Theta, d, 1)
+  if (!inherits(m, "bassetfit")) m$Theta <- alr_array(m$Theta, d, 1)
   if (!is.null(m$init)) m$init <- alr_array(m$init, d, 1)
   
   m$summary <- NULL
@@ -152,7 +152,7 @@ to_ilr <- function(m, V=NULL){
   # Transform priors as well 
   m$Xi <- alrvar2ilrvar(m$Xi_default, m$D, V)
   m$Xi_default <- NULL
-  m$Theta <- ilr_array(m$Theta, V, 1)
+  if (!inherits(m, "bassetfit")) m$Theta <- ilr_array(m$Theta, V, 1)
   if (!is.null(m$init)) m$init <- ilr_array(m$init, V, 1)
   
   m$summary <- NULL
@@ -179,7 +179,7 @@ to_clr <- function(m){
   # Transform priors as well 
   m$Xi <- alrvar2clrvar(m$Xi_default, m$D)
   m$Xi_default <- NULL
-  m$Theta <- clr_array(m$Theta, 1)
+  if (!inherits(m, "bassetfit")) m$Theta <- clr_array(m$Theta, 1)
   if (!is.null(m$init)) m$init <- clr_array(m$init, 1)
   
   m$summary <- NULL

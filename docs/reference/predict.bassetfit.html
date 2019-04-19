@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Generic method for verifying new objects — verify • stray</title>
+<title>Predict using basset — predict.bassetfit • stray</title>
 
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
@@ -30,9 +30,9 @@
 
 
 
-<meta property="og:title" content="Generic method for verifying new objects — verify" />
+<meta property="og:title" content="Predict using basset — predict.bassetfit" />
 
-<meta property="og:description" content="Intended to be called internally by package or object creator" />
+<meta property="og:description" content="Predict using basset" />
 <meta name="twitter:card" content="summary" />
 
 
@@ -129,35 +129,77 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Generic method for verifying new objects</h1>
+    <h1>Predict using basset</h1>
     
-    <div class="hidden name"><code>verify.Rd</code></div>
+    <div class="hidden name"><code>predict.bassetfit.Rd</code></div>
     </div>
 
     <div class="ref-description">
     
-    <p>Intended to be called internally by package or object creator</p>
+    <p>Predict using basset</p>
     
     </div>
 
-    <pre class="usage"><span class='fu'>verify</span>(<span class='no'>m</span>, <span class='no'>...</span>)</pre>
+    <pre class="usage"><span class='co'># S3 method for bassetfit</span>
+<span class='fu'><a href='https://www.rdocumentation.org/packages/stats/topics/predict'>predict</a></span>(<span class='no'>object</span>, <span class='no'>newdata</span>, <span class='kw'>response</span> <span class='kw'>=</span> <span class='st'>"Lambda"</span>,
+  <span class='kw'>size</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>use_names</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>summary</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>iter</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>from_scratch</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='no'>...</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>m</th>
-      <td><p>object</p></td>
+      <th>object</th>
+      <td><p>An object of class pibblefit</p></td>
+    </tr>
+    <tr>
+      <th>newdata</th>
+      <td><p>An optional matrix for which to evaluate prediction.</p></td>
+    </tr>
+    <tr>
+      <th>response</th>
+      <td><p>Options = "Lambda":Mean of regression, "Eta", "Y": counts</p></td>
+    </tr>
+    <tr>
+      <th>size</th>
+      <td><p>the number of counts per sample if response="Y" (as vector or matrix), 
+default if newdata=NULL and response="Y" is to use colsums of m$Y. Otherwise
+uses median colsums of m$Y as default. If passed as a matrix should have dimensions
+ncol(newdata) x iter.</p></td>
+    </tr>
+    <tr>
+      <th>use_names</th>
+      <td><p>if TRUE apply names to output</p></td>
+    </tr>
+    <tr>
+      <th>summary</th>
+      <td><p>if TRUE, posterior summary of predictions are returned rather
+than samples</p></td>
+    </tr>
+    <tr>
+      <th>iter</th>
+      <td><p>number of iterations to return if NULL uses object$iter</p></td>
+    </tr>
+    <tr>
+      <th>from_scratch</th>
+      <td><p>should predictions of Y come from fitted Eta or from 
+predictions of Eta from posterior of Lambda? (default: false)</p></td>
     </tr>
     <tr>
       <th>...</th>
-      <td><p>other arguments to be passed to verify</p></td>
+      <td><p>other arguments passed to summarise_posterior</p></td>
     </tr>
     </table>
     
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>throws error if verify test fails</p>
+    <p>(if summary==FALSE) array D x N x iter; (if summary==TRUE) 
+tibble with calculated posterior summaries</p>
+    
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
+
+    <p>currently only implemented for pibblefit objects in coord_system "default"
+"alr", or "ilr".</p>
     
 
   </div>
@@ -167,6 +209,8 @@
       <li><a href="#arguments">Arguments</a></li>
       
       <li><a href="#value">Value</a></li>
+
+      <li><a href="#details">Details</a></li>
           </ul>
 
   </div>

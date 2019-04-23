@@ -63,7 +63,6 @@ reference:
       - lambda_to_iqlr
       - pibble_sim
       - store_coord
-      - compiled_with_openmp
       - check_dims
   - title: "Utility Math Functions"
     desc: "Fast, C++, mostly for internal use"

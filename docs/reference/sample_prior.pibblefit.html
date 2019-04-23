@@ -81,7 +81,10 @@ be called to get counts or LambdaX (predict.pibblefit)" />
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
-      <a href="../articles/introduction-to-stray.html">Intro stray::pibble</a>
+      <a href="../articles/introduction-to-stray.html">Intro to stray through stray::pibble</a>
+    </li>
+    <li>
+      <a href="../articles/non-linear-models.html">Non-Linear Modeling with stray::basset</a>
     </li>
   </ul>
 </li>
@@ -191,9 +194,10 @@ header in this library - see MatDist.h).</p>
 #&gt;   Contains Samples of Parameters:Eta  Lambda  Sigma
 #&gt;   Coordinate System:		 alr, reference category: 10 [c10] </div><div class='input'>
 <span class='co'># Sample prior as part of model fitting</span>
-<span class='no'>m</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='pibblefit.html'>pibblefit</a></span>(<span class='kw'>N</span><span class='kw'>=</span><span class='no'>N</span>, <span class='kw'>D</span><span class='kw'>=</span><span class='no'>D</span>, <span class='kw'>Q</span><span class='kw'>=</span><span class='no'>Q</span>, <span class='kw'>iter</span><span class='kw'>=</span><span class='fl'>2000</span>, <span class='kw'>upsilon</span><span class='kw'>=</span><span class='no'>upsilon</span>,
+<span class='no'>m</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='pibblefit.html'>pibblefit</a></span>(<span class='kw'>N</span><span class='kw'>=</span><span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/integer'>as.integer</a></span>(<span class='no'>sim</span>$<span class='no'>N</span>), <span class='kw'>D</span><span class='kw'>=</span><span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/integer'>as.integer</a></span>(<span class='no'>sim</span>$<span class='no'>D</span>), <span class='kw'>Q</span><span class='kw'>=</span><span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/integer'>as.integer</a></span>(<span class='no'>sim</span>$<span class='no'>Q</span>),
+                <span class='kw'>iter</span><span class='kw'>=</span><span class='fl'>2000</span>, <span class='kw'>upsilon</span><span class='kw'>=</span><span class='no'>upsilon</span>,
                 <span class='kw'>Xi</span><span class='kw'>=</span><span class='no'>Xi</span>, <span class='kw'>Gamma</span><span class='kw'>=</span><span class='no'>Gamma</span>, <span class='kw'>Theta</span><span class='kw'>=</span><span class='no'>Theta</span>, <span class='kw'>X</span><span class='kw'>=</span><span class='no'>X</span>,
-                <span class='kw'>coord_system</span><span class='kw'>=</span><span class='st'>"alr"</span>, <span class='kw'>alr_base</span><span class='kw'>=</span><span class='no'>D</span>)</div><div class='output co'>#&gt; <span class='error'>Error in verify.pibblefit(m): is.integer(m$N) is not TRUE</span></div><div class='input'><span class='no'>m</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='sample_prior.html'>sample_prior</a></span>(<span class='no'>pibblefit</span>)</div><div class='output co'>#&gt; <span class='error'>Error in UseMethod("sample_prior", m): no applicable method for 'sample_prior' applied to an object of class "function"</span></div><div class='input'><span class='fu'><a href='https://www.rdocumentation.org/packages/graphics/topics/plot'>plot</a></span>(<span class='no'>m</span>) <span class='co'># plot prior distribution (defaults to parameter Lambda) </span></div><div class='output co'>#&gt; <span class='error'>Error in plot(m): object 'm' not found</span></div></pre>
+                <span class='kw'>coord_system</span><span class='kw'>=</span><span class='st'>"alr"</span>, <span class='kw'>alr_base</span><span class='kw'>=</span><span class='no'>D</span>)</div><div class='output co'>#&gt; <span class='error'>Error in eval(quote(y)): is.integer(m$iter) is not TRUE</span></div><div class='input'><span class='no'>m</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='sample_prior.html'>sample_prior</a></span>(<span class='no'>pibblefit</span>)</div><div class='output co'>#&gt; <span class='error'>Error in UseMethod("sample_prior", m): no applicable method for 'sample_prior' applied to an object of class "function"</span></div><div class='input'><span class='fu'><a href='https://www.rdocumentation.org/packages/graphics/topics/plot'>plot</a></span>(<span class='no'>m</span>) <span class='co'># plot prior distribution (defaults to parameter Lambda) </span></div><div class='output co'>#&gt; <span class='error'>Error in plot(m): object 'm' not found</span></div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>

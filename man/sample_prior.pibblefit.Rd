@@ -35,7 +35,8 @@ fit <- pibble(Y, X)
 sample_prior(fit)
 
 # Sample prior as part of model fitting
-m <- pibblefit(N=N, D=D, Q=Q, iter=2000, upsilon=upsilon, 
+m <- pibblefit(N=as.integer(sim$N), D=as.integer(sim$D), Q=as.integer(sim$Q), 
+                iter=2000, upsilon=upsilon, 
                 Xi=Xi, Gamma=Gamma, Theta=Theta, X=X, 
                 coord_system="alr", alr_base=D)
 m <- sample_prior(pibblefit)

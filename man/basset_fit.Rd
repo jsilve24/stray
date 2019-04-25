@@ -40,11 +40,11 @@ Basset (A Lazy Learner) - non-linear regression models in stray
 }
 \details{
 the full model is given by:
-\deqn{Y_j ~ Multinomial(Pi_j)}
+\deqn{Y_j \sim Multinomial(Pi_j)}
 \deqn{Pi_j = Phi^{-1}(Eta_j)}
-\deqn{Eta ~ MN_{D-1 x N}(Lambda, Sigma, I_N)}
-\deqn{Lambda ~ GP_{D-1 x Q}(Theta(X), Sigma, Gamma(X))}
-\deqn{Sigma ~ InvWish(upsilon, Xi)}
+\deqn{Eta \sim MN_{D-1 x N}(Lambda, Sigma, I_N)}
+\deqn{Lambda \sim GP_{D-1 x Q}(Theta(X), Sigma, Gamma(X))}
+\deqn{Sigma \sim InvWish(upsilon, Xi)}
 Where Gamma(X) is short hand for the Gram matrix of the Kernel function.
 
 Default behavior is to use MAP estimate for uncollaping the LTP

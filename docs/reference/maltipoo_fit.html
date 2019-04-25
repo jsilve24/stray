@@ -223,12 +223,12 @@ essentially iid on "base scale" using Aitchison terminology)</p></td>
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
     <p>the full model is given by:
-   $$Y_j ~ Multinomial(Pi_j)$$
+   $$Y_j \sim Multinomial(Pi_j)$$
    $$Pi_j = Phi^{-1}(Eta_j)$$
-   $$Eta ~ MN_{D-1 x N}(Lambda*X, Sigma, I_N)$$
-   $$Lambda ~ MN_{D-1 x Q}(Theta, Sigma, Gamma)$$
+   $$Eta \sim MN_{D-1 x N}(Lambda*X, Sigma, I_N)$$
+   $$Lambda \sim MN_{D-1 x Q}(Theta, Sigma, Gamma)$$
    $$Gamma = e^{ell_1} U_1 + ... + e^{ell_P} U_P$$
-   $$Sigma ~ InvWish(upsilon, Xi)$$</p>   
+   $$Sigma \sim InvWish(upsilon, Xi)$$</p>   
 <p>Where A = (I_N + X * Gamma * X')^-1, K^-1 = Xi is a (D-1)x(D-1) 
  covariance matrix, U_1 is a Q x Q covariance matrix (a variance component), 
  e^ell_i is a scale for that variance component and Phi^-1 is 

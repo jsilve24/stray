@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Interface to fit basset models — basset_fit • stray</title>
+<title>Changelog • stray</title>
 
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
@@ -30,10 +30,7 @@
 
 
 
-<meta property="og:title" content="Interface to fit basset models — basset_fit" />
-
-<meta property="og:description" content="Basset (A Lazy Learner) - non-linear regression models in stray" />
-<meta name="twitter:card" content="summary" />
+<meta property="og:title" content="Changelog" />
 
 
 
@@ -50,7 +47,7 @@
   </head>
 
   <body>
-    <div class="container template-reference-topic">
+    <div class="container template-news">
       <header>
       <div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
@@ -89,6 +86,9 @@
 </li>
 <li>
   <a href="../reference/index.html">Functions</a>
+</li>
+<li>
+  <a href="../news/index.html">News</a>
 </li>
 <li class="dropdown">
   <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
@@ -132,97 +132,30 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Interface to fit basset models</h1>
-    
-    <div class="hidden name"><code>basset_fit.Rd</code></div>
-    </div>
-
-    <div class="ref-description">
-    
-    <p>Basset (A Lazy Learner) - non-linear regression models in stray</p>
-    
-    </div>
-
-    <pre class="usage"><span class='fu'>basset</span>(<span class='kw'>Y</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='no'>X</span>, <span class='kw'>upsilon</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>Theta</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>Gamma</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>Xi</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>init</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>pars</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='st'>"Eta"</span>, <span class='st'>"Lambda"</span>, <span class='st'>"Sigma"</span>), <span class='no'>...</span>)</pre>
-    
-    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
-    <table class="ref-arguments">
-    <colgroup><col class="name" /><col class="desc" /></colgroup>
-    <tr>
-      <th>Y</th>
-      <td><p>D x N matrix of counts (if NULL uses priors only)</p></td>
-    </tr>
-    <tr>
-      <th>X</th>
-      <td><p>Q x N matrix of covariates (cannot be NULL)</p></td>
-    </tr>
-    <tr>
-      <th>upsilon</th>
-      <td><p>dof for inverse wishart prior (numeric must be &gt; D)
-(default: D+3)</p></td>
-    </tr>
-    <tr>
-      <th>Theta</th>
-      <td><p>A function from dimensions dim(X) -&gt; (D-1)xN (prior mean of gaussian process)</p></td>
-    </tr>
-    <tr>
-      <th>Gamma</th>
-      <td><p>A function from dimension dim(X) -&gt; NxN (kernel matrix of gaussian process)</p></td>
-    </tr>
-    <tr>
-      <th>Xi</th>
-      <td><p>(D-1)x(D-1) prior covariance matrix
-(default: ALR transform of diag(1)*(upsilon-D)/2 - this is
-essentially iid on "base scale" using Aitchison terminology)</p></td>
-    </tr>
-    <tr>
-      <th>init</th>
-      <td><p>(D-1) x Q initialization for Eta for optimization</p></td>
-    </tr>
-    <tr>
-      <th>pars</th>
-      <td><p>character vector of posterior parameters to return</p></td>
-    </tr>
-    <tr>
-      <th>...</th>
-      <td></td>
-    </tr>
-    <tr>
-      <th>m</th>
-      <td><p>object of class bassetfit</p></td>
-    </tr>
-    </table>
-    
-    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
-
-    <p>an object of class bassetfit</p>
-    
-    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
-
-    <p>the full model is given by:
-$$Y_j \sim Multinomial(Pi_j)$$
-$$Pi_j = Phi^{-1}(Eta_j)$$
-$$Eta \sim MN_{D-1 x N}(Lambda, Sigma, I_N)$$
-$$Lambda \sim GP_{D-1 x Q}(Theta(X), Sigma, Gamma(X))$$
-$$Sigma \sim InvWish(upsilon, Xi)$$
-Where Gamma(X) is short hand for the Gram matrix of the Kernel function.</p>
-<p>Default behavior is to use MAP estimate for uncollaping the LTP
-model if laplace approximation is not preformed.</p>
-    
-
-  </div>
-  <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
-    <h2>Contents</h2>
-    <ul class="nav nav-pills nav-stacked">
-      <li><a href="#arguments">Arguments</a></li>
+      <h1>Changelog <small></small></h1>
       
-      <li><a href="#value">Value</a></li>
+    </div>
 
-      <li><a href="#details">Details</a></li>
-          </ul>
-
+    <div id="stray-0-1-10" class="section level1">
+<h1 class="page-header">
+<a href="#stray-0-1-10" class="anchor"></a>stray 0.1.10</h1>
+<ul>
+<li>basset added for fitting non-linear regression using stray</li>
+<li>numerous changes to make installation easier</li>
+<li>Added a <code>NEWS.md</code> file to track changes to the package.</li>
+</ul>
+</div>
   </div>
+
+  <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
+    <div id="tocnav">
+      <h2>Contents</h2>
+      <ul class="nav nav-pills nav-stacked">
+        <li><a href="#stray-0-1-10">0.1.10</a></li>
+      </ul>
+    </div>
+  </div>
+
 </div>
 
       <footer>

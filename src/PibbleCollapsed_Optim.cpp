@@ -58,9 +58,9 @@ using Eigen::VectorXd;
 //'  
 //' @details Notation: Let Z_j denote the J-th row of a matrix Z.
 //' Model:
-//'    \deqn{Y_j ~ Multinomial(Pi_j)}
+//'    \deqn{Y_j \sim Multinomial(Pi_j)}
 //'    \deqn{Pi_j = Phi^{-1}(Eta_j)}
-//'    \deqn{Eta ~ T_{D-1, N}(upsilon, Theta*X, K, A)}
+//'    \deqn{Eta \sim T_{D-1, N}(upsilon, Theta*X, K, A)}
 //' Where A = I_N + X * Gamma * X', K is a (D-1)x(D-1) covariance 
 //' matrix, Gamma is a Q x Q covariance matrix, and Phi^{-1} is ALRInv_D 
 //' transform. 

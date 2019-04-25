@@ -11,6 +11,8 @@ navbar:
           href: articles/non-linear-models.html
     - text: "Functions"
       href: "reference/index.html"
+    - text: "News"
+      href: news/index.html
     - text: "Other Packages"
       menu:
         - text: "driver"

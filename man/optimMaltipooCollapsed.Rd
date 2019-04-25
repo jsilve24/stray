@@ -87,9 +87,9 @@ of covariates.
 \details{
 Notation: Let Z_j denote the J-th row of a matrix Z.
 Model:
-\deqn{Y_j ~ Multinomial(Pi_j)}
+\deqn{Y_j \sim Multinomial(Pi_j)}
 \deqn{Pi_j = Phi^{-1}(Eta_j)}
-\deqn{Eta ~ T_{D-1, N}(upsilon, Theta*X, K, A)}
+\deqn{Eta \sim T_{D-1, N}(upsilon, Theta*X, K, A)}
 
 Where A = (I_N + e^{ell_1}\emph{X}U_1\emph{X' + ... + e^{ell_P}\emph{X}U_P}X' ),
 K is a D-1xD-1 covariance and Phi is ALRInv_D transform.

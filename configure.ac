@@ -89,4 +89,5 @@ fi
 ## now use all these
 AC_SUBST([OPENMP_FLAG], ["${openmp_flag}"])
 AC_SUBST([OPENMP_TF], ["${have_openmp}"])
+AC_CONFIG_FILES([src/Makevars])
 AC_OUTPUT

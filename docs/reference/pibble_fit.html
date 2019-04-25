@@ -228,11 +228,11 @@ essentially iid on "base scale" using Aitchison terminology)</p></td>
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
     <p>the full model is given by:
-$$Y_j ~ Multinomial(Pi_j)$$
+$$Y_j \sim Multinomial(Pi_j)$$
 $$Pi_j = Phi^{-1}(Eta_j)$$
-$$Eta ~ MN_{D-1 x N}(Lambda*X, Sigma, I_N)$$
-$$Lambda ~ MN_{D-1 x Q}(Theta, Sigma, Gamma)$$
-$$Sigma ~ InvWish(upsilon, Xi)$$
+$$Eta \sim MN_{D-1 x N}(Lambda*X, Sigma, I_N)$$
+$$Lambda \sim MN_{D-1 x Q}(Theta, Sigma, Gamma)$$
+$$Sigma \sim InvWish(upsilon, Xi)$$
 Where Gamma is a Q x Q covariance matrix, and Phi^-1 is
 ALRInv_D transform.</p>
 <p>Default behavior is to use MAP estimate for uncollaping the LTP

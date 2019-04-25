@@ -17,12 +17,12 @@
 #' @inheritParams pibble_fit
 #'  
 #' @details the full model is given by:
-#'    \deqn{Y_j ~ Multinomial(Pi_j)}
+#'    \deqn{Y_j \sim Multinomial(Pi_j)}
 #'    \deqn{Pi_j = Phi^{-1}(Eta_j)}
-#'    \deqn{Eta ~ MN_{D-1 x N}(Lambda*X, Sigma, I_N)}
-#'    \deqn{Lambda ~ MN_{D-1 x Q}(Theta, Sigma, Gamma)}
+#'    \deqn{Eta \sim MN_{D-1 x N}(Lambda*X, Sigma, I_N)}
+#'    \deqn{Lambda \sim MN_{D-1 x Q}(Theta, Sigma, Gamma)}
 #'    \deqn{Gamma = e^{ell_1} U_1 + ... + e^{ell_P} U_P}
-#'    \deqn{Sigma ~ InvWish(upsilon, Xi)}
+#'    \deqn{Sigma \sim InvWish(upsilon, Xi)}
 #'    
 #'  Where A = (I_N + X * Gamma * X')^{-1}, K^{-1} = Xi is a (D-1)x(D-1) 
 #'  covariance matrix, U_1 is a Q x Q covariance matrix (a variance component), 

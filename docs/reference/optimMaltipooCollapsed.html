@@ -93,6 +93,9 @@ of covariates." />
 <li>
   <a href="../reference/index.html">Functions</a>
 </li>
+<li>
+  <a href="../news/index.html">News</a>
+</li>
 <li class="dropdown">
   <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
     Other Packages
@@ -278,9 +281,9 @@ approximation, useful for calculating marginal likelihood</p></li>
 
     <p>Notation: Let Z_j denote the J-th row of a matrix Z.
 Model:
-$$Y_j ~ Multinomial(Pi_j)$$
+$$Y_j \sim Multinomial(Pi_j)$$
 $$Pi_j = Phi^{-1}(Eta_j)$$
-$$Eta ~ T_{D-1, N}(upsilon, Theta*X, K, A)$$</p>
+$$Eta \sim T_{D-1, N}(upsilon, Theta*X, K, A)$$</p>
 <p>Where A = (I_N + e^ell_1<em>X</em>U_1<em>X' + ... + e^ell_P<em>X</em>U_P</em>X' ),
 K is a D-1xD-1 covariance and Phi is ALRInv_D transform.</p>
 <p>Gradient and Hessian calculations are fast as they are computed using closed

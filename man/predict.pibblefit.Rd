@@ -6,7 +6,7 @@
 \usage{
 \method{predict}{pibblefit}(object, newdata = NULL,
   response = "LambdaX", size = NULL, use_names = TRUE,
-  summary = FALSE, iter = NULL, ...)
+  summary = FALSE, iter = NULL, from_scratch = FALSE, ...)
 }
 \arguments{
 \item{object}{An object of class pibblefit}
@@ -27,6 +27,9 @@ ncol(newdata) x iter.}
 than samples}
 
 \item{iter}{number of iterations to return if NULL uses object$iter}
+
+\item{from_scratch}{should predictions of Y come from fitted Eta or from 
+predictions of Eta from posterior of Lambda? (default: false)}
 
 \item{...}{other arguments passed to summarise_posterior}
 }

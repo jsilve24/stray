@@ -65,7 +65,7 @@ plus random pseudocounts uniformily distributed between
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">stray</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.9</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.10</span>
       </span>
     </div>
 
@@ -82,7 +82,10 @@ plus random pseudocounts uniformily distributed between
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
-      <a href="../articles/introduction-to-stray.html">Intro stray::pibble</a>
+      <a href="../articles/introduction-to-stray.html">Intro to stray through stray::pibble</a>
+    </li>
+    <li>
+      <a href="../articles/non-linear-models.html">Non-Linear Modeling with stray::basset</a>
     </li>
   </ul>
 </li>
@@ -167,26 +170,26 @@ plus random pseudocounts uniformily distributed between
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='no'>Y</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/matrix'>matrix</a></span>(<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/sample'>sample</a></span>(<span class='fl'>1</span>:<span class='fl'>100</span>, <span class='fl'>100</span>), <span class='fl'>10</span>, <span class='fl'>10</span>)
-<span class='fu'>random_pibble_init</span>(<span class='no'>Y</span>)</div><div class='output co'>#&gt;             [,1]        [,2]      [,3]       [,4]        [,5]       [,6]
-#&gt;  [1,]  1.5700247  0.03789731 1.5602679  1.0717015  0.25069798 -0.3263849
-#&gt;  [2,] -0.5811060  0.95498589 1.8937516  1.1395619  0.03641884  1.1039679
-#&gt;  [3,]  1.5051570  0.79304333 1.2318650 -0.5505858 -0.57515410 -2.9958897
-#&gt;  [4,]  1.7413801  0.93320880 2.1975871  0.3333560  0.29045052  0.7464481
-#&gt;  [5,]  1.6799355  0.77602811 2.5669074  0.4626330  0.35304580  1.0783853
-#&gt;  [6,]  1.7863894 -0.40481671 0.2547208 -0.2151110  0.60203828  0.8182953
-#&gt;  [7,]  0.8059828  0.69958379 1.3899562  0.2808580  0.45228805  0.3547464
-#&gt;  [8,]  0.8541769  0.42880065 2.6631464  1.4384931  0.25793921 -0.2690744
-#&gt;  [9,]  0.4413422  0.06232570 1.1591563 -0.5131116  0.42745036  0.1482068
-#&gt;             [,7]        [,8]       [,9]      [,10]
-#&gt;  [1,] -0.5640016 -0.21571268  0.7782404  1.3631580
-#&gt;  [2,] -0.4965449  0.55312057 -1.1472769 -1.0085424
-#&gt;  [3,] -0.6804946  0.49337838  0.1706701 -0.5616520
-#&gt;  [4,] -0.5105969  0.32645227  0.8079886 -0.3134474
-#&gt;  [5,] -0.6537150  0.08377502 -2.6949114  1.0795971
-#&gt;  [6,] -0.7264294  0.24450287 -2.6113329  1.4806584
-#&gt;  [7,] -2.2851113  0.11006655  0.6794487  0.5851689
-#&gt;  [8,] -0.8786904  0.15382721 -0.3589520 -1.5229536
-#&gt;  [9,] -0.6970551  0.48077251  0.5435531  0.8559960</div></pre>
+<span class='fu'>random_pibble_init</span>(<span class='no'>Y</span>)</div><div class='output co'>#&gt;             [,1]       [,2]       [,3]        [,4]        [,5]       [,6]
+#&gt;  [1,]  0.2564795  0.4020805 -0.7263420  0.35888599 -1.83141559 -1.4781918
+#&gt;  [2,]  0.1308749 -0.5910188 -2.5429390  0.09552720 -0.03166671 -0.7306376
+#&gt;  [3,] -1.4967340 -0.1596885 -0.8951563 -1.24989293  0.95177772 -0.4206165
+#&gt;  [4,] -1.2432162  0.1949678 -2.9578447 -1.77045438 -0.35202180 -0.9247950
+#&gt;  [5,] -3.6991877  0.3010896 -0.5365658  0.08785387 -0.88501064  0.2424330
+#&gt;  [6,]  0.2351171 -0.8361655 -2.1002296 -0.31882805  0.66108164  0.2627952
+#&gt;  [7,] -0.4201395  0.4588161 -1.2490576  0.24324713  0.42298078  0.2978652
+#&gt;  [8,]  0.6604881 -0.4429850 -1.4594944  0.32040572  0.64412893 -0.5090139
+#&gt;  [9,] -0.5692143  0.3218052 -0.4788465 -0.18219510 -0.66629824 -0.1659370
+#&gt;             [,7]        [,8]        [,9]      [,10]
+#&gt;  [1,] -1.0655764  0.29871031 -0.25558951  0.2780007
+#&gt;  [2,] -0.6146730  0.11231564 -3.43849940  0.6276261
+#&gt;  [3,] -0.2613160 -0.01800373  0.15920309  0.7382263
+#&gt;  [4,] -3.0107526 -1.18187053 -2.99578035  1.1323288
+#&gt;  [5,] -0.8797707 -0.35876499  0.09902964 -1.3071641
+#&gt;  [6,] -1.8993427  0.13710311 -1.46800116  1.0201013
+#&gt;  [7,] -1.1369392  0.29158771  0.04334499  1.0012121
+#&gt;  [8,] -1.4463443 -0.70383301 -0.61776865  0.7535658
+#&gt;  [9,] -0.3489569 -1.12747124 -0.43375908 -0.8005397</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>

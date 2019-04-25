@@ -30,7 +30,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">stray</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.9</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.10</span>
       </span>
     </div>
 
@@ -47,7 +47,10 @@
   </a>
   <ul class="dropdown-menu" role="menu">
 <li>
-      <a href="../articles/introduction-to-stray.html">Intro stray::pibble</a>
+      <a href="../articles/introduction-to-stray.html">Intro to stray through stray::pibble</a>
+    </li>
+    <li>
+      <a href="../articles/non-linear-models.html">Non-Linear Modeling with stray::basset</a>
     </li>
   </ul>
 </li>
@@ -98,7 +101,7 @@
       <h1>Introduction to Stray::Pibble</h1>
                         <h4 class="author">Justin Silverman</h4>
             
-            <h4 class="date">2019-04-18</h4>
+            <h4 class="date">2019-04-23</h4>
       
       
       <div class="hidden name"><code>introduction-to-stray.Rmd</code></div>
@@ -228,7 +231,7 @@ Gamma &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocum
 <p><img src="introduction-to-stray_files/figure-html/unnamed-chunk-7-1.png" width="672"></p>
 <p>This looks fairly reasonable to me. So I am going to go ahead and fit the model with data. <code>stray</code> provides a helper method called <code>refit</code> that we will use to avoid passing prior parameters again.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">priors<span class="op">$</span>Y &lt;-<span class="st"> </span>Y <span class="co"># remember pibblefit objects are just lists</span>
-posterior &lt;-<span class="st"> </span><span class="kw"><a href="../reference/refit.html">refit</a></span>(priors)</code></pre></div>
+posterior &lt;-<span class="st"> </span><span class="kw"><a href="../reference/refit.html">refit</a></span>(priors, <span class="dt">optim_method=</span><span class="st">"adam"</span>)</code></pre></div>
 <p>Unlike the main <em>pibble</em> function, the <code>refit</code> method can be called on objects in any coordinate system and all transfrormations to and from the default coordinate system are handled internally<a href="#fn2" class="footnoteRef" id="fnref2"><sup>2</sup></a>. This is one nice thing about using the <code>refit</code> method. That said, new objects added to the <code>pibblefit</code> object need to be added in the proper coordinates For example, if we wanted to replace our prior for <span class="math inline">\(\Xi\)</span> for an object in CLR coordinates, we would had to transform our prior for <code>Xi</code> to CLR coordinates before adding it to the <code>priors</code> object.</p>
 <p>Now I are also going to add in the taxa names to make it easier to interpret the results.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">tax &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/phyloseq/topics/tax_table-methods">tax_table</a></span>(dat)[,<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="st">"Class"</span>, <span class="st">"Family"</span>)]
@@ -239,7 +242,7 @@ tax &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumen
 <p><img src="introduction-to-stray_files/figure-html/unnamed-chunk-10-1.png" width="672"></p>
 <p>There are a few things to note about this plot. First, when zoomed out like this it looks it is hard to make much of it. This is a fairly large dataset we are analyzing and its hard to view an uncertainty interval; in this case its plotting the median and 95% confidence interval in grey and black and the observed counts in green. <em>stray</em> also has a simpler function that summarizes the poterior predictive check.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="../reference/ppc_summary.html">ppc_summary</a></span>(posterior)
-<span class="co">#&gt; Proportions of Observations within 95% Credible Interval: 0.9902857</span></code></pre></div>
+<span class="co">#&gt; Proportions of Observations within 95% Credible Interval: 0.9726531</span></code></pre></div>
 <p>Here we see that the model appears to be fitting well (at least based on the posterior predictive check) and that only about 1.5% of observations fall outside of the 95% posterior predictive density (this is good).</p>
 <p>Now we are going to finally look at the posterior distribution of our regression parameters, but because there are so many we will focus on just those that have a 95% credible interval not including zero (i.e., those that the model is fairly certain are non-zero). We are also going to ignore the intercept term and just look at parameters associated with age and disease status.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">posterior_summary &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/summary">summary</a></span>(posterior, <span class="dt">pars=</span><span class="st">"Lambda"</span>)<span class="op">$</span>Lambda

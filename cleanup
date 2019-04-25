@@ -1,2 +1,2 @@
 #!/bin/sh
-rm -f config.* src/Makevars R/open_mp_status.R
+rm -f config.* src/Makevars

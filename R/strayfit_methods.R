@@ -228,6 +228,8 @@ as.list.pibblefit <- function(x,...){
 #' @param summary if TRUE, posterior summary of predictions are returned rather
 #'   than samples
 #' @param iter number of iterations to return if NULL uses object$iter
+#' @param from_scratch should predictions of Y come from fitted Eta or from 
+#'   predictions of Eta from posterior of Lambda? (default: false)
 #' @param ... other arguments passed to summarise_posterior
 #' 
 #' @details currently only implemented for pibblefit objects in coord_system "default"
@@ -243,7 +245,7 @@ as.list.pibblefit <- function(x,...){
 #' fit <- pibble(sim$Y, sim$X)
 #' predict(fit)
 predict.pibblefit <- function(object, newdata=NULL, response="LambdaX", size=NULL, 
-                               use_names=TRUE, summary=FALSE, iter=NULL, ...){
+                               use_names=TRUE, summary=FALSE, iter=NULL, from_scratch=FALSE, ...){
   
   l <- store_coord(object)
   if (!(object$coord_system %in% c("alr", "ilr"))){
@@ -283,14 +285,10 @@ predict.pibblefit <- function(object, newdata=NULL, response="LambdaX", size=NUL
   if (is.null(iter)){ iter <- object$iter }
   
   # if size is a scalar, replicate it to a vector 
-  if ((response=="Y") && (length(size)==1)) { size <- replicate(object$N, size) }
+  if ((response=="Y") && (length(size)==1)) { size <- replicate(ncol(newdata), size) }
   # If size is a vector, replicate it to a matrix
   if ((response=="Y") && is.vector(size)){ size <- replicate(iter, size) }
 
-  
-  # # Try to match rownames of newdata to avoid possible errors...
-  # if (!is.null(rownames(newdata))) newdata <- newdata[object$names_covariates,]
-  # would have error if names_covariates is NULL
   
   nnew <- ncol(newdata)
   
@@ -343,10 +341,15 @@ predict.pibblefit <- function(object, newdata=NULL, response="LambdaX", size=NUL
   if (response=="Eta") return(Eta)
   
   # Draw Y
-  if (is.null(object$Eta)) stop("pibblefit object does not contain samples of Eta")
-  
-  com <- names(object)[!(names(object) %in% c("Lambda", "Sigma"))] # to save computation
-  Pi <- to_proportions(object[com])$Eta
+  if (!from_scratch){
+    Pi <- alrInv_array(Eta, d=nrow(Eta)+1, coords=1)
+  } else {
+    if (is.null(object$Eta)) stop("pibblefit object does not contain samples of Eta")
+    
+    com <- names(object)[!(names(object) %in% c("Lambda", "Sigma"))] # to save computation
+    Pi <- to_proportions(object[com])$Eta
+    Pi <- alrInv_array(Eta, d=nrow(Eta)+1, coords=1)
+  }
   Ypred <- array(0, dim=c(object$D, nnew, iter))
   for (i in 1:iter){
     for (j in 1:nnew){
@@ -476,7 +479,8 @@ names_coords.pibblefit <- function(m){
 #' sample_prior(fit)
 #' 
 #' # Sample prior as part of model fitting
-#' m <- pibblefit(N=N, D=D, Q=Q, iter=2000, upsilon=upsilon, 
+#' m <- pibblefit(N=as.integer(sim$N), D=as.integer(sim$D), Q=as.integer(sim$Q), 
+#'                 iter=2000, upsilon=upsilon, 
 #'                 Xi=Xi, Gamma=Gamma, Theta=Theta, X=X, 
 #'                 coord_system="alr", alr_base=D)
 #' m <- sample_prior(pibblefit)

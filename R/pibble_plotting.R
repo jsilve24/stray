@@ -15,12 +15,10 @@
 #' @importFrom dplyr filter
 #' @export
 #' @examples
-#' \dontrun{
-#' fit <- pibble(Y, X)
+#' sim <- pibble_sim(N=10, D=4, Q=3)
+#' fit <- pibble(sim$Y, sim$X)
 #' plot(fit, par="Lambda")
 #' plot(fit, par="Sigma")
-#' plot(fit, par="Sigma", focus.coord=c("s1", "s2", "s3"))
-#' }
 plot.pibblefit <- function(m, par="Lambda", focus.cov=NULL, focus.coord=NULL, 
                             focus.sample=NULL, use_names=TRUE){
  if (is.null(m[[par]])) stop("pibblefit object does not contain samples for specified parameter")

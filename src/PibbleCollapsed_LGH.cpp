@@ -59,8 +59,8 @@ using Eigen::VectorXd;
 //'
 //'
 //' loglikPibbleCollapsed(Y, upsilon, ThetaX, K, A, Eta)
-//' gradPibbleCollapsed(Y, upsilon, ThetaX, K, A, Eta)
-//' hessPibbleCollapsed(Y, upsilon, ThetaX, K, A, Eta)
+//' gradPibbleCollapsed(Y, upsilon, ThetaX, K, A, Eta)[1:5]
+//' hessPibbleCollapsed(Y, upsilon, ThetaX, K, A, Eta)[1:5,1:5]
 // [[Rcpp::export]]
 double loglikPibbleCollapsed(const Eigen::ArrayXXd Y,
                   const double upsilon,

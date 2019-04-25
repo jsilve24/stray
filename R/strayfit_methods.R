@@ -243,7 +243,7 @@ as.list.pibblefit <- function(x,...){
 #' @examples 
 #' sim <- pibble_sim()
 #' fit <- pibble(sim$Y, sim$X)
-#' predict(fit)
+#' predict(fit)[,,1:2] # just show 2 samples
 predict.pibblefit <- function(object, newdata=NULL, response="LambdaX", size=NULL, 
                                use_names=TRUE, summary=FALSE, iter=NULL, from_scratch=FALSE, ...){
   

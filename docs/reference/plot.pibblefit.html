@@ -187,12 +187,9 @@ rather than using dimension integer indices.</p></td>
     
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><span class='co'># NOT RUN {</span>
-<span class='no'>fit</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='pibble_fit.html'>pibble</a></span>(<span class='no'>Y</span>, <span class='no'>X</span>)
-<span class='fu'><a href='https://www.rdocumentation.org/packages/graphics/topics/plot'>plot</a></span>(<span class='no'>fit</span>, <span class='kw'>par</span><span class='kw'>=</span><span class='st'>"Lambda"</span>)
-<span class='fu'><a href='https://www.rdocumentation.org/packages/graphics/topics/plot'>plot</a></span>(<span class='no'>fit</span>, <span class='kw'>par</span><span class='kw'>=</span><span class='st'>"Sigma"</span>)
-<span class='fu'><a href='https://www.rdocumentation.org/packages/graphics/topics/plot'>plot</a></span>(<span class='no'>fit</span>, <span class='kw'>par</span><span class='kw'>=</span><span class='st'>"Sigma"</span>, <span class='kw'>focus.coord</span><span class='kw'>=</span><span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='st'>"s1"</span>, <span class='st'>"s2"</span>, <span class='st'>"s3"</span>))
-<span class='co'># }</span></pre>
+    <pre class="examples"><div class='input'><span class='no'>sim</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='pibble_sim.html'>pibble_sim</a></span>(<span class='kw'>N</span><span class='kw'>=</span><span class='fl'>10</span>, <span class='kw'>D</span><span class='kw'>=</span><span class='fl'>4</span>, <span class='kw'>Q</span><span class='kw'>=</span><span class='fl'>3</span>)
+<span class='no'>fit</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='pibble_fit.html'>pibble</a></span>(<span class='no'>sim</span>$<span class='no'>Y</span>, <span class='no'>sim</span>$<span class='no'>X</span>)
+<span class='fu'><a href='https://www.rdocumentation.org/packages/graphics/topics/plot'>plot</a></span>(<span class='no'>fit</span>, <span class='kw'>par</span><span class='kw'>=</span><span class='st'>"Lambda"</span>)</div><div class='img'><img src='plot.pibblefit-1.png' alt='' width='700' height='433' /></div><div class='input'><span class='fu'><a href='https://www.rdocumentation.org/packages/graphics/topics/plot'>plot</a></span>(<span class='no'>fit</span>, <span class='kw'>par</span><span class='kw'>=</span><span class='st'>"Sigma"</span>)</div><div class='img'><img src='plot.pibblefit-2.png' alt='' width='700' height='433' /></div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>

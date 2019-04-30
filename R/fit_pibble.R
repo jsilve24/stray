@@ -147,8 +147,10 @@ pibble <- function(Y=NULL, X=NULL, upsilon=NULL, Theta=NULL, Gamma=NULL, Xi=NULL
   
 
   ## precomputation ## 
-  KInv <- solve(Xi)
-  AInv <- solve(diag(N) + t(X) %*% Gamma %*% X)
+  #KInv <- solve(Xi)
+  #AInv <- solve(diag(N) + t(X) %*% Gamma %*% X)
+  KInv <- chol2inv(chol(Xi))
+  AInv <- chol2inv(chol(diag(N) + t(X) %*% Gamma %*% X))
 
   ## fit collapsed model ##
   fitc <- optimPibbleCollapsed(Y, upsilon, Theta%*%X, KInv, AInv, init, n_samples, 

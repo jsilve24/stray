@@ -1,6 +1,6 @@
 # #' Simulate Data and Priors for Maltipoo
 # #' 
-# #' @inheritParams mongrel_sim
+# #' @inheritParams pibble_sim
 # #' @param P number of variance components to simulate
 # #' 
 # #' @return list

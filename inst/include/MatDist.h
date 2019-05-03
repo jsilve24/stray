@@ -9,6 +9,8 @@ using Eigen::VectorXd;
 using Eigen::Lower;
 using Eigen::Map;
 
+// [[Rcpp::depends(RcppZiggurat)]]
+
 static Ziggurat::MT::ZigguratMT ziggmt;
 
 

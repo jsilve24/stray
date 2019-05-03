@@ -1,6 +1,6 @@
 library(testthat)
-library(mongrel)
+library(stray)
 
 #Sys.setenv(KMP_DUPLICATE_LIB_OK="TRUE")
-test_check("mongrel")
+test_check("stray")
 #Sys.unsetenv("KMP_DUPLICATE_LIB_OK")

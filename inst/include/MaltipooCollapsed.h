@@ -99,7 +99,7 @@ class MaltipooCollapsed : public Numer::MFuncGrad
       A = Ainvdec.inverse(); 
         
       S.noalias() = K*E*A*E.transpose();
-      S.diagonal() += VectorXd::Ones(1, D-1);
+      S.diagonal() += VectorXd::Ones(D-1);
       Sdec.compute(S);
       O = eta.array().exp();
       m = O.colwise().sum();
@@ -131,7 +131,7 @@ class MaltipooCollapsed : public Numer::MFuncGrad
     // Must have called updateWithEtaLL and then updateWithEtaGH first 
     VectorXd calcGrad(const Ref<const VectorXd>& ell){ 
       // For Multinomial
-      MatrixXd g = (Y - (rhomat.array().rowwise()*n.array())).matrix();
+      MatrixXd g = (Y.topRows(D-1)  - (rhomat.array().rowwise()*n.array())).matrix();
       // For MatrixVariate T
       g.noalias() += -delta*(R + R.transpose())*C.transpose();
       Map<VectorXd> eg(g.data(), g.size()); 

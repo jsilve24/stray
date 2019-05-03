@@ -2,34 +2,34 @@
 #' 
 #' This function is largely a more user friendly wrapper around 
 #' \code{\link{optimMaltipooCollapsed}} and 
-#' \code{\link{uncollapseMongrelCollapsed}}. 
+#' \code{\link{uncollapsePibble}}. 
 #' See details for model specification. 
 #'  Notation: \code{N} is number of samples,
 #'  \code{D} is number of multinomial categories, \code{Q} is number
 #'  of covariates, \code{P} is the number of variance components 
 #'  \code{iter} is the number of samples of \code{eta} (e.g.,
 #'  the parameter \code{n_samples} in the function 
-#'  \code{\link{optimMongrelCollapsed}})
+#'  \code{\link{optimPibbleCollapsed}})
 #'  
 #' @param U a PQ x Q matrix of stacked variance components (each of dimension Q x Q)
 #' @param init (D-1) x Q initialization for Eta for optimization
 #' @param ellinit P vector initialization values for ell for optimization 
-#' @inheritParams mongrel_fit
+#' @inheritParams pibble_fit
 #'  
 #' @details the full model is given by:
-#'    \deqn{Y_j ~ Multinomial(Pi_j)}
+#'    \deqn{Y_j \sim Multinomial(Pi_j)}
 #'    \deqn{Pi_j = Phi^{-1}(Eta_j)}
-#'    \deqn{Eta ~ MN_{D-1 x N}(Lambda*X, Sigma, I_N)}
-#'    \deqn{Lambda ~ MN_{D-1 x Q}(Theta, Sigma, Gamma)}
+#'    \deqn{Eta \sim MN_{D-1 x N}(Lambda*X, Sigma, I_N)}
+#'    \deqn{Lambda \sim MN_{D-1 x Q}(Theta, Sigma, Gamma)}
 #'    \deqn{Gamma = e^{ell_1} U_1 + ... + e^{ell_P} U_P}
-#'    \deqn{Sigma ~ InvWish(upsilon, Xi)}
+#'    \deqn{Sigma \sim InvWish(upsilon, Xi)}
 #'    
 #'  Where A = (I_N + X * Gamma * X')^{-1}, K^{-1} = Xi is a (D-1)x(D-1) 
 #'  covariance matrix, U_1 is a Q x Q covariance matrix (a variance component), 
 #'  e^{ell_i} is a scale for that variance component and Phi^{-1} is 
 #'  ALRInv_D transform. 
 #'  
-#'  Default behavior is to use MAP estimate for uncollaping collapsed mongrel 
+#'  Default behavior is to use MAP estimate for uncollaping collapsed maltipoo 
 #'  model if laplace approximation is not preformed. 
 #'  
 #'  Parameters ell are treated as fixed and estimated by MAP estimation. 
@@ -92,7 +92,7 @@ maltipoo <- function(Y=NULL, X=NULL, upsilon=NULL, Theta=NULL, U=NULL,
     return(out)
   } else {
     if (is.null(X)) stop("X must be given to fit model")
-    if(is.null(init)) init <- random_mongrel_init(Y)   # initialize init 
+    if(is.null(init)) init <- random_pibble_init(Y)   # initialize init 
     if(is.null(ellinit)) ellinit <- rep(0, P)
   }
   
@@ -111,8 +111,7 @@ maltipoo <- function(Y=NULL, X=NULL, upsilon=NULL, Theta=NULL, U=NULL,
   decomp_method <- args_null("decomp_method", args, "cholesky")
   eigvalthresh <- args_null("eigvalthresh", args, 0)
   jitter <- args_null("jitter", args, 0)
-  calcPartialHess <- args_null("calcPartialHess", args, FALSE)
-  
+
   ## precomputation ## 
   K <- solve(Xi)
   
@@ -122,7 +121,7 @@ maltipoo <- function(Y=NULL, X=NULL, upsilon=NULL, Theta=NULL, U=NULL,
                                 calcGradHess, b1, b2, step_size, epsilon, eps_f, 
                                 eps_g, max_iter, verbose, verbose_rate, 
                                 decomp_method, eigvalthresh, 
-                                jitter, calcPartialHess)
+                                jitter)
   
   # if n_samples=0 or if hessian fails, then use MAP eta estimate for 
   # uncollapsing and unless otherwise specified against, use only the 
@@ -150,8 +149,10 @@ maltipoo <- function(Y=NULL, X=NULL, upsilon=NULL, Theta=NULL, U=NULL,
   for (i in 1:P){
     Gamma <- Gamma + fitc$VCScale[i]*U[((i-1)*Q+1):(i*Q),]
   }
-  fitu <- uncollapseMongrelCollapsed(fitc$Samples, X, Theta, Gamma, Xi, upsilon, 
-                                     ret_mean=ret_mean)
+  seed <- args_null("seed", args, sample(1:2^15, 1))
+  
+  fitu <- uncollapsePibble(fitc$Samples, X, Theta, Gamma, Xi, upsilon, 
+                                     ret_mean=ret_mean, seed=seed)
   
   ## pretty output ##
   out <- list()
@@ -192,10 +193,10 @@ maltipoo <- function(Y=NULL, X=NULL, upsilon=NULL, Theta=NULL, U=NULL,
   out$alr_base <- D
   out$summary <- NULL
   out$logMarginalLikelihood
-  attr(out, "class") <- c("maltipoofit", "mongrelfit")
+  attr(out, "class") <- c("maltipoofit", "pibblefit")
   # add names if present 
   if (use_names) out <- name(out)
-  verify(out) # verify the mongrelfit object
+  verify(out) # verify the pibblefit object
   return(out)
 }
 

@@ -37,23 +37,23 @@ nll <- function(eta, Y, X, upsilon, Theta, Xi, Gamma){
 
 #' function to calculate hessian for model at a given eta 
 #' @param eta (D-1) x N matrix 
-#' @details uses hessMongrelCollapsed function of mongrel 
+#' @details uses hessPibbleCollapsed function of stray 
 hessMC <- function(mdataset, eta){
   X <- mdataset$X
   A <- solve(diag(mdataset$N)+ t(X)%*%mdataset$Gamma%*%X)
-  hessMongrelCollapsed(mdataset$Y, mdataset$upsilon, 
+  hessPibbleCollapsed(mdataset$Y, mdataset$upsilon, 
                        mdataset$Theta%*%X, solve(mdataset$Xi), 
                        A, eta)
 }
 
-sim <- mongrel_sim(D=5, N=10, true_priors=FALSE)
+sim <- pibble_sim(D=5, N=10, true_priors=FALSE)
 nll_partial <- function(x) nll(x, sim$Y, sim$X, sim$upsilon,
                                sim$Theta, sim$Xi, sim$Gamma)
 
 test_that("hessian agrees with finite differences", {
   hess.nd <- numDeriv::hessian(nll_partial, c(sim$Eta))
   A <- solve(diag(sim$N) + t(sim$X) %*% sim$Gamma %*% sim$X)
-  hess <- hessMongrelCollapsed(sim$Y, sim$upsilon, sim$Theta%*%sim$X,
+  hess <- hessPibbleCollapsed(sim$Y, sim$upsilon, sim$Theta%*%sim$X,
                                solve(sim$Xi), A, sim$Eta)
   expect_equal(hess.nd, -hess, tolerance=1e-3)
   expect_true(TRUE)

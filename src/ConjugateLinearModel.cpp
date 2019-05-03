@@ -37,7 +37,7 @@ using Eigen::Lower;
 //' @export
 //' @md
 //' @examples
-//' sim <- mongrel_sim()
+//' sim <- pibble_sim()
 //' eta.hat <- t(driver::alr(t(sim$Y+0.65)))
 //' fit <- conjugateLinearModel(eta.hat, sim$X, sim$Theta, sim$Gamma, 
 //'                             sim$Xi, sim$upsilon, n_samples=2000)
@@ -73,8 +73,7 @@ List conjugateLinearModel(const Eigen::Map<Eigen::MatrixXd> Y,
   // Storage for output
   MatrixXd LambdaDrawO(D*Q, iter);
   MatrixXd SigmaDrawO(D*D, iter);
-
-  // computation out of for-loop compared to mongrelcollapsed_uncollapse
+  // computation out of for-loop compared to pibbleuncollapse
   LambdaN = Y*XTGammaN+ThetaGammaInvGammaN;
   ELambda = LambdaN-Theta;
   EY = Y-LambdaN*X;

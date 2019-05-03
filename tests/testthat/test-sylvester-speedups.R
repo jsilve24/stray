@@ -1,25 +1,25 @@
 context("test-sylvester-speedups")
 
 test_that("Sylvester Results Agree", {
-  sim <- mongrel_sim(D = 20, N=5)
+  sim <- pibble_sim(D = 20, N=5)
   ThetaX <- sim$Theta %*% sim$X
-  eta <- random_mongrel_init(sim$Y)
-  ll <- loglikMongrelCollapsed(sim$Y, sim$upsilon, ThetaX, sim$K, sim$A, eta, 
+  eta <- random_pibble_init(sim$Y)
+  ll <- loglikPibbleCollapsed(sim$Y, sim$upsilon, ThetaX, sim$KInv, sim$AInv, eta, 
                                sylv=FALSE)
-  llsylv <- loglikMongrelCollapsed(sim$Y, sim$upsilon, ThetaX, sim$K, sim$A, eta, 
+  llsylv <- loglikPibbleCollapsed(sim$Y, sim$upsilon, ThetaX, sim$KInv, sim$AInv, eta, 
                                sylv=TRUE)
-  g <- gradMongrelCollapsed(sim$Y, sim$upsilon, ThetaX, sim$K, sim$A, eta, 
+  g <- gradPibbleCollapsed(sim$Y, sim$upsilon, ThetaX, sim$KInv, sim$AInv, eta, 
                             sylv=FALSE)
-  gsylv <- gradMongrelCollapsed(sim$Y, sim$upsilon, ThetaX, sim$K, sim$A, eta, 
+  gsylv <- gradPibbleCollapsed(sim$Y, sim$upsilon, ThetaX, sim$KInv, sim$AInv, eta, 
                                 sylv=TRUE)
-  hess <- hessMongrelCollapsed(sim$Y, sim$upsilon, ThetaX, sim$K, sim$A, eta, 
+  hess <- hessPibbleCollapsed(sim$Y, sim$upsilon, ThetaX, sim$KInv, sim$AInv, eta, 
                             sylv=FALSE)
-  hesssylv <- hessMongrelCollapsed(sim$Y, sim$upsilon, ThetaX, sim$K, sim$A, eta, 
+  hesssylv <- hessPibbleCollapsed(sim$Y, sim$upsilon, ThetaX, sim$KInv, sim$AInv, eta, 
                                 sylv=TRUE)
   
-  # microbenchmark::microbenchmark(gradMongrelCollapsed(sim$Y, sim$upsilon, ThetaX, sim$K, sim$A, eta, 
+  # microbenchmark::microbenchmark(gradPibbleCollapsed(sim$Y, sim$upsilon, ThetaX, sim$KInv, sim$AInv, eta, 
   #                                                     sylv=FALSE), 
-  #                                gradMongrelCollapsed(sim$Y, sim$upsilon, ThetaX, sim$K, sim$A, eta, 
+  #                                gradPibbleCollapsed(sim$Y, sim$upsilon, ThetaX, sim$KInv, sim$AInv, eta, 
   #                                                     sylv=TRUE))
   expect_equal(ll, llsylv)
   expect_equal(g, gsylv)

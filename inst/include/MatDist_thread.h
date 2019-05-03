@@ -4,8 +4,8 @@
 #include <RcppEigen.h>
 #include <boost/random/normal_distribution.hpp>
 #include <boost/random/chi_squared_distribution.hpp>
-#if defined(MONGREL_USE_MKL)
-#include <mkl.h>
+#ifdef STRAY_USE_MKL
+  #include <mkl.h>
 #endif 
 
 using Eigen::MatrixXd;
@@ -76,7 +76,7 @@ inline void rMatNormalCholesky_thread_inplace(Eigen::MatrixBase<T>& A,
   int ncols = M.cols();
   MatrixXd Z(nrows, ncols);
   fillUnitNormal_thread(Z, rng);
-  A.template noalias() =  M + LU*Z*LV.transpose();
+  A.noalias() =  M + LU*Z*LV.transpose();
 }
 
 
@@ -152,15 +152,20 @@ inline void rInvWishRevCholesky_thread_inplace(Eigen::PlainObjectBase<T>& A,
       pos++;
     }
   }
-  A.template noalias() = PsiInv.llt().matrixL()*X;
+  A.noalias() = PsiInv.llt().matrixL()*X;
   
-#if defined(MONGREL_USE_MKL)
+#ifdef STRAY_USE_MKL
   LAPACKE_dtrtri(LAPACK_COL_MAJOR, 'L', 'N', A.cols(), A.data(), A.rows());
+  A.transposeInPlace();
 #else 
   MatrixXd I = MatrixXd::Identity(p,p);
-  A.template triangularView<Lower>().solveInPlace(I); 
+  A.template triangularView<Lower>().solveInPlace(I);
+  A = I.transpose();
+  
+  // MatrixXd Y;
+  // Y.noalias() = A; // hack above commented code doesn't seem to work. 
+  // A = Y.triangularView<Lower>().solve(MatrixXd::Identity(p,p));
 #endif 
-  A.template transposeInPlace();
 }
 
 

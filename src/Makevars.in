@@ -1,0 +1,13 @@
+## With R 3.1.0 or later, you can uncomment the following line to tell R to 
+## enable compilation with C++11 (or even C++14) where available
+CXX_STD = CXX11
+
+## For standard
+PKG_CPPFLAGS =  -I../inst/include/ @OPENMP_FLAG@
+PKG_LIBS = @OPENMP_FLAG@
+
+## For MKL - make sure you are using icc compiler in ~.R/Makevars 
+# Using GCC -- PREFERRED for MKL
+#PKG_CPPFLAGS =  -L/opt/intel/compilers_and_libraries_2019.1.144/mac/compiler/lib -m64 -I../inst/include/ -DSTRAY_USE_MKL
+#PKG_CXXFLAGS = -I/opt/intel/compilers_and_libraries_2019.1.144/mac/mkl/include -w
+#PKG_LIBS = -L/opt/intel/compilers_and_libraries_2019.1.144/mac/mkl/lib -Wl,-rpath,/opt/intel/compilers_and_libraries_2019.1.144/mac/mkl/lib -lmkl_rt -lpthread -lm -ldl 

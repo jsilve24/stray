@@ -33,8 +33,8 @@ essentially iid on "base scale" using Aitchison terminology)}
 
 \item{pars}{character vector of posterior parameters to return}
 
-\item{...}{arguments passed to \code{\link{optimMongrelCollapsed}} and
-\code{\link{uncollapseMongrelCollapsed}}}
+\item{...}{arguments passed to \code{\link{optimPibbleCollapsed}} and
+\code{\link{uncollapsePibble}}}
 }
 \value{
 an object of class maltipoofit
@@ -42,30 +42,30 @@ an object of class maltipoofit
 \description{
 This function is largely a more user friendly wrapper around 
 \code{\link{optimMaltipooCollapsed}} and 
-\code{\link{uncollapseMongrelCollapsed}}. 
+\code{\link{uncollapsePibble}}. 
 See details for model specification. 
  Notation: \code{N} is number of samples,
  \code{D} is number of multinomial categories, \code{Q} is number
  of covariates, \code{P} is the number of variance components 
  \code{iter} is the number of samples of \code{eta} (e.g.,
  the parameter \code{n_samples} in the function 
- \code{\link{optimMongrelCollapsed}})
+ \code{\link{optimPibbleCollapsed}})
 }
 \details{
 the full model is given by:
-   \deqn{Y_j ~ Multinomial(Pi_j)}
+   \deqn{Y_j \sim Multinomial(Pi_j)}
    \deqn{Pi_j = Phi^{-1}(Eta_j)}
-   \deqn{Eta ~ MN_{D-1 x N}(Lambda*X, Sigma, I_N)}
-   \deqn{Lambda ~ MN_{D-1 x Q}(Theta, Sigma, Gamma)}
+   \deqn{Eta \sim MN_{D-1 x N}(Lambda*X, Sigma, I_N)}
+   \deqn{Lambda \sim MN_{D-1 x Q}(Theta, Sigma, Gamma)}
    \deqn{Gamma = e^{ell_1} U_1 + ... + e^{ell_P} U_P}
-   \deqn{Sigma ~ InvWish(upsilon, Xi)}
+   \deqn{Sigma \sim InvWish(upsilon, Xi)}
    
  Where A = (I_N + X * Gamma * X')^{-1}, K^{-1} = Xi is a (D-1)x(D-1) 
  covariance matrix, U_1 is a Q x Q covariance matrix (a variance component), 
  e^{ell_i} is a scale for that variance component and Phi^{-1} is 
  ALRInv_D transform. 
  
- Default behavior is to use MAP estimate for uncollaping collapsed mongrel 
+ Default behavior is to use MAP estimate for uncollaping collapsed maltipoo 
  model if laplace approximation is not preformed. 
  
  Parameters ell are treated as fixed and estimated by MAP estimation.

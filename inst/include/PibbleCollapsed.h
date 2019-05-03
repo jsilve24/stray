@@ -120,7 +120,7 @@ class PibbleCollapsed : public mongrel::MongrelModel {
       for (unsigned i = 0; i < diagLU.rows(); ++i) {
         const double& lii = diagLU(i);
         if (lii < 0.0) c *= -1;
-        ld += log(abs(lii));
+        ld += log(std::abs(lii));
       }
       ld += log(c);
       ll -= delta*ld;

@@ -252,7 +252,8 @@ Bayesian Multinomial Logistic Normal Models through Marginally Latent Matrix-T P
 
 <span class='co'># Finally obtain samples from Lambda and Sigma</span>
 <span class='no'>fit2</span> <span class='kw'>&lt;-</span> <span class='fu'>uncollapsePibble</span>(<span class='no'>fit</span>$<span class='no'>Samples</span>, <span class='no'>sim</span>$<span class='no'>X</span>, <span class='no'>sim</span>$<span class='no'>Theta</span>,
-                                   <span class='no'>sim</span>$<span class='no'>Gamma</span>, <span class='no'>sim</span>$<span class='no'>Xi</span>, <span class='no'>sim</span>$<span class='no'>upsilon</span>)</div><div class='output co'>#&gt; <span class='error'>Error in uncollapsePibble(fit$Samples, sim$X, sim$Theta, sim$Gamma, sim$Xi,     sim$upsilon): argument "seed" is missing, with no default</span></div></pre>
+                                   <span class='no'>sim</span>$<span class='no'>Gamma</span>, <span class='no'>sim</span>$<span class='no'>Xi</span>, <span class='no'>sim</span>$<span class='no'>upsilon</span>,
+                                   <span class='kw'>seed</span><span class='kw'>=</span><span class='fl'>2849</span>)</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>

@@ -4,13 +4,13 @@
 \alias{lambda_to_iqlr}
 \title{Transform Lambda into IQLR (Inter-Quantile Log-Ratio)}
 \usage{
-lambda_to_iqlr(m, focus.cov, probs = c(0.25, 0.75))
+lambda_to_iqlr(m, focus.cov = NULL, probs = c(0.25, 0.75))
 }
 \arguments{
 \item{m}{object of class pibblefit (e.g., output of \code{\link{pibble}})}
 
 \item{focus.cov}{vector of integers or characters specifying columns (covariates)
-of Lambda to include in calculating IQLR}
+of Lambda to include in calculating IQLR (if NULL, default, then uses all covariates)}
 
 \item{probs}{bounds for categories (i.e., features / genes / taxa) to include in 
 calculation of iqlr (smaller bounds means more stringent inclusion criteria)}

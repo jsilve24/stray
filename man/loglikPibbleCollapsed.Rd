@@ -72,6 +72,6 @@ ThetaX <- Theta\%*\%X
 
 
 loglikPibbleCollapsed(Y, upsilon, ThetaX, K, A, Eta)
-gradPibbleCollapsed(Y, upsilon, ThetaX, K, A, Eta)
-hessPibbleCollapsed(Y, upsilon, ThetaX, K, A, Eta)
+gradPibbleCollapsed(Y, upsilon, ThetaX, K, A, Eta)[1:5]
+hessPibbleCollapsed(Y, upsilon, ThetaX, K, A, Eta)[1:5,1:5]
 }

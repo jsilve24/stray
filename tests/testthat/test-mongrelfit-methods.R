@@ -36,6 +36,13 @@ test_that("Predict works in CLR", {
   expect_error(predict(fit), NA) 
 })
 
+test_that("summary works with pars=Lambda", {
+  fit <- pibble(sim$Y, sim$X, pars="Lambda")
+  summary(fit)
+  expect_true(TRUE)
+})
+
+
 # test_that("Plots work with iter=1", {
 #   fit <- pibble(sim$Y, sim$X, n_samples=1)
 #   plot(fit, par="Sigma")

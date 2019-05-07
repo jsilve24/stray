@@ -86,7 +86,10 @@ summary_check_precomputed <- function(m, pars){
 summary.pibblefit <- function(object, pars=NULL, use_names=TRUE, as_factor=FALSE, 
                                gather_prob=FALSE, ...){
   if (is.null(pars)) {
-    pars <- c("Eta", "Lambda", "Sigma")
+    pars <- c()
+    if (!is.null(object$Eta)) pars <- c(pars, "Eta")
+    if (!is.null(object$Lambda)) pars <- c(pars, "Lambda")
+    if (!is.null(object$Sigma)) pars <- c(pars, "Sigma")
     pars <- pars[pars %in% names(object)] # only for the ones that are present 
   }
   
@@ -98,12 +101,22 @@ summary.pibblefit <- function(object, pars=NULL, use_names=TRUE, as_factor=FALSE
                          Parameter %in% pars)
   # Suppress warnings about stupid implict NAs, this is on purpose. 
   suppressWarnings({
-  
-    if (object$coord_system != "proportions") {
-      mtidy <- dplyr::group_by(mtidy, Parameter, coord, coord2, sample, covariate) 
-    } else {
-      mtidy <- dplyr::group_by(mtidy, Parameter, coord, sample, covariate)
+    
+    vars <- c()
+    if ("Eta" %in% pars) vars <- c(vars, "coord", "sample")
+    if ("Lambda" %in% pars) vars <- c(vars, "coord", "covariate")
+    if (("Sigma" %in% pars) & (object$coord_system != "proportions")) {
+      vars <- c(vars, "coord", "coord2")
     }
+    vars <- unique(vars)
+    vars <- rlang::syms(vars)
+    
+    mtidy <- dplyr::group_by(mtidy, Parameter, !!!vars)
+    # if ((object$coord_system != "proportions")) {
+    #   mtidy <- dplyr::group_by(mtidy, Parameter, coord, coord2, sample, covariate) 
+    # } else {
+    #   mtidy <- dplyr::group_by(mtidy, Parameter, coord, sample, covariate)
+    # }
     if (!gather_prob){
       mtidy <- mtidy %>% 
         driver::summarise_posterior(val, ...) %>%

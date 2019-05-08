@@ -75,7 +75,8 @@ fit <- optimPibbleCollapsed(sim$Y, sim$upsilon, sim$Theta\%*\%sim$X, sim$KInv,
 
 # Finally obtain samples from Lambda and Sigma
 fit2 <- uncollapsePibble(fit$Samples, sim$X, sim$Theta, 
-                                   sim$Gamma, sim$Xi, sim$upsilon)
+                                   sim$Gamma, sim$Xi, sim$upsilon, 
+                                   seed=2849)
 }
 \references{
 JD Silverman K Roche, ZC Holmes, LA David, S Mukherjee.

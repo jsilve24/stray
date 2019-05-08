@@ -29,10 +29,8 @@ ggplot object
 Plot Summaries of Posterior Distribution of pibblefit Parameters
 }
 \examples{
-\dontrun{
-fit <- pibble(Y, X)
+sim <- pibble_sim(N=10, D=4, Q=3)
+fit <- pibble(sim$Y, sim$X)
 plot(fit, par="Lambda")
 plot(fit, par="Sigma")
-plot(fit, par="Sigma", focus.coord=c("s1", "s2", "s3"))
-}
 }

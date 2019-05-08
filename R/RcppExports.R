@@ -171,8 +171,8 @@ optimMaltipooCollapsed <- function(Y, upsilon, Theta, X, KInv, U, init, ellinit,
 #'
 #'
 #' loglikPibbleCollapsed(Y, upsilon, ThetaX, K, A, Eta)
-#' gradPibbleCollapsed(Y, upsilon, ThetaX, K, A, Eta)
-#' hessPibbleCollapsed(Y, upsilon, ThetaX, K, A, Eta)
+#' gradPibbleCollapsed(Y, upsilon, ThetaX, K, A, Eta)[1:5]
+#' hessPibbleCollapsed(Y, upsilon, ThetaX, K, A, Eta)[1:5,1:5]
 loglikPibbleCollapsed <- function(Y, upsilon, ThetaX, K, A, eta, sylv = FALSE) {
     .Call('_stray_loglikPibbleCollapsed', PACKAGE = 'stray', Y, upsilon, ThetaX, K, A, eta, sylv)
 }
@@ -358,7 +358,8 @@ optimPibbleCollapsed <- function(Y, upsilon, ThetaX, KInv, AInv, init, n_samples
 #' 
 #' # Finally obtain samples from Lambda and Sigma
 #' fit2 <- uncollapsePibble(fit$Samples, sim$X, sim$Theta, 
-#'                                    sim$Gamma, sim$Xi, sim$upsilon)
+#'                                    sim$Gamma, sim$Xi, sim$upsilon, 
+#'                                    seed=2849)
 uncollapsePibble <- function(eta, X, Theta, Gamma, Xi, upsilon, seed, ret_mean = FALSE, ncores = -1L) {
     .Call('_stray_uncollapsePibble', PACKAGE = 'stray', eta, X, Theta, Gamma, Xi, upsilon, seed, ret_mean, ncores)
 }

@@ -5,7 +5,7 @@
 #' 
 #' @param m object of class pibblefit (e.g., output of \code{\link{pibble}})
 #' @param focus.cov vector of integers or characters specifying columns (covariates)
-#'   of Lambda to include in calculating IQLR
+#'   of Lambda to include in calculating IQLR (if NULL, default, then uses all covariates)
 #' @param probs bounds for categories (i.e., features / genes / taxa) to include in 
 #'   calculation of iqlr (smaller bounds means more stringent inclusion criteria)
 #'
@@ -31,13 +31,15 @@
 #' @examples 
 #' sim <- pibble_sim()
 #' fit <- pibble(sim$Y, sim$X)
-#' lambda_to_iqlr(fit, 1:2) # Use first two covariates to define iqlr
+#' # Use first two covariates to define iqlr, just show first 5 samples
+#' lambda_to_iqlr(fit, 1:2)[,,1:5] 
 #' 
 #' @references Jia R. Wu, Jean M. Macklaim, Briana L. Genge, Gregory B. Gloor (2017)
 #'   Finding the center: corrections for asymmetry in high-throughput sequencing
 #'   datasets. arxiv:1704.01841v1
-lambda_to_iqlr <- function(m, focus.cov, probs=c(.25, .75)){
+lambda_to_iqlr <- function(m, focus.cov=NULL, probs=c(.25, .75)){
   req(m, "Lambda") # defensive
+  if (!is.null(focus.cov)) focus.cov <- 1:m$Q
   if (is.character(focus.cov)) focus.cov <- which(focus.cov %in% names_categories)
   in.iqr <- matrix(0, ncategories(m), niter(m))
   

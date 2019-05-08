@@ -76,7 +76,8 @@ using Eigen::Lower;
 //' 
 //' # Finally obtain samples from Lambda and Sigma
 //' fit2 <- uncollapsePibble(fit$Samples, sim$X, sim$Theta, 
-//'                                    sim$Gamma, sim$Xi, sim$upsilon)
+//'                                    sim$Gamma, sim$Xi, sim$upsilon, 
+//'                                    seed=2849)
 // [[Rcpp::export]]
 List uncollapsePibble(const Eigen::Map<Eigen::VectorXd> eta, // note this is essentially eta
                     const Eigen::Map<Eigen::MatrixXd> X, 

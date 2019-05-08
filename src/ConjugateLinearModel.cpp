@@ -73,7 +73,7 @@ List conjugateLinearModel(const Eigen::Map<Eigen::MatrixXd> Y,
   // Storage for output
   MatrixXd LambdaDrawO(D*Q, iter);
   MatrixXd SigmaDrawO(D*D, iter);
-  
+
   // computation out of for-loop compared to pibbleuncollapse
   LambdaN = Y*XTGammaN+ThetaGammaInvGammaN;
   ELambda = LambdaN-Theta;
@@ -104,6 +104,6 @@ List conjugateLinearModel(const Eigen::Map<Eigen::MatrixXd> Y,
   nvSigma.attr("dim") = dSigma;
   out[0] = nvLambda;
   out[1] = nvSigma;
-  
+
   return out;
 }

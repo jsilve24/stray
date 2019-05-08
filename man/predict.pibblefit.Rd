@@ -47,5 +47,5 @@ currently only implemented for pibblefit objects in coord_system "default"
 \examples{
 sim <- pibble_sim()
 fit <- pibble(sim$Y, sim$X)
-predict(fit)
+predict(fit)[,,1:2] # just show 2 samples
 }

@@ -286,6 +286,19 @@ Here we see that the model appears to be fitting well (at least based on the pos
 predictive check) and that only about 1.5% of observations fall outside of the 95% 
 posterior predictive density (this is good). 
 
+Some readers will look at the above `ppc` plots and think "looks like overfitting". 
+However, note that there are two ways of using `ppc`. One is to predict the counts
+based on the samples of $\eta$ (Eta; as we did above); the other is to predict "from scratch"
+that is to predict starting form the posterior samples of $\Lambda$ (Lambda) then 
+sampling $\eta$ and only then sampling $Y$. This later functionality can be accessed
+by also passing the parameters `from_scratch=TRUE` to the `ppc` function. Note:
+these two posterior predictive checks have different meanings, one is not better 
+than the other.
+```{r}
+ppc(posterior, from_scratch=TRUE) +ggplot2::coord_cartesian(ylim=c(0, 30000))
+ppc_summary(posterior, from_scratch=TRUE)
+```
+
 Now we are going to finally look at the posterior distribution of our regression
 parameters, but because there are so many we will focus on just those 
 that have a 95% credible interval not including zero (i.e., those that 

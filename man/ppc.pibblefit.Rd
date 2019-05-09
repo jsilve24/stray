@@ -4,7 +4,8 @@
 \alias{ppc.pibblefit}
 \title{Visualization of Posterior Predictive Check of fit model}
 \usage{
-\method{ppc}{pibblefit}(m, type = "bounds", iter = NULL)
+\method{ppc}{pibblefit}(m, type = "bounds", iter = NULL,
+  from_scratch = FALSE)
 }
 \arguments{
 \item{m}{an object of class pibblefit}
@@ -14,6 +15,9 @@
 \item{iter}{number of samples from posterior predictive distribution to plot
 (currently must be <= m$iter) if type=="lines" default is 50, if type=="ribbon"
 default is to use all available iterations.}
+
+\item{from_scratch}{should predictions of Y come from fitted Eta or from 
+predictions of Eta from posterior of Lambda? (default: false)}
 }
 \value{
 ggplot object

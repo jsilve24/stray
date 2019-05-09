@@ -63,7 +63,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">stray</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.10</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.11</span>
       </span>
     </div>
 
@@ -149,7 +149,7 @@
     <pre class="usage"><span class='fu'>ppc_summary</span>(<span class='no'>m</span>, <span class='no'>...</span>)
 
 <span class='co'># S3 method for pibblefit</span>
-<span class='fu'>ppc_summary</span>(<span class='no'>m</span>, <span class='no'>...</span>)</pre>
+<span class='fu'>ppc_summary</span>(<span class='no'>m</span>, <span class='kw'>from_scratch</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='no'>...</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -161,6 +161,11 @@
     <tr>
       <th>...</th>
       <td><p>other arguments to pass</p></td>
+    </tr>
+    <tr>
+      <th>from_scratch</th>
+      <td><p>should predictions of Y come from fitted Eta or from 
+predictions of Eta from posterior of Lambda? (default: false)</p></td>
     </tr>
     </table>
     

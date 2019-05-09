@@ -30,7 +30,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">stray</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.10</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.11</span>
       </span>
     </div>
 
@@ -104,7 +104,7 @@
       <h1>Introduction to Stray::Pibble</h1>
                         <h4 class="author">Justin Silverman</h4>
             
-            <h4 class="date">2019-05-07</h4>
+            <h4 class="date">2019-05-09</h4>
       
       
       <div class="hidden name"><code>introduction-to-stray.Rmd</code></div>
@@ -245,14 +245,19 @@ tax &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumen
 <p><img src="introduction-to-stray_files/figure-html/unnamed-chunk-10-1.png" width="672"></p>
 <p>There are a few things to note about this plot. First, when zoomed out like this it looks it is hard to make much of it. This is a fairly large dataset we are analyzing and its hard to view an uncertainty interval; in this case its plotting the median and 95% confidence interval in grey and black and the observed counts in green. <em>stray</em> also has a simpler function that summarizes the poterior predictive check.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="../reference/ppc_summary.html">ppc_summary</a></span>(posterior)
-<span class="co">#&gt; Proportions of Observations within 95% Credible Interval: 0.9712653</span></code></pre></div>
+<span class="co">#&gt; Proportions of Observations within 95% Credible Interval: 0.9902857</span></code></pre></div>
 <p>Here we see that the model appears to be fitting well (at least based on the posterior predictive check) and that only about 1.5% of observations fall outside of the 95% posterior predictive density (this is good).</p>
+<p>Some readers will look at the above <code>ppc</code> plots and think “looks like overfitting”. However, note that there are two ways of using <code>ppc</code>. One is to predict the counts based on the samples of <span class="math inline">\(\eta\)</span> (Eta; as we did above); the other is to predict “from scratch” that is to predict starting form the posterior samples of <span class="math inline">\(\Lambda\)</span> (Lambda) then sampling <span class="math inline">\(\eta\)</span> and only then sampling <span class="math inline">\(Y\)</span>. This later functionality can be accessed by also passing the parameters <code>from_scratch=TRUE</code> to the <code>ppc</code> function. Note: these two posterior predictive checks have different meanings, one is not better than the other.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="../reference/ppc.html">ppc</a></span>(posterior, <span class="dt">from_scratch=</span><span class="ot">TRUE</span>) <span class="op">+</span>ggplot2<span class="op">::</span><span class="kw"><a href="https://www.rdocumentation.org/packages/ggplot2/topics/coord_cartesian">coord_cartesian</a></span>(<span class="dt">ylim=</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="dv">0</span>, <span class="dv">30000</span>))</code></pre></div>
+<p><img src="introduction-to-stray_files/figure-html/unnamed-chunk-12-1.png" width="700"></p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="../reference/ppc_summary.html">ppc_summary</a></span>(posterior, <span class="dt">from_scratch=</span><span class="ot">TRUE</span>)
+<span class="co">#&gt; Proportions of Observations within 95% Credible Interval: 0.972</span></code></pre></div>
 <p>Now we are going to finally look at the posterior distribution of our regression parameters, but because there are so many we will focus on just those that have a 95% credible interval not including zero (i.e., those that the model is fairly certain are non-zero). We are also going to ignore the intercept term and just look at parameters associated with age and disease status.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">posterior_summary &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/summary">summary</a></span>(posterior, <span class="dt">pars=</span><span class="st">"Lambda"</span>)<span class="op">$</span>Lambda
 focus &lt;-<span class="st"> </span>posterior_summary[<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/sign">sign</a></span>(posterior_summary<span class="op">$</span>p2.<span class="dv">5</span>) <span class="op">==</span><span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/sign">sign</a></span>(posterior_summary<span class="op">$</span>p97.<span class="dv">5</span>),]
 focus &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/unique">unique</a></span>(focus<span class="op">$</span>coord)
 <span class="kw"><a href="https://www.rdocumentation.org/packages/graphics/topics/plot">plot</a></span>(posterior, <span class="dt">par=</span><span class="st">"Lambda"</span>, <span class="dt">focus.coord =</span> focus, <span class="dt">focus.cov =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/colnames">rownames</a></span>(X)[<span class="dv">2</span><span class="op">:</span><span class="dv">4</span>])</code></pre></div>
-<p><img src="introduction-to-stray_files/figure-html/unnamed-chunk-12-1.png" width="672"></p>
+<p><img src="introduction-to-stray_files/figure-html/unnamed-chunk-13-1.png" width="672"></p>
 <p>The first, and most obvious ting to notice is that the covariate <code>age</code> has pretty much no effect at all, whatever effect it may have is incredibly weak. So we are going to remove age from the plot and just look at those coordinates with non-zero effect for diagnosisCD</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">posterior_summary &lt;-<span class="st"> </span><span class="kw"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span>(posterior_summary, covariate<span class="op">==</span><span class="st">"diagnosisCD"</span>) 
 focus &lt;-<span class="st"> </span>posterior_summary[<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/sign">sign</a></span>(posterior_summary<span class="op">$</span>p2.<span class="dv">5</span>) <span class="op">==</span><span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/sign">sign</a></span>(posterior_summary<span class="op">$</span>p97.<span class="dv">5</span>),]
@@ -289,7 +294,7 @@ focus &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocum
 <span class="co">#&gt; 1896700 "Clostridiales"      "Peptostreptococcaceae" NA    NA     </span>
 <span class="co">#&gt; 191718  "Erysipelotrichales" "Erysipelotrichaceae"   NA    NA</span>
 <span class="kw"><a href="https://www.rdocumentation.org/packages/graphics/topics/plot">plot</a></span>(posterior, <span class="dt">par=</span><span class="st">"Lambda"</span>, <span class="dt">focus.coord =</span> focus, <span class="dt">focus.cov =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/colnames">rownames</a></span>(X)[<span class="dv">2</span>])</code></pre></div>
-<p><img src="introduction-to-stray_files/figure-html/unnamed-chunk-13-1.png" width="672"></p>
+<p><img src="introduction-to-stray_files/figure-html/unnamed-chunk-14-1.png" width="672"></p>
 </div>
 <div id="more-technical-details" class="section level1">
 <h1 class="hasAnchor">

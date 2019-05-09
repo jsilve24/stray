@@ -354,14 +354,12 @@ predict.pibblefit <- function(object, newdata=NULL, response="LambdaX", size=NUL
   if (response=="Eta") return(Eta)
   
   # Draw Y
-  if (!from_scratch){
+  if (from_scratch){
     Pi <- alrInv_array(Eta, d=nrow(Eta)+1, coords=1)
   } else {
     if (is.null(object$Eta)) stop("pibblefit object does not contain samples of Eta")
-    
     com <- names(object)[!(names(object) %in% c("Lambda", "Sigma"))] # to save computation
     Pi <- to_proportions(object[com])$Eta
-    Pi <- alrInv_array(Eta, d=nrow(Eta)+1, coords=1)
   }
   Ypred <- array(0, dim=c(object$D, nnew, iter))
   for (i in 1:iter){
@@ -566,8 +564,10 @@ sample_prior.pibblefit <- function(m, n_samples=2000,
 # ppc_summary -------------------------------------------------------------
 
 #' @rdname ppc_summary
+#' @param from_scratch should predictions of Y come from fitted Eta or from 
+#'   predictions of Eta from posterior of Lambda? (default: false)
 #' @export
-ppc_summary.pibblefit <- function(m, ...){
+ppc_summary.pibblefit <- function(m, from_scratch=FALSE, ...){
   if (!is.null(m$Y)) {
     o <- order(m$Y, decreasing=TRUE)
   } else {
@@ -579,7 +579,7 @@ ppc_summary.pibblefit <- function(m, ...){
             "results will be missleading")
   }
   
-  pp <- predict(m, response="Y")
+  pp <- predict(m, response="Y", from_scratch=from_scratch)
   pp <- matrix(pp, m$D*m$N, m$iter) 
   pp <- pp[o,]
   

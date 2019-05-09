@@ -24,7 +24,6 @@ devtools::install_github("jsilve24/stray", ref="develop")
 A few notes:
 
 * There are a few installation options that can greatly speed stray up (often by as much as 10-50 fold). For a more detailed description of installation, take a look at [the installation page](https://github.com/jsilve24/stray/wiki/Installation-Details). 
-* Windows machines require a bit of preparation before installing stray. See our [Windows Installation Instructions](https://github.com/jsilve24/stray/wiki/Windows-Installation-Instructions). 
 * Vignettes are prebuilt on the [*stray* webpage](https://jsilve24.github.io/stray/). If you 
 want vignettes to build locally during package installation you must also pass the `build=TRUE` and `build_opts = c("--no-resave-data", "--no-manual")` options to `install_github`. 
 

@@ -7,12 +7,15 @@
 \usage{
 ppc_summary(m, ...)
 
-\method{ppc_summary}{pibblefit}(m, ...)
+\method{ppc_summary}{pibblefit}(m, from_scratch = FALSE, ...)
 }
 \arguments{
 \item{m}{model object}
 
 \item{...}{other arguments to pass}
+
+\item{from_scratch}{should predictions of Y come from fitted Eta or from 
+predictions of Eta from posterior of Lambda? (default: false)}
 }
 \value{
 vector

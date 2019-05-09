@@ -109,6 +109,8 @@ plot_mf_sigma <- function(m, focus.coord=NULL, use_names=TRUE){
 #' @param iter number of samples from posterior predictive distribution to plot
 #'   (currently must be <= m$iter) if type=="lines" default is 50, if type=="ribbon"
 #'   default is to use all available iterations. 
+#' @param from_scratch should predictions of Y come from fitted Eta or from 
+#'   predictions of Eta from posterior of Lambda? (default: false)
 #' @return ggplot object
 #' @import ggplot2
 #' @importFrom driver gather_array
@@ -118,7 +120,7 @@ plot_mf_sigma <- function(m, focus.coord=NULL, use_names=TRUE){
 #' fit <- pibble(Y, X)
 #' ppc(fit)
 #' }
-ppc.pibblefit <- function(m, type="bounds", iter=NULL){
+ppc.pibblefit <- function(m, type="bounds", iter=NULL, from_scratch=FALSE){
   msg <- paste("No observed count data (Y) to check against", 
                "perhaps you are looking for the function `predict`?")
   if (is.null(m$Y)) stop(msg)
@@ -133,7 +135,7 @@ ppc.pibblefit <- function(m, type="bounds", iter=NULL){
   
   if (!is.null(m$Y)) o <- order(m$Y, decreasing=TRUE) else o <- 1:(m$N*m$D)
   
-  pp <- predict(m, response="Y")
+  pp <- predict(m, response="Y", from_scratch=from_scratch)
   if (iter < niter(m)) pp <- pp[,,sample(1:m$iter, iter), drop=F]
   pp <- matrix(pp, m$D*m$N, iter) 
   pp <- pp[o,]

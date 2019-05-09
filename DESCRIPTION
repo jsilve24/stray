@@ -1,8 +1,8 @@
 Package: stray
 Type: Package
 Title: Bayesian Multinomial Logistic Normal Regression
-Version: 0.1.10
-Date: 2018-06-26
+Version: 0.1.11
+Date: 2019-05-09
 Author: Justin Silverman
 Authors@R: c(person("Justin", "Silverman", role=c("aut", "cre"),
                      email = "Justin.Silverman@duke.edu"), 

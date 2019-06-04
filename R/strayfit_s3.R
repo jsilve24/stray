@@ -162,7 +162,21 @@ new_orthusfit <- function(D, N, Q, P, coord_system, iter=NULL,
   )
 }
 
+#' convert list to pibblefit
+#' @param object list object
+as.pibblefit <- function(object){
+  class(object) <- "pibblefit"
+  verify(object)
+  return(object)
+}
 
+#' convert list to orthusfit
+#' @param object list object
+as.orthusfit <- function(object){
+  class(object) <- "orthusfit"
+  verify(object)
+  return(object)
+}
 
 
 # simple function

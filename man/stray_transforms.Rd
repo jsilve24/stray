@@ -3,6 +3,9 @@
 \name{stray_transforms}
 \alias{stray_transforms}
 \alias{to_proportions}
+\alias{to_alr}
+\alias{to_ilr}
+\alias{to_clr}
 \alias{to_proportions.pibblefit}
 \alias{to_alr.pibblefit}
 \alias{to_ilr.pibblefit}
@@ -11,19 +14,19 @@
 \usage{
 to_proportions(m)
 
-to_proportions(m)
+to_alr(m, d)
 
-to_proportions(m)
+to_ilr(m, V = NULL)
 
-to_proportions(m)
+to_clr(m)
 
 \method{to_proportions}{pibblefit}(m)
 
-to_alr.pibblefit(m, d)
+\method{to_alr}{pibblefit}(m, d)
 
-to_ilr.pibblefit(m, V = NULL)
+\method{to_ilr}{pibblefit}(m, V = NULL)
 
-to_clr.pibblefit(m)
+\method{to_clr}{pibblefit}(m)
 }
 \arguments{
 \item{m}{object of class pibblefit (e.g., output of \code{\link{pibble}})}

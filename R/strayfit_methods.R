@@ -359,7 +359,7 @@ predict.pibblefit <- function(object, newdata=NULL, response="LambdaX", size=NUL
   } else {
     if (is.null(object$Eta)) stop("pibblefit object does not contain samples of Eta")
     com <- names(object)[!(names(object) %in% c("Lambda", "Sigma"))] # to save computation
-    Pi <- to_proportions(object[com])$Eta
+    Pi <- to_proportions(as.pibblefit(object[com]))$Eta
   }
   Ypred <- array(0, dim=c(object$D, nnew, iter))
   for (i in 1:iter){

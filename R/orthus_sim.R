@@ -12,8 +12,8 @@
 #' @importFrom driver alrInv
 #' @importFrom stats rnorm rmultinom
 #' @examples 
-#' sim <- pibble_sim()
-pibble_sim <- function(D=10, P=10, N=30, Q=2, use_names=TRUE, true_priors=FALSE){
+#' sim <- orthus_sim()
+orthus_sim <- function(D=10, P=10, N=30, Q=2, use_names=TRUE, true_priors=FALSE){
   
   # Simulate Data
   Sigma <- diag(sample(1:8, D-1+P, replace=TRUE))

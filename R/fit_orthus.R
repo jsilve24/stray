@@ -86,8 +86,7 @@ orthus <- function(Y=NULL, Z=NULL, X=NULL, upsilon=NULL, Theta=NULL, Gamma=NULL,
   Q <- try_set_dims(c(nrow(X), ncol(Theta), nrow(Gamma), ncol(Gamma), args[["Q"]]))
   if (any(c(N, D, Q, P) <=0)) stop("N, D, and Q must all be greater than 0 (D must be greater than 1)")
   if (D <= 1) stop("D must be greater than 1")
-  if (P <= 1) stop("P must be greater than 1")
-  
+
   ## construct default values ##
   # for priors
   if (is.null(upsilon)) upsilon <- D+3  # default is minimal information 
@@ -270,10 +269,10 @@ orthus <- function(Y=NULL, Z=NULL, X=NULL, upsilon=NULL, Theta=NULL, Gamma=NULL,
   out$alr_base <- D
   out$summary <- NULL
   out$Timer <- timer
-  out$logMarginalLikelihood <- logMarginalLikelihood
+  #out$logMarginalLikelihood <- logMarginalLikelihood
   attr(out, "class") <- c("orthusfit")
   # add names if present 
-  if (use_names) out <- name(out)
+  #if (use_names) out <- name(out)
   verify(out) # verify the pibblefit object
   return(out)
 }

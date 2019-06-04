@@ -3,33 +3,25 @@
 \name{orthus_fit}
 \alias{orthus_fit}
 \alias{orthus}
-\title{Interface to fit orthos models
-This function is largely a more user friendly wrapper around
-\code{\link{optimPibbleCollapsed}} and
-\code{\link{uncollapsePibble}}.
-See details for model specification
-Notation: \code{N} is number of samples,
-\code{D} is number of multinomial categories, \code{P} is
-the number of dimensions of the second dataset.  \code{Q} is number
-of covariates, \code{iter} is the number of samples of \code{eta} (e.g.,
-the parameter \code{n_samples} in the function
-\code{\link{optimPibbleCollapsed}})
-@param Y DxN matrix of counts (if NULL uses priors only)
-@param Z PxN matrix of real-valued data (if NULL uses priors only -
-must be present / absent if Y is present/absent)}
+\title{Interface to fit orthus models}
 \usage{
 orthus(Y = NULL, Z = NULL, X = NULL, upsilon = NULL,
   Theta = NULL, Gamma = NULL, Xi = NULL, init = NULL,
   pars = c("Eta", "Lambda", "Sigma"), ...)
 }
 \arguments{
+\item{Y}{D x N matrix of counts (if NULL uses priors only)}
+
+\item{Z}{P x N matrix of counts (if NULL uses priors only - must be present/absent
+if Y is present/absent)}
+
 \item{X}{Q x N matrix of covariates (design matrix) (if NULL uses priors only, must
 be present to sample Eta)}
 
 \item{upsilon}{dof for inverse wishart prior (numeric must be > D)
 (default: D+3)}
 
-\item{Theta}{(D-1+P) x Q matrix of prior mean for regression parameters
+\item{Theta}{(D-1) x Q matrix of prior mean for regression parameters
 (default: matrix(0, D-1+P, Q))}
 
 \item{Gamma}{QxQ prior covariance matrix
@@ -47,42 +39,39 @@ essentially iid on "base scale" using Aitchison terminology)}
 \code{\link{uncollapsePibble}}}
 }
 \value{
-an object of class orthusfitfit
+an object of class pibblefit
 }
 \description{
-Interface to fit orthos models
 This function is largely a more user friendly wrapper around
 \code{\link{optimPibbleCollapsed}} and
-\code{\link{uncollapsePibble}}.
-See details for model specification
-Notation: \code{N} is number of samples,
-\code{D} is number of multinomial categories, \code{P} is
-the number of dimensions of the second dataset.  \code{Q} is number
+\code{\link{uncollapsePibble}} for fitting orthus models.
+See details for model specification.
+Notation: \code{N} is number of samples, \code{P} is the number of dimensions
+of observations in the second dataset,
+\code{D} is number of multinomial categories, \code{Q} is number
 of covariates, \code{iter} is the number of samples of \code{eta} (e.g.,
 the parameter \code{n_samples} in the function
 \code{\link{optimPibbleCollapsed}})
-@param Y DxN matrix of counts (if NULL uses priors only)
-@param Z PxN matrix of real-valued data (if NULL uses priors only -
-must be present / absent if Y is present/absent)
 }
 \details{
 the full model is given by:
 \deqn{Y_j \sim Multinomial(Pi_j)}
 \deqn{Pi_j = Phi^{-1}(Eta_j)}
-\deqn{(Eta, Z)^T \sim MN_{D-1+P x N}(Lambda*X, Sigma, I_N)}
+\deqn{cbind(Eta, Z) \sim MN_{D-1+P x N}(Lambda*X, Sigma, I_N)}
 \deqn{Lambda \sim MN_{D-1+P x Q}(Theta, Sigma, Gamma)}
 \deqn{Sigma \sim InvWish(upsilon, Xi)}
 Where Gamma is a Q x Q covariance matrix, and Phi^{-1} is
-ALRInv_{D} transform.
-In essense this is like Pibble but it models a second dataset (Z) jointly.
-Sigma therefore also gives insight into the covariation between the multinomial
-count data and the second dataset Z.
+ALRInv_D transform.
+That is, the orthus model models the latent multinomial log-ratios (Eta) and
+the observations of the second dataset jointly as a linear model. This allows
+Sigma to also describe the covariation between the two datasets.
+
 Default behavior is to use MAP estimate for uncollaping the LTP
 model if laplace approximation is not preformed.
 }
 \examples{
 sim <- orthus_sim()
-fit <- orthus(Y=sim$Y, Z=sim$Z, X=sim$X)
+fit <- orthus(sim$Y, sim$Z, sim$X)
 }
 \references{
 JD Silverman K Roche, ZC Holmes, LA David, S Mukherjee. 

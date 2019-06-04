@@ -38,23 +38,21 @@ to_proportions <- function(m){
 
 #' @rdname stray_transforms
 #' @export
-to_proportions <- function(m){
+to_alr <- function(m, d){
   UseMethod("to_alr",m)
 }
 
 #' @rdname stray_transforms
 #' @export
-to_proportions <- function(m){
-  UseMethod("to_ilr",m)
+to_ilr <- function(m, V=NULL){
+  UseMethod("to_ilr", m)
 }
 
 #' @rdname stray_transforms
 #' @export
-to_proportions <- function(m){
+to_clr <- function(m){
   UseMethod("to_clr",m)
 }
-
-
 
 #' @rdname stray_transforms
 #' @export

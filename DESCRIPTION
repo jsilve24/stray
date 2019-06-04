@@ -20,7 +20,14 @@ Imports: Rcpp (>= 0.12.17), RcppEigen (>= 0.3.3.4.0), driver, dplyr, ggplot2,
   purrr, tidybayes
 LinkingTo: Rcpp, RcppEigen, RcppNumerical, RcppZiggurat, BH
 RoxygenNote: 6.1.1
-Suggests: testthat, knitr, rmarkdown, phyloseq, ape, numDeriv, MCMCpack
+Suggests: 
+    testthat (>= 2.1.0),
+    knitr,
+    rmarkdown,
+    phyloseq,
+    ape,
+    numDeriv,
+    MCMCpack
 Remotes:
     jsilve24/driver,
     twbattaglia/MicrobeDS

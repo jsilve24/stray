@@ -33,6 +33,32 @@ NULL
 #' @rdname stray_transforms
 #' @export
 to_proportions <- function(m){
+  UseMethod("to_proportions",m)
+}
+
+#' @rdname stray_transforms
+#' @export
+to_proportions <- function(m){
+  UseMethod("to_alr",m)
+}
+
+#' @rdname stray_transforms
+#' @export
+to_proportions <- function(m){
+  UseMethod("to_ilr",m)
+}
+
+#' @rdname stray_transforms
+#' @export
+to_proportions <- function(m){
+  UseMethod("to_clr",m)
+}
+
+
+
+#' @rdname stray_transforms
+#' @export
+to_proportions.pibblefit <- function(m){
   if (m$coord_system == "alr"){
     if (!is.null(m$Eta)) m$Eta <- alrInv_array(m$Eta, m$alr_base, 1)
     if (!is.null(m$Lambda)) m$Lambda <- alrInv_array(m$Lambda, m$alr_base, 1)
@@ -116,7 +142,7 @@ to_proportions <- function(m){
 
 #' @rdname stray_transforms
 #' @export
-to_alr <- function(m, d){
+to_alr.pibblefit <- function(m, d){
   if (m$coord_system=="alr"){
     if (m$alr_base == d) return(m)
   }
@@ -149,7 +175,7 @@ to_alr <- function(m, d){
 
 #' @rdname stray_transforms
 #' @export
-to_ilr <- function(m, V=NULL){
+to_ilr.pibblefit <- function(m, V=NULL){
   if (m$coord_system=="ilr"){
     if (all.equal(m$ilr_base, V)) return(m)
   }
@@ -183,7 +209,7 @@ to_ilr <- function(m, V=NULL){
 
 #' @rdname stray_transforms
 #' @export
-to_clr <- function(m){
+to_clr.pibblefit <- function(m){
   if (m$coord_system=="clr") return(m)
   m <- to_proportions(m)
 

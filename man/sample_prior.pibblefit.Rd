@@ -39,6 +39,6 @@ m <- pibblefit(N=as.integer(sim$N), D=as.integer(sim$D), Q=as.integer(sim$Q),
                 iter=2000, upsilon=upsilon, 
                 Xi=Xi, Gamma=Gamma, Theta=Theta, X=X, 
                 coord_system="alr", alr_base=D)
-m <- sample_prior(pibblefit)
+m <- sample_prior(m)
 plot(m) # plot prior distribution (defaults to parameter Lambda) 
 }

@@ -385,7 +385,6 @@ predict.pibblefit <- function(object, newdata=NULL, response="LambdaX", size=NUL
 
 # access_dims -------------------------------------------------------------
 
-
 #' @rdname access_dims
 #' @export
 ncategories.pibblefit <- function(m){ m$D }
@@ -401,6 +400,23 @@ ncovariates.pibblefit <- function(m){ m$Q }
 #' @rdname access_dims
 #' @export
 niter.pibblefit <- function(m){ m$iter }
+
+
+#' @rdname access_dims
+#' @export
+ncategories.orthusfit <- function(m){ m$D }
+
+#' @rdname access_dims
+#' @export
+nsamples.orthusfit <- function(m){ m$N }
+
+#' @rdname access_dims
+#' @export
+ncovariates.orthusfit <- function(m){ m$Q }
+
+#' @rdname access_dims
+#' @export
+niter.orthusfit <- function(m){ m$iter }
 
 
 

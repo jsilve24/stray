@@ -17,7 +17,7 @@
 #' be present to sample Eta)
 #' @param upsilon dof for inverse wishart prior (numeric must be > D) 
 #'   (default: D+3)
-#' @param Theta (D-1) x Q matrix of prior mean for regression parameters
+#' @param Theta (D-1+P) x Q matrix of prior mean for regression parameters
 #'   (default: matrix(0, D-1+P, Q))
 #' @param Gamma QxQ prior covariance matrix 
 #'   (default: diag(Q))

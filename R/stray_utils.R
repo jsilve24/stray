@@ -155,6 +155,61 @@ name.pibblefit <- function(m, ...){
 }
 
 
+#' S3 for orthusfit apply names to orthusfit object
+#' 
+#' To avoid confusion, assigned default names to multinomial categories (c1 etc...) 
+#' and zdimensions (z1 etc...)
+#' 
+#' @param m object of class orthusfit
+#' @param ... currently ignored
+#' @return object of class orthusfit
+name.orthusfit <- function(m, ...){
+  if (!is.null(m$Eta)) {
+    m$Eta <- name_array(m$Eta, m, list("cat", "sam", NULL))
+  }
+  
+  # name-foo for some names of ortho
+  if (!is.null(m$names_categories)){
+    cnames <- assign_cat_names(m)
+  } else {
+    cnames <- paste0("c", 1:ncategories(m))
+  }
+  if (!is.null(m$names_Zdimensions)){
+    znames <- m$names_Zdimensions
+  } else {
+    znames <- paste0("z", 1:ncategories(m))
+  }
+  combonames <- c(cnames, znames)
+  
+  if (!is.null(m$Lambda)){
+    m$Lambda <- name_array(m$Lambda, m, list(NULL, "cov", NULL))    
+    dimnames(m$Lambda)[[1]] <- combonames
+  }
+  l <- list(combonames, combonames, NULL)
+  if (!is.null(m$Sigma)){
+    dimnames(m$Sigma) <- l
+  } else if (!is.null(m$Sigma_default)) {
+    dimnames(m$Sigma_default) <- l
+  }
+  if (!is.null(m$Xi)){
+    dimnames(m$Xi) <- l[1:2]
+  } else if (!is.null(m$Xi_default)) { 
+    dimnames(m$Xi_default) <- l[1:2]
+  }
+  if (!is.null(m$Theta)) {
+    m$Theta <- name_array(m$Theta, m, list(NULL, "cov"))
+    dimnames(m$Theta)[[1]] <- combonames
+  }
+  if (!is.null(m$Gamma)){
+    m$Gamma <- name_array(m$Gamma, m, list("cov", "cov"))
+  }
+  if (!is.null(m$init)){
+    m$init <- name_array(m$init, m, list("cat", "sam"))
+  }
+  return(m)
+}
+
+
 # ifelse that can handle vector/matrix/dataframe/array output - inline but not 
 # vectorized
 mifelse <- function(b, y, n){

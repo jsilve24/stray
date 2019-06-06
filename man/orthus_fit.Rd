@@ -21,7 +21,7 @@ be present to sample Eta)}
 \item{upsilon}{dof for inverse wishart prior (numeric must be > D)
 (default: D+3)}
 
-\item{Theta}{(D-1) x Q matrix of prior mean for regression parameters
+\item{Theta}{(D-1+P) x Q matrix of prior mean for regression parameters
 (default: matrix(0, D-1+P, Q))}
 
 \item{Gamma}{QxQ prior covariance matrix

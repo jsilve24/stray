@@ -64,4 +64,10 @@ test_that("orthus covariance transform correctness", {
 })
 
 
+test_that("orthusfit transforms work", {
+  sim <- orthus_sim()
+  fit <- orthus(sim$Y, sim$Z, sim$X)
+  fit <- to_proportions(fit)
+})
+
 

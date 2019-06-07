@@ -37,49 +37,66 @@ oglrInv <- function(x, s, V){
 #' @rdname orthus_lr_transforms
 #' @export
 oalr <- function(x, s, d=NULL){
+  if (length(dim(x))==2) x <- add_array_dim(x,3); added_dim=TRUE
   if (is.null(d)) d <- s
   B <- create_alr_base(s, d, inv=FALSE)
-  oglr(x, s, B)
+  y <- oglr(x, s, B)
+  if (added_dim) return(y[,,1])
+  y
 }
 
 #' @rdname orthus_lr_transforms
 #' @export
 oalrInv <- function(y, s, d=NULL){
+  if (length(dim(y))==2) y <- add_array_dim(y,3); added_dim=TRUE
   if (is.null(d)) d <- s+1
   B <- create_alr_base(s+1, d, inv=TRUE)
-  oglrInv(y, s, B)
+  x <- oglrInv(y, s, B)
+  if (added_dim) return(x[,,1])
+  x
 }
 
 #' @rdname orthus_lr_transforms
 #' @export
 oilr <- function(x, s, V=NULL){
+  if (length(dim(x))==2) x <- add_array_dim(x,3); added_dim=TRUE
   if (is.null(V)) V <- create_default_ilr_base(s)
-  oglr(x, s, V)
+  y <- oglr(x, s, V)
+  if (added_dim) return(y[,,1])
+  y
 }
 
 #' @rdname orthus_lr_transforms
 #' @export
 oilrInv <- function(y, s, V=NULL){
+  if (length(dim(y))==2) y <- add_array_dim(y,3); added_dim=TRUE
   if (is.null(V)) V <- create_default_ilr_base(s+1)
-  oglrInv(y, s, V)
+  x <- oglrInv(y, s, V)
+  if (added_dim) return(x[,,1])
+  x
 }
 
 #' @rdname orthus_lr_transforms
 #' @export
 oclr <- function(x, s){
-  oglr(x, s, create_clr_base(s))
+  if (length(dim(x))==2) x <- add_array_dim(x,3); added_dim=TRUE
+  y <- oglr(x, s, create_clr_base(s))
+  if (added_dim) return(y[,,1])
+  y
 }
 
 #' @rdname orthus_lr_transforms
 #' @export
 oclrInv <- function(x, s){
+  if (length(dim(x))==2) x <- add_array_dim(x,3); added_dim=TRUE
   x.star <- clrInv_array(x[1:s,,], coords=1)
   d.star <- dim(x.star)[1]
   n <-  dim(x)[1] + d.star - s
   y <- array(0, dim=c(n, dim(x)[2], dim(x)[3]))
   y[1:d.star,,] <- x.star
   y[(d.star+1):n,,] <- x[(s+1):dim(x)[1],,]
-  return(y)
+  if (added_dim) return(y[,,1])
+  y
 }
 
 

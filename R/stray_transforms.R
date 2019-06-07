@@ -142,83 +142,56 @@ to_proportions.pibblefit <- function(m){
 #' @rdname stray_transforms
 #' @export
 to_proportions.orthusfit <- function(m){
-  one <- 1:(m$D-1); two <- m$D:(m$D-1+m$P)
   if (m$coord_system == "alr"){
-    if (!is.null(m$Eta)) m$Eta <- alrInv_array(m$Eta, m$alr_base, 1)
-    if (!is.null(m$Lambda)) {
-      d <- dim(m$Lambda)
-      d[1] <- d[1]+1
-      Lambda <- array(0, dim=d)
-      Lambda[one,,] <- alrInv_array(m$Lambda[one,,], m$alr_base, 1)
-      Lambda[two,,] <- m$Lambda[two,,]
-      m$Lambda <- Lambda
-      rm(Lambda)
-    }
+    if (!is.null(m$Eta)) m$Eta <- alrInv_array(m$Eta, m$alr_base, 1) 
+    if (!is.null(m$Lambda)) m$Lambda <- oalrInv(m$Lambda, m$D-1, m$alr_base)
     
     if (!is.null(m$Sigma)){
-      if (m$alr_base != m$D){
-        for (i in 1:m$iter){
-          m$Sigma[,,i] <- alrvar2alrvar(m$Sigma[,,i], m$alr_base, m$D)
-        }
-      }
+      if (m$alr_base != m$D) m$Sigma <- oalrvar2alrvar(m$Sigma, m$D-1, m$alr_base, m$D) 
       m$Sigma_default <- m$Sigma
       m$Sigma <- NULL
     }
-    # Transform Priors as well 
+    # Transform Priors as well  
     if (!is.null(m$Xi)){
-      if (m$alr_base != m$D){
-        m$Xi <- alrvar2alrvar(m$Xi, m$alr_base, m$D)
+      if (m$alr_base != m$D) {
+        m$Xi <- oalrvar2alrvar(add_array_dim(m$Xi,3), m$D-1, m$alr_base, m$D)[,,1]
       }
       m$Xi_default <- m$Xi
       m$Xi <- NULL
     }
-    if (!is.null(m$Theta)){
-      if (!inherits(m, "bassetfit")) m$Theta <- alrInv_array(m$Theta, m$alr_base, 1)
-    }
-    if (!is.null(m$init)) m$init <- alrInv_array(m$init, m$alr_base, 1)
+    if (!is.null(m$Theta)) m$Theta <- oalrInv(m$Theta, m$D-1, m$alr_base)
+    if (!is.null(m$init)) m$init <- alrInv_array(m$init, m$alr_base, 1) 
   }
   if (m$coord_system == "ilr"){
     if (!is.null(m$Eta)) m$Eta <- ilrInv_array(m$Eta, m$ilr_base, 1)
-    if (!is.null(m$Lambda)) m$Lambda <- ilrInv_array(m$Lambda, m$ilr_base, 1)
-    if (!is.null(m$Sigma)){
-      for (i in 1:m$iter){
-        m$Sigma[,,i] <- ilrvar2alrvar(m$Sigma[,,i], m$ilr_base, m$D)
-      }
-      m$Sigma_default <- m$Sigma
+    if (!is.null(m$Lambda)) m$Lambda <- oilrInv(m$Lambda, m$D-1, m$ilr_base)
+    if (!is.null(m$Sigma)) {
+      m$Sigma_default <- oilrvar2alrvar(m$Sigma, m$D-1, m$ilr_base, m$D) 
       m$Sigma <- NULL
     }
     
     # Transform priors as well 
     if (!is.null(m$Xi)){
-      m$Xi <- ilrvar2alrvar(m$Xi, m$ilr_base, m$D)
-      m$Xi_default <- m$Xi
+      m$Xi_default <- oilrvar2alrvar(add_array_dim(m$Xi,3), m$D-1, m$ilr_base, m$D)[,,1]
       m$Xi <- NULL  
     }
-    if (!is.null(m$Theta)) {
-      if (!inherits(m, "bassetfit")) m$Theta <- ilrInv_array(m$Theta, m$ilr_base, 1)  
-    }
+    if (!is.null(m$Theta)) m$Theta <- oilrInv(m$Theta, m$D-1, m$ilr_base)
     if (!is.null(m$init)) m$init <- ilrInv_array(m$init, m$ilr_base, 1)
   }
   if (m$coord_system == "clr"){
     if (!is.null(m$Eta)) m$Eta <- clrInv_array(m$Eta, 1)
-    if (!is.null(m$Lambda)) m$Lambda <- clrInv_array(m$Lambda, 1)
+    if (!is.null(m$Lambda)) m$Lambda <- oclrInv(m$Lambda, m$D)
     if (!is.null(m$Sigma)){
-      Sigma_default <- array(0, dim=c(m$D-1, m$D-1, m$iter))
-      for (i in 1:m$iter){
-        Sigma_default[,,i] <- clrvar2alrvar(m$Sigma[,,i], m$D)
-      }
+      m$Sigma_default <- oclrvar2alrvar(m$Sigma, m$D, m$D)
       m$Sigma <- NULL
-      m$Sigma_default <- Sigma_default
     }
     # Transform priors as well
     if (!is.null(m$Xi)){
-      m$Xi_default <- clrvar2alrvar(m$Xi, m$D)
+      m$Xi_default <- oclrvar2alrvar(m$Xi, m$D, m$D)
       m$Xi <- NULL      
     }
-    if (!is.null(m$Theta)){
-      if (!inherits(m, "bassetfit")) m$Theta <- clrInv_array(m$Theta, 1)  
-    }
-    if (!is.null(m$init)) m$init <- clrInv_array(m$init, 1)
+    if (!is.null(m$Theta)) m$Theta <- oclrInv(m$Theta, m$D)  
+    if (!is.null(m$init)) m$init <- clrInv_array(m$init,1)
   }
   if (m$coord_system=="proportions"){
     return(m)
@@ -231,7 +204,8 @@ to_proportions.orthusfit <- function(m){
 }
 
 
-
+### STOPPED HERE ####
+#stop("Not updated")
 
 #' @rdname stray_transforms
 #' @export

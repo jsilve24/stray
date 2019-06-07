@@ -1,3 +1,5 @@
+set.seed(859)
+
 test_that("orthus sim and wrapper run without error", {
   sim <- orthus_sim()
   fit <- orthus(sim$Y, sim$Z, sim$X)
@@ -24,3 +26,6 @@ test_that("orthus wrapper correctness", {
   # -- not implemented yet - correct results for Lambda imply correct results
   # -- for Sigma due to dependency structure. 
 })
+
+
+

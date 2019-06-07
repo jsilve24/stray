@@ -15,7 +15,7 @@ NULL
 oglr <- function(x,s, V){
   x.star <- glr_array(x[1:s,,],V, parts=1)
   d.star <- dim(x.star)[1]
-  n <-  dim(x)[1] + d.star - d
+  n <-  dim(x)[1] + d.star - s
   y <- array(0, dim=c(n, dim(x)[2], dim(x)[3]))
   y[1:d.star,,] <- x.star
   y[(d.star+1):n,,] <- x[(s+1):dim(x)[1],,]
@@ -25,9 +25,9 @@ oglr <- function(x,s, V){
 #' @rdname orthus_lr_transforms
 #' @export
 oglrInv <- function(x, s, V){
-  x.star <- glrInv_array(x[1:s,,],V, parts=1)
+  x.star <- glrInv_array(x[1:s,,],V, coords=1)
   d.star <- dim(x.star)[1]
-  n <-  dim(x)[1] + d.star - d
+  n <-  dim(x)[1] + d.star - s
   y <- array(0, dim=c(n, dim(x)[2], dim(x)[3]))
   y[1:d.star,,] <- x.star
   y[(d.star+1):n,,] <- x[(s+1):dim(x)[1],,]
@@ -36,7 +36,7 @@ oglrInv <- function(x, s, V){
 
 #' @rdname orthus_lr_transforms
 #' @export
-oalr <- function(x, s, d){
+oalr <- function(x, s, d=NULL){
   if (is.null(d)) d <- s
   B <- create_alr_base(s, d, inv=FALSE)
   oglr(x, s, B)
@@ -44,7 +44,7 @@ oalr <- function(x, s, d){
 
 #' @rdname orthus_lr_transforms
 #' @export
-oalrInv <- function(y, s, d){
+oalrInv <- function(y, s, d=NULL){
   if (is.null(d)) d <- s+1
   B <- create_alr_base(s+1, d, inv=TRUE)
   oglrInv(y, s, B)
@@ -73,9 +73,9 @@ oclr <- function(x, s){
 #' @rdname orthus_lr_transforms
 #' @export
 oclrInv <- function(x, s){
-  x.star <- clrInv_array(x[1:s,,], parts=1)
+  x.star <- clrInv_array(x[1:s,,], coords=1)
   d.star <- dim(x.star)[1]
-  n <-  dim(x)[1] + d.star - d
+  n <-  dim(x)[1] + d.star - s
   y <- array(0, dim=c(n, dim(x)[2], dim(x)[3]))
   y[1:d.star,,] <- x.star
   y[(d.star+1):n,,] <- x[(s+1):dim(x)[1],,]
@@ -87,10 +87,6 @@ oclrInv <- function(x, s){
 
 
 #' Convert orthus covariance matricies between representations
-#'
-#' \code{ilrvar}, \code{clrvar}, and \code{varmat} (variation matrix).
-#' \code{ilrvar2phi} calculates phi statistics (for proportionality)
-#' from an ILR covariance matrix as described in Lovell (2015).
 #'
 #' @param Sigma covariance matrix arrat in specified transformed space 
 #'   (dim(Sigma)[3]=iter)
@@ -109,10 +105,10 @@ NULL
 #' @export
 oilrvar2ilrvar <- function(Sigma, s, V1, V2){
   for (i in 1:dim(Sigma)[3]){
-    one <- 1:s; two <- (s+1):dim(Sigma)[3]
-    Sigma[1:s, 1:s, i] <-  t(V2) %*% V1 %*% Sigma %*% t(V1) %*% V2
-    Sigma[two,one,i] <- t(V2) %*% V1 %*% Sigma[two,one,i]
-    Sigma[one,two,i] <- t(Sigma[two,one,i])
+    one <- 1:s; two <- (s+1):dim(Sigma)[1]
+    Sigma[1:s, 1:s, i] <-  t(V2) %*% V1 %*% Sigma[one,one,i] %*% t(V1) %*% V2
+    Sigma[one,two,i] <- t(V2) %*% V1 %*% Sigma[one,two,i]
+    Sigma[two,one,i] <- t(Sigma[one,two,i])
   }
   return(Sigma)
 }
@@ -121,13 +117,14 @@ oilrvar2ilrvar <- function(Sigma, s, V1, V2){
 #' @export
 oilrvar2clrvar <- function(Sigma, s, V){
   d <- dim(Sigma)
-  d[1] <- d[1]+1
+  d[1] <-  d[2]<- d[1]+1
   O <- array(0, dim=d)
   for (i in 1:dim(Sigma)[3]){
-    one <- 1:s; two <- (s+1):dim(Sigma)[3]
+    one <- 1:s; two <- (s+1):dim(Sigma)[1]
     O[1:(s+1), 1:(s+1), i] <- V %*% Sigma[one,one,i] %*% t(V)
-    O[two,1:(s+1),i] <-   V %*% Sigma[two,one,i]
-    O[1:(s+1),two,i] <- t(O[two,1:(s+1),i])
+    O[1:(s+1), two+1,i] <-   V %*% Sigma[one,two,i]
+    O[two+1,1:(s+1),i] <- t(O[1:(s+1), two+1,i])
+    O[two+1,two+1,i] <- Sigma[two,two,i]
   }
   return(O)
 }
@@ -136,13 +133,14 @@ oilrvar2clrvar <- function(Sigma, s, V){
 #' @export
 oclrvar2ilrvar <- function(Sigma, s, V){
   d <- dim(Sigma)
-  d[1] <- d[1]-1
+  d[1] <- d[2] <- d[1]-1
   O <- array(0, dim=d)
   for (i in 1:dim(Sigma)[3]){
-    one <- 1:s; two <- (s+1):dim(Sigma)[3]
+    one <- 1:s; two <- (s+1):dim(Sigma)[1]
     O[1:(s-1), 1:(s-1), i] <- t(V) %*% Sigma[one,one,i] %*% V
-    O[two,1:(s-1),i] <-   t(V) %*% Sigma[two,one,i]
-    O[1:(s-1),two,i] <- t(O[two,1:(s-1),i])
+    O[1:(s-1),two-1,i] <-   t(V) %*% Sigma[one,two,i]
+    O[two-1,1:(s-1),i] <- t(O[1:(s-1),two-1,i])
+    O[two-1,two-1,i] <- Sigma[two,two,i]
   }
   return(O)
 }
@@ -151,14 +149,15 @@ oclrvar2ilrvar <- function(Sigma, s, V){
 #' @export
 oalrvar2clrvar <- function(Sigma, s, d1){
   d <- dim(Sigma)
-  d[1] <- d[1]+1
+  d[1] <- d[2] <- d[1]+1
   O <- array(0, dim=d)
   G1 <- driver::create_alr_base(s+1, d1, inv=TRUE) - 1/(s+1)
   for (i in 1:dim(Sigma)[3]){
-    one <- 1:s; two <- (s+1):dim(Sigma)[3]
+    one <- 1:s; two <- (s+1):dim(Sigma)[1]
     O[1:(s+1), 1:(s+1), i] <- G1 %*% Sigma[one,one,i] %*% t(G1)
-    O[two,1:(s+1),i] <-   G1 %*% Sigma[two,one,i]
-    O[1:(s+1),two,i] <- t(O[two,1:(s+1),i])
+    O[1:(s+1), two+1,i] <-   G1 %*% Sigma[one,two,i]
+    O[two+1,1:(s+1),i] <- t(O[1:(s+1), two+1,i])
+    O[two+1,two+1,i] <- Sigma[two,two,i]
   }
   return(O)
 }
@@ -167,14 +166,15 @@ oalrvar2clrvar <- function(Sigma, s, d1){
 #' @export
 oclrvar2alrvar <- function(Sigma, s, d2){
   d <- dim(Sigma)
-  d[1] <- d[1]-1
+  d[1] <- d[2] <- d[1]-1
   O <- array(0, dim=d)
   G1 <- driver::create_alr_base(s, d2, inv=FALSE)
   for (i in 1:dim(Sigma)[3]){
-    one <- 1:s; two <- (s+1):dim(Sigma)[3]
+    one <- 1:s; two <- (s+1):dim(Sigma)[1]
     O[1:(s-1), 1:(s-1), i] <- t(G1) %*% Sigma[one,one,i] %*% G1
-    O[two,1:(s-1),i] <-   t(G1) %*% Sigma[two,one,i]
-    O[1:(s-1),two,i] <- t(O[two,1:(s-1),i])
+    O[1:(s-1),two-1,i] <-   t(G1) %*% Sigma[one,two,i]
+    O[two-1,1:(s-1),i] <- t(O[1:(s-1),two-1,i])
+    O[two-1,two-1,i] <- Sigma[two,two,i]
   }
   return(O)
 }

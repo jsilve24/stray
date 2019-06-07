@@ -7,6 +7,7 @@
 \alias{to_ilr}
 \alias{to_clr}
 \alias{to_proportions.pibblefit}
+\alias{to_proportions.orthusfit}
 \alias{to_alr.pibblefit}
 \alias{to_ilr.pibblefit}
 \alias{to_clr.pibblefit}
@@ -22,6 +23,8 @@ to_clr(m)
 
 \method{to_proportions}{pibblefit}(m)
 
+\method{to_proportions}{orthusfit}(m)
+
 \method{to_alr}{pibblefit}(m, d)
 
 \method{to_ilr}{pibblefit}(m, V = NULL)
@@ -29,7 +32,8 @@ to_clr(m)
 \method{to_clr}{pibblefit}(m)
 }
 \arguments{
-\item{m}{object of class pibblefit (e.g., output of \code{\link{pibble}})}
+\item{m}{object of class pibblefit or orthusfit (e.g., output of \code{\link{pibble}}
+or \code{\link{orthus}})}
 
 \item{d}{(integer) multinomial category to take as new alr reference}
 
@@ -37,7 +41,7 @@ to_clr(m)
 \code{driver::create_default_ilr_base(D)})}
 }
 \value{
-pibblefit object
+object
 }
 \description{
 These are a collection of convenience functions for transforming
@@ -45,6 +49,8 @@ stray fit objects to a number of different representations including
 ILR bases, CLR coordinates, ALR coordinates, and proportions.
 }
 \details{
+For orthus, transforms only appleid to log-ratio parameters
+
 Note: that there is a degeneracy of representations for a covariance 
 matrix represented in terms of proportions. As such the function 
 \code{to_proportions} does not attempt to transform parameters Sigma

@@ -9,8 +9,11 @@
 \alias{to_proportions.pibblefit}
 \alias{to_proportions.orthusfit}
 \alias{to_alr.pibblefit}
+\alias{to_alr.orthusfit}
 \alias{to_ilr.pibblefit}
+\alias{to_ilr.orthusfit}
 \alias{to_clr.pibblefit}
+\alias{to_clr.orthusfit}
 \title{Transform Fit Stray Parameters to other representations}
 \usage{
 to_proportions(m)
@@ -27,9 +30,15 @@ to_clr(m)
 
 \method{to_alr}{pibblefit}(m, d)
 
+\method{to_alr}{orthusfit}(m, d)
+
 \method{to_ilr}{pibblefit}(m, V = NULL)
 
+\method{to_ilr}{orthusfit}(m, V = NULL)
+
 \method{to_clr}{pibblefit}(m)
+
+\method{to_clr}{orthusfit}(m)
 }
 \arguments{
 \item{m}{object of class pibblefit or orthusfit (e.g., output of \code{\link{pibble}}

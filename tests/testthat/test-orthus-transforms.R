@@ -57,17 +57,21 @@ test_that("orthus covariance transform correctness", {
   expect_equal(Sigma.alr, oclrvar2alrvar(Sigma.clr, D, D))
   
   # test oilrvar2ilrvar
-  Sigma.ilr <- Sigma.alr.
+  Sigma.ilr <- Sigma.alr
   expect_equal(Sigma.ilr, oilrvar2ilrvar(Sigma.ilr, D-1, V, V))
   
   # Others not currently tested as they are just based on the above transforms
 })
 
 
-test_that("orthusfit transforms work", {
+test_that("orthusfit transforms don't give error", {
   sim <- orthus_sim()
   fit <- orthus(sim$Y, sim$Z, sim$X)
   fit <- to_proportions(fit)
+  fit <- to_alr(fit, 4)
+  fit <- to_ilr(fit)
+  fit <- to_clr(fit)
+  expect_true(TRUE)
 })
 
 

@@ -37,7 +37,8 @@ oglrInv <- function(x, s, V){
 #' @rdname orthus_lr_transforms
 #' @export
 oalr <- function(x, s, d=NULL){
-  if (length(dim(x))==2) x <- add_array_dim(x,3); added_dim=TRUE
+  added_dim <- FALSE
+  if (length(dim(x))==2) {x <- add_array_dim(x,3); added_dim=TRUE}
   if (is.null(d)) d <- s
   B <- create_alr_base(s, d, inv=FALSE)
   y <- oglr(x, s, B)
@@ -48,7 +49,8 @@ oalr <- function(x, s, d=NULL){
 #' @rdname orthus_lr_transforms
 #' @export
 oalrInv <- function(y, s, d=NULL){
-  if (length(dim(y))==2) y <- add_array_dim(y,3); added_dim=TRUE
+  added_dim <- FALSE
+  if (length(dim(y))==2) {y <- add_array_dim(y,3); added_dim=TRUE}
   if (is.null(d)) d <- s+1
   B <- create_alr_base(s+1, d, inv=TRUE)
   x <- oglrInv(y, s, B)
@@ -59,7 +61,8 @@ oalrInv <- function(y, s, d=NULL){
 #' @rdname orthus_lr_transforms
 #' @export
 oilr <- function(x, s, V=NULL){
-  if (length(dim(x))==2) x <- add_array_dim(x,3); added_dim=TRUE
+  added_dim <- FALSE
+  if (length(dim(x))==2) { x <- add_array_dim(x,3); added_dim=TRUE}
   if (is.null(V)) V <- create_default_ilr_base(s)
   y <- oglr(x, s, V)
   if (added_dim) return(y[,,1])
@@ -69,7 +72,8 @@ oilr <- function(x, s, V=NULL){
 #' @rdname orthus_lr_transforms
 #' @export
 oilrInv <- function(y, s, V=NULL){
-  if (length(dim(y))==2) y <- add_array_dim(y,3); added_dim=TRUE
+  added_dim <- FALSE
+  if (length(dim(y))==2) {y <- add_array_dim(y,3); added_dim=TRUE}
   if (is.null(V)) V <- create_default_ilr_base(s+1)
   x <- oglrInv(y, s, V)
   if (added_dim) return(x[,,1])
@@ -79,7 +83,8 @@ oilrInv <- function(y, s, V=NULL){
 #' @rdname orthus_lr_transforms
 #' @export
 oclr <- function(x, s){
-  if (length(dim(x))==2) x <- add_array_dim(x,3); added_dim=TRUE
+  added_dim <- FALSE
+  if (length(dim(x))==2) {x <- add_array_dim(x,3); added_dim=TRUE}
   y <- oglr(x, s, create_clr_base(s))
   if (added_dim) return(y[,,1])
   y
@@ -88,7 +93,8 @@ oclr <- function(x, s){
 #' @rdname orthus_lr_transforms
 #' @export
 oclrInv <- function(x, s){
-  if (length(dim(x))==2) x <- add_array_dim(x,3); added_dim=TRUE
+  added_dim <- FALSE
+  if (length(dim(x))==2) {x <- add_array_dim(x,3); added_dim=TRUE}
   x.star <- clrInv_array(x[1:s,,], coords=1)
   d.star <- dim(x.star)[1]
   n <-  dim(x)[1] + d.star - s
@@ -121,18 +127,23 @@ NULL
 #' @rdname convert_orthus_covariance
 #' @export
 oilrvar2ilrvar <- function(Sigma, s, V1, V2){
+  added_dim <- FALSE
+  if (length(dim(Sigma))==2) {Sigma <- add_array_dim(Sigma,3); added_dim=TRUE}
   for (i in 1:dim(Sigma)[3]){
     one <- 1:s; two <- (s+1):dim(Sigma)[1]
     Sigma[1:s, 1:s, i] <-  t(V2) %*% V1 %*% Sigma[one,one,i] %*% t(V1) %*% V2
     Sigma[one,two,i] <- t(V2) %*% V1 %*% Sigma[one,two,i]
     Sigma[two,one,i] <- t(Sigma[one,two,i])
   }
+  if (added_dim) return(Sigma[,,i])
   return(Sigma)
 }
 
 #' @rdname convert_orthus_covariance
 #' @export
 oilrvar2clrvar <- function(Sigma, s, V){
+  added_dim <- FALSE
+  if (length(dim(Sigma))==2) {Sigma <- add_array_dim(Sigma,3); added_dim=TRUE}
   d <- dim(Sigma)
   d[1] <-  d[2]<- d[1]+1
   O <- array(0, dim=d)
@@ -143,12 +154,15 @@ oilrvar2clrvar <- function(Sigma, s, V){
     O[two+1,1:(s+1),i] <- t(O[1:(s+1), two+1,i])
     O[two+1,two+1,i] <- Sigma[two,two,i]
   }
+  if (added_dim) return(O[,,i])
   return(O)
 }
 
 #' @rdname convert_orthus_covariance
 #' @export
 oclrvar2ilrvar <- function(Sigma, s, V){
+  added_dim <- FALSE
+  if (length(dim(Sigma))==2) {Sigma <- add_array_dim(Sigma,3); added_dim=TRUE}
   d <- dim(Sigma)
   d[1] <- d[2] <- d[1]-1
   O <- array(0, dim=d)
@@ -159,12 +173,15 @@ oclrvar2ilrvar <- function(Sigma, s, V){
     O[two-1,1:(s-1),i] <- t(O[1:(s-1),two-1,i])
     O[two-1,two-1,i] <- Sigma[two,two,i]
   }
+  if (added_dim) return(O[,,i])
   return(O)
 }
 
 #' @rdname convert_orthus_covariance
 #' @export
 oalrvar2clrvar <- function(Sigma, s, d1){
+  added_dim <- FALSE
+  if (length(dim(Sigma))==2) {Sigma <- add_array_dim(Sigma,3); added_dim=TRUE}
   d <- dim(Sigma)
   d[1] <- d[2] <- d[1]+1
   O <- array(0, dim=d)
@@ -176,12 +193,15 @@ oalrvar2clrvar <- function(Sigma, s, d1){
     O[two+1,1:(s+1),i] <- t(O[1:(s+1), two+1,i])
     O[two+1,two+1,i] <- Sigma[two,two,i]
   }
+  if (added_dim) return(O[,,i])
   return(O)
 }
 
 #' @rdname convert_orthus_covariance
 #' @export
 oclrvar2alrvar <- function(Sigma, s, d2){
+  added_dim <- FALSE
+  if (length(dim(Sigma))==2) {Sigma <- add_array_dim(Sigma,3); added_dim=TRUE}
   d <- dim(Sigma)
   d[1] <- d[2] <- d[1]-1
   O <- array(0, dim=d)
@@ -193,6 +213,7 @@ oclrvar2alrvar <- function(Sigma, s, d2){
     O[two-1,1:(s-1),i] <- t(O[1:(s-1),two-1,i])
     O[two-1,two-1,i] <- Sigma[two,two,i]
   }
+  if (added_dim) return(O[,,i])
   return(O)
 }
 
@@ -201,21 +222,21 @@ oclrvar2alrvar <- function(Sigma, s, d2){
 #' @export
 oalrvar2alrvar <- function(Sigma, s, d1, d2){
   O <- oalrvar2clrvar(Sigma, s, d1)
-  oclrvar2alrvar(O, d2)
+  oclrvar2alrvar(O, s+1, d2)
 }
 
 #' @rdname convert_orthus_covariance
 #' @export
 oalrvar2ilrvar <- function(Sigma, s, d1, V2){
   O <- oalrvar2clrvar(Sigma, s, d1)
-  oclrvar2ilrvar(O, V2)
+  oclrvar2ilrvar(O, s+1, V2)
 }
 
 #' @rdname convert_orthus_covariance
 #' @export
 oilrvar2alrvar <- function(Sigma, s, V1, d2){
   O <- oilrvar2clrvar(Sigma, s, V1)
-  oclrvar2alrvar(O, d2)
+  oclrvar2alrvar(O, s+1, d2)
 }
 
 

@@ -67,6 +67,23 @@ assign_cat_names <- function(m){
   else stop("not a recognized coordinate system to name")
 }
 
+# For orthus objects
+assign_combo_names <- function(m){
+  # name-foo for some names of ortho
+  if (!is.null(m$names_categories)){
+    cnames <- assign_cat_names(m)
+  } else {
+    cnames <- paste0("c", 1:ncategories(m))
+  }
+  if (!is.null(m$names_Zdimensions)){
+    znames <- m$names_Zdimensions
+  } else {
+    znames <- paste0("z", 1:ncategories(m))
+  }
+  combonames <- c(cnames, znames)
+  return(combonames)
+}
+
 
 apply_names <- function(X, m, dimvars){
   n <- list()
@@ -77,6 +94,8 @@ apply_names <- function(X, m, dimvars){
       n[[i]] <- m$names_covariates
     } else if (identical(dimvars[[i]], "cat") & !is.null(m$names_categories)) {
       n[[i]] <- assign_cat_names(m)
+    } else if (identical(dimvars[[i]], "combo")) {
+      n[[i]] <- assign_combo_names(m)
     } else if (is.data.frame(X)){
       if (max(X[,names(dimvars)[i]], na.rm=TRUE) == length(dimvars[[i]])) {
         n[[i]] <- dimvars[[i]]
@@ -168,18 +187,18 @@ name.orthusfit <- function(m, ...){
     m$Eta <- name_array(m$Eta, m, list("cat", "sam", NULL))
   }
   
-  # name-foo for some names of ortho
-  if (!is.null(m$names_categories)){
-    cnames <- assign_cat_names(m)
-  } else {
-    cnames <- paste0("c", 1:ncategories(m))
-  }
-  if (!is.null(m$names_Zdimensions)){
-    znames <- m$names_Zdimensions
-  } else {
-    znames <- paste0("z", 1:ncategories(m))
-  }
-  combonames <- c(cnames, znames)
+  # # name-foo for some names of ortho
+  # if (!is.null(m$names_categories)){
+  #   cnames <- assign_cat_names(m)
+  # } else {
+  #   cnames <- paste0("c", 1:ncategories(m))
+  # }
+  # if (!is.null(m$names_Zdimensions)){
+  #   znames <- m$names_Zdimensions
+  # } else {
+  #   znames <- paste0("z", 1:ncategories(m))
+  # }
+  combonames <- assign_combo_names(m)
   
   if (!is.null(m$Lambda)){
     m$Lambda <- name_array(m$Lambda, m, list(NULL, "cov", NULL))    

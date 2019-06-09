@@ -47,6 +47,58 @@ pibble_tidy_samples<- function(m, use_names=FALSE, as_factor=FALSE){
   return(l)
 }
 
+
+#' Convert orthus samples of Eta Lambda and Sigma to tidy format
+#' 
+#' Combines them all into a single tibble, see example for formatting and 
+#' column headers. Primarily designed to be used by 
+#' \code{\link{summary.orthusfit}}. 
+#' 
+#' @param m an object of class orthusfit
+#' @param use_names should dimension indices be replaced by
+#'   dimension names if provided in data used to fit pibble model.  
+#' @param as_factor if use_names should names be returned as factor?
+#' 
+#' @importFrom driver gather_array
+#' @importFrom dplyr bind_rows group_by 
+#' @export
+#' @return tibble
+#' @examples 
+#' sim <- orthus_sim()
+#' fit <- pibble(sim$Y, sim$Z, sim$X)
+#' fit_tidy <- orthus_tidy_samples(fit, use_names=TRUE)
+#' head(fit_tidy)
+orthus_tidy_samples<- function(m, use_names=FALSE, as_factor=FALSE){
+  l <- list()
+  if (!is.null(m$Eta)) l$Eta <- driver::gather_array(m$Eta, val, coord, sample, iter)
+  if (!is.null(m$Lambda)) l$Lambda <- driver::gather_array(m$Lambda, val, coord, covariate, iter)
+  if (!is.null(m$Sigma)) l$Sigma <- driver::gather_array(m$Sigma, val, coord, coord2, iter) 
+  
+  l <- dplyr::bind_rows(l, .id="Parameter")
+  
+  if (!use_names) return(l)
+  # Deal with names (first create conversion list)
+  cl <- list()
+  if (!is.null(m$Eta)) {
+    cl[["sample"]] = "sam"
+    cl[["coord"]] = "combo"
+  }
+  if (!is.null(m$Lambda)){
+    cl[["covariate"]] = "cov"
+    cl[["coord"]] = "combo"
+  }
+  if (!is.null(m$Sigma)){
+    cl[["coord"]] = "combo"
+    cl[["coord2"]] = "combo"
+  }
+  
+  l <- name_tidy(l, m, cl, as_factor)
+  
+  return(l)
+}
+
+
+
 # Internal function to check if summary has already been precomputed. 
 summary_check_precomputed <- function(m, pars){
   if (!is.null(m$summary)){
@@ -137,6 +189,88 @@ summary.pibblefit <- function(object, pars=NULL, use_names=TRUE, as_factor=FALSE
   return(mtidy)
 }
 
+#' Summarise orthusfit object and print posterior quantiles
+#' 
+#' Default calculates median, mean, 50\% and 95\% credible interval
+#' 
+#' @param object an object of class orthusfit 
+#' @param pars character vector (default: c("Eta", "Lambda", "Sigma"))
+#' @param use_names should summary replace dimension indices with orthusfit 
+#'   names if names Y and X were named in call to \code{\link{orthus}}
+#' @param as_factor if use_names and as_factor then returns names as factors 
+#'   (useful for maintaining orderings when plotting)
+#' @param gather_prob if TRUE then prints quantiles in long format rather than 
+#'  wide (useful for some plotting functions)
+#' @param ... other expressions to pass to summarise (using name 'val' unquoted is 
+#'   probably what you want)
+#' @import dplyr
+#' @importFrom driver summarise_posterior
+#' @importFrom purrr map
+#' @importFrom tidybayes mean_qi
+#' @importFrom dplyr group_by select ungroup
+#' @export
+#' @examples 
+#' \dontrun{
+#' fit <- orthus(Y, Z, X)
+#' summary(fit, pars="Eta", median = median(val))
+#' 
+#' # Some later functions make use of precomputation
+#' fit$summary <- summary(fit)
+#' }
+summary.orthusfit <- function(object, pars=NULL, use_names=TRUE, as_factor=FALSE, 
+                              gather_prob=FALSE, ...){
+  if (is.null(pars)) {
+    pars <- c()
+    if (!is.null(object$Eta)) pars <- c(pars, "Eta")
+    if (!is.null(object$Lambda)) pars <- c(pars, "Lambda")
+    if (!is.null(object$Sigma)) pars <- c(pars, "Sigma")
+    pars <- pars[pars %in% names(object)] # only for the ones that are present 
+  }
+  
+  
+  # if already calculated
+  if (summary_check_precomputed(object, pars)) return(object$summary[pars])
+  
+  mtidy <- dplyr::filter(orthus_tidy_samples(object, use_names, as_factor), 
+                         Parameter %in% pars)
+  # Suppress warnings about stupid implict NAs, this is on purpose. 
+  suppressWarnings({
+    
+    vars <- c()
+    if ("Eta" %in% pars) vars <- c(vars, "coord", "sample")
+    if ("Lambda" %in% pars) vars <- c(vars, "coord", "covariate")
+    if (("Sigma" %in% pars) & (object$coord_system != "proportions")) {
+      vars <- c(vars, "coord", "coord2")
+    }
+    vars <- unique(vars)
+    vars <- rlang::syms(vars)
+    
+    mtidy <- dplyr::group_by(mtidy, Parameter, !!!vars)
+    # if ((object$coord_system != "proportions")) {
+    #   mtidy <- dplyr::group_by(mtidy, Parameter, coord, coord2, sample, covariate) 
+    # } else {
+    #   mtidy <- dplyr::group_by(mtidy, Parameter, coord, sample, covariate)
+    # }
+    if (!gather_prob){
+      mtidy <- mtidy %>% 
+        driver::summarise_posterior(val, ...) %>%
+        dplyr::ungroup() %>%
+        split(.$Parameter) %>% 
+        purrr::map(~dplyr::select_if(.x, ~!all(is.na(.x))))  
+    } else if (gather_prob){
+      mtidy <- mtidy %>% 
+        dplyr::select(-iter) %>% 
+        tidybayes::mean_qi(val, .width=c(.5, .8, .95, .99)) %>% 
+        dplyr::ungroup() %>% 
+        split(.$Parameter) %>% 
+        purrr::map(~dplyr::select_if(.x, ~!all(is.na(.x))))  
+    }
+    
+  })
+  
+  return(mtidy)
+}
+
 #' Print dimensions and coordinate system information for pibblefit object. 
 #'
 #' @param x an object of class pibblefit
@@ -187,9 +321,62 @@ print.pibblefit <- function(x, summary=FALSE, ...){
 }
 
 
+#' Print dimensions and coordinate system information for orthusfit object. 
+#'
+#' @param x an object of class orthusfit
+#' @param summary if true also calculates and prints summary
+#' @param ... other arguments to pass to summary function
+#' @export
+#' @examples 
+#' \dontrun{
+#' fit <- orthus(Y, Z, X)
+#' print(fit)
+#' }
+#' @seealso \code{\link{summary.orthusfit}} summarizes posterior intervals 
+print.orthusfit <- function(x, summary=FALSE, ...){
+  if (is.null(x$Y)) {
+    cat(" orthusfit Object (Priors Only): \n")
+  } else {
+    cat("orthusfit Object: \n" )  
+  }
+  
+  cat(paste("  Number of Samples:\t\t", x$N, "\n"))
+  cat(paste("  Number of Categories:\t\t", x$D, "\n"))
+  cat(paste("  Number of Zdimensions:\t", x$P, "\n"))
+  cat(paste("  Number of Covariates:\t\t", x$Q, "\n"))
+  cat(paste("  Number of Posterior Samples:\t", x$iter, "\n"))
+  
+  pars <- c("Eta", "Lambda", "Sigma")
+  pars <- pars[pars %in% names(x)]
+  pars <- paste(pars, collapse = "  ")
+  cat(paste("  Contains Samples of Parameters:", pars, "\n", sep=""))
+  
+  if (x$coord_system=="alr"){
+    cs <- x$alr_base
+    nm <- x$names_categories
+    if (!is.null(nm)) cs <- paste0(cs, " [", nm[x$alr_base], "]")
+    cs <- paste("alr, reference category:", cs)
+  } else {
+    cs <- x$coord_system
+  }
+  cat(paste("  Coordinate System:\t\t", cs, "\n"))
+  if (!is.null(x$logMarginalLikelihood)){
+    cat(paste("  Log Marginal Likelihood:\t", 
+              round(x$logMarginalLikelihood, 3), "\n"))
+  }
+  
+  if (summary){
+    cat("\n\n Summary: \n ")
+    print(summary(x, ...))
+  }
+}
+
+
+
 #' Return regression coefficients of pibblefit object
 #' 
-#' Returned as array of dimension (D-1) x Q x iter.
+#' Returned as array of dimension (D-1) x Q x iter (if in ALR or ILR) otherwise
+#' DxQxiter (if in proportions or clr).
 #' 
 #' @param object an object of class pibblefit
 #' @param use_names if column and row names were passed for Y and X in 
@@ -210,6 +397,32 @@ coef.pibblefit <- function(object, use_names=TRUE){
   return(x)
 }
 
+
+#' Return regression coefficients of orthus object
+#' 
+#' Returned as array of dimension (D-1+P) x Q x iter (if in ALR or ILR) 
+#' otherwise (D+P) x Q x iter.
+#' 
+#' @param object an object of class orthusfit
+#' @param use_names if column and row names were passed for Y and X in 
+#' call to \code{\link{pibble}}, should these names be applied to output 
+#' array. 
+#' @return Array of dimension (D-1) x Q x iter
+#' 
+#' @export
+#' @examples 
+#' \dontrun{
+#' fit <- orthus(Y, Z, X)
+#' coef(fit)
+#' }
+coef.orthusfit <- function(object, use_names=TRUE){
+  if (is.null(object$Lambda)) stop("orthusfit object does not contain samples of Lambda")
+  if (use_names) object <- name.orthusfit(object)
+  x <- object$Lambda
+  return(x)
+}
+
+
 #' Convert object of class pibblefit to a list
 #' 
 #' @param x an object of class pibblefit
@@ -225,6 +438,25 @@ as.list.pibblefit <- function(x,...){
   attr(x, "class") <- "list"
   return(x)
 }
+
+
+
+#' Convert object of class orthusfit to a list
+#' 
+#' @param x an object of class orthusfit
+#' @param ... currently unused
+#' 
+#' @export
+#' @examples 
+#' \dontrun{
+#' fit <- orthus(Y, Z, X)
+#' as.list(fit)
+#' }
+as.list.orthusfit <- function(x,...){
+  attr(x, "class") <- "list"
+  return(x)
+}
+
 
 #' Predict response from new data
 #' 

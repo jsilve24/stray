@@ -182,22 +182,12 @@ name.pibblefit <- function(m, ...){
 #' @param m object of class orthusfit
 #' @param ... currently ignored
 #' @return object of class orthusfit
+#' @export
 name.orthusfit <- function(m, ...){
   if (!is.null(m$Eta)) {
     m$Eta <- name_array(m$Eta, m, list("cat", "sam", NULL))
   }
-  
-  # # name-foo for some names of ortho
-  # if (!is.null(m$names_categories)){
-  #   cnames <- assign_cat_names(m)
-  # } else {
-  #   cnames <- paste0("c", 1:ncategories(m))
-  # }
-  # if (!is.null(m$names_Zdimensions)){
-  #   znames <- m$names_Zdimensions
-  # } else {
-  #   znames <- paste0("z", 1:ncategories(m))
-  # }
+
   combonames <- assign_combo_names(m)
   
   if (!is.null(m$Lambda)){

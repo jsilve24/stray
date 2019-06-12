@@ -89,17 +89,16 @@ orthus <- function(Y=NULL, Z=NULL, X=NULL, upsilon=NULL, Theta=NULL, Gamma=NULL,
 
   ## construct default values ##
   # for priors
-  if (is.null(upsilon)) upsilon <- D+3  # default is minimal information 
+  if (is.null(upsilon)) upsilon <- D+P+3  # default is minimal information 
   # but with defined mean
   if (is.null(Theta)) Theta <- matrix(0, D-1+P, Q) # default is mean zero
   if (is.null(Gamma)) Gamma <- diag(Q) # default is iid
   if (is.null(Xi)) {
-    # default is iid on base scale
-    # G <- cbind(diag(D-1), -1) ## alr log-constrast matrix
-    # Xi <- 0.5*G%*%diag(D)%*%t(G) ## default is iid on base scale
-    Xi <- matrix(0.5, D-1+P, D-1+P) # same as commented out above 2 lines
-    diag(Xi) <- 1               # same as commented out above 2 lines
-    Xi <- Xi*(upsilon-D+P) # make inverse wishart mean Xi as in previous lines 
+    ## default is iid on base scale for multinomial parameters and independent for Z dims
+    Xi <- diag(D-1+P)
+    Xi[1:(D-1), 1:(D-1)] <- matrix(0.5, D-1, D-1)
+    diag(Xi) <- 1
+    Xi <- Xi * (upsilon-D-P)  # make inverse wishart mean Xi as in previous lines 
   }
   
   # check dimensions

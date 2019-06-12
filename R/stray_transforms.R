@@ -363,7 +363,7 @@ to_clr.orthusfit <- function(m){
   m <- to_proportions(m)
   
   if (!is.null(m$Eta)) m$Eta <- clr_array(m$Eta, 1)
-  if (!is.null(m$Lambda)) m$Lambda <- oclr(m$Lambda, m$D)
+  if (!is.null(m$Lambda)) m$Lambda <- oclr(m$Lambda, m$D-1)
   if (!is.null(m$Sigma)){
     m$Sigma <- oalrvar2clrvar(m$Sigma_default, m$D-1, m$D)
     m$Sigma_default <- NULL
@@ -373,7 +373,7 @@ to_clr.orthusfit <- function(m){
     m$Xi <- oalrvar2clrvar(m$Xi_default, m$D-1, m$D)
     m$Xi_default <- NULL  
   }
-  if (!is.null(m$Theta)) m$Theta <- oclr(m$Theta, m$D)  
+  if (!is.null(m$Theta)) m$Theta <- oclr(m$Theta, m$D-1)  
   if (!is.null(m$init)) m$init <- clr_array(m$init, 1)
   
   m$summary <- NULL

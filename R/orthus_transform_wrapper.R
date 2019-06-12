@@ -1,3 +1,9 @@
+matrix_maintain_dim <- function(x){
+  if (is.vector(x)) return(matrix(x))
+  return(x)
+}
+
+
 #' Log-Ratio transforms for orthus objects
 #' @param x orthus data array (e.g., first s rows are multinomial parameters or log-ratios)
 #' @param s first s rows of x are transformed
@@ -13,24 +19,24 @@ NULL
 #' @rdname orthus_lr_transforms
 #' @export
 oglr <- function(x,s, V){
-  x.star <- glr_array(x[1:s,,],V, parts=1)
+  x.star <- glr_array(x[1:s,,,drop=F],V, parts=1)
   d.star <- dim(x.star)[1]
   n <-  dim(x)[1] + d.star - s
   y <- array(0, dim=c(n, dim(x)[2], dim(x)[3]))
   y[1:d.star,,] <- x.star
-  y[(d.star+1):n,,] <- x[(s+1):dim(x)[1],,]
+  y[(d.star+1):n,,] <- x[(s+1):dim(x)[1],,,drop=F]
   return(y)
 }
 
 #' @rdname orthus_lr_transforms
 #' @export
 oglrInv <- function(x, s, V){
-  x.star <- glrInv_array(x[1:s,,],V, coords=1)
+  x.star <- glrInv_array(x[1:s,,,drop=F],V, coords=1)
   d.star <- dim(x.star)[1]
   n <-  dim(x)[1] + d.star - s
   y <- array(0, dim=c(n, dim(x)[2], dim(x)[3]))
   y[1:d.star,,] <- x.star
-  y[(d.star+1):n,,] <- x[(s+1):dim(x)[1],,]
+  y[(d.star+1):n,,] <- x[(s+1):dim(x)[1],,,drop=F]
   return(y)
 }
 
@@ -42,7 +48,7 @@ oalr <- function(x, s, d=NULL){
   if (is.null(d)) d <- s
   B <- create_alr_base(s, d, inv=FALSE)
   y <- oglr(x, s, B)
-  if (added_dim) return(y[,,1])
+  if (added_dim) return(matrix_maintain_dim(y[,,1]))
   y
 }
 
@@ -54,7 +60,7 @@ oalrInv <- function(y, s, d=NULL){
   if (is.null(d)) d <- s+1
   B <- create_alr_base(s+1, d, inv=TRUE)
   x <- oglrInv(y, s, B)
-  if (added_dim) return(x[,,1])
+  if (added_dim) return(matrix_maintain_dim(x[,,1]))
   x
 }
 
@@ -65,7 +71,7 @@ oilr <- function(x, s, V=NULL){
   if (length(dim(x))==2) { x <- add_array_dim(x,3); added_dim=TRUE}
   if (is.null(V)) V <- create_default_ilr_base(s)
   y <- oglr(x, s, V)
-  if (added_dim) return(y[,,1])
+  if (added_dim) return(matrix_maintain_dim(y[,,1]))
   y
 }
 
@@ -76,7 +82,7 @@ oilrInv <- function(y, s, V=NULL){
   if (length(dim(y))==2) {y <- add_array_dim(y,3); added_dim=TRUE}
   if (is.null(V)) V <- create_default_ilr_base(s+1)
   x <- oglrInv(y, s, V)
-  if (added_dim) return(x[,,1])
+  if (added_dim) return(matrix_maintain_dim(x[,,1]))
   x
 }
 
@@ -86,7 +92,7 @@ oclr <- function(x, s){
   added_dim <- FALSE
   if (length(dim(x))==2) {x <- add_array_dim(x,3); added_dim=TRUE}
   y <- oglr(x, s, create_clr_base(s))
-  if (added_dim) return(y[,,1])
+  if (added_dim) return(matrix_maintain_dim(y[,,1]))
   y
 }
 
@@ -101,7 +107,7 @@ oclrInv <- function(x, s){
   y <- array(0, dim=c(n, dim(x)[2], dim(x)[3]))
   y[1:d.star,,] <- x.star
   y[(d.star+1):n,,] <- x[(s+1):dim(x)[1],,]
-  if (added_dim) return(y[,,1])
+  if (added_dim) return(matrix_maintain_dim(y[,,1]))
   y
 }
 
@@ -135,7 +141,7 @@ oilrvar2ilrvar <- function(Sigma, s, V1, V2){
     Sigma[one,two,i] <- t(V2) %*% V1 %*% Sigma[one,two,i]
     Sigma[two,one,i] <- t(Sigma[one,two,i])
   }
-  if (added_dim) return(Sigma[,,i])
+  if (added_dim) return(matrix_maintain_dim(Sigma[,,i]))
   return(Sigma)
 }
 
@@ -154,7 +160,7 @@ oilrvar2clrvar <- function(Sigma, s, V){
     O[two+1,1:(s+1),i] <- t(O[1:(s+1), two+1,i])
     O[two+1,two+1,i] <- Sigma[two,two,i]
   }
-  if (added_dim) return(O[,,i])
+  if (added_dim) return(matrix_maintain_dim(O[,,1]))
   return(O)
 }
 
@@ -173,7 +179,7 @@ oclrvar2ilrvar <- function(Sigma, s, V){
     O[two-1,1:(s-1),i] <- t(O[1:(s-1),two-1,i])
     O[two-1,two-1,i] <- Sigma[two,two,i]
   }
-  if (added_dim) return(O[,,i])
+  if (added_dim) return(matrix_maintain_dim(O[,,1]))
   return(O)
 }
 
@@ -193,7 +199,7 @@ oalrvar2clrvar <- function(Sigma, s, d1){
     O[two+1,1:(s+1),i] <- t(O[1:(s+1), two+1,i])
     O[two+1,two+1,i] <- Sigma[two,two,i]
   }
-  if (added_dim) return(O[,,i])
+  if (added_dim) return(matrix_maintain_dim(O[,,1]))
   return(O)
 }
 
@@ -213,7 +219,7 @@ oclrvar2alrvar <- function(Sigma, s, d2){
     O[two-1,1:(s-1),i] <- t(O[1:(s-1),two-1,i])
     O[two-1,two-1,i] <- Sigma[two,two,i]
   }
-  if (added_dim) return(O[,,i])
+  if (added_dim) return(matrix_maintain_dim(O[,,1]))
   return(O)
 }
 

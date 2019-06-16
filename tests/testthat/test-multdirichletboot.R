@@ -31,3 +31,9 @@ test_that("MultDirichletBoot is correct", {
   expect_equal(rowMeans(x), rowMeans(s), tolerance=0.01)
   expect_equal(apply(x, 1, var), apply(s, 1, var), tolerance=0.05)
 })
+
+test_that("Timer does not have Error Johannes pointed out",{
+  sim <- pibble_sim()
+  fit <- pibble(sim$Y, sim$X, calcGradHess=FALSE, multDirichletBoot=0.65)
+  expect_true(TRUE)
+})

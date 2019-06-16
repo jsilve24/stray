@@ -191,9 +191,9 @@ List optimPibbleCollapsed(const Eigen::ArrayXXd Y,
       NumericVector samples = wrap(samp);
       samples.attr("dim") = d; // convert to 3d array for return to R
       out[4] = samples;
+      timer.step("Overall_stop");
       NumericVector t(timer);
       out[5] = t;
-      timer.step("Overall_stop");
       return out;
     }
     // "Multinomial-Dirchlet" option 

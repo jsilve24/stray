@@ -10,6 +10,10 @@
 \alias{nsamples.pibblefit}
 \alias{ncovariates.pibblefit}
 \alias{niter.pibblefit}
+\alias{ncategories.orthusfit}
+\alias{nsamples.orthusfit}
+\alias{ncovariates.orthusfit}
+\alias{niter.orthusfit}
 \title{Generic method for accessing model fit dimensions}
 \usage{
 ncategories(m)
@@ -27,6 +31,14 @@ niter(m)
 \method{ncovariates}{pibblefit}(m)
 
 \method{niter}{pibblefit}(m)
+
+\method{ncategories}{orthusfit}(m)
+
+\method{nsamples}{orthusfit}(m)
+
+\method{ncovariates}{orthusfit}(m)
+
+\method{niter}{orthusfit}(m)
 }
 \arguments{
 \item{m}{An object of class pibblefit}

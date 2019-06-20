@@ -1,3 +1,7 @@
+# stray 0.1.12
+
+* orthus added for jointly fitting multinomial and gaussian data (e.g., 16S microbiome and metabolomics data)
+
 # stray 0.1.11
 
 * Kim fixed windows installation problems (Thanks Kim!)

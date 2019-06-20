@@ -21,7 +21,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-If you have not already done so I would read through the *pibble* vignette before this one.  
+If you have not already done so, I would read through the *pibble* vignette before this one.  
 
 # stray::basset, the model
 Stray can be used for non-linear modeling. Here we are going to go through one 

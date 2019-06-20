@@ -17,7 +17,8 @@ array.}
 Array of dimension (D-1) x Q x iter
 }
 \description{
-Returned as array of dimension (D-1) x Q x iter.
+Returned as array of dimension (D-1) x Q x iter (if in ALR or ILR) otherwise
+DxQxiter (if in proportions or clr).
 }
 \examples{
 \dontrun{

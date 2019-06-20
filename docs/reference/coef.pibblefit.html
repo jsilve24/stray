@@ -32,7 +32,8 @@
 
 <meta property="og:title" content="Return regression coefficients of pibblefit object — coef.pibblefit" />
 
-<meta property="og:description" content="Returned as array of dimension (D-1) x Q x iter." />
+<meta property="og:description" content="Returned as array of dimension (D-1) x Q x iter (if in ALR or ILR) otherwise
+DxQxiter (if in proportions or clr)." />
 <meta name="twitter:card" content="summary" />
 
 
@@ -63,7 +64,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">stray</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.11</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.12</span>
       </span>
     </div>
 
@@ -84,6 +85,9 @@
     </li>
     <li>
       <a href="../articles/non-linear-models.html">Non-Linear Modeling with stray::basset</a>
+    </li>
+    <li>
+      <a href="../articles/orthus.html">Joint Modeling  (e.g., Multiomics) with Stray::Orthus</a>
     </li>
   </ul>
 </li>
@@ -142,7 +146,8 @@
 
     <div class="ref-description">
     
-    <p>Returned as array of dimension (D-1) x Q x iter.</p>
+    <p>Returned as array of dimension (D-1) x Q x iter (if in ALR or ILR) otherwise
+DxQxiter (if in proportions or clr).</p>
     
     </div>
 

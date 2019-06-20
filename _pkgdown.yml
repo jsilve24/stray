@@ -9,6 +9,8 @@ navbar:
           href: articles/introduction-to-stray.html
         - text: "Non-Linear Modeling with stray::basset"
           href: articles/non-linear-models.html
+        - text: "Joint Modeling  (e.g., Multiomics) with Stray::Orthus"
+          href: articles/orthus.html
     - text: "Functions"
       href: "reference/index.html"
     - text: "News"
@@ -31,6 +33,7 @@ reference:
     contents:
       - 'pibble'
       - 'basset'
+      - 'orthus'
       - 'maltipoo'
   - title: "Rcpp Model Interfaces"
     desc: "Low level interfaces for fitting models"
@@ -64,6 +67,7 @@ reference:
       - random_pibble_init
       - lambda_to_iqlr
       - pibble_sim
+      - orthus_sim
       - store_coord
       - check_dims
   - title: "Utility Math Functions"

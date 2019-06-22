@@ -1,7 +1,6 @@
 ---
 title: "Non-linear models with stray::basset"
 author: "Justin Silverman"
-date: "`r Sys.Date()`"
 output: 
   rmarkdown::html_vignette:
     toc: true
@@ -25,9 +24,9 @@ If you have not already done so I would read through the *pibble* vignette befor
 
 # stray::basset, the model
 Stray can be used for non-linear modeling. Here we are going to go through one 
-such model which is based on multivarite Gaussian processes. As Gaussian
+such model which is based on multivariate Gaussian processes. As Gaussian
 processes are a type of lazy learner, I have named this model after a lazy dog: 
-a Basset Hound. Hense this model is called *basset*. The *basset* model
+a Basset Hound. Hence this model is called *basset*. The *basset* model
 can be written as 
 $$
 \begin{align}
@@ -45,12 +44,12 @@ as a smooth function that relates covariates $X$ to composition $\eta$ in a pote
 non-linear manner. $\Theta[X]$ is the mean function evaluated at $X$, 
 $\Gamma[X]$ is a covariance matrix (or gram matrix) formed by evaluating
 a positive semi-definite kernel function $K$ at each set of points $i$ and $j$, 
-*i.e.*, $\Gamma_{ij} = K(X_i, X_j)$. Many different possibel kernel 
+*i.e.*, $\Gamma_{ij} = K(X_i, X_j)$. Many different possible kernel 
 functions makes this a very flexible and powerful model. 
 
 # Non-linear time-series modeling
 To demonstrate *basset* I am going to reanalyze the mallard^[I have a long
-history of comming up with rediculous names for statistical models and software.] dataset from 
+history of coming up with ridiculous names for statistical models and software.] dataset from 
 @silverman2018 which is provided as a phyloseq object in *stray*. This dataset
 features 4 artificial gut vessels sampled both daily and hourly for 1 month with 
 many technical replicates. 
@@ -61,7 +60,7 @@ Note: the full dataset (at the sequence variant level without preprocessing)
 is available if you run `data(mallard)`. For simplicity we will just look at 
 samples from vessel 1^[In the future I may make a vignette discussing
 how we can model all the vessels jointly using *basset*. Note: it's
-just a different kernel function that also relates the covarance between
+just a different kernel function that also relates the covariance between
 samples as a function of which vessel they were taken from.]. 
 
 ```{r message=FALSE, warning=FALSE, paged.print=FALSE}
@@ -97,8 +96,8 @@ X <- t((X-min(X)) / 3600)
 
 The function *basset* is a wrapper around some *stray* internals that make fitting
 the above model easy. *basset* is patterned after the function *pibble* but
-requres that `Theta` and `Gamma` be given as matrix functions rather than as
-matricies. That is `Theta` must be a function that given `X` outputs a $D-1 \times N$ matrix 
+requires that `Theta` and `Gamma` be given as matrix functions rather than as
+matrices. That is `Theta` must be a function that given `X` outputs a $D-1 \times N$ matrix 
 (just like you would give to *pibble*) and `Gamma` must be a function that given `X`
 outputs a $N \times N$ covariance matrix (e.g., covariance over the samples). 
 There are a few kernel functions that meet the requirements for `Gamma` in *stray* already. 
@@ -107,10 +106,10 @@ to be the zero function. The SE kernel will give us non-linear smoothing of the
 observed time-series. 
 
 *Important Note:* Currently, `Theta` must output a matrix represented in the default coordinate 
-sysmtem ($ALR_D$). This may be generalized in the future. 
+system ($ALR_D$). This may be generalized in the future. 
 
 Here we will just specify the Kernel parameters manually, more generally these
-parameters can be choosen by cross-validation. 
+parameters can be chosen by cross-validation. 
 
 ```{r}
 # Specify Priors

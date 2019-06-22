@@ -1,0 +1,212 @@
+---
+title: "Tips for Specifying Priors"
+output: 
+  rmarkdown::html_vignette:
+    toc: true
+vignette: >
+  %\VignetteIndexEntry{picking_priors}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+# Overview
+
+Picking priors is both an important and difficult part of Bayesian statistics. This vignette is not intended to be an introduction to Bayesian statistics, here I assume readers are already know what a prior/posterior is. Just to review, a prior is a probability distribution representing an analysts belief in model parameters prior to seeing the data. The posterior is the (in some sense optimal) probability distribution representing what you should belief having seen the data (given your prior beliefs). 
+
+Since priors represent an analysts belief prior to seeing the data, it makes sense that priors will often be specific for a given study. For example, we don't necessarily believe the parameters learned for an RNA-seq data analysis will be the same as for someone studying microbial communities or political gerrymandering. What's more, we probably have different prior beliefs depending on what microbial community we are studying or how a study is set up. 
+
+There are (at least) two important reasons to think carefully about priors. First, the meaning of the posterior is conditioned on your prior accurately reflecting your beliefs. The posterior represents an optimal belief given data and *given prior beleifs*. If a specified prior does not reflect your beliefs well then the prior won't have the right meaning. Of course all priors are imperfect but we do the best we can. Second, on a practical note, some really weird priors can lead to numerical issues during optimization and uncertainty quantification in *stray*. This later problem can appear as failure to reach the MAP estimate or an error when trying to invert the Hessian.
+
+Overall, a prior is a single function (a probability distribution) specified jointly on parameters of interest. Still, it can be confusing to think about the prior in the joint form. Here I will instead try to simplify this and break the prior down into distinct components. While there are numerous models in *stray*, here I will focus on the prior for the *pibble* model as it is, in my opinion, the heart of *stray*. 
+
+Just to review, the pibble model is given by:
+$$
+\begin{align}
+Y_j & \sim \text{Multinomial}\left(\pi_j \right)  \\
+\pi_j & = \phi^{-1}(\eta_j) \\
+\eta_j &\sim N(\Lambda X_j, \Sigma) \\
+\Lambda &\sim  N(\Theta, \Sigma, \Gamma) \\
+\Sigma &\sim W^{-1}(\Xi, \upsilon). 
+\end{align}
+$$
+We consider the first two lines to be part of the likelihood and the bottom three lines to be part of the prior. Therefore we have the following three components of the prior:
+
+* The prior for $\Sigma$: $\Sigma \sim W^{-1}(\Xi, \upsilon)$ 
+* The prior for $\Lambda$: $\Lambda \sim  N(\Theta, \Sigma, \Gamma)$
+* The prior for $\eta_j$:  $\eta_j \sim N(\Lambda X_j, \Sigma)$
+
+# Background on the Matrix Normal
+There are three things I should explain before going forward. The vec operation, the Kronecker product, and the matrix normal. The first two are needed to understand the matrix-normal. 
+
+## The Vec Operation
+The vec operation is just a special way of saying column stacking. If we have a \
+matrix $$X = \begin{bmatrix} a & b \\ c & d \end{bmatrix}$$ then
+$$vec(X) = \begin{bmatrix} a\\ c \\ b\\d\end{bmatrix}.$$ It's that simple.
+
+## Kronker Products
+
+It turns out there are many different definitions for how to multiply two matrices together. There is standard matrix multiplication, there is element-wise multiplication, there is also something called the Kronecker product. Given two matrices $X = \begin{bmatrix} x_{11} & x_{12} \\ x_{21} & x_{22} \end{bmatrix}$ and 
+$Y = \begin{bmatrix} y_{11} & y_{12} \\ y_{21} & y_{22} \end{bmatrix}$, we define the Kronecker product of $X$ and $Y$ as
+$$
+X \otimes Y = \begin{bmatrix}x_{11}Y & x_{12}Y \\ x_{21}Y & x_{22}Y \end{bmatrix} = 
+\begin{bmatrix} 
+x_{11}y_{11} & x_{11}y_{12} & x_{12}y_{11} & x_{12}y_{12} \\
+x_{11}y_{21} & x_{11}y_{22} & x_{12}y_{21} & x_{12}y_{22} \\                
+x_{21}y_{11} & x_{21}y_{12} & x_{22}y_{11} & x_{22}y_{12} \\
+x_{21}y_{21} & x_{21}y_{22} & x_{22}y_{21} & x_{22}y_{22} \\  
+\end{bmatrix}.
+$$
+Notice how we are essentially making a larger matrix by patterning Y over X? 
+
+
+## The Matrix Normal
+Before going forward you may be wondering why the normal in the prior for $\Lambda$ has three parameters 
+($\Theta$, $\Sigma$, and $\Gamma$) rather than two. This means that our prior for $\Lambda$ is a *matrix normal*
+rather than a *multivariate normal*. The matrix normal is a generalization of the multivariate normal 
+for random matrices (not just random vectors). Below is a simplified description of the matrix normal. 
+
+With the multivariate normal you have a mean vector and a covariance matrix describing the 
+spread of the distribution about the mean. With the matrix normal you have a mean matrix, and
+two covariance matrices describing the spread of the distribution about the mean. The first
+covariance matrix ($\Sigma$) describes the covariance between the rows of $\Lambda$ while the second
+covariance matrix ($\Gamma$). describes the covariance between the columns of $\Lambda$. 
+
+The relationship between the multivariate normal and the matrix normal is as follows. 
+$$\Lambda \sim N(\Theta, \Sigma, \Gamma) \leftrightarrow vec(\Lambda) \sim N(vec(\Theta), \Gamma \otimes \Sigma)$$
+where $\otimes$ represents the Kronecker product and $vec$ represents the vectorization operation (i.e., column stacking of a matrix to produce a very long vector). 
+
+So we can now ask, what is the distribution of a single element of $\Lambda$? The answer is simply
+$$\Lambda_{ij} \sim N(\Theta_{ij}, \Sigma_{ii}\Gamma_{jj}).$$
+Similarly, we can ask about the distribution of a single column of $\Lambda$:
+$$\Lambda_{\cdot j} \sim N(\Theta_{\cdot j}, \Gamma_{jj} \Sigma).$$ Make sense? If not take a look at [wikipedia for a more complete treatment of the matrix-normal](https://en.wikipedia.org/wiki/Matrix_normal_distribution).
+
+# The prior for $\Sigma$
+$\Sigma$ describes the covariance between log-ratios. So if $\phi^{-1}$ is the inverse of the $ALR_D$ transform then 
+$\Sigma$ describes the covariance between $ALR_D$ coordinates. Also note, this section is going to be the hardest one, the other priors components will be faster to describe and probably easier to understand. 
+
+## Background on the Prior
+The prior for $\Sigma$ is an [Inverse Wishart](https://en.wikipedia.org/wiki/Inverse-Wishart_distribution) written
+$$\Sigma \sim W^{-1}(\Xi, \upsilon)$$
+where $\Psi$ is called the scale matrix (and must be a valid covariance matrix itself), and $\upsilon$ is called the degrees of freedom parameter. If $\Sigma$ is a $(D-1)x(D-1)$ matrix, then there is a constraint on $\upsilon$
+such that $\upsilon \geq D-1$. 
+
+The inverse Wishart has a mildly complex form for its moments (e.g., mean and variance). Its mean is given by
+$$E[\Sigma] = \frac{\Psi}{\upsilon-D-2} \quad \text{for } \upsilon > D.$$
+Its variance is somewhat complicated ([Wikipedia gives the relationships](https://en.wikipedia.org/wiki/Inverse-Wishart_distribution#Moments)) but for most purposes you can think
+of $\upsilon$ as setting the variance, larger $\upsilon$ means less uncertainty (lower variance) about the mean, smaller $\upsilon$ means more uncertainty (higher variance) about the mean. 
+
+## Choosing $\upsilon$ and $\Xi$. 
+Reading the above may seem intimidating: that's the form of the mean... so what? What's-more how should I think about covariance between log-ratios? Here's how I think about it. I think about it in-terms of putting a prior on the true abundances in log-space and then transforming that into a prior on log-ratios. Before I can really explain that I need to explain a bit more background. 
+
+**Compositional Data Analysis in a Nutshell**
+It turns out that those transforms $\phi$ are all examples of log-ratio transforms studied in a field called compositional data analysis. Briefly, all of those transforms can be written in a form: $\eta = \Psi \log \pi$. So log-ratios ($\eta$) are just a linear transform of log-transformed relative-abundances. It turns out that because of special properties of $\Psi$, the following also holds: $\eta = \Psi \log w$ where $w$ are the absolute (not relative) abundances. So we can say that log-ratios are also just a linear transform of log-transformed absolute-abundances.  
+
+**Linear Transformations of Covariance Matricies**
+Recall that if $x \sim N(\mu, \Sigma)$ (for multivariate $x$) then for a matrix $\Psi$ 
+we have $\Psi x \sim N(\Psi \mu, \Psi \Sigma \Psi^T)$. This is to say that you should think
+of linear transformations of covariance matrices as being applied by pre *and post* multiplying by the transformation matrix $\Psi$. 
+
+**Linear transformation of the Inverse Wishart**
+It turns out that if we have $\Omega \sim W^{-1}(\gamma, S)$ for a $D\times D$ covariance matrix $\Omega$ then for $M\times D$ matrix $\Psi$ we have $\Psi \Omega \Psi^T \sim W^{-1}(\upsilon, \Psi S \Psi^T)$. 
+
+**Putting It All Together**
+A central question: what is a reasonable prior for log-ratios? We are not used to working with log-ratios so this is difficult. A potentially simpler problem is to place a prior on the log-absolute-abundances ($\Omega$) of whatever we are measuring, *e.g.*, placing a prior on the covariance between log-absolute-abundances of bacteria ($\Omega \sim W^{-1}(\gamma, S)$. 
+
+_An example:_ Lets say that for a given microbiome dataset, I have weak prior belief that, on average, all the taxa are independent with variance 1. I want to come up with values $\gamma$ and $S$ for my prior on $\Omega$ that reflect this. Lets start by specifying the mean for $\Omega$.
+$$E[\Omega] =I_D.$$
+Next we say we have little certainty about this mean (want high variance) so we set $\gamma$ to be close to the lower bound of $D$ (I often like  $\gamma=D+3$). Now we have $\gamma$ we need to calculate $S$ which we do by solving for $S$ in the equation for the Inverse-Wishart mean^[Note its $D-1$ here because $\Omega$ is $D\times D$ rather than $D-1 \times D-1$]:
+$$S = E[\Omega](\gamma -D-1).$$ 
+There you go that's a prior on the log-absolute-abundances. Next we need to transform this into a prior on log-ratios. Well the above allows us to do this by simplifying taking the contrast matrix $\Psi$ from the log-ratio transform we want and transforming our prior for $\Omega$ as $\Sigma \sim W^{-1}(\gamma, \Psi S \Psi^T)$. That's it there the prior on log-ratios built form a prior on log-absolute-abundances. 
+
+
+*A Note on Phylogenetic priors:* As in phylogenetic linear models, you can make $S$ (as defined above) a covariance derived from the phylogenetic differences between taxa. This allows you to fit phylogenetic linear models in *stray*. 
+
+**Making It Even Simpler**
+Say that you  have a prior $\Omega \sim W^{-1}(\gamma, S)$ for covariance between log-absolute-abundances (created as in our example above). You want to transform this into a prior $\Sigma \sim W^{-1}(\upsilon, \Xi)$. You do this by simply taking $\upsilon=\gamma$. To calculate $\Xi$, rather than worrying about $\Psi$, functions in the [*driver* package I wrote](https://jsilve24.github.io/driver/) will do this for you, here are recipes:
+```{r, eval=FALSE}
+# To put prior on ALR_j coordinates for some j in (1,...,D-1)
+Xi <- clrvar2alrvar(S, j)
+
+# To put prior in a particular ILR coordinate defined by contrast matrix V
+Xi <- clrvar2ilrvar(S, V)
+
+# To put prior in CLR coordinates (this one needs two transforms)
+foo <- clrvar2alrvar(S, D)
+Xi <- alrvar2clrvar(foo, D)
+```
+Hopefully that is simple enough to be useful for folks. 
+
+# The prior for $\Lambda$
+$\Lambda$ are the regression parameters in the linear model. The prior for $\Lambda$ is just a matrix-normal which we described above: 
+$$\Lambda \sim N(\Theta, \Sigma, \Gamma).$$
+Here $\Theta$ is the mean matrix of $\Lambda$, $\Sigma$ is actually random (i.e., you don't have to specify it, its specified by the prior on $\Sigma$ we discussed already), and $\Gamma$ is a $QxQ$^[Where $Q$ is the number of regression covaraites] covariance matrix describing the covariance between the columns of $\Lambda$ (*i.e.*, between the effect of the different covariates). So we really need to just discuss specifying $\Theta$ and specifying $\Gamma$. 
+
+## Choosing $\Theta$
+
+This is really easy, in most situations this will simply be a matrix of zeros. This implies that you expect that on average, the covariates of interest are not associated with composition.^[This is the same assumption as used in Ridge Regression]. This helps prevent you from inferrign an effect if there isn't one. 
+
+Outside of this simple case lets say you actually have prior knowledge about the effects of the covariates. Perhaps you have some knowledge about the mean effect of covariates on log-absolute-abundances which you describe in a $D\times Q$ matrix $A$. Well you can just transform that prior into the log-ratio coordinates you want as follows:
+```{r, eval=FALSE}
+# Transform from log-absolute-abundance effects to effects on absolute-abundances
+foo <- exp(A)
+
+# To put prior on ALR_j coordinates for some j in (1,...,D-1)
+Theta <- driver::alr_array(foo, j, parts=1)
+
+# To put prior in a particular ILR coordinate defined by contrast matrix V
+Theta <- driver::ilr_array(foo, V, parts=1)
+
+# To put prior in CLR coordinates
+Theta <- driver::clr_array(foo, parts=1)
+```
+
+## Choosing $\Gamma$
+Alright, here we get a break as $\Gamma$ doesn't care what log-ratio coordinates your in. It's
+just a $Q\times Q$ covariance matrix describing the covariation between the effects of the $Q$ covariates. 
+
+For example, Lets say your data is a microbiome survey of a disease with a number of healthy controls. Your goal is to figure out what is different between the composition of these two groups. Your model may have two covariates, an intercept and a binary variable (1 if sample is from disease, 0 if from healthy). We probably want to set a prior that allows the intercept to be moderately large but we likely believe that the differences between disease and health are small (so we want the effect of the binary covariate to be modest). We could specify:
+$$\Gamma = \alpha\begin{bmatrix} 1 & 0 \\ 0& .2 \end{bmatrix}$$
+for a scalar $\alpha$ which I will discuss in depth below. Note here the off diagonals being zero also specifies that we don't think there is any covariation between the intercept and the effect of the disease state (probably a pretty good assumption in this example). 
+
+The choice of alpha can be important. I will describe it later in the section on how the choice of $\upsilon$ and 
+$\Xi$ interact with the choice of $\Gamma$. First I need to briefly describe the prior on $\eta$. 
+
+# The Prior for $\eta$
+$\eta$ are log-ratios from the regression relationship obscured by noise. 
+$$\eta_j \sim N(\Lambda X_j, \Sigma).$$
+Notice $\Sigma$ shows up again like it did in the prior for $\Lambda$. Actually, there are no more parameters we need to specify, the prior for $\eta$ is completely induced based on our priors for $\Lambda$ and $\Sigma$. The reason I discuss it here is that I want readers to recognize that the variation of $\eta$ about the regression relationship is specified by $\Sigma$. That means that if $\Sigma$ is large there is more noise, small there is less noise. This should also be taken into account when specifying $\upsilon$ and $\Xi$. The next section will further expand on this idea. 
+
+# How the Choice of $\upsilon$ and $\Xi$ Interacts With the Choice of $\Gamma$
+
+The point of this subsection is the following, the choice of $\Gamma$, $\Xi$, and $\upsilon$
+in some senses place a prior on the signal-to-noise ratio in the data. In short:
+The larger $\Gamma$ is relative to $\Sigma$ (specified by $\upsilon$ and $\Xi$) the more signal, the smaller $\Gamma$ is realtive to $\Sigma$ the more noise. I will describe this below. 
+
+Notice that we could alternatively write the prior for $\eta$ as 
+$$\eta \sim N(\Lambda X, \Sigma, I)$$
+using the matrix normal in parallel to our prior for $\Lambda$
+$$\Lambda \sim N(\Theta, \Sigma, \Gamma).$$
+We can write the *vec* form of these relationships as 
+$$
+\begin{align}
+vec(\eta) &\sim N(vec(\Lambda X), I\otimes\Sigma) \\
+vec(\Lambda) &\sim N(vec(\Theta), \Gamma \otimes \Sigma).
+\end{align}
+$$
+If we write $\Gamma$ as the multiplication of a scalar and scaled matrix (a matrix scaled so that the sum of the diagonals equals 1) $\Gamma=\alpha \bar{\Gamma}$ as we did when describing the choice of $\Gamma$ above, then the above equations turn into:
+$$
+\begin{align}
+vec(\eta) &\sim N(vec(\Lambda X), 1(I\otimes\Sigma)) \\
+vec(\Lambda) &\sim N(vec(\Theta), \alpha(\bar{\Gamma}\otimes \Sigma)).
+\end{align}
+$$
+and we can see that the magnitude of $\Lambda$ is a factor of $\alpha$ times the noise level. If $\alpha<1$ we have that the the magnitude of $\Lambda$ is smaller than the magnitude of the noise. If $\alpha > 1$ we have that the magnitude of $\Lambda$ is greater than the magnitude of the noise. 
+
+The actual "signal" is the product $\Lambda X$ (so it depends on the scale of $X$) as well but hopefully the point is clear: **The magnitude of $\Sigma$ (which is specified by $\upsilon$ and $\Xi$) in comparision to the magnitude of $\Gamma$ sets the signal-to-noise ratio in our prior.**

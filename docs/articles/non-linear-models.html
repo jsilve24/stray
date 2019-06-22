@@ -52,6 +52,9 @@
     <li>
       <a href="../articles/non-linear-models.html">Non-Linear Modeling with stray::basset</a>
     </li>
+    <li>
+      <a href="../articles/picking_priors.html">Tips on Specifying Priors</a>
+    </li>
   </ul>
 </li>
 <li>
@@ -104,7 +107,6 @@
       <h1>Non-linear models with stray::basset</h1>
                         <h4 class="author">Justin Silverman</h4>
             
-            <h4 class="date">2019-05-09</h4>
       
       
       <div class="hidden name"><code>non-linear-models.Rmd</code></div>
@@ -117,7 +119,7 @@
 <div id="straybasset-the-model" class="section level1">
 <h1 class="hasAnchor">
 <a href="#straybasset-the-model" class="anchor"></a>stray::basset, the model</h1>
-<p>Stray can be used for non-linear modeling. Here we are going to go through one such model which is based on multivarite Gaussian processes. As Gaussian processes are a type of lazy learner, I have named this model after a lazy dog: a Basset Hound. Hense this model is called <em>basset</em>. The <em>basset</em> model can be written as <span class="math display">\[
+<p>Stray can be used for non-linear modeling. Here we are going to go through one such model which is based on multivariate Gaussian processes. As Gaussian processes are a type of lazy learner, I have named this model after a lazy dog: a Basset Hound. Hence this model is called <em>basset</em>. The <em>basset</em> model can be written as <span class="math display">\[
 \begin{align}
 Y_j &amp; \sim \text{Multinomial}\left(\pi_j \right)  \\
 \pi_j &amp; = \phi^{-1}(\eta_j) \\
@@ -125,7 +127,7 @@ Y_j &amp; \sim \text{Multinomial}\left(\pi_j \right)  \\
 \Lambda[X] &amp;\sim  \textsf{GP}(\Theta[X], \Sigma, \Gamma[X]) \\
 \Sigma &amp;\sim W^{-1}(\Xi, \upsilon) 
 \end{align}
-\]</span> where we now label quantities interpreted as function with square brackets. In particular, we use the notation that <span class="math inline">\(\Lambda[X]\)</span> is a function that maps am <span class="math inline">\(Q \times N\)</span> matrix of covariates <span class="math inline">\(X\)</span> to a matrix <span class="math inline">\(\eta\)</span>. <span class="math inline">\(\Lambda\)</span> can be interpreted as a smooth function that relates covariates <span class="math inline">\(X\)</span> to composition <span class="math inline">\(\eta\)</span> in a potentially non-linear manner. <span class="math inline">\(\Theta[X]\)</span> is the mean function evaluated at <span class="math inline">\(X\)</span>, <span class="math inline">\(\Gamma[X]\)</span> is a covariance matrix (or gram matrix) formed by evaluating a positive semi-definite kernel function <span class="math inline">\(K\)</span> at each set of points <span class="math inline">\(i\)</span> and <span class="math inline">\(j\)</span>, <em>i.e.</em>, <span class="math inline">\(\Gamma_{ij} = K(X_i, X_j)\)</span>. Many different possibel kernel functions makes this a very flexible and powerful model.</p>
+\]</span> where we now label quantities interpreted as function with square brackets. In particular, we use the notation that <span class="math inline">\(\Lambda[X]\)</span> is a function that maps am <span class="math inline">\(Q \times N\)</span> matrix of covariates <span class="math inline">\(X\)</span> to a matrix <span class="math inline">\(\eta\)</span>. <span class="math inline">\(\Lambda\)</span> can be interpreted as a smooth function that relates covariates <span class="math inline">\(X\)</span> to composition <span class="math inline">\(\eta\)</span> in a potentially non-linear manner. <span class="math inline">\(\Theta[X]\)</span> is the mean function evaluated at <span class="math inline">\(X\)</span>, <span class="math inline">\(\Gamma[X]\)</span> is a covariance matrix (or gram matrix) formed by evaluating a positive semi-definite kernel function <span class="math inline">\(K\)</span> at each set of points <span class="math inline">\(i\)</span> and <span class="math inline">\(j\)</span>, <em>i.e.</em>, <span class="math inline">\(\Gamma_{ij} = K(X_i, X_j)\)</span>. Many different possible kernel functions makes this a very flexible and powerful model.</p>
 </div>
 <div id="non-linear-time-series-modeling" class="section level1">
 <h1 class="hasAnchor">
@@ -160,9 +162,9 @@ N &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumenta
 <span class="co"># X in hours</span>
 X &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/numeric">as.numeric</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/phyloseq/topics/sample_data-methods">sample_data</a></span>(ps)<span class="op">$</span>time)
 X &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/phyloseq/topics/transpose-methods">t</a></span>((X<span class="op">-</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/Extremes">min</a></span>(X)) <span class="op">/</span><span class="st"> </span><span class="dv">3600</span>)</code></pre></div>
-<p>The function <em>basset</em> is a wrapper around some <em>stray</em> internals that make fitting the above model easy. <em>basset</em> is patterned after the function <em>pibble</em> but requres that <code>Theta</code> and <code>Gamma</code> be given as matrix functions rather than as matricies. That is <code>Theta</code> must be a function that given <code>X</code> outputs a <span class="math inline">\(D-1 \times N\)</span> matrix (just like you would give to <em>pibble</em>) and <code>Gamma</code> must be a function that given <code>X</code> outputs a <span class="math inline">\(N \times N\)</span> covariance matrix (e.g., covariance over the samples). There are a few kernel functions that meet the requirements for <code>Gamma</code> in <em>stray</em> already. Here we will use a Squared Exponential (SE) kernel for <code>Gamma</code> and will set <code>Theta</code> to be the zero function. The SE kernel will give us non-linear smoothing of the observed time-series.</p>
-<p><em>Important Note:</em> Currently, <code>Theta</code> must output a matrix represented in the default coordinate sysmtem (<span class="math inline">\(ALR_D\)</span>). This may be generalized in the future.</p>
-<p>Here we will just specify the Kernel parameters manually, more generally these parameters can be choosen by cross-validation.</p>
+<p>The function <em>basset</em> is a wrapper around some <em>stray</em> internals that make fitting the above model easy. <em>basset</em> is patterned after the function <em>pibble</em> but requires that <code>Theta</code> and <code>Gamma</code> be given as matrix functions rather than as matrices. That is <code>Theta</code> must be a function that given <code>X</code> outputs a <span class="math inline">\(D-1 \times N\)</span> matrix (just like you would give to <em>pibble</em>) and <code>Gamma</code> must be a function that given <code>X</code> outputs a <span class="math inline">\(N \times N\)</span> covariance matrix (e.g., covariance over the samples). There are a few kernel functions that meet the requirements for <code>Gamma</code> in <em>stray</em> already. Here we will use a Squared Exponential (SE) kernel for <code>Gamma</code> and will set <code>Theta</code> to be the zero function. The SE kernel will give us non-linear smoothing of the observed time-series.</p>
+<p><em>Important Note:</em> Currently, <code>Theta</code> must output a matrix represented in the default coordinate system (<span class="math inline">\(ALR_D\)</span>). This may be generalized in the future.</p>
+<p>Here we will just specify the Kernel parameters manually, more generally these parameters can be chosen by cross-validation.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Specify Priors</span>
 Gamma &lt;-<span class="st"> </span><span class="cf">function</span>(X) <span class="kw"><a href="../reference/kernels.html">SE</a></span>(X, <span class="dt">sigma=</span><span class="dv">5</span>, <span class="dt">rho=</span><span class="dv">10</span>) <span class="co"># Create partial function </span>
 Theta &lt;-<span class="st"> </span><span class="cf">function</span>(X) <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/matrix">matrix</a></span>(<span class="dv">0</span>, D<span class="op">-</span><span class="dv">1</span>, <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/nrow">ncol</a></span>(X))
@@ -197,16 +199,16 @@ predicted_tidy &lt;-<span class="st"> </span><span class="kw"><a href="https://w
 <span class="st">  </span><span class="kw"><a href="https://dplyr.tidyverse.org/reference/group_by.html">ungroup</a></span>() <span class="op">%&gt;%</span><span class="st"> </span>
 <span class="st">  </span><span class="kw"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span>(<span class="dt">coord =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/paste">paste0</a></span>(<span class="st">"CLR("</span>, family_names[coord],<span class="st">")"</span>))
 
-<span class="kw"><a href="https://www.rdocumentation.org/packages/ggplot2/topics/ggplot">ggplot</a></span>(predicted_tidy, <span class="kw"><a href="https://www.rdocumentation.org/packages/ggplot2/topics/aes">aes</a></span>(<span class="dt">x =</span> time, <span class="dt">y=</span>mean)) <span class="op">+</span>
-<span class="st">  </span><span class="kw"><a href="https://www.rdocumentation.org/packages/ggplot2/topics/geom_ribbon">geom_ribbon</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/ggplot2/topics/aes">aes</a></span>(<span class="dt">ymin=</span>p2.<span class="dv">5</span>, <span class="dt">ymax=</span>p97.<span class="dv">5</span>), <span class="dt">fill=</span><span class="st">"darkgrey"</span>, <span class="dt">alpha=</span><span class="fl">0.5</span>) <span class="op">+</span>
-<span class="st">  </span><span class="kw"><a href="https://www.rdocumentation.org/packages/ggplot2/topics/geom_ribbon">geom_ribbon</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/ggplot2/topics/aes">aes</a></span>(<span class="dt">ymin=</span>p25, <span class="dt">ymax=</span>p75), <span class="dt">fill=</span><span class="st">"darkgrey"</span>, <span class="dt">alpha=</span><span class="fl">0.9</span>)<span class="op">+</span>
-<span class="st">  </span><span class="kw"><a href="https://www.rdocumentation.org/packages/ggplot2/topics/geom_path">geom_line</a></span>(<span class="dt">color=</span><span class="st">"blue"</span>) <span class="op">+</span>
-<span class="st">  </span><span class="kw"><a href="https://www.rdocumentation.org/packages/ggplot2/topics/geom_point">geom_point</a></span>(<span class="dt">data =</span> Y_clr_tidy, <span class="dt">alpha=</span><span class="fl">0.5</span>) <span class="op">+</span>
-<span class="st">  </span><span class="kw"><a href="https://www.rdocumentation.org/packages/ggplot2/topics/facet_wrap">facet_wrap</a></span>(<span class="op">~</span>coord, <span class="dt">scales=</span><span class="st">"free_y"</span>) <span class="op">+</span>
-<span class="st">  </span><span class="kw"><a href="https://www.rdocumentation.org/packages/ggplot2/topics/ggtheme">theme_minimal</a></span>()<span class="op">+</span>
-<span class="st">  </span><span class="kw"><a href="https://www.rdocumentation.org/packages/ggplot2/topics/theme">theme</a></span>(<span class="dt">axis.title.y =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/ggplot2/topics/element">element_blank</a></span>(), 
-        <span class="dt">axis.title.x =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/ggplot2/topics/element">element_blank</a></span>(), 
-        <span class="dt">axis.text.x =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/ggplot2/topics/element">element_text</a></span>(<span class="dt">angle=</span><span class="dv">45</span>))</code></pre></div>
+<span class="kw"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span>(predicted_tidy, <span class="kw"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span>(<span class="dt">x =</span> time, <span class="dt">y=</span>mean)) <span class="op">+</span>
+<span class="st">  </span><span class="kw"><a href="https://ggplot2.tidyverse.org/reference/geom_ribbon.html">geom_ribbon</a></span>(<span class="kw"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span>(<span class="dt">ymin=</span>p2.<span class="dv">5</span>, <span class="dt">ymax=</span>p97.<span class="dv">5</span>), <span class="dt">fill=</span><span class="st">"darkgrey"</span>, <span class="dt">alpha=</span><span class="fl">0.5</span>) <span class="op">+</span>
+<span class="st">  </span><span class="kw"><a href="https://ggplot2.tidyverse.org/reference/geom_ribbon.html">geom_ribbon</a></span>(<span class="kw"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span>(<span class="dt">ymin=</span>p25, <span class="dt">ymax=</span>p75), <span class="dt">fill=</span><span class="st">"darkgrey"</span>, <span class="dt">alpha=</span><span class="fl">0.9</span>)<span class="op">+</span>
+<span class="st">  </span><span class="kw"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html">geom_line</a></span>(<span class="dt">color=</span><span class="st">"blue"</span>) <span class="op">+</span>
+<span class="st">  </span><span class="kw"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span>(<span class="dt">data =</span> Y_clr_tidy, <span class="dt">alpha=</span><span class="fl">0.5</span>) <span class="op">+</span>
+<span class="st">  </span><span class="kw"><a href="https://ggplot2.tidyverse.org/reference/facet_wrap.html">facet_wrap</a></span>(<span class="op">~</span>coord, <span class="dt">scales=</span><span class="st">"free_y"</span>) <span class="op">+</span>
+<span class="st">  </span><span class="kw"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_minimal</a></span>()<span class="op">+</span>
+<span class="st">  </span><span class="kw"><a href="https://ggplot2.tidyverse.org/reference/theme.html">theme</a></span>(<span class="dt">axis.title.y =</span> <span class="kw"><a href="https://ggplot2.tidyverse.org/reference/element.html">element_blank</a></span>(), 
+        <span class="dt">axis.title.x =</span> <span class="kw"><a href="https://ggplot2.tidyverse.org/reference/element.html">element_blank</a></span>(), 
+        <span class="dt">axis.text.x =</span> <span class="kw"><a href="https://ggplot2.tidyverse.org/reference/element.html">element_text</a></span>(<span class="dt">angle=</span><span class="dv">45</span>))</code></pre></div>
 <p><img src="non-linear-models_files/figure-html/unnamed-chunk-5-1.png" width="672"></p>
 </div>
 <div id="references" class="section level1 unnumbered">
@@ -221,8 +223,8 @@ predicted_tidy &lt;-<span class="st"> </span><span class="kw"><a href="https://w
 <div class="footnotes">
 <hr>
 <ol>
-<li id="fn1"><p>I have a long history of comming up with rediculous names for statistical models and software.<a href="#fnref1">↩</a></p></li>
-<li id="fn2"><p>In the future I may make a vignette discussing how we can model all the vessels jointly using <em>basset</em>. Note: it’s just a different kernel function that also relates the covarance between samples as a function of which vessel they were taken from.<a href="#fnref2">↩</a></p></li>
+<li id="fn1"><p>I have a long history of coming up with ridiculous names for statistical models and software.<a href="#fnref1">↩</a></p></li>
+<li id="fn2"><p>In the future I may make a vignette discussing how we can model all the vessels jointly using <em>basset</em>. Note: it’s just a different kernel function that also relates the covariance between samples as a function of which vessel they were taken from.<a href="#fnref2">↩</a></p></li>
 </ol>
 </div>
   </div>

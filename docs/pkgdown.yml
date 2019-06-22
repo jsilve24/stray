@@ -4,4 +4,5 @@ pkgdown_sha: ~
 articles:
   introduction-to-stray: introduction-to-stray.html
   non-linear-models: non-linear-models.html
+  picking_priors: picking_priors.html
 

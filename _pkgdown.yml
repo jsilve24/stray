@@ -9,6 +9,8 @@ navbar:
           href: articles/introduction-to-stray.html
         - text: "Non-Linear Modeling with stray::basset"
           href: articles/non-linear-models.html
+        - text: "Tips on Specifying Priors"
+          href: articles/picking_priors.html
     - text: "Functions"
       href: "reference/index.html"
     - text: "News"

@@ -11,6 +11,8 @@ navbar:
           href: articles/non-linear-models.html
         - text: "Joint Modeling  (e.g., Multiomics) with Stray::Orthus"
           href: articles/orthus.html
+        - text: "Tips on Specifying Priors"
+          href: articles/picking_priors.html
     - text: "Functions"
       href: "reference/index.html"
     - text: "News"

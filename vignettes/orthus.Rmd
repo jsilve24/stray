@@ -32,7 +32,7 @@ set.seed(48482)
 If you have not already done so, I would read through the *pibble* vignette before this one. 
 
 # stray::orthus, the model
-Stray can be used for jointly modeling multivariate count data and multivariate Gaussian data. For example, this would be a reasonable model to jointly model 16S microbiome data and metabolomics data jointly. Because of the "two-headed" nature of this model, e.g., two observed datasets, I named this model *orthus* (a two-headed dog and brother of Cerberus in Greek Mythology)[https://en.wikipedia.org/wiki/Orthrus]. The *orthus* model can be written as
+Stray can be used for jointly modeling multivariate count data and multivariate Gaussian data. For example, this would be a reasonable model to jointly model 16S microbiome data and metabolomics data jointly. Because of the "two-headed" nature of this model, e.g., two observed data-sets, I named this model *orthus* (a two-headed dog and brother of Cerberus in Greek Mythology)[https://en.Wikipedia.org/wiki/Orthrus]. The *orthus* model can be written as
 
 $$
 \begin{align}
@@ -56,10 +56,10 @@ where $\Sigma_{(\eta, \eta)}$ describes the covariance between log-ratios (e.g.,
 among the multinomial categories in log-ratio space), $\Sigma_{(Z, Z)}$ describes the covariance 
 between the dimensions of $Z$ (e.g., between metabolites if Z is metabolomics data), and 
 $\Sigma_{(\eta, Z)} = \Sigma_{(Z, \eta)}^T$ represents the covariance between log-ratios and dimensions of $Z$ (e.g., between microbial taxa and metabolites). Similar to $\Sigma$ and $\Lambda$, the parameters $\Xi$
-and $\Theta$ undergo a similar expansion to accomidate the second dataset. 
+and $\Theta$ undergo a similar expansion to accommodate the second dataset. 
 
 # Joint modeling of Microbial 16S data and Metabolomics
-To demonstrate *orthus* I will perform a toy analysis on data from @kashyap2013 and made available by @callahan2016 as part of their recently published microbioem data anlaysis workflow [@callahan2016]. I follow the data preprocessing of @callahan2016 we just don't drop taxa but instead amalgamate those that don't pass filtering to a category called "other". I do this to maintain the proper variance in the multinomial model.
+To demonstrate *orthus* I will perform a toy analysis on data from @kashyap2013 and made available by @callahan2016 as part of their recently published microbiome data analysis workflow [@callahan2016]. I follow the data preprocessing of @callahan2016 we just don't drop taxa but instead amalgamate those that don't pass filtering to a category called "other". I do this to maintain the proper variance in the multinomial model.
 
 ```{r}
 metab_path <- system.file("extdata/Kashyap2013", "metabolites.csv", package="stray")
@@ -111,11 +111,11 @@ ALR with the reference being the D-th taxa; this may be changed in the future to
 make specifying priors more user friendly).
 
 I am going to form our prior for $\Sigma$ by specifying $\upsilon$ and $\Xi$. 
-I will specify that I have weak prior beleif that the taxa are independent in terms of their log absolute abundance. 
+I will specify that I have weak prior belief that the taxa are independent in terms of their log absolute abundance. 
 We can translate this statement about covariance of log absolute abundance into a statement
 about log-ratio covariance by pre- and post-multiplying by the $ALR_D$ contrast matrix (which 
 I refer to as $GG$ below). Additionally, I believe that there is likely no 
-substantial covariance between the taxa and the metabolites and I assume the metabolites are likely indpednent. 
+substantial covariance between the taxa and the metabolites and I assume the metabolites are likely independent. 
 
 ```{r fig.height=5, fig.width=5}
 upsilon <- (D-1+P)+10 # weak-ish prior on covariance over joint taxa and metabolites
@@ -126,7 +126,7 @@ Xi <- Xi * (upsilon-D-P) # this scales Xi to have the proper mean we wanted
 image(Xi)
 ```
 
-Note the stucture of this prior, everything is independent but there is a moderate positive covariance
+Note the structure of this prior, everything is independent but there is a moderate positive covariance
 between the log-ratios based on their shared definition in terms of the $D$-th taxa. 
 
 The other parts of the prior are less interesting. We are going to 
@@ -146,7 +146,7 @@ fit <- orthus(Y, Z, X, Theta=Theta, Gamma=Gamma, Xi=Xi, upsilon=upsilon, n_sampl
 Next we are going to transform the log-ratios from $ALR_D$ to the $CLR$. 
 I have written all the transformation functions, *e.g.*, `to_clr` etc... to work 
 on `orthusfit` objects in a similar manner to how they work on `pibblefit` objects. 
-For `orthusfit` objects they only transform the log-ratio components of paramters
+For `orthusfit` objects they only transform the log-ratio components of parameters
 leaving the other parts of inferred model parameters 
 (*i.e.*, the parts associated with the metabolites) untouched. 
 
@@ -160,7 +160,7 @@ print(fit)
 There are a ton of ways to visualize the inferred model. I could make network diagrams
 relating taxa to taxa, taxa to metabolites and metabolites to metabolites. I could 
 look at a low dimensional representation of joint covariance to create something very much
-akin to cannonical correlation analysis (CCA). I could look at how well the metabolites
+akin to canonical correlation analysis (CCA). I could look at how well the metabolites
 predict the taxa and vice-versa. But for the sake of simplicity I will do something much simpler. 
 Here I am just going to find a list of taxa metabolite covariances that the model is very confident about. 
 ```{r}
@@ -212,25 +212,18 @@ For some reason this is how the metabolites in that dataset were named. For the
 same reason I have left the taxa indexed by sequence variant number. 
 
 Second (and more important), identifying relationships between taxa and metabolites
-(or between any two high-dimensinal multivariate datasets) is really difficult! 
+(or between any two high-dimensional multivariate data-sets) is really difficult! 
 Here we are looking at just `r length(fit$names_categories)` taxa and 
 `r length(fit$names_Zdimensions)` but this leads to 
 `r length(fit$names_categories)*length(fit$names_Zdimensions)` possible covariances and 
 here we only have 12 samples! Yes *orthus* is a Bayesian model, and Yes, Bayesian 
 models can be quite useful when there are more parameters than samples, but there is a limit of 
 reasonability. Really, Bayesian models are great when you can perfectly capture your
-prior beleifs with your prior. But how often can that really be done perfectly?
-As such I would caution users, don't run out and try applying *orthus* on every 
-possible dataset with massive dimensions. Think carefully about what taxa or metabolites
-(or whatever else you are looking at) you really care about and analyze those. 
-Use a bit of expert knowledge to guide your science. 
+prior beliefs with your prior. But how often can that really be done perfectly?
+As such I would caution users, to use *orthus* carefully. Consider which metabolites 
+and taxa you really care about and if you can, isolate your analyses to those. 
 
-That said, please do not take the above comment as a particular limitation of *orthus*. 
-It's not that some other model will overcome this issue. It's a fundamental issue with 
-answering a very very difficult question (e.g., the covariance between high-dimensional datasets)
-using limited data. 
-
-Alright, thats probably enough philosophising for an R package Vignette. I hope you enjoy
+Alright, that's probably enough philosophizing for an R package Vignette. I hope you enjoy
 *orthus*. 
 
 # References

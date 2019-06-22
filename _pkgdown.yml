@@ -70,6 +70,8 @@ reference:
       - lambda_to_iqlr
       - pibble_sim
       - orthus_sim
+      - pibble_tidy_samples
+      - orthus_tidy_samples
       - store_coord
       - check_dims
   - title: "Utility Math Functions"

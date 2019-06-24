@@ -29,6 +29,8 @@ want vignettes to build locally during package installation you must also pass t
 
 
 ## Bugs/Feature requests ##
+Have you checked out [our FAQ](https://github.com/jsilve24/stray/wiki/Frequently-Asked-Questions)? 
+
 I appreciate bug reports and feature requests. Please post to the github issue tracker [here](https://github.com/jsilve24/stray/issues). 
 
 

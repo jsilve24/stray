@@ -181,7 +181,7 @@ List optimPibbleCollapsed(const Eigen::ArrayXXd Y,
     // "Multinomial-Dirichlet" option
     if (multDirichletBoot>=0.0){
       timer.step("MultDirichletBoot_start");
-      if (verbose) Rcout << "Preforming Multinomial Dirichlet Bootstrap" << std::endl;
+      if (verbose) Rcout << "Performing Multinomial Dirichlet Bootstrap" << std::endl;
       MatrixXd samp = MultDirichletBoot::MultDirichletBoot(n_samples, etamat, Y, 
                                                            multDirichletBoot);
       timer.step("MultDirichletBoot_stop");

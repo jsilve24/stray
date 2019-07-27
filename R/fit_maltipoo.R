@@ -50,6 +50,10 @@ maltipoo <- function(Y=NULL, X=NULL, upsilon=NULL, Theta=NULL, U=NULL,
   D <- try_set_dims(c(nrow(Y), nrow(Theta)+1, nrow(Xi)+1, ncol(Xi)+1, args[["D"]]))
   Q <- try_set_dims(c(nrow(X), ncol(Theta), ncol(U), args[["Q"]]))
   P <- try_set_dims(c(nrow(U)/Q)) # Maltipoo specific
+  
+  cat("P:",P,"\n")
+  cat("Q:",Q,"\n")
+  
   if (any(c(N, D, Q) <=0)) stop("N, D, and Q must all be greater than 0 (D must be greater than 1)")
   if (D <= 1) stop("D must be greater than 1")
   

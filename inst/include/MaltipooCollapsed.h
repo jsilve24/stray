@@ -36,7 +36,7 @@ class MaltipooCollapsed : public Numer::MFuncGrad
     const MatrixXd Theta;
     const MatrixXd X;
     MatrixXd ThetaX;
-    const MatrixXd K;
+    const MatrixXd K; // passed as Xi^{-1}
     const MatrixXd U; // PQ x Q matrix of concatenated deltas
     MatrixXd XTUX;
     MatrixXd A; // no longer constant

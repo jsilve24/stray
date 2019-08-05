@@ -1,5 +1,9 @@
 <img width="160" height="160" src="https://raw.githubusercontent.com/jsilve24/stray/master/inst/stray.png" />
 
+  <!-- badges: start -->
+  [![Travis build status](https://travis-ci.org/jsilve24/stray.svg?branch=master)](https://travis-ci.org/jsilve24/stray)
+  <!-- badges: end -->
+
 # stray
 Multinomial Logistic-Normal Models (really fast) <br>
 *its a little **tar**-ball of joy*

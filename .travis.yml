@@ -17,3 +17,13 @@ bioc_packages:
 # Linus System dependencies:
 apt_packages:
   - libgsl0-dev
+  
+# Increase build time-out time - because of long package vignette built times
+
+script:
+  - |
+    R CMD build .
+    travis_wait 20 R CMD check stray.tar.gz
+    
+after_failure:
+  find *Rcheck -name '*.fail' -print -exec cat '{}' \;

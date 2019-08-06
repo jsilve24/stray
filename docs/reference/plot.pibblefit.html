@@ -63,7 +63,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">stray</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.12</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.13</span>
       </span>
     </div>
 
@@ -153,43 +153,36 @@
     </div>
 
     <pre class="usage"><span class='co'># S3 method for pibblefit</span>
-<span class='fu'><a href='https://www.rdocumentation.org/packages/graphics/topics/plot'>plot</a></span>(<span class='no'>m</span>, <span class='kw'>par</span> <span class='kw'>=</span> <span class='st'>"Lambda"</span>, <span class='kw'>focus.cov</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>focus.coord</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>focus.sample</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>use_names</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</pre>
+<span class='fu'><a href='https://www.rdocumentation.org/packages/graphics/topics/plot'>plot</a></span>(<span class='no'>x</span>, <span class='no'>...</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>m</th>
+      <th>x</th>
       <td><p>an object of class pibblefit</p></td>
     </tr>
     <tr>
-      <th>par</th>
-      <td><p>parameter to plot (options: Lambda, Eta, and Sigma) 
-(default="Lambda")</p></td>
-    </tr>
-    <tr>
-      <th>focus.cov</th>
-      <td><p>vector of covariates to include in plot (plots all if NULL)</p></td>
-    </tr>
-    <tr>
-      <th>focus.coord</th>
-      <td><p>vector of coordinates to include in plot (plots all if NULL)</p></td>
-    </tr>
-    <tr>
-      <th>focus.sample</th>
-      <td><p>vector of samples to include in plot (plots all if NULL)</p></td>
-    </tr>
-    <tr>
-      <th>use_names</th>
-      <td><p>if TRUE, uses dimension names found in data as plot labels
-rather than using dimension integer indices.</p></td>
+      <th>...</th>
+      <td><p>other arguments passed to plot.pibblefit (see details)</p></td>
     </tr>
     </table>
     
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
     <p>ggplot object</p>
+    
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
+
+    <p>Other arguments:</p><ul>
+<li><p>`par` parameter to plot (options: Lambda, Eta, and Sigma) 
+  (default="Lambda")</p></li>
+<li><p>`focus.cov` vector of covariates to include in plot (plots all if NULL)</p></li>
+<li><p>`focus.coord` vector of coordinates to include in plot (plots all if NULL)</p></li>
+<li><p>`focus.sample` vector of samples to include in plot (plots all if NULL)</p></li>
+<li><p>`use_names` if TRUE, uses dimension names found in data as plot labels
+  rather than using dimension integer indices.</p></li>
+</ul>
     
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
@@ -203,6 +196,8 @@ rather than using dimension integer indices.</p></td>
       <li><a href="#arguments">Arguments</a></li>
       
       <li><a href="#value">Value</a></li>
+
+      <li><a href="#details">Details</a></li>
       
       <li><a href="#examples">Examples</a></li>
     </ul>

@@ -14,7 +14,7 @@ Description: Provides methods for fitting and inspection of Bayesian Multinomial
  Logistic Normal Models using MAP estimation 
  and Laplace Approximation. Key functionality is implemented in C++ for 
  scalability.
-License: GPL-3
+License: GPL (>=2)
 URL: https://jsilve24.github.io/stray/
 Depends: R (>= 3.5.0)
 Imports: Rcpp (>= 0.12.17), RcppEigen (>= 0.3.3.4.0), driver, dplyr, ggplot2, 

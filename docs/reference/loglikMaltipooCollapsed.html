@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Return regression coefficients of orthus object — coef.orthusfit • stray</title>
+<title>Calculations for the Collapsed Maltipoo Model — loglikMaltipooCollapsed • stray</title>
 
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
@@ -30,10 +30,16 @@
 
 
 
-<meta property="og:title" content="Return regression coefficients of orthus object — coef.orthusfit" />
+<meta property="og:title" content="Calculations for the Collapsed Maltipoo Model — loglikMaltipooCollapsed" />
 
-<meta property="og:description" content="Returned as array of dimension (D-1+P) x Q x iter (if in ALR or ILR) 
-otherwise (D+P) x Q x iter." />
+<meta property="og:description" content="Functions providing access to the Log Likelihood, Gradient, and Hessian
+of the collapsed maltipoo model. Note: These are convenience functions
+but are not as optimized as direct coding of the MaltipooCollapsed
+C++ class due to a lack of Memoization. By contrast function optimMaltipooCollapsed
+is much more optimized and massively cuts down on repeated calculations.
+A more efficient Rcpp module based implementation of these functions
+may following if the future. For model details see optimMaltipooCollapsed
+documentation" />
 <meta name="twitter:card" content="summary" />
 
 
@@ -142,64 +148,82 @@ otherwise (D+P) x Q x iter." />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Return regression coefficients of orthus object</h1>
+    <h1>Calculations for the Collapsed Maltipoo Model</h1>
     
-    <div class="hidden name"><code>coef.orthusfit.Rd</code></div>
+    <div class="hidden name"><code>loglikMaltipooCollapsed.Rd</code></div>
     </div>
 
     <div class="ref-description">
     
-    <p>Returned as array of dimension (D-1+P) x Q x iter (if in ALR or ILR) 
-otherwise (D+P) x Q x iter.</p>
+    <p>Functions providing access to the Log Likelihood, Gradient, and Hessian
+of the collapsed maltipoo model. Note: These are convenience functions
+but are not as optimized as direct coding of the MaltipooCollapsed
+C++ class due to a lack of Memoization. By contrast function optimMaltipooCollapsed
+is much more optimized and massively cuts down on repeated calculations.
+A more efficient Rcpp module based implementation of these functions
+may following if the future. For model details see <code><a href='optimMaltipooCollapsed.html'>optimMaltipooCollapsed</a></code>
+documentation</p>
     
     </div>
 
-    <pre class="usage"><span class='co'># S3 method for orthusfit</span>
-<span class='fu'><a href='https://www.rdocumentation.org/packages/stats/topics/coef'>coef</a></span>(<span class='no'>object</span>, <span class='no'>...</span>)</pre>
+    <pre class="usage"><span class='fu'>loglikMaltipooCollapsed</span>(<span class='no'>Y</span>, <span class='no'>upsilon</span>, <span class='no'>Theta</span>, <span class='no'>X</span>, <span class='no'>KInv</span>, <span class='no'>U</span>, <span class='no'>eta</span>, <span class='no'>ell</span>,
+  <span class='kw'>sylv</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)
+
+<span class='fu'>gradMaltipooCollapsed</span>(<span class='no'>Y</span>, <span class='no'>upsilon</span>, <span class='no'>Theta</span>, <span class='no'>X</span>, <span class='no'>KInv</span>, <span class='no'>U</span>, <span class='no'>eta</span>, <span class='no'>ell</span>,
+  <span class='kw'>sylv</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)
+
+<span class='fu'>hessMaltipooCollapsed</span>(<span class='no'>Y</span>, <span class='no'>upsilon</span>, <span class='no'>Theta</span>, <span class='no'>X</span>, <span class='no'>KInv</span>, <span class='no'>U</span>, <span class='no'>eta</span>, <span class='no'>ell</span>,
+  <span class='kw'>sylv</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>object</th>
-      <td><p>an object of class orthusfit</p></td>
+      <th>Y</th>
+      <td><p>D x N matrix of counts</p></td>
     </tr>
     <tr>
-      <th>...</th>
-      <td><p>other options passed to coef.orthusfit (see details)</p></td>
+      <th>upsilon</th>
+      <td><p>(must be &gt; D)</p></td>
+    </tr>
+    <tr>
+      <th>Theta</th>
+      <td><p>D-1 x Q matrix the prior mean for regression coefficients</p></td>
+    </tr>
+    <tr>
+      <th>X</th>
+      <td><p>Q x N matrix of covariates</p></td>
+    </tr>
+    <tr>
+      <th>KInv</th>
+      <td><p>D-1 x D-1 symmetric positive-definite matrix</p></td>
+    </tr>
+    <tr>
+      <th>U</th>
+      <td><p>a PQxQ matrix of stacked variance components</p></td>
+    </tr>
+    <tr>
+      <th>eta</th>
+      <td><p>matrix (D-1)xN of parameter values at which to calculate quantities</p></td>
+    </tr>
+    <tr>
+      <th>ell</th>
+      <td><p>P-vector of scale factors for each variance component (aka VCScale)</p></td>
+    </tr>
+    <tr>
+      <th>sylv</th>
+      <td><p>(default:false) if true and if N &lt; D-1 will use sylvester determinant
+identity to speed computation</p></td>
     </tr>
     </table>
     
-    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>Array of dimension (D-1) x Q x iter</p>
-    
-    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
-
-    <p>Other arguments:</p><ul>
-<li><p>use_names if column and row names were passed for Y and X in 
-call to <code><a href='pibble_fit.html'>pibble</a></code>, should these names be applied to output 
-array.</p></li>
-</ul>
-    
-
-    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><span class='co'># NOT RUN {</span>
-<span class='no'>fit</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='orthus_fit.html'>orthus</a></span>(<span class='no'>Y</span>, <span class='no'>Z</span>, <span class='no'>X</span>)
-<span class='fu'><a href='https://www.rdocumentation.org/packages/stats/topics/coef'>coef</a></span>(<span class='no'>fit</span>)
-<span class='co'># }</span></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
-      
-      <li><a href="#value">Value</a></li>
-
-      <li><a href="#details">Details</a></li>
-      
-      <li><a href="#examples">Examples</a></li>
-    </ul>
+                </ul>
 
   </div>
 </div>

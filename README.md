@@ -2,6 +2,7 @@
 
   <!-- badges: start -->
   [![Travis build status](https://travis-ci.org/jsilve24/stray.svg?branch=master)](https://travis-ci.org/jsilve24/stray)
+  [![License](http://img.shields.io/badge/license-GPL%20%28%3E=%202%29-brightgreen.svg?style=flat)](http://www.gnu.org/licenses/gpl-2.0.html) 
   <!-- badges: end -->
 
 # stray

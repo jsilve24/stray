@@ -64,7 +64,7 @@ be called to get counts or LambdaX (predict.pibblefit)" />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">stray</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.12</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.13</span>
       </span>
     </div>
 
@@ -155,7 +155,7 @@ be called to get counts or LambdaX (<code><a href='predict.pibblefit.html'>predi
     </div>
 
     <pre class="usage"><span class='co'># S3 method for pibblefit</span>
-<span class='fu'><a href='sample_prior.html'>sample_prior</a></span>(<span class='no'>m</span>, <span class='kw'>n_samples</span> <span class='kw'>=</span> <span class='fl'>2000</span>, <span class='kw'>pars</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='st'>"Eta"</span>,
+<span class='fu'><a href='sample_prior.html'>sample_prior</a></span>(<span class='no'>m</span>, <span class='kw'>n_samples</span> <span class='kw'>=</span> <span class='fl'>2000L</span>, <span class='kw'>pars</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='st'>"Eta"</span>,
   <span class='st'>"Lambda"</span>, <span class='st'>"Sigma"</span>), <span class='kw'>use_names</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='no'>...</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -204,9 +204,11 @@ header in this library - see MatDist.h).</p>
 #&gt;   Coordinate System:		 alr, reference category: 10 [c10] </div><div class='input'>
 <span class='co'># Sample prior as part of model fitting</span>
 <span class='no'>m</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='pibblefit.html'>pibblefit</a></span>(<span class='kw'>N</span><span class='kw'>=</span><span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/integer'>as.integer</a></span>(<span class='no'>sim</span>$<span class='no'>N</span>), <span class='kw'>D</span><span class='kw'>=</span><span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/integer'>as.integer</a></span>(<span class='no'>sim</span>$<span class='no'>D</span>), <span class='kw'>Q</span><span class='kw'>=</span><span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/integer'>as.integer</a></span>(<span class='no'>sim</span>$<span class='no'>Q</span>),
-                <span class='kw'>iter</span><span class='kw'>=</span><span class='fl'>2000</span>, <span class='kw'>upsilon</span><span class='kw'>=</span><span class='no'>upsilon</span>,
+                <span class='kw'>iter</span><span class='kw'>=</span><span class='fl'>2000L</span>, <span class='kw'>upsilon</span><span class='kw'>=</span><span class='no'>upsilon</span>,
                 <span class='kw'>Xi</span><span class='kw'>=</span><span class='no'>Xi</span>, <span class='kw'>Gamma</span><span class='kw'>=</span><span class='no'>Gamma</span>, <span class='kw'>Theta</span><span class='kw'>=</span><span class='no'>Theta</span>, <span class='kw'>X</span><span class='kw'>=</span><span class='no'>X</span>,
-                <span class='kw'>coord_system</span><span class='kw'>=</span><span class='st'>"alr"</span>, <span class='kw'>alr_base</span><span class='kw'>=</span><span class='no'>D</span>)</div><div class='output co'>#&gt; <span class='error'>Error in eval(quote(y)): is.integer(m$iter) is not TRUE</span></div><div class='input'><span class='no'>m</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='sample_prior.html'>sample_prior</a></span>(<span class='no'>pibblefit</span>)</div><div class='output co'>#&gt; <span class='error'>Error in UseMethod("sample_prior", m): no applicable method for 'sample_prior' applied to an object of class "function"</span></div><div class='input'><span class='fu'><a href='https://www.rdocumentation.org/packages/graphics/topics/plot'>plot</a></span>(<span class='no'>m</span>) <span class='co'># plot prior distribution (defaults to parameter Lambda) </span></div><div class='output co'>#&gt; <span class='error'>Error in plot(m): object 'm' not found</span></div></pre>
+                <span class='kw'>coord_system</span><span class='kw'>=</span><span class='st'>"alr"</span>, <span class='kw'>alr_base</span><span class='kw'>=</span><span class='no'>D</span>)
+<span class='no'>m</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='sample_prior.html'>sample_prior</a></span>(<span class='no'>m</span>)
+<span class='fu'><a href='https://www.rdocumentation.org/packages/graphics/topics/plot'>plot</a></span>(<span class='no'>m</span>) <span class='co'># plot prior distribution (defaults to parameter Lambda) </span></div><div class='img'><img src='sample_prior.pibblefit-1.png' alt='' width='700' height='433' /></div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>

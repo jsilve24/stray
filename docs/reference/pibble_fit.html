@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Interface to fit pibble models — refit.pibblefit • stray</title>
+<title>Interface to fit pibble models — pibble_fit • stray</title>
 
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
@@ -30,7 +30,7 @@
 
 
 
-<meta property="og:title" content="Interface to fit pibble models — refit.pibblefit" />
+<meta property="og:title" content="Interface to fit pibble models — pibble_fit" />
 
 <meta property="og:description" content="This function is largely a more user friendly wrapper around
 optimPibbleCollapsed and
@@ -71,7 +71,7 @@ optimPibbleCollapsed)" />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">stray</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.12</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.13</span>
       </span>
     </div>
 
@@ -168,10 +168,7 @@ the parameter <code>n_samples</code> in the function
     
     </div>
 
-    <pre class="usage"><span class='co'># S3 method for pibblefit</span>
-<span class='fu'><a href='refit.html'>refit</a></span>(<span class='no'>m</span>, <span class='kw'>pars</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='st'>"Eta"</span>, <span class='st'>"Lambda"</span>, <span class='st'>"Sigma"</span>), <span class='no'>...</span>)
-
-<span class='fu'>pibble</span>(<span class='kw'>Y</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>X</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>upsilon</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>Theta</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+    <pre class="usage"><span class='fu'>pibble</span>(<span class='kw'>Y</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>X</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>upsilon</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>Theta</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
   <span class='kw'>Gamma</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>Xi</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>init</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>pars</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='st'>"Eta"</span>, <span class='st'>"Lambda"</span>,
   <span class='st'>"Sigma"</span>), <span class='no'>...</span>)
 
@@ -181,19 +178,6 @@ the parameter <code>n_samples</code> in the function
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
-    <tr>
-      <th>m</th>
-      <td><p>object of class pibblefit</p></td>
-    </tr>
-    <tr>
-      <th>pars</th>
-      <td><p>character vector of posterior parameters to return</p></td>
-    </tr>
-    <tr>
-      <th>...</th>
-      <td><p>arguments passed to <code><a href='optimPibbleCollapsed.html'>optimPibbleCollapsed</a></code> and
-<code><a href='uncollapsePibble.html'>uncollapsePibble</a></code></p></td>
-    </tr>
     <tr>
       <th>Y</th>
       <td><p>D x N matrix of counts (if NULL uses priors only)</p></td>
@@ -227,6 +211,19 @@ essentially iid on "base scale" using Aitchison terminology)</p></td>
     <tr>
       <th>init</th>
       <td><p>(D-1) x Q initialization for Eta for optimization</p></td>
+    </tr>
+    <tr>
+      <th>pars</th>
+      <td><p>character vector of posterior parameters to return</p></td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td><p>arguments passed to <code><a href='optimPibbleCollapsed.html'>optimPibbleCollapsed</a></code> and
+<code><a href='uncollapsePibble.html'>uncollapsePibble</a></code></p></td>
+    </tr>
+    <tr>
+      <th>m</th>
+      <td><p>object of class pibblefit</p></td>
     </tr>
     </table>
     
@@ -265,7 +262,6 @@ dimensions of pibblefit object</p>
 <code><a href='coef.pibblefit.html'>coef</a></code>,
 <code><a href='as.list.pibblefit.html'>as.list</a></code>,
 <code><a href='predict.pibblefit.html'>predict</a></code>,
-<code>model.matrix</code>,
 <code><a href='name.pibblefit.html'>name</a></code>, and
 <code><a href='sample_prior.pibblefit.html'>sample_prior</a></code>
 <code><a href='name_dims.html'>name_dims</a></code></p>

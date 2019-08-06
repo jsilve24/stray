@@ -63,7 +63,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">stray</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.12</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.13</span>
       </span>
     </div>
 
@@ -153,7 +153,10 @@
     </div>
 
     <pre class="usage"><span class='fu'>basset</span>(<span class='kw'>Y</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='no'>X</span>, <span class='kw'>upsilon</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>Theta</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>Gamma</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>Xi</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>init</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>pars</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='st'>"Eta"</span>, <span class='st'>"Lambda"</span>, <span class='st'>"Sigma"</span>), <span class='no'>...</span>)</pre>
+  <span class='kw'>Xi</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>init</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>pars</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='st'>"Eta"</span>, <span class='st'>"Lambda"</span>, <span class='st'>"Sigma"</span>), <span class='no'>...</span>)
+
+<span class='co'># S3 method for bassetfit</span>
+<span class='fu'><a href='refit.html'>refit</a></span>(<span class='no'>m</span>, <span class='kw'>pars</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='st'>"Eta"</span>, <span class='st'>"Lambda"</span>, <span class='st'>"Sigma"</span>), <span class='no'>...</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -195,7 +198,8 @@ essentially iid on "base scale" using Aitchison terminology)</p></td>
     </tr>
     <tr>
       <th>...</th>
-      <td></td>
+      <td><p>other arguments passed to <a href='pibble_fit.html'>pibble</a> (which is used internally to
+fit the basset model)</p></td>
     </tr>
     <tr>
       <th>m</th>

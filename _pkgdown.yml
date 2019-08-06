@@ -19,10 +19,14 @@ navbar:
       href: news/index.html
     - text: "Other Packages"
       menu:
+        - text: "RcppCoDA"
+          href: https://github.com/jsilve24/RcppCoDA
         - text: "driver"
           href: https://jsilve24.github.io/driver/
         - text: "philr"
           href: https://bioconductor.org/packages/release/bioc/html/philr.html
+        - text: "RcppHungarian"
+          href: https://cran.r-project.org/package=RcppHungarian
   right: 
     - icon: fa-twitter
       href: https://twitter.com/inschool4life
@@ -45,6 +49,8 @@ reference:
       - conjugateLinearModel
       - uncollapsePibble
       - loglikPibbleCollapsed
+      - loglikMaltipooCollapsed
+      - kernels
   - title: "Object Methods"
     desc: "Methods for working with model objects"
     contents: 
@@ -63,6 +69,8 @@ reference:
       - stray_transforms
       - req
       - verify
+      - summary.pibblefit
+      - summary.orthusfit
   - title: "Helpful Utility Methods"
     desc: "Just that, mostly support other package functions"
     contents:
@@ -79,3 +87,8 @@ reference:
     contents:
       - lmvgamma
       - lmvgamma_deriv
+  - title: "Datasets"
+    desc: "Example Datasets"
+    contents: 
+      - mallard
+      - mallard_family

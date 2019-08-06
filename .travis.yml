@@ -11,3 +11,8 @@ branches:
   only:
     - master
     - develop
+    
+use_bioc: true
+bioc_required: true
+bio_packages:
+  - phyloseq

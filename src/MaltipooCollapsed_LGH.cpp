@@ -9,7 +9,7 @@ using Eigen::ArrayXXd;
 using Eigen::VectorXd;
 
 
-//' @rdname loglikMaltipooCollapsed
+//' Calculate log posterior (up to proportionality constant) of Maltipoo model
 //' @export
 // [[Rcpp::export]]
 double loglikMaltipooCollapsed(const Eigen::ArrayXXd Y,
@@ -27,7 +27,7 @@ double loglikMaltipooCollapsed(const Eigen::ArrayXXd Y,
   return cm.calcLogLik(etavec);
 }
 
-//' @rdname gradMaltipooCollapsed
+//' Calculate gradient of maltipoo model
 //' @export
 // [[Rcpp::export]]
 Eigen::VectorXd gradMaltipooCollapsed(const Eigen::ArrayXXd Y,
@@ -46,7 +46,7 @@ Eigen::VectorXd gradMaltipooCollapsed(const Eigen::ArrayXXd Y,
   return cm.calcGrad(ell);
 }
 
-//' @rdname hessMaltipooCollapsed
+//' Calculate hessian of maltipoo model 
 //' @export
 // [[Rcpp::export]]
 Eigen::MatrixXd hessMaltipooCollapsed(const Eigen::ArrayXXd Y,

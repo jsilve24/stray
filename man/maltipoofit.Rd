@@ -8,7 +8,7 @@ maltipoofit(D, N, Q, P, coord_system, iter = NULL, alr_base = NULL,
   ilr_base = NULL, Eta = NULL, Lambda = NULL, Sigma = NULL,
   Sigma_default = NULL, Y = NULL, X = NULL, upsilon = NULL,
   Theta = NULL, Xi = NULL, Xi_default = NULL, Gamma = NULL,
-  init = NULL, deltainit = NULL, names_categories = NULL,
+  init = NULL, ellinit = NULL, names_categories = NULL,
   names_samples = NULL, names_covariates = NULL, VCScale = NULL,
   U = NULL)
 }
@@ -55,6 +55,8 @@ base D (used if coord_system=="proportions")}
 \item{Gamma}{QxQ covariance matrix prior for Lambda}
 
 \item{init}{matrix initial guess for Lambda used for optimization}
+
+\item{ellinit}{P vector initialization values for ell for optimization}
 
 \item{names_categories}{character vector}
 

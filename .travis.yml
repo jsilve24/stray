@@ -7,10 +7,6 @@ os:
   - osx
   - linux
 
-branches:
-  only:
-    - master
-    - develop
 
 # Packages to install from specific sources other than CRAN   
 use_bioc: true

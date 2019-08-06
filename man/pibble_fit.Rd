@@ -91,7 +91,6 @@ Generic functions including \code{\link[=summary.pibblefit]{summary}},
 \code{\link[=coef.pibblefit]{coef}},
 \code{\link[=as.list.pibblefit]{as.list}},
 \code{\link[=predict.pibblefit]{predict}},
-\code{\link[=model.matrix.pibblefit]{model.matrix}},
 \code{\link[=name.pibblefit]{name}}, and
 \code{\link[=sample_prior.pibblefit]{sample_prior}}
 \code{\link{name_dims}}

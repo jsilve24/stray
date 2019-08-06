@@ -6,6 +6,11 @@
 \usage{
 lmvgamma_deriv(a, p)
 }
+\arguments{
+\item{a}{defined by Gamma_p(a)}
+
+\item{p}{defined by Gamma_p(a)}
+}
 \description{
 Derivative of Log of Multivariate Gamma Function - Gamma_p(a)
 }

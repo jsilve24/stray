@@ -3,6 +3,7 @@
 #' @inheritParams pibblefit
 #' @inheritParams maltipoo_fit
 #' @param VCScale scale factors (delta) for variance components 
+#' @param P number of variance components
 #' @return object of class maltipoofit
 #' @export
 #' @seealso \code{\link{maltipoo}}

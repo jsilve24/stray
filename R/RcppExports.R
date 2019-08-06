@@ -35,19 +35,22 @@ conjugateLinearModel <- function(Y, X, Theta, Gamma, Xi, upsilon, n_samples = 20
     .Call('_stray_conjugateLinearModel', PACKAGE = 'stray', Y, X, Theta, Gamma, Xi, upsilon, n_samples)
 }
 
-#' @rdname loglikMaltipooCollapsed
+#' Calculate log posterior (up to proportionality constant) of Maltipoo model
+#' @inheritParams optimMaltipooCollapsed
 #' @export
 loglikMaltipooCollapsed <- function(Y, upsilon, Theta, X, K, U, eta, ell, sylv = FALSE) {
     .Call('_stray_loglikMaltipooCollapsed', PACKAGE = 'stray', Y, upsilon, Theta, X, K, U, eta, ell, sylv)
 }
 
-#' @rdname gradMaltipooCollapsed
+#' Calculate gradient of maltipoo model
+#' @inheritParams optimMaltipooCollapsed
 #' @export
 gradMaltipooCollapsed <- function(Y, upsilon, Theta, X, K, U, eta, ell, sylv = FALSE) {
     .Call('_stray_gradMaltipooCollapsed', PACKAGE = 'stray', Y, upsilon, Theta, X, K, U, eta, ell, sylv)
 }
 
-#' @rdname hessMaltipooCollapsed
+#' Calculate hessian of maltipoo model 
+#' @inheritParams optimMaltipooCollapsed
 #' @export
 hessMaltipooCollapsed <- function(Y, upsilon, Theta, X, K, U, eta, ell, sylv = FALSE) {
     .Call('_stray_hessMaltipooCollapsed', PACKAGE = 'stray', Y, upsilon, Theta, X, K, U, eta, ell, sylv)
@@ -86,8 +89,6 @@ hessMaltipooCollapsed <- function(Y, upsilon, Theta, X, K, U, eta, ell, sylv = F
 #'   'eigen' (more stable-slightly, slower) or 'cholesky' (less stable, faster, default)
 #' @param eigvalthresh threshold for negative eigenvalues in 
 #'   decomposition of negative inverse hessian (should be <=0)
-#' @param no_error if true will throw hessian warning rather than error if 
-#'   not positive definite. 
 #' @param jitter (default: 0) if >0 then adds that factor to diagonal of Hessian 
 #' before decomposition (to improve matrix conditioning)
 #'   
@@ -247,8 +248,6 @@ hessVectorProd <- function(Y, upsilon, ThetaX, K, A, eta, v, r, sylv = FALSE) {
 #' @param optim_method (default:"adam") or "lbfgs"
 #' @param eigvalthresh threshold for negative eigenvalues in 
 #'   decomposition of negative inverse hessian (should be <=0)
-#' @param no_error if true will throw hessian warning rather than error if 
-#'   not positive definite. 
 #' @param jitter (default: 0) if >=0 then adds that factor to diagonal of Hessian 
 #' before decomposition (to improve matrix conditioning)
 #' @param multDirichletBoot if >0 (overrides laplace approximation) and samples
@@ -407,12 +406,16 @@ rMatUnitNormal_test2 <- function(n) {
 }
 
 #' Log of Multivarate Gamma Function - Gamma_p(a)
+#' @param a defined by Gamma_p(a)
+#' @param p defined by Gamma_p(a)
 #' @references https://en.wikipedia.org/wiki/Multivariate_gamma_function
 lmvgamma <- function(a, p) {
     .Call('_stray_lmvgamma', PACKAGE = 'stray', a, p)
 }
 
 #' Derivative of Log of Multivariate Gamma Function - Gamma_p(a)
+#' @param a defined by Gamma_p(a)
+#' @param p defined by Gamma_p(a)
 #' @references https://en.wikipedia.org/wiki/Multivariate_gamma_function
 lmvgamma_deriv <- function(a, p) {
     .Call('_stray_lmvgamma_deriv', PACKAGE = 'stray', a, p)

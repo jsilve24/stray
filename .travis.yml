@@ -25,7 +25,7 @@ apt_packages:
 script:
   - |
     R CMD build --no-build-vignettes .
-    travis_wait 20 R CMD check --no--vignettes stray.tar.gz
+    travis_wait 20 R CMD check --no-vignettes *.tar.gz
     
 after_failure:
   find *Rcheck -name '*.fail' -print -exec cat '{}' \;

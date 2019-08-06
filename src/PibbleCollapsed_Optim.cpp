@@ -45,8 +45,6 @@ using Eigen::VectorXd;
 //' @param optim_method (default:"adam") or "lbfgs"
 //' @param eigvalthresh threshold for negative eigenvalues in 
 //'   decomposition of negative inverse hessian (should be <=0)
-//' @param no_error if true will throw hessian warning rather than error if 
-//'   not positive definite. 
 //' @param jitter (default: 0) if >=0 then adds that factor to diagonal of Hessian 
 //' before decomposition (to improve matrix conditioning)
 //' @param multDirichletBoot if >0 (overrides laplace approximation) and samples

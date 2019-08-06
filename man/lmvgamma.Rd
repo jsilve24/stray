@@ -6,6 +6,11 @@
 \usage{
 lmvgamma(a, p)
 }
+\arguments{
+\item{a}{defined by Gamma_p(a)}
+
+\item{p}{defined by Gamma_p(a)}
+}
 \description{
 Log of Multivarate Gamma Function - Gamma_p(a)
 }

@@ -19,6 +19,8 @@ maltipoofit(D, N, Q, P, coord_system, iter = NULL, alr_base = NULL,
 
 \item{Q}{number of covariates}
 
+\item{P}{number of variance components}
+
 \item{coord_system}{coordinate system objects are represented in (options 
 include "alr", "clr", "ilr", and "proportions")}
 

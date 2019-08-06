@@ -27,7 +27,8 @@ Suggests:
     phyloseq,
     ape,
     numDeriv,
-    MCMCpack
+    MCMCpack, 
+    MicrobeDS
 Remotes:
     jsilve24/driver,
     twbattaglia/MicrobeDS

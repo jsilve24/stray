@@ -17,7 +17,7 @@ Description: Provides methods for fitting and inspection of Bayesian Multinomial
 License: GPL-3
 URL: https://jsilve24.github.io/stray/
 Imports: Rcpp (>= 0.12.17), RcppEigen (>= 0.3.3.4.0), driver, dplyr, ggplot2, 
-  purrr, tidybayes
+  purrr, tidybayes, rlang
 LinkingTo: Rcpp, RcppEigen, RcppNumerical, RcppZiggurat, BH
 RoxygenNote: 6.1.1
 Suggests: 

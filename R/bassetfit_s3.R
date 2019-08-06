@@ -44,7 +44,7 @@ verify.bassetfit <- function(m, ...){
 #' @param response Options = "Lambda":Mean of regression, "Eta", "Y": counts
 #' @param size the number of counts per sample if response="Y" (as vector or matrix), 
 #'   default if newdata=NULL and response="Y" is to use colsums of m$Y. Otherwise
-#'   uses median colsums of m$Y as default. If passed as a matrix should have dimensions
+#'   uses median colsums of object$Y as default. If passed as a matrix should have dimensions
 #'   ncol(newdata) x iter.
 #' @param use_names if TRUE apply names to output 
 #' @param summary if TRUE, posterior summary of predictions are returned rather
@@ -137,9 +137,9 @@ predict.bassetfit <- function(object, newdata, response="Lambda", size=NULL,
     }
   }
   if ((response == "Lambda") && summary) {
-    Lambda_u <- gather_array(Lambda_u, val, coord, sample, iter) %>% 
-      group_by(coord, sample) %>% 
-      summarise_posterior(val, ...) %>% 
+    Lambda_u <- gather_array(Lambda_u, .data$val, .data$coord, .data$sample, .data$iter) %>% 
+      group_by(.data$coord, .data$sample) %>% 
+      summarise_posterior(.data$val, ...) %>% 
       ungroup() %>% 
       name_tidy(object, list("coord" = "cat", "sample"=colnames(newdata)))
     return(Lambda_u)
@@ -156,14 +156,14 @@ predict.bassetfit <- function(object, newdata, response="Lambda", size=NULL,
                                                      NULL))
   if (response=="Eta"){
     if (transformed){
-      Eta <- alrInv_array(Eta, m$D, 1)
+      Eta <- alrInv_array(Eta, object$D, 1)
       if (l$coord_system == "clr") Eta <- clr_array(Eta, 1)
     }
   }
   if ((response=="Eta") && summary) {
-    Eta <- gather_array(Eta, val, coord, sample, iter) %>% 
-      group_by(coord, sample) %>% 
-      summarise_posterior(val, ...) %>% 
+    Eta <- gather_array(Eta, .data$val, .data$coord, .data$sample, .data$iter) %>% 
+      group_by(.data$coord, .data$sample) %>% 
+      summarise_posterior(.data$val, ...) %>% 
       ungroup() %>% 
       name_tidy(object, list("coord" = "cat", "sample"=colnames(newdata)))
   }
@@ -189,9 +189,9 @@ predict.bassetfit <- function(object, newdata, response="Lambda", size=NULL,
                             list(object$names_categories, colnames(newdata), 
                                  NULL))
   if ((response == "Y") && summary) {
-    Ypred <- gather_array(Ypred, val, coord, sample, iter) %>% 
-      group_by(coord, sample) %>% 
-      summarise_posterior(val, ...) %>% 
+    Ypred <- gather_array(Ypred, .data$val, .data$coord, .data$sample, .data$iter) %>% 
+      group_by(.data$coord, .data$sample) %>% 
+      summarise_posterior(.data$val, ...) %>% 
       ungroup() %>% 
       name_tidy(object, list("coord" = object$names_categories, 
                              "sample"= colnames(newdata)))

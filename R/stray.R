@@ -11,3 +11,5 @@
 #' @useDynLib stray
 #' @importFrom Rcpp sourceCpp
 NULL
+
+globalVariables(".")

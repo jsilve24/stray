@@ -84,6 +84,7 @@ new_pibblefit <- function(D, N, Q, coord_system, iter=NULL,
 #' @param D number of multinomial categories 
 #' @param N number of samples
 #' @param Q number of covariates
+#' @param P Dimension of second dataset (e.g., nrows(Z) )
 #' @param iter number of posterior samples
 #' @param coord_system coordinate system objects are represented in (options 
 #'   include "alr", "clr", "ilr", and "proportions")
@@ -97,6 +98,7 @@ new_pibblefit <- function(D, N, Q, coord_system, iter=NULL,
 #'   coord_system=="proportions"
 #' @param Y DxN matrix of observed counts
 #' @param X QxN design matrix
+#' @param Z PxN matrix of real valued observations
 #' @param upsilon scalar prior dof of inverse wishart prior
 #' @param Theta prior mean of Lambda
 #' @param Xi Matrix of prior covariance for inverse wishart 
@@ -108,6 +110,7 @@ new_pibblefit <- function(D, N, Q, coord_system, iter=NULL,
 #' @param names_categories character vector
 #' @param names_samples character vector
 #' @param names_covariates character vector
+#' @param names_Zdimensions character vector
 #'
 #' @return object of class pibblefit
 #'
@@ -116,6 +119,7 @@ new_pibblefit <- function(D, N, Q, coord_system, iter=NULL,
 orthusfit <- function(D, N, Q, P, coord_system, iter=NULL,  
                       alr_base=NULL, ilr_base=NULL,
                       Eta=NULL, Lambda=NULL, Sigma=NULL, Sigma_default=NULL, 
+                      Z=NULL, 
                       Y=NULL, X=NULL, upsilon=NULL, 
                       Theta=NULL, Xi=NULL,Xi_default=NULL, Gamma=NULL, 
                       init=NULL, names_categories=NULL, names_samples=NULL, 
@@ -123,6 +127,7 @@ orthusfit <- function(D, N, Q, P, coord_system, iter=NULL,
                       names_covariates=NULL){
   m <- new_orthusfit(D, N, Q, P, coord_system, iter, alr_base, ilr_base,
                      Eta, Lambda, Sigma, Sigma_default, 
+                     Z,
                      Y, X, upsilon, Theta, Xi,Xi_default, Gamma, 
                      init, names_categories, names_samples, 
                      names_Zdimensions,
@@ -135,6 +140,7 @@ orthusfit <- function(D, N, Q, P, coord_system, iter=NULL,
 new_orthusfit <- function(D, N, Q, P, coord_system, iter=NULL, 
                           alr_base=NULL, ilr_base=NULL,
                           Eta=NULL, Lambda=NULL,Sigma=NULL, Sigma_default=NULL, 
+                          Z = NULL, 
                           Y=NULL, X=NULL, upsilon=NULL, 
                           Theta=NULL, Xi=NULL,Xi_default=NULL, Gamma=NULL, 
                           init=NULL, names_categories=NULL, names_samples=NULL,
@@ -150,7 +156,7 @@ new_orthusfit <- function(D, N, Q, P, coord_system, iter=NULL,
       # Results
       Eta=Eta, Lambda=Lambda, Sigma=Sigma, Sigma_default=Sigma_default, 
       # Data
-      Y=Y, X=X, 
+      Y=Y, X=X, Z=Z,
       # Priors
       upsilon=upsilon, Theta=Theta, Xi=Xi, Xi_default=Xi_default, Gamma=Gamma, 
       # Other

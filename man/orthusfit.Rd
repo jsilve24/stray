@@ -6,10 +6,11 @@
 \usage{
 orthusfit(D, N, Q, P, coord_system, iter = NULL, alr_base = NULL,
   ilr_base = NULL, Eta = NULL, Lambda = NULL, Sigma = NULL,
-  Sigma_default = NULL, Y = NULL, X = NULL, upsilon = NULL,
-  Theta = NULL, Xi = NULL, Xi_default = NULL, Gamma = NULL,
-  init = NULL, names_categories = NULL, names_samples = NULL,
-  names_Zdimensions = NULL, names_covariates = NULL)
+  Sigma_default = NULL, Z = NULL, Y = NULL, X = NULL,
+  upsilon = NULL, Theta = NULL, Xi = NULL, Xi_default = NULL,
+  Gamma = NULL, init = NULL, names_categories = NULL,
+  names_samples = NULL, names_Zdimensions = NULL,
+  names_covariates = NULL)
 }
 \arguments{
 \item{D}{number of multinomial categories}
@@ -17,6 +18,8 @@ orthusfit(D, N, Q, P, coord_system, iter = NULL, alr_base = NULL,
 \item{N}{number of samples}
 
 \item{Q}{number of covariates}
+
+\item{P}{Dimension of second dataset (e.g., nrows(Z) )}
 
 \item{coord_system}{coordinate system objects are represented in (options 
 include "alr", "clr", "ilr", and "proportions")}
@@ -36,6 +39,8 @@ include "alr", "clr", "ilr", and "proportions")}
 
 \item{Sigma_default}{Array of samples of Sigma in alr base D, used if 
 coord_system=="proportions"}
+
+\item{Z}{PxN matrix of real valued observations}
 
 \item{Y}{DxN matrix of observed counts}
 
@@ -58,6 +63,8 @@ base D (used if coord_system=="proportions")}
 \item{names_categories}{character vector}
 
 \item{names_samples}{character vector}
+
+\item{names_Zdimensions}{character vector}
 
 \item{names_covariates}{character vector}
 }

@@ -25,8 +25,8 @@ BEGIN_RCPP
 END_RCPP
 }
 // loglikMaltipooCollapsed
-double loglikMaltipooCollapsed(const Eigen::ArrayXXd Y, const double upsilon, const Eigen::MatrixXd Theta, const Eigen::MatrixXd X, const Eigen::MatrixXd K, const Eigen::MatrixXd U, Eigen::MatrixXd eta, Eigen::VectorXd ell, bool sylv);
-RcppExport SEXP _stray_loglikMaltipooCollapsed(SEXP YSEXP, SEXP upsilonSEXP, SEXP ThetaSEXP, SEXP XSEXP, SEXP KSEXP, SEXP USEXP, SEXP etaSEXP, SEXP ellSEXP, SEXP sylvSEXP) {
+double loglikMaltipooCollapsed(const Eigen::ArrayXXd Y, const double upsilon, const Eigen::MatrixXd Theta, const Eigen::MatrixXd X, const Eigen::MatrixXd KInv, const Eigen::MatrixXd U, Eigen::MatrixXd eta, Eigen::VectorXd ell, bool sylv);
+RcppExport SEXP _stray_loglikMaltipooCollapsed(SEXP YSEXP, SEXP upsilonSEXP, SEXP ThetaSEXP, SEXP XSEXP, SEXP KInvSEXP, SEXP USEXP, SEXP etaSEXP, SEXP ellSEXP, SEXP sylvSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -34,18 +34,18 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< const double >::type upsilon(upsilonSEXP);
     Rcpp::traits::input_parameter< const Eigen::MatrixXd >::type Theta(ThetaSEXP);
     Rcpp::traits::input_parameter< const Eigen::MatrixXd >::type X(XSEXP);
-    Rcpp::traits::input_parameter< const Eigen::MatrixXd >::type K(KSEXP);
+    Rcpp::traits::input_parameter< const Eigen::MatrixXd >::type KInv(KInvSEXP);
     Rcpp::traits::input_parameter< const Eigen::MatrixXd >::type U(USEXP);
     Rcpp::traits::input_parameter< Eigen::MatrixXd >::type eta(etaSEXP);
     Rcpp::traits::input_parameter< Eigen::VectorXd >::type ell(ellSEXP);
     Rcpp::traits::input_parameter< bool >::type sylv(sylvSEXP);
-    rcpp_result_gen = Rcpp::wrap(loglikMaltipooCollapsed(Y, upsilon, Theta, X, K, U, eta, ell, sylv));
+    rcpp_result_gen = Rcpp::wrap(loglikMaltipooCollapsed(Y, upsilon, Theta, X, KInv, U, eta, ell, sylv));
     return rcpp_result_gen;
 END_RCPP
 }
 // gradMaltipooCollapsed
-Eigen::VectorXd gradMaltipooCollapsed(const Eigen::ArrayXXd Y, const double upsilon, const Eigen::MatrixXd Theta, const Eigen::MatrixXd X, const Eigen::MatrixXd K, const Eigen::MatrixXd U, Eigen::MatrixXd eta, Eigen::VectorXd ell, bool sylv);
-RcppExport SEXP _stray_gradMaltipooCollapsed(SEXP YSEXP, SEXP upsilonSEXP, SEXP ThetaSEXP, SEXP XSEXP, SEXP KSEXP, SEXP USEXP, SEXP etaSEXP, SEXP ellSEXP, SEXP sylvSEXP) {
+Eigen::VectorXd gradMaltipooCollapsed(const Eigen::ArrayXXd Y, const double upsilon, const Eigen::MatrixXd Theta, const Eigen::MatrixXd X, const Eigen::MatrixXd KInv, const Eigen::MatrixXd U, Eigen::MatrixXd eta, Eigen::VectorXd ell, bool sylv);
+RcppExport SEXP _stray_gradMaltipooCollapsed(SEXP YSEXP, SEXP upsilonSEXP, SEXP ThetaSEXP, SEXP XSEXP, SEXP KInvSEXP, SEXP USEXP, SEXP etaSEXP, SEXP ellSEXP, SEXP sylvSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -53,18 +53,18 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< const double >::type upsilon(upsilonSEXP);
     Rcpp::traits::input_parameter< const Eigen::MatrixXd >::type Theta(ThetaSEXP);
     Rcpp::traits::input_parameter< const Eigen::MatrixXd >::type X(XSEXP);
-    Rcpp::traits::input_parameter< const Eigen::MatrixXd >::type K(KSEXP);
+    Rcpp::traits::input_parameter< const Eigen::MatrixXd >::type KInv(KInvSEXP);
     Rcpp::traits::input_parameter< const Eigen::MatrixXd >::type U(USEXP);
     Rcpp::traits::input_parameter< Eigen::MatrixXd >::type eta(etaSEXP);
     Rcpp::traits::input_parameter< Eigen::VectorXd >::type ell(ellSEXP);
     Rcpp::traits::input_parameter< bool >::type sylv(sylvSEXP);
-    rcpp_result_gen = Rcpp::wrap(gradMaltipooCollapsed(Y, upsilon, Theta, X, K, U, eta, ell, sylv));
+    rcpp_result_gen = Rcpp::wrap(gradMaltipooCollapsed(Y, upsilon, Theta, X, KInv, U, eta, ell, sylv));
     return rcpp_result_gen;
 END_RCPP
 }
 // hessMaltipooCollapsed
-Eigen::MatrixXd hessMaltipooCollapsed(const Eigen::ArrayXXd Y, const double upsilon, const Eigen::MatrixXd Theta, const Eigen::MatrixXd X, const Eigen::MatrixXd K, const Eigen::MatrixXd U, Eigen::MatrixXd eta, Eigen::VectorXd ell, bool sylv);
-RcppExport SEXP _stray_hessMaltipooCollapsed(SEXP YSEXP, SEXP upsilonSEXP, SEXP ThetaSEXP, SEXP XSEXP, SEXP KSEXP, SEXP USEXP, SEXP etaSEXP, SEXP ellSEXP, SEXP sylvSEXP) {
+Eigen::MatrixXd hessMaltipooCollapsed(const Eigen::ArrayXXd Y, const double upsilon, const Eigen::MatrixXd Theta, const Eigen::MatrixXd X, const Eigen::MatrixXd KInv, const Eigen::MatrixXd U, Eigen::MatrixXd eta, Eigen::VectorXd ell, bool sylv);
+RcppExport SEXP _stray_hessMaltipooCollapsed(SEXP YSEXP, SEXP upsilonSEXP, SEXP ThetaSEXP, SEXP XSEXP, SEXP KInvSEXP, SEXP USEXP, SEXP etaSEXP, SEXP ellSEXP, SEXP sylvSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -72,12 +72,12 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< const double >::type upsilon(upsilonSEXP);
     Rcpp::traits::input_parameter< const Eigen::MatrixXd >::type Theta(ThetaSEXP);
     Rcpp::traits::input_parameter< const Eigen::MatrixXd >::type X(XSEXP);
-    Rcpp::traits::input_parameter< const Eigen::MatrixXd >::type K(KSEXP);
+    Rcpp::traits::input_parameter< const Eigen::MatrixXd >::type KInv(KInvSEXP);
     Rcpp::traits::input_parameter< const Eigen::MatrixXd >::type U(USEXP);
     Rcpp::traits::input_parameter< Eigen::MatrixXd >::type eta(etaSEXP);
     Rcpp::traits::input_parameter< Eigen::VectorXd >::type ell(ellSEXP);
     Rcpp::traits::input_parameter< bool >::type sylv(sylvSEXP);
-    rcpp_result_gen = Rcpp::wrap(hessMaltipooCollapsed(Y, upsilon, Theta, X, K, U, eta, ell, sylv));
+    rcpp_result_gen = Rcpp::wrap(hessMaltipooCollapsed(Y, upsilon, Theta, X, KInv, U, eta, ell, sylv));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -114,72 +114,53 @@ BEGIN_RCPP
 END_RCPP
 }
 // loglikPibbleCollapsed
-double loglikPibbleCollapsed(const Eigen::ArrayXXd Y, const double upsilon, const Eigen::MatrixXd ThetaX, const Eigen::MatrixXd K, const Eigen::MatrixXd A, Eigen::MatrixXd eta, bool sylv);
-RcppExport SEXP _stray_loglikPibbleCollapsed(SEXP YSEXP, SEXP upsilonSEXP, SEXP ThetaXSEXP, SEXP KSEXP, SEXP ASEXP, SEXP etaSEXP, SEXP sylvSEXP) {
+double loglikPibbleCollapsed(const Eigen::ArrayXXd Y, const double upsilon, const Eigen::MatrixXd ThetaX, const Eigen::MatrixXd KInv, const Eigen::MatrixXd AInv, Eigen::MatrixXd eta, bool sylv);
+RcppExport SEXP _stray_loglikPibbleCollapsed(SEXP YSEXP, SEXP upsilonSEXP, SEXP ThetaXSEXP, SEXP KInvSEXP, SEXP AInvSEXP, SEXP etaSEXP, SEXP sylvSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const Eigen::ArrayXXd >::type Y(YSEXP);
     Rcpp::traits::input_parameter< const double >::type upsilon(upsilonSEXP);
     Rcpp::traits::input_parameter< const Eigen::MatrixXd >::type ThetaX(ThetaXSEXP);
-    Rcpp::traits::input_parameter< const Eigen::MatrixXd >::type K(KSEXP);
-    Rcpp::traits::input_parameter< const Eigen::MatrixXd >::type A(ASEXP);
+    Rcpp::traits::input_parameter< const Eigen::MatrixXd >::type KInv(KInvSEXP);
+    Rcpp::traits::input_parameter< const Eigen::MatrixXd >::type AInv(AInvSEXP);
     Rcpp::traits::input_parameter< Eigen::MatrixXd >::type eta(etaSEXP);
     Rcpp::traits::input_parameter< bool >::type sylv(sylvSEXP);
-    rcpp_result_gen = Rcpp::wrap(loglikPibbleCollapsed(Y, upsilon, ThetaX, K, A, eta, sylv));
+    rcpp_result_gen = Rcpp::wrap(loglikPibbleCollapsed(Y, upsilon, ThetaX, KInv, AInv, eta, sylv));
     return rcpp_result_gen;
 END_RCPP
 }
 // gradPibbleCollapsed
-Eigen::VectorXd gradPibbleCollapsed(const Eigen::ArrayXXd Y, const double upsilon, const Eigen::MatrixXd ThetaX, const Eigen::MatrixXd K, const Eigen::MatrixXd A, Eigen::MatrixXd eta, bool sylv);
-RcppExport SEXP _stray_gradPibbleCollapsed(SEXP YSEXP, SEXP upsilonSEXP, SEXP ThetaXSEXP, SEXP KSEXP, SEXP ASEXP, SEXP etaSEXP, SEXP sylvSEXP) {
+Eigen::VectorXd gradPibbleCollapsed(const Eigen::ArrayXXd Y, const double upsilon, const Eigen::MatrixXd ThetaX, const Eigen::MatrixXd KInv, const Eigen::MatrixXd AInv, Eigen::MatrixXd eta, bool sylv);
+RcppExport SEXP _stray_gradPibbleCollapsed(SEXP YSEXP, SEXP upsilonSEXP, SEXP ThetaXSEXP, SEXP KInvSEXP, SEXP AInvSEXP, SEXP etaSEXP, SEXP sylvSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const Eigen::ArrayXXd >::type Y(YSEXP);
     Rcpp::traits::input_parameter< const double >::type upsilon(upsilonSEXP);
     Rcpp::traits::input_parameter< const Eigen::MatrixXd >::type ThetaX(ThetaXSEXP);
-    Rcpp::traits::input_parameter< const Eigen::MatrixXd >::type K(KSEXP);
-    Rcpp::traits::input_parameter< const Eigen::MatrixXd >::type A(ASEXP);
+    Rcpp::traits::input_parameter< const Eigen::MatrixXd >::type KInv(KInvSEXP);
+    Rcpp::traits::input_parameter< const Eigen::MatrixXd >::type AInv(AInvSEXP);
     Rcpp::traits::input_parameter< Eigen::MatrixXd >::type eta(etaSEXP);
     Rcpp::traits::input_parameter< bool >::type sylv(sylvSEXP);
-    rcpp_result_gen = Rcpp::wrap(gradPibbleCollapsed(Y, upsilon, ThetaX, K, A, eta, sylv));
+    rcpp_result_gen = Rcpp::wrap(gradPibbleCollapsed(Y, upsilon, ThetaX, KInv, AInv, eta, sylv));
     return rcpp_result_gen;
 END_RCPP
 }
 // hessPibbleCollapsed
-Eigen::MatrixXd hessPibbleCollapsed(const Eigen::ArrayXXd Y, const double upsilon, const Eigen::MatrixXd ThetaX, const Eigen::MatrixXd K, const Eigen::MatrixXd A, Eigen::MatrixXd eta, bool sylv);
-RcppExport SEXP _stray_hessPibbleCollapsed(SEXP YSEXP, SEXP upsilonSEXP, SEXP ThetaXSEXP, SEXP KSEXP, SEXP ASEXP, SEXP etaSEXP, SEXP sylvSEXP) {
+Eigen::MatrixXd hessPibbleCollapsed(const Eigen::ArrayXXd Y, const double upsilon, const Eigen::MatrixXd ThetaX, const Eigen::MatrixXd KInv, const Eigen::MatrixXd AInv, Eigen::MatrixXd eta, bool sylv);
+RcppExport SEXP _stray_hessPibbleCollapsed(SEXP YSEXP, SEXP upsilonSEXP, SEXP ThetaXSEXP, SEXP KInvSEXP, SEXP AInvSEXP, SEXP etaSEXP, SEXP sylvSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const Eigen::ArrayXXd >::type Y(YSEXP);
     Rcpp::traits::input_parameter< const double >::type upsilon(upsilonSEXP);
     Rcpp::traits::input_parameter< const Eigen::MatrixXd >::type ThetaX(ThetaXSEXP);
-    Rcpp::traits::input_parameter< const Eigen::MatrixXd >::type K(KSEXP);
-    Rcpp::traits::input_parameter< const Eigen::MatrixXd >::type A(ASEXP);
+    Rcpp::traits::input_parameter< const Eigen::MatrixXd >::type KInv(KInvSEXP);
+    Rcpp::traits::input_parameter< const Eigen::MatrixXd >::type AInv(AInvSEXP);
     Rcpp::traits::input_parameter< Eigen::MatrixXd >::type eta(etaSEXP);
     Rcpp::traits::input_parameter< bool >::type sylv(sylvSEXP);
-    rcpp_result_gen = Rcpp::wrap(hessPibbleCollapsed(Y, upsilon, ThetaX, K, A, eta, sylv));
-    return rcpp_result_gen;
-END_RCPP
-}
-// hessVectorProd
-Eigen::VectorXd hessVectorProd(const Eigen::ArrayXXd Y, const double upsilon, const Eigen::MatrixXd ThetaX, const Eigen::MatrixXd K, const Eigen::MatrixXd A, Eigen::MatrixXd eta, Eigen::VectorXd v, double r, bool sylv);
-RcppExport SEXP _stray_hessVectorProd(SEXP YSEXP, SEXP upsilonSEXP, SEXP ThetaXSEXP, SEXP KSEXP, SEXP ASEXP, SEXP etaSEXP, SEXP vSEXP, SEXP rSEXP, SEXP sylvSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const Eigen::ArrayXXd >::type Y(YSEXP);
-    Rcpp::traits::input_parameter< const double >::type upsilon(upsilonSEXP);
-    Rcpp::traits::input_parameter< const Eigen::MatrixXd >::type ThetaX(ThetaXSEXP);
-    Rcpp::traits::input_parameter< const Eigen::MatrixXd >::type K(KSEXP);
-    Rcpp::traits::input_parameter< const Eigen::MatrixXd >::type A(ASEXP);
-    Rcpp::traits::input_parameter< Eigen::MatrixXd >::type eta(etaSEXP);
-    Rcpp::traits::input_parameter< Eigen::VectorXd >::type v(vSEXP);
-    Rcpp::traits::input_parameter< double >::type r(rSEXP);
-    Rcpp::traits::input_parameter< bool >::type sylv(sylvSEXP);
-    rcpp_result_gen = Rcpp::wrap(hessVectorProd(Y, upsilon, ThetaX, K, A, eta, v, r, sylv));
+    rcpp_result_gen = Rcpp::wrap(hessPibbleCollapsed(Y, upsilon, ThetaX, KInv, AInv, eta, sylv));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -446,7 +427,6 @@ static const R_CallMethodDef CallEntries[] = {
     {"_stray_loglikPibbleCollapsed", (DL_FUNC) &_stray_loglikPibbleCollapsed, 7},
     {"_stray_gradPibbleCollapsed", (DL_FUNC) &_stray_gradPibbleCollapsed, 7},
     {"_stray_hessPibbleCollapsed", (DL_FUNC) &_stray_hessPibbleCollapsed, 7},
-    {"_stray_hessVectorProd", (DL_FUNC) &_stray_hessVectorProd, 9},
     {"_stray_optimPibbleCollapsed", (DL_FUNC) &_stray_optimPibbleCollapsed, 24},
     {"_stray_uncollapsePibble", (DL_FUNC) &_stray_uncollapsePibble, 9},
     {"_stray_rMatNormalCholesky_test", (DL_FUNC) &_stray_rMatNormalCholesky_test, 4},

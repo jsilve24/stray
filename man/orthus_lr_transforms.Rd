@@ -39,9 +39,7 @@ oclrInv(x, s)
 (default is ncol(x)) for alrInv corresponds to column position in untransformed
 matrix.}
 
-\item{inv}{for ALR and CLR, transformation matrix is different forward and inverse}
-
-\item{D}{the number of parts (e.g., number of columns in untransformed data)}
+\item{y}{orthus data array (e.g., first s rows are multinomial parameters or log-ratios)}
 }
 \description{
 Log-Ratio transforms for orthus objects

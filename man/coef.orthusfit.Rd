@@ -4,14 +4,12 @@
 \alias{coef.orthusfit}
 \title{Return regression coefficients of orthus object}
 \usage{
-\method{coef}{orthusfit}(object, use_names = TRUE)
+\method{coef}{orthusfit}(object, ...)
 }
 \arguments{
 \item{object}{an object of class orthusfit}
 
-\item{use_names}{if column and row names were passed for Y and X in 
-call to \code{\link{pibble}}, should these names be applied to output 
-array.}
+\item{...}{other options passed to coef.orthusfit (see details)}
 }
 \value{
 Array of dimension (D-1) x Q x iter
@@ -19,6 +17,14 @@ Array of dimension (D-1) x Q x iter
 \description{
 Returned as array of dimension (D-1+P) x Q x iter (if in ALR or ILR) 
 otherwise (D+P) x Q x iter.
+}
+\details{
+Other arguments:
+\itemize{
+\item use_names if column and row names were passed for Y and X in 
+call to \code{\link{pibble}}, should these names be applied to output 
+array. 
+}
 }
 \examples{
 \dontrun{

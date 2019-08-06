@@ -2,9 +2,17 @@
 % Please edit documentation in R/RcppExports.R
 \name{loglikMaltipooCollapsed}
 \alias{loglikMaltipooCollapsed}
-\title{Calculate log posterior (up to proportionality constant) of Maltipoo model}
+\alias{gradMaltipooCollapsed}
+\alias{hessMaltipooCollapsed}
+\title{Calculations for the Collapsed Maltipoo Model}
 \usage{
-loglikMaltipooCollapsed(Y, upsilon, Theta, X, K, U, eta, ell,
+loglikMaltipooCollapsed(Y, upsilon, Theta, X, KInv, U, eta, ell,
+  sylv = FALSE)
+
+gradMaltipooCollapsed(Y, upsilon, Theta, X, KInv, U, eta, ell,
+  sylv = FALSE)
+
+hessMaltipooCollapsed(Y, upsilon, Theta, X, KInv, U, eta, ell,
   sylv = FALSE)
 }
 \arguments{
@@ -16,8 +24,24 @@ loglikMaltipooCollapsed(Y, upsilon, Theta, X, K, U, eta, ell,
 
 \item{X}{Q x N matrix of covariates}
 
+\item{KInv}{D-1 x D-1 symmetric positive-definite matrix}
+
 \item{U}{a PQxQ matrix of stacked variance components}
+
+\item{eta}{matrix (D-1)xN of parameter values at which to calculate quantities}
+
+\item{ell}{P-vector of scale factors for each variance component (aka VCScale)}
+
+\item{sylv}{(default:false) if true and if N < D-1 will use sylvester determinant
+identity to speed computation}
 }
 \description{
-Calculate log posterior (up to proportionality constant) of Maltipoo model
+Functions providing access to the Log Likelihood, Gradient, and Hessian
+of the collapsed maltipoo model. Note: These are convenience functions
+but are not as optimized as direct coding of the MaltipooCollapsed
+C++ class due to a lack of Memoization. By contrast function optimMaltipooCollapsed
+is much more optimized and massively cuts down on repeated calculations.
+A more efficient Rcpp module based implementation of these functions
+may following if the future. For model details see \code{\link{optimMaltipooCollapsed}}
+documentation
 }

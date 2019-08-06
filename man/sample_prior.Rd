@@ -4,7 +4,7 @@
 \alias{sample_prior}
 \title{Generic method for sampling from prior distribution of object}
 \usage{
-sample_prior(m, n_samples = 2000, ...)
+sample_prior(m, n_samples = 2000L, ...)
 }
 \arguments{
 \item{m}{object}

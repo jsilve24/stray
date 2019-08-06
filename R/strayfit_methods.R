@@ -20,9 +20,18 @@
 #' head(fit_tidy)
 pibble_tidy_samples<- function(m, use_names=FALSE, as_factor=FALSE){
   l <- list()
-  if (!is.null(m$Eta)) l$Eta <- driver::gather_array(m$Eta, val, coord, sample, iter)
-  if (!is.null(m$Lambda)) l$Lambda <- driver::gather_array(m$Lambda, val, coord, covariate, iter)
-  if (!is.null(m$Sigma)) l$Sigma <- driver::gather_array(m$Sigma, val, coord, coord2, iter) 
+  if (!is.null(m$Eta)) l$Eta <- driver::gather_array(m$Eta, .data$val, 
+                                                     .data$coord, 
+                                                     .data$sample, 
+                                                     .data$iter)
+  if (!is.null(m$Lambda)) l$Lambda <- driver::gather_array(m$Lambda, .data$val, 
+                                                           .data$coord, 
+                                                           .data$covariate, 
+                                                           .data$iter)
+  if (!is.null(m$Sigma)) l$Sigma <- driver::gather_array(m$Sigma, .data$val, 
+                                                         .data$coord, 
+                                                         .data$coord2, 
+                                                         .data$iter) 
 
   l <- dplyr::bind_rows(l, .id="Parameter")
   
@@ -70,9 +79,15 @@ pibble_tidy_samples<- function(m, use_names=FALSE, as_factor=FALSE){
 #' head(fit_tidy)
 orthus_tidy_samples<- function(m, use_names=FALSE, as_factor=FALSE){
   l <- list()
-  if (!is.null(m$Eta)) l$Eta <- driver::gather_array(m$Eta, val, coord, sample, iter)
-  if (!is.null(m$Lambda)) l$Lambda <- driver::gather_array(m$Lambda, val, coord, covariate, iter)
-  if (!is.null(m$Sigma)) l$Sigma <- driver::gather_array(m$Sigma, val, coord, coord2, iter) 
+  if (!is.null(m$Eta)) l$Eta <- driver::gather_array(m$Eta, .data$val, 
+                                                     .data$coord, .data$sample, 
+                                                     .data$iter)
+  if (!is.null(m$Lambda)) l$Lambda <- driver::gather_array(m$Lambda, .data$val, 
+                                                           .data$coord, .data$covariate, 
+                                                           .data$iter)
+  if (!is.null(m$Sigma)) l$Sigma <- driver::gather_array(m$Sigma, .data$val, 
+                                                         .data$coord, .data$coord2, 
+                                                         .data$iter) 
   
   l <- dplyr::bind_rows(l, .id="Parameter")
   
@@ -151,7 +166,7 @@ summary.pibblefit <- function(object, pars=NULL, use_names=TRUE, as_factor=FALSE
   if (summary_check_precomputed(object, pars)) return(object$summary[pars])
   
   mtidy <- dplyr::filter(pibble_tidy_samples(object, use_names, as_factor), 
-                         Parameter %in% pars)
+                         .data$Parameter %in% pars)
   # Suppress warnings about stupid implict NAs, this is on purpose. 
   suppressWarnings({
     
@@ -164,7 +179,7 @@ summary.pibblefit <- function(object, pars=NULL, use_names=TRUE, as_factor=FALSE
     vars <- unique(vars)
     vars <- rlang::syms(vars)
     
-    mtidy <- dplyr::group_by(mtidy, Parameter, !!!vars)
+    mtidy <- dplyr::group_by(mtidy, .data$Parameter, !!!vars)
     # if ((object$coord_system != "proportions")) {
     #   mtidy <- dplyr::group_by(mtidy, Parameter, coord, coord2, sample, covariate) 
     # } else {
@@ -172,14 +187,14 @@ summary.pibblefit <- function(object, pars=NULL, use_names=TRUE, as_factor=FALSE
     # }
     if (!gather_prob){
       mtidy <- mtidy %>% 
-        driver::summarise_posterior(val, ...) %>%
+        driver::summarise_posterior(.data$val, ...) %>%
         dplyr::ungroup() %>%
         split(.$Parameter) %>% 
         purrr::map(~dplyr::select_if(.x, ~!all(is.na(.x))))  
     } else if (gather_prob){
       mtidy <- mtidy %>% 
-        dplyr::select(-iter) %>% 
-        tidybayes::mean_qi(val, .width=c(.5, .8, .95, .99)) %>% 
+        dplyr::select(-.data$iter) %>% 
+        tidybayes::mean_qi(.data$val, .width=c(.5, .8, .95, .99)) %>% 
         dplyr::ungroup() %>% 
         split(.$Parameter) %>% 
         purrr::map(~dplyr::select_if(.x, ~!all(is.na(.x))))  
@@ -234,7 +249,7 @@ summary.orthusfit <- function(object, pars=NULL, use_names=TRUE, as_factor=FALSE
   if (summary_check_precomputed(object, pars)) return(object$summary[pars])
   
   mtidy <- dplyr::filter(orthus_tidy_samples(object, use_names, as_factor), 
-                         Parameter %in% pars)
+                         .data$Parameter %in% pars)
   # Suppress warnings about stupid implict NAs, this is on purpose. 
   suppressWarnings({
     
@@ -247,7 +262,7 @@ summary.orthusfit <- function(object, pars=NULL, use_names=TRUE, as_factor=FALSE
     vars <- unique(vars)
     vars <- rlang::syms(vars)
     
-    mtidy <- dplyr::group_by(mtidy, Parameter, !!!vars)
+    mtidy <- dplyr::group_by(mtidy, .data$Parameter, !!!vars)
     # if ((object$coord_system != "proportions")) {
     #   mtidy <- dplyr::group_by(mtidy, Parameter, coord, coord2, sample, covariate) 
     # } else {
@@ -255,14 +270,14 @@ summary.orthusfit <- function(object, pars=NULL, use_names=TRUE, as_factor=FALSE
     # }
     if (!gather_prob){
       mtidy <- mtidy %>% 
-        driver::summarise_posterior(val, ...) %>%
+        driver::summarise_posterior(.data$val, ...) %>%
         dplyr::ungroup() %>%
         split(.$Parameter) %>% 
         purrr::map(~dplyr::select_if(.x, ~!all(is.na(.x))))  
     } else if (gather_prob){
       mtidy <- mtidy %>% 
-        dplyr::select(-iter) %>% 
-        tidybayes::mean_qi(val, .width=c(.5, .8, .95, .99)) %>% 
+        dplyr::select(-.data$iter) %>% 
+        tidybayes::mean_qi(.data$val, .width=c(.5, .8, .95, .99)) %>% 
         dplyr::ungroup() %>% 
         split(.$Parameter) %>% 
         purrr::map(~dplyr::select_if(.x, ~!all(is.na(.x))))  
@@ -381,10 +396,14 @@ print.orthusfit <- function(x, summary=FALSE, ...){
 #' DxQxiter (if in proportions or clr).
 #' 
 #' @param object an object of class pibblefit
-#' @param use_names if column and row names were passed for Y and X in 
+#' @param ... other options passed to coef.pibblefit (see details)
+#' @return Array of dimension (D-1) x Q x iter
+#' @details Other arguments:
+#' \itemize{
+#' \item `use_names` if column and row names were passed for Y and X in 
 #' call to \code{\link{pibble}}, should these names be applied to output 
 #' array. 
-#' @return Array of dimension (D-1) x Q x iter
+#' }
 #' 
 #' @export
 #' @examples 
@@ -392,7 +411,10 @@ print.orthusfit <- function(x, summary=FALSE, ...){
 #' fit <- pibble(Y, X)
 #' coef(fit)
 #' }
-coef.pibblefit <- function(object, use_names=TRUE){
+coef.pibblefit <- function(object, ...){
+  args <- list(...)
+  use_names <- args_null("use_names", args, TRUE)
+  
   if (is.null(object$Lambda)) stop("pibblefit object does not contain samples of Lambda")
   x <- object$Lambda
   if (use_names) return(name_array(x, object, list("cat", "cov", NULL)))
@@ -406,10 +428,14 @@ coef.pibblefit <- function(object, use_names=TRUE){
 #' otherwise (D+P) x Q x iter.
 #' 
 #' @param object an object of class orthusfit
-#' @param use_names if column and row names were passed for Y and X in 
+#' @param ... other options passed to coef.orthusfit (see details)
+#' @return Array of dimension (D-1) x Q x iter
+#' @details Other arguments:
+#' \itemize{
+#' \item use_names if column and row names were passed for Y and X in 
 #' call to \code{\link{pibble}}, should these names be applied to output 
 #' array. 
-#' @return Array of dimension (D-1) x Q x iter
+#' }
 #' 
 #' @export
 #' @examples 
@@ -417,7 +443,9 @@ coef.pibblefit <- function(object, use_names=TRUE){
 #' fit <- orthus(Y, Z, X)
 #' coef(fit)
 #' }
-coef.orthusfit <- function(object, use_names=TRUE){
+coef.orthusfit <- function(object, ...){
+  args <- list(...)
+  use_names <- args_null("use_names", args, TRUE)
   if (is.null(object$Lambda)) stop("orthusfit object does not contain samples of Lambda")
   if (use_names) object <- name.orthusfit(object)
   x <- object$Lambda
@@ -555,9 +583,9 @@ predict.pibblefit <- function(object, newdata=NULL, response="LambdaX", size=NUL
     }
   }
   if ((response == "LambdaX") && summary) {
-    LambdaX <- gather_array(LambdaX, val, coord, sample, iter) %>% 
-      group_by(coord, sample) %>% 
-      summarise_posterior(val, ...) %>% 
+    LambdaX <- gather_array(LambdaX, .data$val, .data$coord, .data$sample, .data$iter) %>% 
+      group_by(.data$coord, .data$sample) %>% 
+      summarise_posterior(.data$val, ...) %>% 
       ungroup() %>% 
       name_tidy(object, list("coord" = "cat", "sample"=colnames(newdata)))
     return(LambdaX)
@@ -574,14 +602,14 @@ predict.pibblefit <- function(object, newdata=NULL, response="LambdaX", size=NUL
                                                      NULL))
   if (response=="Eta"){
     if (transformed){
-      Eta <- alrInv_array(Eta, m$D, 1)
+      Eta <- alrInv_array(Eta, object$D, 1)
       if (l$coord_system == "clr") Eta <- clr_array(Eta, 1)
     }
   }
   if ((response=="Eta") && summary) {
-    Eta <- gather_array(Eta, val, coord, sample, iter) %>% 
-      group_by(coord, sample) %>% 
-      summarise_posterior(val, ...) %>% 
+    Eta <- gather_array(Eta, .data$val, .data$coord, .data$sample, .data$iter) %>% 
+      group_by(.data$coord, .data$sample) %>% 
+      summarise_posterior(.data$val, ...) %>% 
       ungroup() %>% 
       name_tidy(object, list("coord" = "cat", "sample"=colnames(newdata)))
   }
@@ -605,9 +633,9 @@ predict.pibblefit <- function(object, newdata=NULL, response="LambdaX", size=NUL
                             list(object$names_categories, colnames(newdata), 
                                  NULL))
   if ((response == "Y") && summary) {
-    Ypred <- gather_array(Ypred, val, coord, sample, iter) %>% 
-      group_by(coord, sample) %>% 
-      summarise_posterior(val, ...) %>% 
+    Ypred <- gather_array(Ypred, .data$val, .data$coord, .data$sample, .data$iter) %>% 
+      group_by(.data$coord, .data$sample) %>% 
+      summarise_posterior(.data$val, ...) %>% 
       ungroup() %>% 
       name_tidy(object, list("coord" = object$names_categories, 
                              "sample"= colnames(newdata)))
@@ -741,12 +769,12 @@ names_coords.pibblefit <- function(m){
 #' 
 #' # Sample prior as part of model fitting
 #' m <- pibblefit(N=as.integer(sim$N), D=as.integer(sim$D), Q=as.integer(sim$Q), 
-#'                 iter=2000, upsilon=upsilon, 
+#'                 iter=2000L, upsilon=upsilon, 
 #'                 Xi=Xi, Gamma=Gamma, Theta=Theta, X=X, 
 #'                 coord_system="alr", alr_base=D)
-#' m <- sample_prior(pibblefit)
+#' m <- sample_prior(m)
 #' plot(m) # plot prior distribution (defaults to parameter Lambda) 
-sample_prior.pibblefit <- function(m, n_samples=2000, 
+sample_prior.pibblefit <- function(m, n_samples=2000L, 
                                     pars=c("Eta", "Lambda", "Sigma"), 
                                     use_names=TRUE, ...){
   req(m, c("upsilon", "Theta", "Gamma", "Xi"))

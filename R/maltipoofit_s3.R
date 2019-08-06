@@ -1,3 +1,24 @@
+# internal function 
+new_maltipoofit <- function(D, N, Q, P, coord_system, iter=NULL, 
+                            alr_base=NULL, ilr_base=NULL,
+                            Eta=NULL, Lambda=NULL,Sigma=NULL, Sigma_default=NULL, 
+                            Y=NULL, X=NULL, upsilon=NULL, 
+                            Theta=NULL, Xi=NULL,Xi_default=NULL, Gamma=NULL, 
+                            init=NULL, ellinit=NULL, names_categories=NULL, names_samples=NULL, 
+                            names_covariates=NULL, VCScale=NULL, U=NULL){
+  m <- new_pibblefit(D, N, Q, coord_system, iter, alr_base, ilr_base,
+                     Eta, Lambda, Sigma, Sigma_default, 
+                     Y, X, upsilon, Theta, Xi,Xi_default, Gamma, 
+                     init, ellinit, names_categories, names_samples)
+  m$VCScale <- VCScale
+  m$U <- U
+  m$ellinit <- ellinit
+  m$P <- P
+  m$names_covariates <- names_covariates
+  class(m) <- c("maltipoofit", "pibblefit")
+}
+
+
 #' Create maltipoofit object 
 #' 
 #' @inheritParams pibblefit
@@ -14,7 +35,7 @@ maltipoofit <- function(D, N, Q, P, coord_system, iter=NULL,
                         Theta=NULL, Xi=NULL,Xi_default=NULL, Gamma=NULL, 
                         init=NULL, ellinit=NULL, names_categories=NULL, names_samples=NULL, 
                         names_covariates=NULL, VCScale=NULL, U=NULL){
-  m <- new_maltipoo(D, N, Q, coord_system, iter, alr_base, ilr_base,
+  m <- new_maltipoofit(D, N, Q, coord_system, iter, alr_base, ilr_base,
                     Eta, Lambda, Sigma, Sigma_default, 
                     Y, X, upsilon, Theta, Xi,Xi_default, Gamma, 
                     init, ellinit, names_categories, names_samples, 
@@ -23,25 +44,7 @@ maltipoofit <- function(D, N, Q, P, coord_system, iter=NULL,
   return(m)
 }
 
-# internal function 
-new_maltipoofit <- function(D, N, Q, P, coord_system, iter=NULL, 
-                            alr_base=NULL, ilr_base=NULL,
-                            Eta=NULL, Lambda=NULL,Sigma=NULL, Sigma_default=NULL, 
-                            Y=NULL, X=NULL, upsilon=NULL, 
-                            Theta=NULL, Xi=NULL,Xi_default=NULL, Gamma=NULL, 
-                            init=NULL, ellinit=NULL, names_categories=NULL, names_samples=NULL, 
-                            names_covariates=NULL, VCScale=NULL, U=NULL){
-  m <- new_pibblefit(D, N, Q, coord_system, iter, alr_base, ilr_base,
-                      Eta, Lambda, Sigma, Sigma_default, 
-                      Y, X, upsilon, Theta, Xi,Xi_default, Gamma, 
-                      init, ellinit, names_categories, names_samples, 
-                      names_covariates)
-  m$VCScale <- VCScale
-  m$U <- U
-  m$ellinit <- ellinit
-  m$P <- P
-  class(m) <- c("maltipoofit", "pibblefit")
-}
+
 
 #' Simple verification of passed multipoo object
 #' @param m an object of class multipoo

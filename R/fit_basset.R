@@ -15,7 +15,8 @@
 #' @param init (D-1) x Q initialization for Eta for optimization 
 #' @param pars character vector of posterior parameters to return
 #' @param m object of class bassetfit 
-#' @param ... 
+#' @param ... other arguments passed to \link{pibble} (which is used internally to 
+#'  fit the basset model)
 #' 
 #' @details the full model is given by:
 #'    \deqn{Y_j \sim Multinomial(Pi_j)} 
@@ -59,9 +60,9 @@ basset <- function(Y=NULL, X, upsilon=NULL, Theta=NULL, Gamma=NULL, Xi=NULL,
   return(out)
 }
 
-#' @rdname pibble_fit
+#' @rdname basset_fit
 #' @export
-refit.pibblefit <- function(m, pars=c("Eta", "Lambda", "Sigma"), ...){
+refit.bassetfit <- function(m, pars=c("Eta", "Lambda", "Sigma"), ...){
   # Store coordinates and tranfsorm to cannonical representation
   l <- store_coord(m)
   m <- to_alr(m, m$D)

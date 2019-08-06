@@ -6,13 +6,14 @@ matrix_maintain_dim <- function(x){
 
 #' Log-Ratio transforms for orthus objects
 #' @param x orthus data array (e.g., first s rows are multinomial parameters or log-ratios)
+#' @param y orthus data array (e.g., first s rows are multinomial parameters or log-ratios)
 #' @param s first s rows of x are transformed
 #' @param V transformation matrix (defines transform) 
 #' @param d for ALR, which component (integer position) to take as reference
 #' (default is ncol(x)) for alrInv corresponds to column position in untransformed
 #' matrix.
-#' @param inv for ALR and CLR, transformation matrix is different forward and inverse
-#' @param D the number of parts (e.g., number of columns in untransformed data)
+# @param inv for ALR and CLR, transformation matrix is different forward and inverse
+# @param D the number of parts (e.g., number of columns in untransformed data)
 #' @name orthus_lr_transforms
 NULL
 

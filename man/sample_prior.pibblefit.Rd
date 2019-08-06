@@ -4,7 +4,7 @@
 \alias{sample_prior.pibblefit}
 \title{Sample from the prior distribution of pibblefit object}
 \usage{
-\method{sample_prior}{pibblefit}(m, n_samples = 2000, pars = c("Eta",
+\method{sample_prior}{pibblefit}(m, n_samples = 2000L, pars = c("Eta",
   "Lambda", "Sigma"), use_names = TRUE, ...)
 }
 \arguments{
@@ -36,9 +36,9 @@ sample_prior(fit)
 
 # Sample prior as part of model fitting
 m <- pibblefit(N=as.integer(sim$N), D=as.integer(sim$D), Q=as.integer(sim$Q), 
-                iter=2000, upsilon=upsilon, 
+                iter=2000L, upsilon=upsilon, 
                 Xi=Xi, Gamma=Gamma, Theta=Theta, X=X, 
                 coord_system="alr", alr_base=D)
-m <- sample_prior(pibblefit)
+m <- sample_prior(m)
 plot(m) # plot prior distribution (defaults to parameter Lambda) 
 }

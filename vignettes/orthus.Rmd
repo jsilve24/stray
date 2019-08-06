@@ -94,7 +94,7 @@ at this time.
 ```{r}
 Y <- otu_table(microbe, taxa_are_rows=TRUE)
 Z <- metab #(metabolites are rows)
-X <- matrix(1, 1, nsamples(microbe))
+X <- matrix(1, 1, phyloseq::nsamples(microbe))
 
 # save dims for easy reference
 N <- ncol(Y)

@@ -3,8 +3,9 @@
 CXX_STD = CXX11
 
 ## For standard
-PKG_CPPFLAGS =  -I../inst/include/ @OPENMP_FLAG@
+PKG_CPPFLAGS =  -I../inst/include/ 
 PKG_LIBS = @OPENMP_FLAG@
+PKG_CXXFLAGS = @OPENMP_FLAG@
 
 ## For MKL - make sure you are using icc compiler in ~.R/Makevars 
 # Using GCC -- PREFERRED for MKL

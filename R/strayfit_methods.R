@@ -65,7 +65,7 @@ pibble_tidy_samples<- function(m, use_names=FALSE, as_factor=FALSE){
 #' @return tibble
 #' @examples 
 #' sim <- orthus_sim()
-#' fit <- pibble(sim$Y, sim$Z, sim$X)
+#' fit <- orthus(sim$Y, sim$Z, sim$X)
 #' fit_tidy <- orthus_tidy_samples(fit, use_names=TRUE)
 #' head(fit_tidy)
 orthus_tidy_samples<- function(m, use_names=FALSE, as_factor=FALSE){
@@ -126,6 +126,7 @@ summary_check_precomputed <- function(m, pars){
 #' @importFrom purrr map
 #' @importFrom tidybayes mean_qi
 #' @importFrom dplyr group_by select ungroup
+#' @importFrom rlang syms
 #' @export
 #' @examples 
 #' \dontrun{
@@ -208,6 +209,7 @@ summary.pibblefit <- function(object, pars=NULL, use_names=TRUE, as_factor=FALSE
 #' @importFrom purrr map
 #' @importFrom tidybayes mean_qi
 #' @importFrom dplyr group_by select ungroup
+#' @importFrom rlang syms
 #' @export
 #' @examples 
 #' \dontrun{

@@ -6,6 +6,8 @@ cache: packages
 os: 
   - osx
   - linux
+  
+warnings_are_errors: false
 
 
 # Packages to install from specific sources other than CRAN   

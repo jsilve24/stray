@@ -35,6 +35,24 @@ conjugateLinearModel <- function(Y, X, Theta, Gamma, Xi, upsilon, n_samples = 20
     .Call('_stray_conjugateLinearModel', PACKAGE = 'stray', Y, X, Theta, Gamma, Xi, upsilon, n_samples)
 }
 
+#' @rdname loglikMaltipooCollapsed
+#' @export
+loglikMaltipooCollapsed <- function(Y, upsilon, Theta, X, K, U, eta, ell, sylv = FALSE) {
+    .Call('_stray_loglikMaltipooCollapsed', PACKAGE = 'stray', Y, upsilon, Theta, X, K, U, eta, ell, sylv)
+}
+
+#' @rdname gradMaltipooCollapsed
+#' @export
+gradMaltipooCollapsed <- function(Y, upsilon, Theta, X, K, U, eta, ell, sylv = FALSE) {
+    .Call('_stray_gradMaltipooCollapsed', PACKAGE = 'stray', Y, upsilon, Theta, X, K, U, eta, ell, sylv)
+}
+
+#' @rdname hessMaltipooCollapsed
+#' @export
+hessMaltipooCollapsed <- function(Y, upsilon, Theta, X, K, U, eta, ell, sylv = FALSE) {
+    .Call('_stray_hessMaltipooCollapsed', PACKAGE = 'stray', Y, upsilon, Theta, X, K, U, eta, ell, sylv)
+}
+
 #' Function to Optimize the Collapsed Maltipoo Model
 #' 
 #' See details for model. Should likely be followed by function 

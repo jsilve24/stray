@@ -36,7 +36,7 @@ class MaltipooCollapsed : public Numer::MFuncGrad
     const MatrixXd Theta;
     const MatrixXd X;
     MatrixXd ThetaX;
-    const MatrixXd K;
+    const MatrixXd K; // passed as Xi^{-1}
     const MatrixXd U; // PQ x Q matrix of concatenated deltas
     MatrixXd XTUX;
     MatrixXd A; // no longer constant
@@ -50,8 +50,10 @@ class MaltipooCollapsed : public Numer::MFuncGrad
     Eigen::ArrayXd m;
     Eigen::RowVectorXd n;
     MatrixXd S;  // I_D-1 + KEAE'
-    Eigen::ColPivHouseholderQR<MatrixXd> Sdec;
-    Eigen::ColPivHouseholderQR<MatrixXd> Ainvdec;
+    //Eigen::ColPivHouseholderQR<MatrixXd> Sdec;
+    //Eigen::ColPivHouseholderQR<MatrixXd> Ainvdec;
+    Eigen::PartialPivLU<MatrixXd> Sdec;
+    Eigen::PartialPivLU<MatrixXd> Ainvdec;
     MatrixXd E;  // eta-ThetaX
     ArrayXXd O;  // exp{eta}
     // only needed for gradient and hessian
@@ -60,7 +62,7 @@ class MaltipooCollapsed : public Numer::MFuncGrad
     MatrixXd C;
     MatrixXd R;
     MatrixXd M; // for maltipoo specifically
-    
+    bool sylv;
     
   public:
     MaltipooCollapsed(const ArrayXXd Y_,          // constructor
@@ -68,7 +70,8 @@ class MaltipooCollapsed : public Numer::MFuncGrad
                         const MatrixXd Theta_,
                         const MatrixXd X_,
                         const MatrixXd K_,
-                        const MatrixXd U_) :
+                        const MatrixXd U_,
+                        bool sylv=false) :
     Y(Y_), upsilon(upsilon_), Theta(Theta_), X(X_), K(K_), U(U_)
     {
       D = Y.rows();           // number of multinomial categories
@@ -78,6 +81,7 @@ class MaltipooCollapsed : public Numer::MFuncGrad
       ThetaX.noalias() = Theta*X;
       n = Y.colwise().sum();  // total number of counts per sample
       delta = 0.5*(upsilon + N + D - 2.0);
+      this->sylv = sylv;
       XTUX = MatrixXd::Zero(P*N, N);
       for (int i=0; i<P; i++){
         XTUX.middleRows(N*i, N).noalias() = X.transpose()*U.middleRows(Q*i, Q)*X;
@@ -94,12 +98,16 @@ class MaltipooCollapsed : public Numer::MFuncGrad
       for (int i=0; i<P; i++){
         Ainv += exp(ell(i))*XTUX.middleRows(N*i, N);
       }
-      //Eigen::FullPivLU<MatrixXd> lu(Ainv);
       Ainvdec.compute(Ainv);
       A = Ainvdec.inverse(); 
-        
-      S.noalias() = K*E*A*E.transpose();
-      S.diagonal() += VectorXd::Ones(D-1);
+      
+      if (sylv & (N < (D-1))){
+        S.noalias() = A*E.transpose()*K*E;
+        S.diagonal() += VectorXd::Ones(N);
+      } else {
+        S.noalias() = K*E*A*E.transpose();
+        S.diagonal() += VectorXd::Ones(D-1);
+      }
       Sdec.compute(S);
       O = eta.array().exp();
       m = O.colwise().sum();
@@ -111,9 +119,16 @@ class MaltipooCollapsed : public Numer::MFuncGrad
       rhomat = (O.rowwise()/m.transpose()).matrix();
       Map<VectorXd> rhovec(rhomat.data() , rhomat.size());
       rho = rhovec; // probably could be done in one line rather than 2 (above)
-      C.noalias() = A*E.transpose();
-      R.noalias() = Sdec.solve(K); // S^{-1}K
-      M.noalias() = Ainv*E.transpose()*R*E*Ainv;
+      if (sylv & (N < (D-1))){
+        C.noalias() = K*E;
+        R.noalias() = Sdec.solve(A); // S^{-1}AInv
+        MatrixXd SinvK = Sdec.solve(K);
+        M.noalias() = A*E.transpose()*SinvK*E*A;
+      } else {
+        C.noalias() = A*E.transpose();
+        R.noalias() = Sdec.solve(K); // S^{-1}K
+        M.noalias() = A*E.transpose()*R*E*A;
+      }
     }
     
     // Must have called updateWithEtaLL first 
@@ -123,8 +138,30 @@ class MaltipooCollapsed : public Numer::MFuncGrad
       // start with multinomial ll
       ll += (Y.topRows(D-1)*eta.array()).sum() - n*m.log().matrix();
       // Now compute collapsed prior ll
-      ll -= delta*Sdec.logAbsDeterminant();
-      ll -= 0.5*(D-1)*Ainvdec.logAbsDeterminant(); // repeated can speed up in future
+      //ll -= delta*Sdec.logAbsDeterminant();
+      // Following was adapted from : 
+      //   https://gist.github.com/redpony/fc8a0db6b20f7b1a3f23
+      double ld = 0.0;
+      double c = Sdec.permutationP().determinant();
+      VectorXd diagLU = Sdec.matrixLU().diagonal();
+      for (unsigned i = 0; i < diagLU.rows(); ++i) {
+        const double& lii = diagLU(i);
+        if (lii < 0.0) c *= -1;
+        ld += log(std::abs(lii));
+      }
+      ld += log(c);
+      ll -= delta*ld;
+      //ll -= 0.5*(D-1)*Ainvdec.logAbsDeterminant();
+      ld = 0.0;
+      c = Ainvdec.permutationP().determinant();
+      diagLU = Ainvdec.matrixLU().diagonal();
+      for (unsigned i = 0; i < diagLU.rows(); ++i) {
+        const double& lii = diagLU(i);
+        if (lii < 0.0) c *= -1;
+        ld += log(std::abs(lii));
+      }
+      ld += log(c);
+      ll -= 0.5*(D-1)*ld;
       return ll;
     }
     
@@ -133,7 +170,11 @@ class MaltipooCollapsed : public Numer::MFuncGrad
       // For Multinomial
       MatrixXd g = (Y.topRows(D-1)  - (rhomat.array().rowwise()*n.array())).matrix();
       // For MatrixVariate T
-      g.noalias() += -delta*(R + R.transpose())*C.transpose();
+      if (sylv & (N < (D-1))){
+        g.noalias() += -delta*C*(R+R.transpose());
+      } else {
+        g.noalias() += -delta*(R + R.transpose())*C.transpose();
+      }
       Map<VectorXd> eg(g.data(), g.size()); 
       VectorXd sg(P);
       for (int i=0; i<P; i++){
@@ -147,7 +188,15 @@ class MaltipooCollapsed : public Numer::MFuncGrad
     }
     
     // Must have called updateWithEtaLL and then updateWithEtaGH first 
-    MatrixXd calcHess(){
+    MatrixXd calcHess(const Ref<const VectorXd>& ell){
+      bool tmp_sylv = sylv;
+      if (sylv & (N < (D-1))){
+        MatrixXd eta = E + ThetaX;
+        Map<VectorXd> etavec(eta.data(), N*(D-1));
+        this->sylv=false;
+        updateWithEtaLL(etavec, ell);
+        updateWithEtaGH();
+      }
       // for MatrixVariate T
       MatrixXd H(N*(D-1), N*(D-1));
       MatrixXd RCT(D-1, N);
@@ -162,15 +211,28 @@ class MaltipooCollapsed : public Numer::MFuncGrad
       L.noalias() += krondense(CR.transpose(), CR); // reuse L
       H.noalias() -= tveclmult(N, D-1, L);
       H.noalias() = -delta * H;
+      
       // For Multinomial
+      VectorXd rho_parallel;
+      VectorXd n_parallel;
+      rho_parallel = rho; 
+      n_parallel = n;
+      
+      #pragma omp parallel shared(rho_parallel, n_parallel)
+      {
       MatrixXd W(D-1, D-1);
-      VectorXd rhoseg(D-1);
+      //VectorXd rhoseg(D-1);
+      #pragma omp for 
       for (int j=0; j<N; j++){
-        rhoseg = rho.segment(j*(D-1), D-1);
+        //rhoseg = rho.segment(j*(D-1), D-1);
+        Eigen::Ref<VectorXd> rhoseg = rho_parallel.segment(j*(D-1), D-1);
         W.noalias() = rhoseg*rhoseg.transpose();
         W.diagonal() -= rhoseg;
-        H.block(j*(D-1), j*(D-1), D-1, D-1).noalias()  += n(j)*W;
+        H.block(j*(D-1), j*(D-1), D-1, D-1).noalias()  += n_parallel(j)*W;
       }
+      }
+      // Turn back on sylv option if it was wanted:
+      this->sylv = tmp_sylv;
       return H;
     }
     

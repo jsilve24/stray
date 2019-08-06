@@ -6,11 +6,11 @@
 \alias{hessPibbleCollapsed}
 \title{Calculations for the Collapsed Pibble Model}
 \usage{
-loglikPibbleCollapsed(Y, upsilon, ThetaX, K, A, eta, sylv = FALSE)
+loglikPibbleCollapsed(Y, upsilon, ThetaX, KInv, AInv, eta, sylv = FALSE)
 
-gradPibbleCollapsed(Y, upsilon, ThetaX, K, A, eta, sylv = FALSE)
+gradPibbleCollapsed(Y, upsilon, ThetaX, KInv, AInv, eta, sylv = FALSE)
 
-hessPibbleCollapsed(Y, upsilon, ThetaX, K, A, eta, sylv = FALSE)
+hessPibbleCollapsed(Y, upsilon, ThetaX, KInv, AInv, eta, sylv = FALSE)
 }
 \arguments{
 \item{Y}{D x N matrix of counts}
@@ -19,6 +19,11 @@ hessPibbleCollapsed(Y, upsilon, ThetaX, K, A, eta, sylv = FALSE)
 
 \item{ThetaX}{D-1 x N matrix formed by Theta*X (Theta is Prior mean
 for regression coefficients)}
+
+\item{KInv}{Inverse of K for LTP (for Pibble defined as KInv = solve(Xi))}
+
+\item{AInv}{Inverse of A for LTP (for Pibble defined as
+AInv = solve(diag(N)+ t(X)\%\emph{\%Gamma\%}\%X) )}
 
 \item{eta}{matrix (D-1)xN of parameter values at which to calculate quantities}
 
@@ -66,12 +71,12 @@ upsilon <- D+10
 Xi <- Sigma*(upsilon-D)
 
 # Precompute
-K <- solve(Xi)
-A <- solve(diag(N)+ t(X)\%*\%Gamma\%*\%X)
+KInv <- solve(Xi)
+AInv <- solve(diag(N)+ t(X)\%*\%Gamma\%*\%X)
 ThetaX <- Theta\%*\%X
 
 
-loglikPibbleCollapsed(Y, upsilon, ThetaX, K, A, Eta)
-gradPibbleCollapsed(Y, upsilon, ThetaX, K, A, Eta)[1:5]
-hessPibbleCollapsed(Y, upsilon, ThetaX, K, A, Eta)[1:5,1:5]
+loglikPibbleCollapsed(Y, upsilon, ThetaX, KInv, AInv, Eta)
+gradPibbleCollapsed(Y, upsilon, ThetaX, KInv, AInv, Eta)[1:5]
+hessPibbleCollapsed(Y, upsilon, ThetaX, KInv, AInv, Eta)[1:5,1:5]
 }

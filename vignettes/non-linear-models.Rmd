@@ -5,7 +5,7 @@ output:
   rmarkdown::html_vignette:
     toc: true
 vignette: >
-  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteIndexEntry{intro_stray_basset}
   %\VignetteEncoding{UTF-8}
   %\VignetteEngine{knitr::rmarkdown}
 editor_options: 
@@ -20,7 +20,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-If you have not already done so I would read through the *pibble* vignette before this one.  
+If you have not already done so, I would read through the *pibble* vignette before this one.  
 
 # stray::basset, the model
 Stray can be used for non-linear modeling. Here we are going to go through one 
@@ -72,25 +72,25 @@ library(ggplot2)
 data(mallard_family)
 
 # Just take vessel 1
-ps <- prune_samples(sample_data(ps)$Vessel==1, ps)
+mallard_family <- prune_samples(sample_data(mallard_family)$Vessel==1, mallard_family)
 
 # Just take hourly samples
-ps <- prune_samples((sample_data(ps)$time > "2015-11-20 15:00:00 UTC") &
-                      (sample_data(ps)$time < "2015-11-25 16:00:00 UTC"), ps)
+mallard_family <- prune_samples((sample_data(mallard_family)$time > "2015-11-20 15:00:00 UTC") &
+                      (sample_data(mallard_family)$time < "2015-11-25 16:00:00 UTC"), mallard_family)
 
 # Order samples - to make plotting easy later
-o <- order(sample_data(ps)$time)
-otu_table(ps) <- otu_table(ps)[o,]
-sample_data(ps) <- sample_data(ps)[o,]
+o <- order(sample_data(mallard_family)$time)
+otu_table(mallard_family) <- otu_table(mallard_family)[o,]
+sample_data(mallard_family) <- sample_data(mallard_family)[o,]
 
 # Extract Data / dimensions from Phyloseq object
-Y <- t(as(otu_table(ps), "matrix"))
-rownames(Y) <- taxa_names(ps)
-D <- ntaxa(ps)
-N <- nrow(sample_data(ps))
+Y <- t(as(otu_table(mallard_family), "matrix"))
+rownames(Y) <- taxa_names(mallard_family)
+D <- ntaxa(mallard_family)
+N <- nrow(sample_data(mallard_family))
 
 # X in hours
-X <- as.numeric(sample_data(ps)$time)
+X <- as.numeric(sample_data(mallard_family)$time)
 X <- t((X-min(X)) / 3600)
 ```
 
@@ -144,7 +144,7 @@ predicted <- predict(fit.clr, X_predict, jitter=1)
 Now I am going to create a visual that shows the observed data in CLR coordinates 
 (to do that I will need to add a pseudo-count) along with the smoothed estimates. 
 ```{r fig.height=5, fig.width=7}
-family_names <- as(tax_table(ps)[,"Family"], "vector")
+family_names <- as(tax_table(mallard_family)[,"Family"], "vector")
 Y_clr_tidy <- clr_array(Y+0.65, parts = 1) %>% 
   gather_array(mean, coord, sample) %>% 
   mutate(time = X[1,sample], 
@@ -170,11 +170,6 @@ ggplot(predicted_tidy, aes(x = time, y=mean)) +
         axis.text.x = element_text(angle=45))
 
 ```
-
-
-
-
-
 
 
 # References

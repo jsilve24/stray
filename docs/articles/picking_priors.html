@@ -30,7 +30,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">stray</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.11</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.13</span>
       </span>
     </div>
 
@@ -51,6 +51,9 @@
     </li>
     <li>
       <a href="../articles/non-linear-models.html">Non-Linear Modeling with stray::basset</a>
+    </li>
+    <li>
+      <a href="../articles/orthus.html">Joint Modeling  (e.g., Multiomics) with Stray::Orthus</a>
     </li>
     <li>
       <a href="../articles/picking_priors.html">Tips on Specifying Priors</a>
@@ -190,18 +193,18 @@ x_{21}y_{21} &amp; x_{21}y_{22} &amp; x_{22}y_{21} &amp; x_{22}y_{22} \\
 <p><strong>Linear Transformations of Covariance Matricies</strong> Recall that if <span class="math inline">\(x \sim N(\mu, \Sigma)\)</span> (for multivariate <span class="math inline">\(x\)</span>) then for a matrix <span class="math inline">\(\Psi\)</span> we have <span class="math inline">\(\Psi x \sim N(\Psi \mu, \Psi \Sigma \Psi^T)\)</span>. This is to say that you should think of linear transformations of covariance matrices as being applied by pre <em>and post</em> multiplying by the transformation matrix <span class="math inline">\(\Psi\)</span>.</p>
 <p><strong>Linear transformation of the Inverse Wishart</strong> It turns out that if we have <span class="math inline">\(\Omega \sim W^{-1}(\gamma, S)\)</span> for a <span class="math inline">\(D\times D\)</span> covariance matrix <span class="math inline">\(\Omega\)</span> then for <span class="math inline">\(M\times D\)</span> matrix <span class="math inline">\(\Psi\)</span> we have <span class="math inline">\(\Psi \Omega \Psi^T \sim W^{-1}(\upsilon, \Psi S \Psi^T)\)</span>.</p>
 <p><strong>Putting It All Together</strong> A central question: what is a reasonable prior for log-ratios? We are not used to working with log-ratios so this is difficult. A potentially simpler problem is to place a prior on the log-absolute-abundances (<span class="math inline">\(\Omega\)</span>) of whatever we are measuring, <em>e.g.</em>, placing a prior on the covariance between log-absolute-abundances of bacteria (<span class="math inline">\(\Omega \sim W^{-1}(\gamma, S)\)</span>.</p>
-<p><em>An example:</em> Lets say that for a given microbiome dataset, I have weak prior belief that, on average, all the taxa are independent with variance 1. I want to come up with values <span class="math inline">\(\gamma\)</span> and <span class="math inline">\(S\)</span> for my prior on <span class="math inline">\(\Omega\)</span> that reflect this. Lets start by specifying the mean for <span class="math inline">\(\Omega\)</span>. <span class="math display">\[E[\Omega] =I_D.\]</span> Next we say we have little certainty about this mean (want high variance) so we set <span class="math inline">\(\gamma\)</span> to be close to the lower bound of <span class="math inline">\(D\)</span> (I often like <span class="math inline">\(\gamma=D+3\)</span>). Now we have <span class="math inline">\(\gamma\)</span> we need to calculate <span class="math inline">\(S\)</span> which we do by solving for <span class="math inline">\(S\)</span> in the equation for the Inverse-Wishart mean<a href="#fn1" class="footnoteRef" id="fnref1"><sup>1</sup></a>: <span class="math display">\[S = E[\Omega](\gamma -D-1).\]</span> There you go that’s a prior on the log-absolute-abundances. Next we need to transform this into a prior on log-ratios. Well the above allows us to do this by simplifying taking the contrast matrix <span class="math inline">\(\Psi\)</span> from the log-ratio transform we want and transforming our prior for <span class="math inline">\(\Omega\)</span> as <span class="math inline">\(\Sigma \sim W^{-1}(\gamma, \Psi S \Psi^T)\)</span>. That’s it there the prior on log-ratios built form a prior on log-absolute-abundances.</p>
+<p><em>An example:</em> Lets say that for a given microbiome dataset, I have weak prior belief that, on average, all the taxa are independent with variance 1. I want to come up with values <span class="math inline">\(\gamma\)</span> and <span class="math inline">\(S\)</span> for my prior on <span class="math inline">\(\Omega\)</span> that reflect this. Lets start by specifying the mean for <span class="math inline">\(\Omega\)</span>. <span class="math display">\[E[\Omega] =I_D.\]</span> Next we say we have little certainty about this mean (want high variance) so we set <span class="math inline">\(\gamma\)</span> to be close to the lower bound of <span class="math inline">\(D\)</span> (I often like <span class="math inline">\(\gamma=D+3\)</span>). Now we have <span class="math inline">\(\gamma\)</span> we need to calculate <span class="math inline">\(S\)</span> which we do by solving for <span class="math inline">\(S\)</span> in the equation for the Inverse-Wishart mean<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a>: <span class="math display">\[S = E[\Omega](\gamma -D-1).\]</span> There you go that’s a prior on the log-absolute-abundances. Next we need to transform this into a prior on log-ratios. Well the above allows us to do this by simplifying taking the contrast matrix <span class="math inline">\(\Psi\)</span> from the log-ratio transform we want and transforming our prior for <span class="math inline">\(\Omega\)</span> as <span class="math inline">\(\Sigma \sim W^{-1}(\gamma, \Psi S \Psi^T)\)</span>. That’s it there the prior on log-ratios built form a prior on log-absolute-abundances.</p>
 <p><em>A Note on Phylogenetic priors:</em> As in phylogenetic linear models, you can make <span class="math inline">\(S\)</span> (as defined above) a covariance derived from the phylogenetic differences between taxa. This allows you to fit phylogenetic linear models in <em>stray</em>.</p>
 <p><strong>Making It Even Simpler</strong> Say that you have a prior <span class="math inline">\(\Omega \sim W^{-1}(\gamma, S)\)</span> for covariance between log-absolute-abundances (created as in our example above). You want to transform this into a prior <span class="math inline">\(\Sigma \sim W^{-1}(\upsilon, \Xi)\)</span>. You do this by simply taking <span class="math inline">\(\upsilon=\gamma\)</span>. To calculate <span class="math inline">\(\Xi\)</span>, rather than worrying about <span class="math inline">\(\Psi\)</span>, functions in the <a href="https://jsilve24.github.io/driver/"><em>driver</em> package I wrote</a> will do this for you, here are recipes:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># To put prior on ALR_j coordinates for some j in (1,...,D-1)</span>
-Xi &lt;-<span class="st"> </span><span class="kw">clrvar2alrvar</span>(S, j)
-
-<span class="co"># To put prior in a particular ILR coordinate defined by contrast matrix V</span>
-Xi &lt;-<span class="st"> </span><span class="kw">clrvar2ilrvar</span>(S, V)
-
-<span class="co"># To put prior in CLR coordinates (this one needs two transforms)</span>
-foo &lt;-<span class="st"> </span><span class="kw">clrvar2alrvar</span>(S, D)
-Xi &lt;-<span class="st"> </span><span class="kw">alrvar2clrvar</span>(foo, D)</code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1"><span class="co"># To put prior on ALR_j coordinates for some j in (1,...,D-1)</span></a>
+<a class="sourceLine" id="cb1-2" data-line-number="2">Xi &lt;-<span class="st"> </span><span class="kw">clrvar2alrvar</span>(S, j)</a>
+<a class="sourceLine" id="cb1-3" data-line-number="3"></a>
+<a class="sourceLine" id="cb1-4" data-line-number="4"><span class="co"># To put prior in a particular ILR coordinate defined by contrast matrix V</span></a>
+<a class="sourceLine" id="cb1-5" data-line-number="5">Xi &lt;-<span class="st"> </span><span class="kw">clrvar2ilrvar</span>(S, V)</a>
+<a class="sourceLine" id="cb1-6" data-line-number="6"></a>
+<a class="sourceLine" id="cb1-7" data-line-number="7"><span class="co"># To put prior in CLR coordinates (this one needs two transforms)</span></a>
+<a class="sourceLine" id="cb1-8" data-line-number="8">foo &lt;-<span class="st"> </span><span class="kw">clrvar2alrvar</span>(S, D)</a>
+<a class="sourceLine" id="cb1-9" data-line-number="9">Xi &lt;-<span class="st"> </span><span class="kw">alrvar2clrvar</span>(foo, D)</a></code></pre></div>
 <p>Hopefully that is simple enough to be useful for folks.</p>
 </div>
 </div>
@@ -209,24 +212,24 @@ Xi &lt;-<span class="st"> </span><span class="kw">alrvar2clrvar</span>(foo, D)</
 <h1 class="hasAnchor">
 <a href="#the-prior-for-lambda" class="anchor"></a>The prior for <span class="math inline">\(\Lambda\)</span>
 </h1>
-<p><span class="math inline">\(\Lambda\)</span> are the regression parameters in the linear model. The prior for <span class="math inline">\(\Lambda\)</span> is just a matrix-normal which we described above: <span class="math display">\[\Lambda \sim N(\Theta, \Sigma, \Gamma).\]</span> Here <span class="math inline">\(\Theta\)</span> is the mean matrix of <span class="math inline">\(\Lambda\)</span>, <span class="math inline">\(\Sigma\)</span> is actually random (i.e., you don’t have to specify it, its specified by the prior on <span class="math inline">\(\Sigma\)</span> we discussed already), and <span class="math inline">\(\Gamma\)</span> is a <span class="math inline">\(QxQ\)</span><a href="#fn2" class="footnoteRef" id="fnref2"><sup>2</sup></a> covariance matrix describing the covariance between the columns of <span class="math inline">\(\Lambda\)</span> (<em>i.e.</em>, between the effect of the different covariates). So we really need to just discuss specifying <span class="math inline">\(\Theta\)</span> and specifying <span class="math inline">\(\Gamma\)</span>.</p>
+<p><span class="math inline">\(\Lambda\)</span> are the regression parameters in the linear model. The prior for <span class="math inline">\(\Lambda\)</span> is just a matrix-normal which we described above: <span class="math display">\[\Lambda \sim N(\Theta, \Sigma, \Gamma).\]</span> Here <span class="math inline">\(\Theta\)</span> is the mean matrix of <span class="math inline">\(\Lambda\)</span>, <span class="math inline">\(\Sigma\)</span> is actually random (i.e., you don’t have to specify it, its specified by the prior on <span class="math inline">\(\Sigma\)</span> we discussed already), and <span class="math inline">\(\Gamma\)</span> is a <span class="math inline">\(QxQ\)</span><a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a> covariance matrix describing the covariance between the columns of <span class="math inline">\(\Lambda\)</span> (<em>i.e.</em>, between the effect of the different covariates). So we really need to just discuss specifying <span class="math inline">\(\Theta\)</span> and specifying <span class="math inline">\(\Gamma\)</span>.</p>
 <div id="choosing-theta" class="section level2">
 <h2 class="hasAnchor">
 <a href="#choosing-theta" class="anchor"></a>Choosing <span class="math inline">\(\Theta\)</span>
 </h2>
-<p>This is really easy, in most situations this will simply be a matrix of zeros. This implies that you expect that on average, the covariates of interest are not associated with composition.<a href="#fn3" class="footnoteRef" id="fnref3"><sup>3</sup></a>. This helps prevent you from inferrign an effect if there isn’t one.</p>
+<p>This is really easy, in most situations this will simply be a matrix of zeros. This implies that you expect that on average, the covariates of interest are not associated with composition.<a href="#fn3" class="footnote-ref" id="fnref3"><sup>3</sup></a>. This helps prevent you from inferrign an effect if there isn’t one.</p>
 <p>Outside of this simple case lets say you actually have prior knowledge about the effects of the covariates. Perhaps you have some knowledge about the mean effect of covariates on log-absolute-abundances which you describe in a <span class="math inline">\(D\times Q\)</span> matrix <span class="math inline">\(A\)</span>. Well you can just transform that prior into the log-ratio coordinates you want as follows:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Transform from log-absolute-abundance effects to effects on absolute-abundances</span>
-foo &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/Log">exp</a></span>(A)
-
-<span class="co"># To put prior on ALR_j coordinates for some j in (1,...,D-1)</span>
-Theta &lt;-<span class="st"> </span>driver<span class="op">::</span><span class="kw"><a href="https://www.rdocumentation.org/packages/driver/topics/array_lr_transforms">alr_array</a></span>(foo, j, <span class="dt">parts=</span><span class="dv">1</span>)
-
-<span class="co"># To put prior in a particular ILR coordinate defined by contrast matrix V</span>
-Theta &lt;-<span class="st"> </span>driver<span class="op">::</span><span class="kw"><a href="https://www.rdocumentation.org/packages/driver/topics/array_lr_transforms">ilr_array</a></span>(foo, V, <span class="dt">parts=</span><span class="dv">1</span>)
-
-<span class="co"># To put prior in CLR coordinates</span>
-Theta &lt;-<span class="st"> </span>driver<span class="op">::</span><span class="kw"><a href="https://www.rdocumentation.org/packages/driver/topics/array_lr_transforms">clr_array</a></span>(foo, <span class="dt">parts=</span><span class="dv">1</span>)</code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" data-line-number="1"><span class="co"># Transform from log-absolute-abundance effects to effects on absolute-abundances</span></a>
+<a class="sourceLine" id="cb2-2" data-line-number="2">foo &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/Log">exp</a></span>(A)</a>
+<a class="sourceLine" id="cb2-3" data-line-number="3"></a>
+<a class="sourceLine" id="cb2-4" data-line-number="4"><span class="co"># To put prior on ALR_j coordinates for some j in (1,...,D-1)</span></a>
+<a class="sourceLine" id="cb2-5" data-line-number="5">Theta &lt;-<span class="st"> </span>driver<span class="op">::</span><span class="kw"><a href="https://www.rdocumentation.org/packages/driver/topics/array_lr_transforms">alr_array</a></span>(foo, j, <span class="dt">parts=</span><span class="dv">1</span>)</a>
+<a class="sourceLine" id="cb2-6" data-line-number="6"></a>
+<a class="sourceLine" id="cb2-7" data-line-number="7"><span class="co"># To put prior in a particular ILR coordinate defined by contrast matrix V</span></a>
+<a class="sourceLine" id="cb2-8" data-line-number="8">Theta &lt;-<span class="st"> </span>driver<span class="op">::</span><span class="kw"><a href="https://www.rdocumentation.org/packages/driver/topics/array_lr_transforms">ilr_array</a></span>(foo, V, <span class="dt">parts=</span><span class="dv">1</span>)</a>
+<a class="sourceLine" id="cb2-9" data-line-number="9"></a>
+<a class="sourceLine" id="cb2-10" data-line-number="10"><span class="co"># To put prior in CLR coordinates</span></a>
+<a class="sourceLine" id="cb2-11" data-line-number="11">Theta &lt;-<span class="st"> </span>driver<span class="op">::</span><span class="kw"><a href="https://www.rdocumentation.org/packages/driver/topics/array_lr_transforms">clr_array</a></span>(foo, <span class="dt">parts=</span><span class="dv">1</span>)</a></code></pre></div>
 </div>
 <div id="choosing-gamma" class="section level2">
 <h2 class="hasAnchor">
@@ -264,9 +267,9 @@ vec(\Lambda) &amp;\sim N(vec(\Theta), \alpha(\bar{\Gamma}\otimes \Sigma)).
 <div class="footnotes">
 <hr>
 <ol>
-<li id="fn1"><p>Note its <span class="math inline">\(D-1\)</span> here because <span class="math inline">\(\Omega\)</span> is <span class="math inline">\(D\times D\)</span> rather than <span class="math inline">\(D-1 \times D-1\)</span><a href="#fnref1">↩</a></p></li>
-<li id="fn2"><p>Where <span class="math inline">\(Q\)</span> is the number of regression covaraites<a href="#fnref2">↩</a></p></li>
-<li id="fn3"><p>This is the same assumption as used in Ridge Regression<a href="#fnref3">↩</a></p></li>
+<li id="fn1"><p>Note its <span class="math inline">\(D-1\)</span> here because <span class="math inline">\(\Omega\)</span> is <span class="math inline">\(D\times D\)</span> rather than <span class="math inline">\(D-1 \times D-1\)</span><a href="#fnref1" class="footnote-back">↩</a></p></li>
+<li id="fn2"><p>Where <span class="math inline">\(Q\)</span> is the number of regression covaraites<a href="#fnref2" class="footnote-back">↩</a></p></li>
+<li id="fn3"><p>This is the same assumption as used in Ridge Regression<a href="#fnref3" class="footnote-back">↩</a></p></li>
 </ol>
 </div>
   </div>

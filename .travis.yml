@@ -1,0 +1,30 @@
+# R for travis: see documentation at https://docs.travis-ci.com/user/languages/r
+
+language: R
+cache: packages
+
+os: 
+  - osx
+  - linux
+  
+# warnings_are_errors: false
+
+
+# Packages to install from specific sources other than CRAN   
+use_bioc: true
+bioc_required: true
+bioc_packages:
+  - phyloseq
+  
+# Linus System dependencies:
+apt_packages:
+  - libgsl0-dev
+  
+# Increase build time-out time - because of long package vignette built times
+
+script:
+  - R CMD build --no-build-vignettes .
+  - R CMD check --no-vignettes *.tar.gz
+    
+after_failure:
+  find *Rcheck -name '*.fail' -print -exec cat '{}' \;

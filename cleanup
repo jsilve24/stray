@@ -1,2 +1,5 @@
 #!/bin/sh
-rm -f config.* src/Makevars
+
+rm -f config.log
+rm -f config.status
+rm -f src/Makevars

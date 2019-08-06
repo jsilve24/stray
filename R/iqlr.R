@@ -50,7 +50,7 @@ lambda_to_iqlr <- function(m, focus.cov=NULL, probs=c(.25, .75)){
   for (i in 1:niter(m)){
     L <- vec_to_mat(m$Lambda[,focus.cov,i])
     L <- rowSums(L*L)
-    q <- quantile(L, probs)
+    q <- stats::quantile(L, probs)
     in.iqr[,i] <- (L>= q[1]) & (L <= q[2]) 
   }
   

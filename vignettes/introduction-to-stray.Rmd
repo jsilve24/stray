@@ -1,12 +1,11 @@
 ---
 title: "Introduction to Stray::Pibble"
 author: "Justin Silverman"
-date: "`r Sys.Date()`"
 output: 
   rmarkdown::html_vignette:
     toc: true
 vignette: >
-  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteIndexEntry{intro_stray_pibble}
   %\VignetteEncoding{UTF-8}
   %\VignetteEngine{knitr::rmarkdown}
 editor_options: 

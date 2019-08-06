@@ -41,8 +41,6 @@ using Eigen::VectorXd;
 //'   'eigen' (more stable-slightly, slower) or 'cholesky' (less stable, faster, default)
 //' @param eigvalthresh threshold for negative eigenvalues in 
 //'   decomposition of negative inverse hessian (should be <=0)
-//' @param no_error if true will throw hessian warning rather than error if 
-//'   not positive definite. 
 //' @param jitter (default: 0) if >0 then adds that factor to diagonal of Hessian 
 //' before decomposition (to improve matrix conditioning)
 //'   
@@ -147,7 +145,7 @@ List optimMaltipooCollapsed(const Eigen::ArrayXXd Y,
     VectorXd grad(N*(D-1));
     if (verbose) Rcout << "Calculating Hessian" << std::endl;
     grad = cm.calcGrad(ell); // should have eta at optima already
-    hess = -cm.calcHess(); // should have eta at optima already
+    hess = -cm.calcHess(ell); // should have eta at optima already
     out[1] = grad;
     if ((N * (D-1)) > 44750){
       Rcpp::warning("Hessian is to large to return to R");

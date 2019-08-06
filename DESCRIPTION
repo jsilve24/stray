@@ -1,8 +1,8 @@
 Package: stray
 Type: Package
 Title: Bayesian Multinomial Logistic Normal Regression
-Version: 0.1.11
-Date: 2019-05-09
+Version: 0.1.13
+Date: 2019-07-06
 Author: Justin Silverman
 Authors@R: c(person("Justin", "Silverman", role=c("aut", "cre"),
                      email = "Justin.Silverman@duke.edu"), 
@@ -13,14 +13,23 @@ Maintainer: Justin Silverman
 Description: Provides methods for fitting and inspection of Bayesian Multinomial 
  Logistic Normal Models using MAP estimation 
  and Laplace Approximation. Key functionality is implemented in C++ for 
- scalability. 
-License: GPL-3
+ scalability.
+License: GPL (>=2)
 URL: https://jsilve24.github.io/stray/
+Depends: R (>= 3.5.0)
 Imports: Rcpp (>= 0.12.17), RcppEigen (>= 0.3.3.4.0), driver, dplyr, ggplot2, 
-  purrr, tidybayes
+  purrr, tidybayes, rlang
 LinkingTo: Rcpp, RcppEigen, RcppNumerical, RcppZiggurat, BH
 RoxygenNote: 6.1.1
-Suggests: testthat, knitr, rmarkdown, phyloseq, ape, numDeriv, MCMCpack
+Suggests: 
+    testthat (>= 2.1.0),
+    knitr,
+    rmarkdown,
+    phyloseq,
+    ape,
+    numDeriv,
+    MCMCpack, 
+    MicrobeDS
 Remotes:
     jsilve24/driver,
     twbattaglia/MicrobeDS

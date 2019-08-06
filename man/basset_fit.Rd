@@ -3,10 +3,13 @@
 \name{basset_fit}
 \alias{basset_fit}
 \alias{basset}
+\alias{refit.bassetfit}
 \title{Interface to fit basset models}
 \usage{
 basset(Y = NULL, X, upsilon = NULL, Theta = NULL, Gamma = NULL,
   Xi = NULL, init = NULL, pars = c("Eta", "Lambda", "Sigma"), ...)
+
+\method{refit}{bassetfit}(m, pars = c("Eta", "Lambda", "Sigma"), ...)
 }
 \arguments{
 \item{Y}{D x N matrix of counts (if NULL uses priors only)}
@@ -28,7 +31,8 @@ essentially iid on "base scale" using Aitchison terminology)}
 
 \item{pars}{character vector of posterior parameters to return}
 
-\item{...}{}
+\item{...}{other arguments passed to \link{pibble} (which is used internally to
+fit the basset model)}
 
 \item{m}{object of class bassetfit}
 }

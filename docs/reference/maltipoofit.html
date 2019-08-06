@@ -63,7 +63,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">stray</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.11</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.13</span>
       </span>
     </div>
 
@@ -84,6 +84,9 @@
     </li>
     <li>
       <a href="../articles/non-linear-models.html">Non-Linear Modeling with stray::basset</a>
+    </li>
+    <li>
+      <a href="../articles/orthus.html">Joint Modeling  (e.g., Multiomics) with Stray::Orthus</a>
     </li>
     <li>
       <a href="../articles/picking_priors.html">Tips on Specifying Priors</a>
@@ -153,7 +156,7 @@
   <span class='kw'>ilr_base</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>Eta</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>Lambda</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>Sigma</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
   <span class='kw'>Sigma_default</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>Y</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>X</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>upsilon</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
   <span class='kw'>Theta</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>Xi</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>Xi_default</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>Gamma</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>init</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>deltainit</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>names_categories</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>init</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>ellinit</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>names_categories</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
   <span class='kw'>names_samples</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>names_covariates</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>VCScale</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
   <span class='kw'>U</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</pre>
     
@@ -171,6 +174,10 @@
     <tr>
       <th>Q</th>
       <td><p>number of covariates</p></td>
+    </tr>
+    <tr>
+      <th>P</th>
+      <td><p>number of variance components</p></td>
     </tr>
     <tr>
       <th>coord_system</th>
@@ -240,6 +247,10 @@ base D (used if coord_system=="proportions")</p></td>
     <tr>
       <th>init</th>
       <td><p>matrix initial guess for Lambda used for optimization</p></td>
+    </tr>
+    <tr>
+      <th>ellinit</th>
+      <td><p>P vector initialization values for ell for optimization</p></td>
     </tr>
     <tr>
       <th>names_categories</th>

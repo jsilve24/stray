@@ -60,7 +60,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">stray</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.11</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.13</span>
       </span>
     </div>
 
@@ -83,6 +83,9 @@
       <a href="../articles/non-linear-models.html">Non-Linear Modeling with stray::basset</a>
     </li>
     <li>
+      <a href="../articles/orthus.html">Joint Modeling  (e.g., Multiomics) with Stray::Orthus</a>
+    </li>
+    <li>
       <a href="../articles/picking_priors.html">Tips on Specifying Priors</a>
     </li>
   </ul>
@@ -101,10 +104,16 @@
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
+      <a href="https://github.com/jsilve24/RcppCoDA">RcppCoDA</a>
+    </li>
+    <li>
       <a href="https://jsilve24.github.io/driver/">driver</a>
     </li>
     <li>
       <a href="https://bioconductor.org/packages/release/bioc/html/philr.html">philr</a>
+    </li>
+    <li>
+      <a href="https://cran.r-project.org/package=RcppHungarian">RcppHungarian</a>
     </li>
   </ul>
 </li>
@@ -156,15 +165,21 @@
       <tr>
         
         <td>
-          <p><code><a href="pibble_fit.html">refit(<i>&lt;pibblefit&gt;</i>)</a></code> <code><a href="pibble_fit.html">pibble()</a></code> <code><a href="pibble_fit.html">refit(<i>&lt;pibblefit&gt;</i>)</a></code> </p>
+          <p><code><a href="pibble_fit.html">pibble()</a></code> <code><a href="pibble_fit.html">refit(<i>&lt;pibblefit&gt;</i>)</a></code> </p>
         </td>
         <td><p>Interface to fit pibble models</p></td>
       </tr><tr>
         
         <td>
-          <p><code><a href="basset_fit.html">basset()</a></code> </p>
+          <p><code><a href="basset_fit.html">basset()</a></code> <code><a href="basset_fit.html">refit(<i>&lt;bassetfit&gt;</i>)</a></code> </p>
         </td>
         <td><p>Interface to fit basset models</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="orthus_fit.html">orthus()</a></code> </p>
+        </td>
+        <td><p>Interface to fit orthus models</p></td>
       </tr><tr>
         
         <td>
@@ -209,6 +224,18 @@
           <p><code><a href="loglikPibbleCollapsed.html">loglikPibbleCollapsed()</a></code> <code><a href="loglikPibbleCollapsed.html">gradPibbleCollapsed()</a></code> <code><a href="loglikPibbleCollapsed.html">hessPibbleCollapsed()</a></code> </p>
         </td>
         <td><p>Calculations for the Collapsed Pibble Model</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="loglikMaltipooCollapsed.html">loglikMaltipooCollapsed()</a></code> <code><a href="loglikMaltipooCollapsed.html">gradMaltipooCollapsed()</a></code> <code><a href="loglikMaltipooCollapsed.html">hessMaltipooCollapsed()</a></code> </p>
+        </td>
+        <td><p>Calculations for the Collapsed Maltipoo Model</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="kernels.html">SE()</a></code> <code><a href="kernels.html">LINEAR()</a></code> </p>
+        </td>
+        <td><p>Multivariate RBF Kernel</p></td>
       </tr>
     </tbody><tbody>
       <tr>
@@ -307,6 +334,18 @@
           <p><code><a href="verify.html">verify()</a></code> </p>
         </td>
         <td><p>Generic method for verifying new objects</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="summary.pibblefit.html">summary(<i>&lt;pibblefit&gt;</i>)</a></code> </p>
+        </td>
+        <td><p>Summarise pibblefit object and print posterior quantiles</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="summary.orthusfit.html">summary(<i>&lt;orthusfit&gt;</i>)</a></code> </p>
+        </td>
+        <td><p>Summarise orthusfit object and print posterior quantiles</p></td>
       </tr>
     </tbody><tbody>
       <tr>
@@ -333,6 +372,24 @@
           <p><code><a href="pibble_sim.html">pibble_sim()</a></code> </p>
         </td>
         <td><p>Simulate simple pibble dataset and priors (for testing)</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="orthus_sim.html">orthus_sim()</a></code> </p>
+        </td>
+        <td><p>Simulate simple orthus dataset and priors (for testing)</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="pibble_tidy_samples.html">pibble_tidy_samples()</a></code> </p>
+        </td>
+        <td><p>Convert pibble samples of Eta Lambda and Sigma to tidy format</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="orthus_tidy_samples.html">orthus_tidy_samples()</a></code> </p>
+        </td>
+        <td><p>Convert orthus samples of Eta Lambda and Sigma to tidy format</p></td>
       </tr><tr>
         
         <td>
@@ -366,6 +423,26 @@
         </td>
         <td><p>Derivative of Log of Multivariate Gamma Function - Gamma_p(a)</p></td>
       </tr>
+    </tbody><tbody>
+      <tr>
+        <th colspan="2">
+          <h2 id="section-datasets" class="hasAnchor"><a href="#section-datasets" class="anchor"></a>Datasets</h2>
+          <p class="section-desc"><p>Example Datasets</p></p>
+        </th>
+      </tr>
+      <tr>
+        
+        <td>
+          <p><code><a href="mallard.html">mallard</a></code> </p>
+        </td>
+        <td><p>Data from Silverman et al. (2018) Microbiome</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="mallard_family.html">mallard_family</a></code> </p>
+        </td>
+        <td><p>Data from Silverman et al. (2018) Microbiome</p></td>
+      </tr>
     </tbody>
     </table>
   </div>
@@ -378,6 +455,7 @@
       <li><a href="#section-object-methods">Object Methods</a></li>
       <li><a href="#section-helpful-utility-methods">Helpful Utility Methods</a></li>
       <li><a href="#section-utility-math-functions">Utility Math Functions</a></li>
+      <li><a href="#section-datasets">Datasets</a></li>
     </ul>
   </div>
 </div>

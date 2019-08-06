@@ -17,7 +17,7 @@
 
 \item{size}{the number of counts per sample if response="Y" (as vector or matrix), 
 default if newdata=NULL and response="Y" is to use colsums of m$Y. Otherwise
-uses median colsums of m$Y as default. If passed as a matrix should have dimensions
+uses median colsums of object$Y as default. If passed as a matrix should have dimensions
 ncol(newdata) x iter.}
 
 \item{use_names}{if TRUE apply names to output}

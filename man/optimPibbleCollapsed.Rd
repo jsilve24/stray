@@ -70,9 +70,6 @@ to speed up calculation of log-likelihood and gradients.}
 
 \item{ncores}{(default:-1) number of cores to use, if ncores==-1 then
 uses default from OpenMP typically to use all available cores.}
-
-\item{no_error}{if true will throw hessian warning rather than error if
-not positive definite.}
 }
 \value{
 List containing (all with respect to found optima)

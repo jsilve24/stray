@@ -20,9 +20,18 @@
 #' head(fit_tidy)
 pibble_tidy_samples<- function(m, use_names=FALSE, as_factor=FALSE){
   l <- list()
-  if (!is.null(m$Eta)) l$Eta <- driver::gather_array(m$Eta, val, coord, sample, iter)
-  if (!is.null(m$Lambda)) l$Lambda <- driver::gather_array(m$Lambda, val, coord, covariate, iter)
-  if (!is.null(m$Sigma)) l$Sigma <- driver::gather_array(m$Sigma, val, coord, coord2, iter) 
+  if (!is.null(m$Eta)) l$Eta <- driver::gather_array(m$Eta, .data$val, 
+                                                     .data$coord, 
+                                                     .data$sample, 
+                                                     .data$iter)
+  if (!is.null(m$Lambda)) l$Lambda <- driver::gather_array(m$Lambda, .data$val, 
+                                                           .data$coord, 
+                                                           .data$covariate, 
+                                                           .data$iter)
+  if (!is.null(m$Sigma)) l$Sigma <- driver::gather_array(m$Sigma, .data$val, 
+                                                         .data$coord, 
+                                                         .data$coord2, 
+                                                         .data$iter) 
 
   l <- dplyr::bind_rows(l, .id="Parameter")
   
@@ -46,6 +55,64 @@ pibble_tidy_samples<- function(m, use_names=FALSE, as_factor=FALSE){
   
   return(l)
 }
+
+
+#' Convert orthus samples of Eta Lambda and Sigma to tidy format
+#' 
+#' Combines them all into a single tibble, see example for formatting and 
+#' column headers. Primarily designed to be used by 
+#' \code{\link{summary.orthusfit}}. 
+#' 
+#' @param m an object of class orthusfit
+#' @param use_names should dimension indices be replaced by
+#'   dimension names if provided in data used to fit pibble model.  
+#' @param as_factor if use_names should names be returned as factor?
+#' 
+#' @importFrom driver gather_array
+#' @importFrom dplyr bind_rows group_by 
+#' @export
+#' @return tibble
+#' @examples 
+#' sim <- orthus_sim()
+#' fit <- orthus(sim$Y, sim$Z, sim$X)
+#' fit_tidy <- orthus_tidy_samples(fit, use_names=TRUE)
+#' head(fit_tidy)
+orthus_tidy_samples<- function(m, use_names=FALSE, as_factor=FALSE){
+  l <- list()
+  if (!is.null(m$Eta)) l$Eta <- driver::gather_array(m$Eta, .data$val, 
+                                                     .data$coord, .data$sample, 
+                                                     .data$iter)
+  if (!is.null(m$Lambda)) l$Lambda <- driver::gather_array(m$Lambda, .data$val, 
+                                                           .data$coord, .data$covariate, 
+                                                           .data$iter)
+  if (!is.null(m$Sigma)) l$Sigma <- driver::gather_array(m$Sigma, .data$val, 
+                                                         .data$coord, .data$coord2, 
+                                                         .data$iter) 
+  
+  l <- dplyr::bind_rows(l, .id="Parameter")
+  
+  if (!use_names) return(l)
+  # Deal with names (first create conversion list)
+  cl <- list()
+  if (!is.null(m$Eta)) {
+    cl[["sample"]] = "sam"
+    cl[["coord"]] = "combo"
+  }
+  if (!is.null(m$Lambda)){
+    cl[["covariate"]] = "cov"
+    cl[["coord"]] = "combo"
+  }
+  if (!is.null(m$Sigma)){
+    cl[["coord"]] = "combo"
+    cl[["coord2"]] = "combo"
+  }
+  
+  l <- name_tidy(l, m, cl, as_factor)
+  
+  return(l)
+}
+
+
 
 # Internal function to check if summary has already been precomputed. 
 summary_check_precomputed <- function(m, pars){
@@ -74,6 +141,7 @@ summary_check_precomputed <- function(m, pars){
 #' @importFrom purrr map
 #' @importFrom tidybayes mean_qi
 #' @importFrom dplyr group_by select ungroup
+#' @importFrom rlang syms
 #' @export
 #' @examples 
 #' \dontrun{
@@ -98,7 +166,7 @@ summary.pibblefit <- function(object, pars=NULL, use_names=TRUE, as_factor=FALSE
   if (summary_check_precomputed(object, pars)) return(object$summary[pars])
   
   mtidy <- dplyr::filter(pibble_tidy_samples(object, use_names, as_factor), 
-                         Parameter %in% pars)
+                         .data$Parameter %in% pars)
   # Suppress warnings about stupid implict NAs, this is on purpose. 
   suppressWarnings({
     
@@ -111,7 +179,7 @@ summary.pibblefit <- function(object, pars=NULL, use_names=TRUE, as_factor=FALSE
     vars <- unique(vars)
     vars <- rlang::syms(vars)
     
-    mtidy <- dplyr::group_by(mtidy, Parameter, !!!vars)
+    mtidy <- dplyr::group_by(mtidy, .data$Parameter, !!!vars)
     # if ((object$coord_system != "proportions")) {
     #   mtidy <- dplyr::group_by(mtidy, Parameter, coord, coord2, sample, covariate) 
     # } else {
@@ -119,19 +187,102 @@ summary.pibblefit <- function(object, pars=NULL, use_names=TRUE, as_factor=FALSE
     # }
     if (!gather_prob){
       mtidy <- mtidy %>% 
-        driver::summarise_posterior(val, ...) %>%
+        driver::summarise_posterior(.data$val, ...) %>%
         dplyr::ungroup() %>%
         split(.$Parameter) %>% 
         purrr::map(~dplyr::select_if(.x, ~!all(is.na(.x))))  
     } else if (gather_prob){
       mtidy <- mtidy %>% 
-        dplyr::select(-iter) %>% 
-        tidybayes::mean_qi(val, .width=c(.5, .8, .95, .99)) %>% 
+        dplyr::select(-.data$iter) %>% 
+        tidybayes::mean_qi(.data$val, .width=c(.5, .8, .95, .99)) %>% 
         dplyr::ungroup() %>% 
         split(.$Parameter) %>% 
         purrr::map(~dplyr::select_if(.x, ~!all(is.na(.x))))  
     }
       
+  })
+  
+  return(mtidy)
+}
+
+#' Summarise orthusfit object and print posterior quantiles
+#' 
+#' Default calculates median, mean, 50\% and 95\% credible interval
+#' 
+#' @param object an object of class orthusfit 
+#' @param pars character vector (default: c("Eta", "Lambda", "Sigma"))
+#' @param use_names should summary replace dimension indices with orthusfit 
+#'   names if names Y and X were named in call to \code{\link{orthus}}
+#' @param as_factor if use_names and as_factor then returns names as factors 
+#'   (useful for maintaining orderings when plotting)
+#' @param gather_prob if TRUE then prints quantiles in long format rather than 
+#'  wide (useful for some plotting functions)
+#' @param ... other expressions to pass to summarise (using name 'val' unquoted is 
+#'   probably what you want)
+#' @import dplyr
+#' @importFrom driver summarise_posterior
+#' @importFrom purrr map
+#' @importFrom tidybayes mean_qi
+#' @importFrom dplyr group_by select ungroup
+#' @importFrom rlang syms
+#' @export
+#' @examples 
+#' \dontrun{
+#' fit <- orthus(Y, Z, X)
+#' summary(fit, pars="Eta", median = median(val))
+#' 
+#' # Some later functions make use of precomputation
+#' fit$summary <- summary(fit)
+#' }
+summary.orthusfit <- function(object, pars=NULL, use_names=TRUE, as_factor=FALSE, 
+                              gather_prob=FALSE, ...){
+  if (is.null(pars)) {
+    pars <- c()
+    if (!is.null(object$Eta)) pars <- c(pars, "Eta")
+    if (!is.null(object$Lambda)) pars <- c(pars, "Lambda")
+    if (!is.null(object$Sigma)) pars <- c(pars, "Sigma")
+    pars <- pars[pars %in% names(object)] # only for the ones that are present 
+  }
+  
+  
+  # if already calculated
+  if (summary_check_precomputed(object, pars)) return(object$summary[pars])
+  
+  mtidy <- dplyr::filter(orthus_tidy_samples(object, use_names, as_factor), 
+                         .data$Parameter %in% pars)
+  # Suppress warnings about stupid implict NAs, this is on purpose. 
+  suppressWarnings({
+    
+    vars <- c()
+    if ("Eta" %in% pars) vars <- c(vars, "coord", "sample")
+    if ("Lambda" %in% pars) vars <- c(vars, "coord", "covariate")
+    if (("Sigma" %in% pars) & (object$coord_system != "proportions")) {
+      vars <- c(vars, "coord", "coord2")
+    }
+    vars <- unique(vars)
+    vars <- rlang::syms(vars)
+    
+    mtidy <- dplyr::group_by(mtidy, .data$Parameter, !!!vars)
+    # if ((object$coord_system != "proportions")) {
+    #   mtidy <- dplyr::group_by(mtidy, Parameter, coord, coord2, sample, covariate) 
+    # } else {
+    #   mtidy <- dplyr::group_by(mtidy, Parameter, coord, sample, covariate)
+    # }
+    if (!gather_prob){
+      mtidy <- mtidy %>% 
+        driver::summarise_posterior(.data$val, ...) %>%
+        dplyr::ungroup() %>%
+        split(.$Parameter) %>% 
+        purrr::map(~dplyr::select_if(.x, ~!all(is.na(.x))))  
+    } else if (gather_prob){
+      mtidy <- mtidy %>% 
+        dplyr::select(-.data$iter) %>% 
+        tidybayes::mean_qi(.data$val, .width=c(.5, .8, .95, .99)) %>% 
+        dplyr::ungroup() %>% 
+        split(.$Parameter) %>% 
+        purrr::map(~dplyr::select_if(.x, ~!all(is.na(.x))))  
+    }
+    
   })
   
   return(mtidy)
@@ -187,15 +338,72 @@ print.pibblefit <- function(x, summary=FALSE, ...){
 }
 
 
+#' Print dimensions and coordinate system information for orthusfit object. 
+#'
+#' @param x an object of class orthusfit
+#' @param summary if true also calculates and prints summary
+#' @param ... other arguments to pass to summary function
+#' @export
+#' @examples 
+#' \dontrun{
+#' fit <- orthus(Y, Z, X)
+#' print(fit)
+#' }
+#' @seealso \code{\link{summary.orthusfit}} summarizes posterior intervals 
+print.orthusfit <- function(x, summary=FALSE, ...){
+  if (is.null(x$Y)) {
+    cat(" orthusfit Object (Priors Only): \n")
+  } else {
+    cat("orthusfit Object: \n" )  
+  }
+  
+  cat(paste("  Number of Samples:\t\t", x$N, "\n"))
+  cat(paste("  Number of Categories:\t\t", x$D, "\n"))
+  cat(paste("  Number of Zdimensions:\t", x$P, "\n"))
+  cat(paste("  Number of Covariates:\t\t", x$Q, "\n"))
+  cat(paste("  Number of Posterior Samples:\t", x$iter, "\n"))
+  
+  pars <- c("Eta", "Lambda", "Sigma")
+  pars <- pars[pars %in% names(x)]
+  pars <- paste(pars, collapse = "  ")
+  cat(paste("  Contains Samples of Parameters:", pars, "\n", sep=""))
+  
+  if (x$coord_system=="alr"){
+    cs <- x$alr_base
+    nm <- x$names_categories
+    if (!is.null(nm)) cs <- paste0(cs, " [", nm[x$alr_base], "]")
+    cs <- paste("alr, reference category:", cs)
+  } else {
+    cs <- x$coord_system
+  }
+  cat(paste("  Coordinate System:\t\t", cs, "\n"))
+  if (!is.null(x$logMarginalLikelihood)){
+    cat(paste("  Log Marginal Likelihood:\t", 
+              round(x$logMarginalLikelihood, 3), "\n"))
+  }
+  
+  if (summary){
+    cat("\n\n Summary: \n ")
+    print(summary(x, ...))
+  }
+}
+
+
+
 #' Return regression coefficients of pibblefit object
 #' 
-#' Returned as array of dimension (D-1) x Q x iter.
+#' Returned as array of dimension (D-1) x Q x iter (if in ALR or ILR) otherwise
+#' DxQxiter (if in proportions or clr).
 #' 
 #' @param object an object of class pibblefit
-#' @param use_names if column and row names were passed for Y and X in 
+#' @param ... other options passed to coef.pibblefit (see details)
+#' @return Array of dimension (D-1) x Q x iter
+#' @details Other arguments:
+#' \itemize{
+#' \item `use_names` if column and row names were passed for Y and X in 
 #' call to \code{\link{pibble}}, should these names be applied to output 
 #' array. 
-#' @return Array of dimension (D-1) x Q x iter
+#' }
 #' 
 #' @export
 #' @examples 
@@ -203,12 +411,47 @@ print.pibblefit <- function(x, summary=FALSE, ...){
 #' fit <- pibble(Y, X)
 #' coef(fit)
 #' }
-coef.pibblefit <- function(object, use_names=TRUE){
+coef.pibblefit <- function(object, ...){
+  args <- list(...)
+  use_names <- args_null("use_names", args, TRUE)
+  
   if (is.null(object$Lambda)) stop("pibblefit object does not contain samples of Lambda")
   x <- object$Lambda
   if (use_names) return(name_array(x, object, list("cat", "cov", NULL)))
   return(x)
 }
+
+
+#' Return regression coefficients of orthus object
+#' 
+#' Returned as array of dimension (D-1+P) x Q x iter (if in ALR or ILR) 
+#' otherwise (D+P) x Q x iter.
+#' 
+#' @param object an object of class orthusfit
+#' @param ... other options passed to coef.orthusfit (see details)
+#' @return Array of dimension (D-1) x Q x iter
+#' @details Other arguments:
+#' \itemize{
+#' \item use_names if column and row names were passed for Y and X in 
+#' call to \code{\link{pibble}}, should these names be applied to output 
+#' array. 
+#' }
+#' 
+#' @export
+#' @examples 
+#' \dontrun{
+#' fit <- orthus(Y, Z, X)
+#' coef(fit)
+#' }
+coef.orthusfit <- function(object, ...){
+  args <- list(...)
+  use_names <- args_null("use_names", args, TRUE)
+  if (is.null(object$Lambda)) stop("orthusfit object does not contain samples of Lambda")
+  if (use_names) object <- name.orthusfit(object)
+  x <- object$Lambda
+  return(x)
+}
+
 
 #' Convert object of class pibblefit to a list
 #' 
@@ -225,6 +468,25 @@ as.list.pibblefit <- function(x,...){
   attr(x, "class") <- "list"
   return(x)
 }
+
+
+
+#' Convert object of class orthusfit to a list
+#' 
+#' @param x an object of class orthusfit
+#' @param ... currently unused
+#' 
+#' @export
+#' @examples 
+#' \dontrun{
+#' fit <- orthus(Y, Z, X)
+#' as.list(fit)
+#' }
+as.list.orthusfit <- function(x,...){
+  attr(x, "class") <- "list"
+  return(x)
+}
+
 
 #' Predict response from new data
 #' 
@@ -321,9 +583,9 @@ predict.pibblefit <- function(object, newdata=NULL, response="LambdaX", size=NUL
     }
   }
   if ((response == "LambdaX") && summary) {
-    LambdaX <- gather_array(LambdaX, val, coord, sample, iter) %>% 
-      group_by(coord, sample) %>% 
-      summarise_posterior(val, ...) %>% 
+    LambdaX <- gather_array(LambdaX, .data$val, .data$coord, .data$sample, .data$iter) %>% 
+      group_by(.data$coord, .data$sample) %>% 
+      summarise_posterior(.data$val, ...) %>% 
       ungroup() %>% 
       name_tidy(object, list("coord" = "cat", "sample"=colnames(newdata)))
     return(LambdaX)
@@ -340,14 +602,14 @@ predict.pibblefit <- function(object, newdata=NULL, response="LambdaX", size=NUL
                                                      NULL))
   if (response=="Eta"){
     if (transformed){
-      Eta <- alrInv_array(Eta, m$D, 1)
+      Eta <- alrInv_array(Eta, object$D, 1)
       if (l$coord_system == "clr") Eta <- clr_array(Eta, 1)
     }
   }
   if ((response=="Eta") && summary) {
-    Eta <- gather_array(Eta, val, coord, sample, iter) %>% 
-      group_by(coord, sample) %>% 
-      summarise_posterior(val, ...) %>% 
+    Eta <- gather_array(Eta, .data$val, .data$coord, .data$sample, .data$iter) %>% 
+      group_by(.data$coord, .data$sample) %>% 
+      summarise_posterior(.data$val, ...) %>% 
       ungroup() %>% 
       name_tidy(object, list("coord" = "cat", "sample"=colnames(newdata)))
   }
@@ -359,7 +621,7 @@ predict.pibblefit <- function(object, newdata=NULL, response="LambdaX", size=NUL
   } else {
     if (is.null(object$Eta)) stop("pibblefit object does not contain samples of Eta")
     com <- names(object)[!(names(object) %in% c("Lambda", "Sigma"))] # to save computation
-    Pi <- to_proportions(object[com])$Eta
+    Pi <- to_proportions(as.pibblefit(object[com]))$Eta
   }
   Ypred <- array(0, dim=c(object$D, nnew, iter))
   for (i in 1:iter){
@@ -371,9 +633,9 @@ predict.pibblefit <- function(object, newdata=NULL, response="LambdaX", size=NUL
                             list(object$names_categories, colnames(newdata), 
                                  NULL))
   if ((response == "Y") && summary) {
-    Ypred <- gather_array(Ypred, val, coord, sample, iter) %>% 
-      group_by(coord, sample) %>% 
-      summarise_posterior(val, ...) %>% 
+    Ypred <- gather_array(Ypred, .data$val, .data$coord, .data$sample, .data$iter) %>% 
+      group_by(.data$coord, .data$sample) %>% 
+      summarise_posterior(.data$val, ...) %>% 
       ungroup() %>% 
       name_tidy(object, list("coord" = object$names_categories, 
                              "sample"= colnames(newdata)))
@@ -384,7 +646,6 @@ predict.pibblefit <- function(object, newdata=NULL, response="LambdaX", size=NUL
 
 
 # access_dims -------------------------------------------------------------
-
 
 #' @rdname access_dims
 #' @export
@@ -401,6 +662,23 @@ ncovariates.pibblefit <- function(m){ m$Q }
 #' @rdname access_dims
 #' @export
 niter.pibblefit <- function(m){ m$iter }
+
+
+#' @rdname access_dims
+#' @export
+ncategories.orthusfit <- function(m){ m$D }
+
+#' @rdname access_dims
+#' @export
+nsamples.orthusfit <- function(m){ m$N }
+
+#' @rdname access_dims
+#' @export
+ncovariates.orthusfit <- function(m){ m$Q }
+
+#' @rdname access_dims
+#' @export
+niter.orthusfit <- function(m){ m$iter }
 
 
 
@@ -491,12 +769,12 @@ names_coords.pibblefit <- function(m){
 #' 
 #' # Sample prior as part of model fitting
 #' m <- pibblefit(N=as.integer(sim$N), D=as.integer(sim$D), Q=as.integer(sim$Q), 
-#'                 iter=2000, upsilon=upsilon, 
+#'                 iter=2000L, upsilon=upsilon, 
 #'                 Xi=Xi, Gamma=Gamma, Theta=Theta, X=X, 
 #'                 coord_system="alr", alr_base=D)
-#' m <- sample_prior(pibblefit)
+#' m <- sample_prior(m)
 #' plot(m) # plot prior distribution (defaults to parameter Lambda) 
-sample_prior.pibblefit <- function(m, n_samples=2000, 
+sample_prior.pibblefit <- function(m, n_samples=2000L, 
                                     pars=c("Eta", "Lambda", "Sigma"), 
                                     use_names=TRUE, ...){
   req(m, c("upsilon", "Theta", "Gamma", "Xi"))

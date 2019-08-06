@@ -65,7 +65,7 @@ ILR bases, CLR coordinates, ALR coordinates, and proportions." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">stray</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.11</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.13</span>
       </span>
     </div>
 
@@ -86,6 +86,9 @@ ILR bases, CLR coordinates, ALR coordinates, and proportions." />
     </li>
     <li>
       <a href="../articles/non-linear-models.html">Non-Linear Modeling with stray::basset</a>
+    </li>
+    <li>
+      <a href="../articles/orthus.html">Joint Modeling  (e.g., Multiomics) with Stray::Orthus</a>
     </li>
     <li>
       <a href="../articles/picking_priors.html">Tips on Specifying Priors</a>
@@ -159,6 +162,30 @@ ILR bases, CLR coordinates, ALR coordinates, and proportions.</p>
 
 <span class='fu'>to_ilr</span>(<span class='no'>m</span>, <span class='kw'>V</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)
 
+<span class='fu'>to_clr</span>(<span class='no'>m</span>)
+
+<span class='co'># S3 method for pibblefit</span>
+<span class='fu'>to_proportions</span>(<span class='no'>m</span>)
+
+<span class='co'># S3 method for orthusfit</span>
+<span class='fu'>to_proportions</span>(<span class='no'>m</span>)
+
+<span class='co'># S3 method for pibblefit</span>
+<span class='fu'>to_alr</span>(<span class='no'>m</span>, <span class='no'>d</span>)
+
+<span class='co'># S3 method for orthusfit</span>
+<span class='fu'>to_alr</span>(<span class='no'>m</span>, <span class='no'>d</span>)
+
+<span class='co'># S3 method for pibblefit</span>
+<span class='fu'>to_ilr</span>(<span class='no'>m</span>, <span class='kw'>V</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)
+
+<span class='co'># S3 method for orthusfit</span>
+<span class='fu'>to_ilr</span>(<span class='no'>m</span>, <span class='kw'>V</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)
+
+<span class='co'># S3 method for pibblefit</span>
+<span class='fu'>to_clr</span>(<span class='no'>m</span>)
+
+<span class='co'># S3 method for orthusfit</span>
 <span class='fu'>to_clr</span>(<span class='no'>m</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -166,7 +193,8 @@ ILR bases, CLR coordinates, ALR coordinates, and proportions.</p>
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>m</th>
-      <td><p>object of class pibblefit (e.g., output of <code><a href='pibble_fit.html'>pibble</a></code>)</p></td>
+      <td><p>object of class pibblefit or orthusfit (e.g., output of <code><a href='pibble_fit.html'>pibble</a></code>
+or <code><a href='orthus_fit.html'>orthus</a></code>)</p></td>
     </tr>
     <tr>
       <th>d</th>
@@ -181,11 +209,12 @@ ILR bases, CLR coordinates, ALR coordinates, and proportions.</p>
     
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>pibblefit object</p>
+    <p>object</p>
     
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p>Note: that there is a degeneracy of representations for a covariance 
+    <p>For orthus, transforms only appleid to log-ratio parameters</p>
+<p>Note: that there is a degeneracy of representations for a covariance 
 matrix represented in terms of proportions. As such the function 
 <code>to_proportions</code> does not attempt to transform parameters Sigma
 or prior Xi and instead just removes them from the pibblefit object returned.</p>

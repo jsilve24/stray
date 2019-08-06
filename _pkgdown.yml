@@ -9,6 +9,8 @@ navbar:
           href: articles/introduction-to-stray.html
         - text: "Non-Linear Modeling with stray::basset"
           href: articles/non-linear-models.html
+        - text: "Joint Modeling  (e.g., Multiomics) with Stray::Orthus"
+          href: articles/orthus.html
         - text: "Tips on Specifying Priors"
           href: articles/picking_priors.html
     - text: "Functions"
@@ -17,10 +19,14 @@ navbar:
       href: news/index.html
     - text: "Other Packages"
       menu:
+        - text: "RcppCoDA"
+          href: https://github.com/jsilve24/RcppCoDA
         - text: "driver"
           href: https://jsilve24.github.io/driver/
         - text: "philr"
           href: https://bioconductor.org/packages/release/bioc/html/philr.html
+        - text: "RcppHungarian"
+          href: https://cran.r-project.org/package=RcppHungarian
   right: 
     - icon: fa-twitter
       href: https://twitter.com/inschool4life
@@ -33,6 +39,7 @@ reference:
     contents:
       - 'pibble'
       - 'basset'
+      - 'orthus'
       - 'maltipoo'
   - title: "Rcpp Model Interfaces"
     desc: "Low level interfaces for fitting models"
@@ -42,6 +49,8 @@ reference:
       - conjugateLinearModel
       - uncollapsePibble
       - loglikPibbleCollapsed
+      - loglikMaltipooCollapsed
+      - kernels
   - title: "Object Methods"
     desc: "Methods for working with model objects"
     contents: 
@@ -60,12 +69,17 @@ reference:
       - stray_transforms
       - req
       - verify
+      - summary.pibblefit
+      - summary.orthusfit
   - title: "Helpful Utility Methods"
     desc: "Just that, mostly support other package functions"
     contents:
       - random_pibble_init
       - lambda_to_iqlr
       - pibble_sim
+      - orthus_sim
+      - pibble_tidy_samples
+      - orthus_tidy_samples
       - store_coord
       - check_dims
   - title: "Utility Math Functions"
@@ -73,3 +87,8 @@ reference:
     contents:
       - lmvgamma
       - lmvgamma_deriv
+  - title: "Datasets"
+    desc: "Example Datasets"
+    contents: 
+      - mallard
+      - mallard_family

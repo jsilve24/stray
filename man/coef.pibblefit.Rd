@@ -4,20 +4,27 @@
 \alias{coef.pibblefit}
 \title{Return regression coefficients of pibblefit object}
 \usage{
-\method{coef}{pibblefit}(object, use_names = TRUE)
+\method{coef}{pibblefit}(object, ...)
 }
 \arguments{
 \item{object}{an object of class pibblefit}
 
-\item{use_names}{if column and row names were passed for Y and X in 
-call to \code{\link{pibble}}, should these names be applied to output 
-array.}
+\item{...}{other options passed to coef.pibblefit (see details)}
 }
 \value{
 Array of dimension (D-1) x Q x iter
 }
 \description{
-Returned as array of dimension (D-1) x Q x iter.
+Returned as array of dimension (D-1) x Q x iter (if in ALR or ILR) otherwise
+DxQxiter (if in proportions or clr).
+}
+\details{
+Other arguments:
+\itemize{
+\item `use_names` if column and row names were passed for Y and X in 
+call to \code{\link{pibble}}, should these names be applied to output 
+array. 
+}
 }
 \examples{
 \dontrun{

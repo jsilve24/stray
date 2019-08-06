@@ -63,7 +63,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">stray</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.11</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.13</span>
       </span>
     </div>
 
@@ -84,6 +84,9 @@
     </li>
     <li>
       <a href="../articles/non-linear-models.html">Non-Linear Modeling with stray::basset</a>
+    </li>
+    <li>
+      <a href="../articles/orthus.html">Joint Modeling  (e.g., Multiomics) with Stray::Orthus</a>
     </li>
     <li>
       <a href="../articles/picking_priors.html">Tips on Specifying Priors</a>
@@ -201,11 +204,11 @@ $$G = \sigma^2*(X-c)'(X-c)$$</p>
   <span class='no'>X</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/matrix'>matrix</a></span>(<span class='fu'><a href='https://www.rdocumentation.org/packages/stats/topics/Normal'>rnorm</a></span>(<span class='fl'>10</span>), <span class='fl'>2</span>, <span class='fl'>5</span>)
   <span class='no'>G</span> <span class='kw'>&lt;-</span> <span class='fu'>K</span>(<span class='no'>X</span>)
   <span class='no'>G</span> <span class='co'># this is the gram matrix (the kernel evaluated on a finite set of points)</span></div><div class='output co'>#&gt;              1            2            3            4            5
-#&gt; 1 4.000000e+00 3.048418e-34 9.601342e-18 5.163322e-90 3.507828e-38
-#&gt; 2 3.048418e-34 4.000000e+00 1.658447e-04 9.348181e-31 1.245223e-05
-#&gt; 3 9.601342e-18 1.658447e-04 4.000000e+00 1.020556e-31 1.989879e-04
-#&gt; 4 5.163322e-90 9.348181e-31 1.020556e-31 4.000000e+00 6.006114e-13
-#&gt; 5 3.507828e-38 1.245223e-05 1.989879e-04 6.006114e-13 4.000000e+00</div></pre>
+#&gt; 1 4.000000e+00 2.319187e-13 4.722057e-03 1.183206e-32 2.239274e-10
+#&gt; 2 2.319187e-13 4.000000e+00 1.157943e-18 4.229921e-22 1.401244e-41
+#&gt; 3 4.722057e-03 1.157943e-18 4.000000e+00 2.052164e-53 1.531729e-18
+#&gt; 4 1.183206e-32 4.229921e-22 2.052164e-53 4.000000e+00 5.341212e-40
+#&gt; 5 2.239274e-10 1.401244e-41 1.531729e-18 5.341212e-40 4.000000e+00</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>

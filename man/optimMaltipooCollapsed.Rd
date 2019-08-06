@@ -60,9 +60,6 @@ decomposition of negative inverse hessian (should be <=0)}
 
 \item{jitter}{(default: 0) if >0 then adds that factor to diagonal of Hessian
 before decomposition (to improve matrix conditioning)}
-
-\item{no_error}{if true will throw hessian warning rather than error if
-not positive definite.}
 }
 \value{
 List containing (all with respect to found optima)

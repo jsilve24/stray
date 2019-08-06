@@ -32,7 +32,8 @@
 
 <meta property="og:title" content="Return regression coefficients of pibblefit object — coef.pibblefit" />
 
-<meta property="og:description" content="Returned as array of dimension (D-1) x Q x iter." />
+<meta property="og:description" content="Returned as array of dimension (D-1) x Q x iter (if in ALR or ILR) otherwise
+DxQxiter (if in proportions or clr)." />
 <meta name="twitter:card" content="summary" />
 
 
@@ -63,7 +64,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">stray</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.11</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.13</span>
       </span>
     </div>
 
@@ -84,6 +85,9 @@
     </li>
     <li>
       <a href="../articles/non-linear-models.html">Non-Linear Modeling with stray::basset</a>
+    </li>
+    <li>
+      <a href="../articles/orthus.html">Joint Modeling  (e.g., Multiomics) with Stray::Orthus</a>
     </li>
     <li>
       <a href="../articles/picking_priors.html">Tips on Specifying Priors</a>
@@ -145,12 +149,13 @@
 
     <div class="ref-description">
     
-    <p>Returned as array of dimension (D-1) x Q x iter.</p>
+    <p>Returned as array of dimension (D-1) x Q x iter (if in ALR or ILR) otherwise
+DxQxiter (if in proportions or clr).</p>
     
     </div>
 
     <pre class="usage"><span class='co'># S3 method for pibblefit</span>
-<span class='fu'><a href='https://www.rdocumentation.org/packages/stats/topics/coef'>coef</a></span>(<span class='no'>object</span>, <span class='kw'>use_names</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</pre>
+<span class='fu'><a href='https://www.rdocumentation.org/packages/stats/topics/coef'>coef</a></span>(<span class='no'>object</span>, <span class='no'>...</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -160,16 +165,22 @@
       <td><p>an object of class pibblefit</p></td>
     </tr>
     <tr>
-      <th>use_names</th>
-      <td><p>if column and row names were passed for Y and X in 
-call to <code><a href='pibble_fit.html'>pibble</a></code>, should these names be applied to output 
-array.</p></td>
+      <th>...</th>
+      <td><p>other options passed to coef.pibblefit (see details)</p></td>
     </tr>
     </table>
     
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
     <p>Array of dimension (D-1) x Q x iter</p>
+    
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
+
+    <p>Other arguments:</p><ul>
+<li><p>`use_names` if column and row names were passed for Y and X in 
+call to <code><a href='pibble_fit.html'>pibble</a></code>, should these names be applied to output 
+array.</p></li>
+</ul>
     
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
@@ -184,6 +195,8 @@ array.</p></td>
       <li><a href="#arguments">Arguments</a></li>
       
       <li><a href="#value">Value</a></li>
+
+      <li><a href="#details">Details</a></li>
       
       <li><a href="#examples">Examples</a></li>
     </ul>

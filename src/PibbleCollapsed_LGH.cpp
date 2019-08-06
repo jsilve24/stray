@@ -21,13 +21,18 @@ using Eigen::VectorXd;
 //' documentation
 //'
 //' @inheritParams optimPibbleCollapsed
+//' @param AInv Inverse of A for LTP (for Pibble defined as 
+//'   AInv = solve(diag(N)+ t(X)\%*\%Gamma\%*\%X) )
+//' @param KInv Inverse of K for LTP (for Pibble defined as KInv = solve(Xi))
 //' @param eta matrix (D-1)xN of parameter values at which to calculate quantities
 //' @param sylv (default:false) if true and if N < D-1 will use sylvester determinant
 //'   identity to speed computation
 //' @return see below
-//' * loglikPibbleCollapsed - double
-//' * gradPibbleCollapsed - vector
-//' * hessPibbleCollapsed- matrix
+//'   \itemize{
+//'     \item loglikPibbleCollapsed - double
+//'     \item gradPibbleCollapsed - vector
+//'     \item hessPibbleCollapsed- matrix
+//'   }
 //' @md
 //' @export
 //' @examples
@@ -53,23 +58,24 @@ using Eigen::VectorXd;
 //' Xi <- Sigma*(upsilon-D)
 //'
 //' # Precompute
-//' K <- solve(Xi)
-//' A <- solve(diag(N)+ t(X)%*%Gamma%*%X)
+//' KInv <- solve(Xi)
+//' AInv <- solve(diag(N)+ t(X)%*%Gamma%*%X)
 //' ThetaX <- Theta%*%X
 //'
 //'
-//' loglikPibbleCollapsed(Y, upsilon, ThetaX, K, A, Eta)
-//' gradPibbleCollapsed(Y, upsilon, ThetaX, K, A, Eta)[1:5]
-//' hessPibbleCollapsed(Y, upsilon, ThetaX, K, A, Eta)[1:5,1:5]
+//' loglikPibbleCollapsed(Y, upsilon, ThetaX, KInv, AInv, Eta)
+//' gradPibbleCollapsed(Y, upsilon, ThetaX, KInv, AInv, Eta)[1:5]
+//' hessPibbleCollapsed(Y, upsilon, ThetaX, KInv, AInv, Eta)[1:5,1:5]
 // [[Rcpp::export]]
 double loglikPibbleCollapsed(const Eigen::ArrayXXd Y,
                   const double upsilon,
                   const Eigen::MatrixXd ThetaX,
-                  const Eigen::MatrixXd K,
-                  const Eigen::MatrixXd A,
+                  const Eigen::MatrixXd KInv,
+                  const Eigen::MatrixXd AInv,
                   Eigen::MatrixXd eta,
                   bool sylv=false){
-  PibbleCollapsed cm(Y, upsilon, ThetaX, K, A, sylv);
+  // note inverting naming structure here to accord with manuscript
+  PibbleCollapsed cm(Y, upsilon, ThetaX, KInv, AInv, sylv); 
   Map<VectorXd> etavec(eta.data(), eta.size());
   cm.updateWithEtaLL(etavec);
   return cm.calcLogLik(etavec);
@@ -82,11 +88,12 @@ double loglikPibbleCollapsed(const Eigen::ArrayXXd Y,
 Eigen::VectorXd gradPibbleCollapsed(const Eigen::ArrayXXd Y,
                          const double upsilon,
                          const Eigen::MatrixXd ThetaX,
-                         const Eigen::MatrixXd K,
-                         const Eigen::MatrixXd A,
+                         const Eigen::MatrixXd KInv,
+                         const Eigen::MatrixXd AInv,
                          Eigen::MatrixXd eta,
                          bool sylv=false){
-  PibbleCollapsed cm(Y, upsilon, ThetaX, K, A, sylv);
+  // note inverting naming structure here to accord with manuscript
+  PibbleCollapsed cm(Y, upsilon, ThetaX, KInv, AInv, sylv);
   Map<VectorXd> etavec(eta.data(), eta.size());
   cm.updateWithEtaLL(etavec);
   cm.updateWithEtaGH();
@@ -99,34 +106,36 @@ Eigen::VectorXd gradPibbleCollapsed(const Eigen::ArrayXXd Y,
 Eigen::MatrixXd hessPibbleCollapsed(const Eigen::ArrayXXd Y,
                          const double upsilon,
                          const Eigen::MatrixXd ThetaX,
-                         const Eigen::MatrixXd K,
-                         const Eigen::MatrixXd A,
+                         const Eigen::MatrixXd KInv,
+                         const Eigen::MatrixXd AInv,
                          Eigen::MatrixXd eta,
                          bool sylv=false){
-  PibbleCollapsed cm(Y, upsilon, ThetaX, K, A, sylv);
+  // note inverting naming structure here to accord with manuscript
+  PibbleCollapsed cm(Y, upsilon, ThetaX, KInv, AInv, sylv);
   Map<VectorXd> etavec(eta.data(), eta.size());
   cm.updateWithEtaLL(etavec);
   cm.updateWithEtaGH();
   return cm.calcHess();
 }
 
-//' Hessian Vector Product using Finite Differences
-//' @rdname hessVectorProd
-//' @export
-// [[Rcpp::export]]
-Eigen::VectorXd hessVectorProd(const Eigen::ArrayXXd Y,
-                         const double upsilon,
-                         const Eigen::MatrixXd ThetaX,
-                         const Eigen::MatrixXd K,
-                         const Eigen::MatrixXd A,
-                         Eigen::MatrixXd eta,
-                         Eigen::VectorXd v,
-                         double r,
-                         bool sylv=false){
-  PibbleCollapsed cm(Y, upsilon, ThetaX, K, A, sylv);
-  Map<VectorXd> etavec(eta.data(), eta.size());
-  return cm.calcHessVectorProd(etavec, v, r);
-}
+// //' Hessian Vector Product using Finite Differences
+// //' @rdname hessVectorProd
+// //' @export
+// // [[Rcpp::export]]
+// Eigen::VectorXd hessVectorProd(const Eigen::ArrayXXd Y,
+//                          const double upsilon,
+//                          const Eigen::MatrixXd ThetaX,
+//                          const Eigen::MatrixXd KInv,
+//                          const Eigen::MatrixXd AInv,
+//                          Eigen::MatrixXd eta,
+//                          Eigen::VectorXd v,
+//                          double r,
+//                          bool sylv=false){
+//   // note inverting naming structure here to accord with manuscript
+//   PibbleCollapsed cm(Y, upsilon, ThetaX, KInv, AInv, sylv);
+//   Map<VectorXd> etavec(eta.data(), eta.size());
+//   return cm.calcHessVectorProd(etavec, v, r);
+// }
 
 // //' Backtracking line search
 // //' @rdname lineSearch

@@ -35,6 +35,39 @@ conjugateLinearModel <- function(Y, X, Theta, Gamma, Xi, upsilon, n_samples = 20
     .Call('_stray_conjugateLinearModel', PACKAGE = 'stray', Y, X, Theta, Gamma, Xi, upsilon, n_samples)
 }
 
+#' Calculations for the Collapsed Maltipoo Model
+#'
+#' Functions providing access to the Log Likelihood, Gradient, and Hessian
+#' of the collapsed maltipoo model. Note: These are convenience functions
+#' but are not as optimized as direct coding of the MaltipooCollapsed
+#' C++ class due to a lack of Memoization. By contrast function optimMaltipooCollapsed
+#' is much more optimized and massively cuts down on repeated calculations.
+#' A more efficient Rcpp module based implementation of these functions
+#' may following if the future. For model details see \code{\link{optimMaltipooCollapsed}}
+#' documentation
+#' @inheritParams optimMaltipooCollapsed
+#' @param eta matrix (D-1)xN of parameter values at which to calculate quantities
+#' @param sylv (default:false) if true and if N < D-1 will use sylvester determinant
+#'   identity to speed computation
+#' @param ell P-vector of scale factors for each variance component (aka VCScale) 
+#' @name loglikMaltipooCollapsed
+#' @export
+loglikMaltipooCollapsed <- function(Y, upsilon, Theta, X, KInv, U, eta, ell, sylv = FALSE) {
+    .Call('_stray_loglikMaltipooCollapsed', PACKAGE = 'stray', Y, upsilon, Theta, X, KInv, U, eta, ell, sylv)
+}
+
+#' @rdname loglikMaltipooCollapsed
+#' @export
+gradMaltipooCollapsed <- function(Y, upsilon, Theta, X, KInv, U, eta, ell, sylv = FALSE) {
+    .Call('_stray_gradMaltipooCollapsed', PACKAGE = 'stray', Y, upsilon, Theta, X, KInv, U, eta, ell, sylv)
+}
+
+#' @rdname loglikMaltipooCollapsed
+#' @export
+hessMaltipooCollapsed <- function(Y, upsilon, Theta, X, KInv, U, eta, ell, sylv = FALSE) {
+    .Call('_stray_hessMaltipooCollapsed', PACKAGE = 'stray', Y, upsilon, Theta, X, KInv, U, eta, ell, sylv)
+}
+
 #' Function to Optimize the Collapsed Maltipoo Model
 #' 
 #' See details for model. Should likely be followed by function 
@@ -68,8 +101,6 @@ conjugateLinearModel <- function(Y, X, Theta, Gamma, Xi, upsilon, n_samples = 20
 #'   'eigen' (more stable-slightly, slower) or 'cholesky' (less stable, faster, default)
 #' @param eigvalthresh threshold for negative eigenvalues in 
 #'   decomposition of negative inverse hessian (should be <=0)
-#' @param no_error if true will throw hessian warning rather than error if 
-#'   not positive definite. 
 #' @param jitter (default: 0) if >0 then adds that factor to diagonal of Hessian 
 #' before decomposition (to improve matrix conditioning)
 #'   
@@ -133,13 +164,18 @@ optimMaltipooCollapsed <- function(Y, upsilon, Theta, X, KInv, U, init, ellinit,
 #' documentation
 #'
 #' @inheritParams optimPibbleCollapsed
+#' @param AInv Inverse of A for LTP (for Pibble defined as 
+#'   AInv = solve(diag(N)+ t(X)\%*\%Gamma\%*\%X) )
+#' @param KInv Inverse of K for LTP (for Pibble defined as KInv = solve(Xi))
 #' @param eta matrix (D-1)xN of parameter values at which to calculate quantities
 #' @param sylv (default:false) if true and if N < D-1 will use sylvester determinant
 #'   identity to speed computation
 #' @return see below
-#' * loglikPibbleCollapsed - double
-#' * gradPibbleCollapsed - vector
-#' * hessPibbleCollapsed- matrix
+#'   \itemize{
+#'     \item loglikPibbleCollapsed - double
+#'     \item gradPibbleCollapsed - vector
+#'     \item hessPibbleCollapsed- matrix
+#'   }
 #' @md
 #' @export
 #' @examples
@@ -165,35 +201,28 @@ optimMaltipooCollapsed <- function(Y, upsilon, Theta, X, KInv, U, init, ellinit,
 #' Xi <- Sigma*(upsilon-D)
 #'
 #' # Precompute
-#' K <- solve(Xi)
-#' A <- solve(diag(N)+ t(X)%*%Gamma%*%X)
+#' KInv <- solve(Xi)
+#' AInv <- solve(diag(N)+ t(X)%*%Gamma%*%X)
 #' ThetaX <- Theta%*%X
 #'
 #'
-#' loglikPibbleCollapsed(Y, upsilon, ThetaX, K, A, Eta)
-#' gradPibbleCollapsed(Y, upsilon, ThetaX, K, A, Eta)[1:5]
-#' hessPibbleCollapsed(Y, upsilon, ThetaX, K, A, Eta)[1:5,1:5]
-loglikPibbleCollapsed <- function(Y, upsilon, ThetaX, K, A, eta, sylv = FALSE) {
-    .Call('_stray_loglikPibbleCollapsed', PACKAGE = 'stray', Y, upsilon, ThetaX, K, A, eta, sylv)
+#' loglikPibbleCollapsed(Y, upsilon, ThetaX, KInv, AInv, Eta)
+#' gradPibbleCollapsed(Y, upsilon, ThetaX, KInv, AInv, Eta)[1:5]
+#' hessPibbleCollapsed(Y, upsilon, ThetaX, KInv, AInv, Eta)[1:5,1:5]
+loglikPibbleCollapsed <- function(Y, upsilon, ThetaX, KInv, AInv, eta, sylv = FALSE) {
+    .Call('_stray_loglikPibbleCollapsed', PACKAGE = 'stray', Y, upsilon, ThetaX, KInv, AInv, eta, sylv)
 }
 
 #' @rdname loglikPibbleCollapsed
 #' @export
-gradPibbleCollapsed <- function(Y, upsilon, ThetaX, K, A, eta, sylv = FALSE) {
-    .Call('_stray_gradPibbleCollapsed', PACKAGE = 'stray', Y, upsilon, ThetaX, K, A, eta, sylv)
+gradPibbleCollapsed <- function(Y, upsilon, ThetaX, KInv, AInv, eta, sylv = FALSE) {
+    .Call('_stray_gradPibbleCollapsed', PACKAGE = 'stray', Y, upsilon, ThetaX, KInv, AInv, eta, sylv)
 }
 
 #' @rdname loglikPibbleCollapsed
 #' @export
-hessPibbleCollapsed <- function(Y, upsilon, ThetaX, K, A, eta, sylv = FALSE) {
-    .Call('_stray_hessPibbleCollapsed', PACKAGE = 'stray', Y, upsilon, ThetaX, K, A, eta, sylv)
-}
-
-#' Hessian Vector Product using Finite Differences
-#' @rdname hessVectorProd
-#' @export
-hessVectorProd <- function(Y, upsilon, ThetaX, K, A, eta, v, r, sylv = FALSE) {
-    .Call('_stray_hessVectorProd', PACKAGE = 'stray', Y, upsilon, ThetaX, K, A, eta, v, r, sylv)
+hessPibbleCollapsed <- function(Y, upsilon, ThetaX, KInv, AInv, eta, sylv = FALSE) {
+    .Call('_stray_hessPibbleCollapsed', PACKAGE = 'stray', Y, upsilon, ThetaX, KInv, AInv, eta, sylv)
 }
 
 #' Function to Optimize the Collapsed Pibble Model
@@ -229,8 +258,6 @@ hessVectorProd <- function(Y, upsilon, ThetaX, K, A, eta, v, r, sylv = FALSE) {
 #' @param optim_method (default:"adam") or "lbfgs"
 #' @param eigvalthresh threshold for negative eigenvalues in 
 #'   decomposition of negative inverse hessian (should be <=0)
-#' @param no_error if true will throw hessian warning rather than error if 
-#'   not positive definite. 
 #' @param jitter (default: 0) if >=0 then adds that factor to diagonal of Hessian 
 #' before decomposition (to improve matrix conditioning)
 #' @param multDirichletBoot if >0 (overrides laplace approximation) and samples
@@ -389,12 +416,16 @@ rMatUnitNormal_test2 <- function(n) {
 }
 
 #' Log of Multivarate Gamma Function - Gamma_p(a)
+#' @param a defined by Gamma_p(a)
+#' @param p defined by Gamma_p(a)
 #' @references https://en.wikipedia.org/wiki/Multivariate_gamma_function
 lmvgamma <- function(a, p) {
     .Call('_stray_lmvgamma', PACKAGE = 'stray', a, p)
 }
 
 #' Derivative of Log of Multivariate Gamma Function - Gamma_p(a)
+#' @param a defined by Gamma_p(a)
+#' @param p defined by Gamma_p(a)
 #' @references https://en.wikipedia.org/wiki/Multivariate_gamma_function
 lmvgamma_deriv <- function(a, p) {
     .Call('_stray_lmvgamma_deriv', PACKAGE = 'stray', a, p)

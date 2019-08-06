@@ -47,7 +47,7 @@ name <- function(m, ...){
 #' 
 #' @export
 #' @return object of the same class 
-sample_prior <- function(m, n_samples=2000, ...){
+sample_prior <- function(m, n_samples=2000L, ...){
   UseMethod("sample_prior", m)
 }
 
@@ -119,7 +119,7 @@ niter <- function(m){
 #' Generic method for getting and setting dimension names of fit object
 #' 
 #' @param m object
-#' @param names character vector (or NULL)
+#' @param value character vector (or NULL)
 #' @name name_dims
 #' 
 #' @details \code{names_coords} is different than \code{names_categories}. 

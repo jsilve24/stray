@@ -1,0 +1,3 @@
+[submodule "inst/extdata/Kashyap2013"]
+	path = inst/extdata/Kashyap2013
+	url = https://github.com/jsilve24/kashyap2013data.git

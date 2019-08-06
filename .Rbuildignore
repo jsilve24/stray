@@ -1,2 +1,8 @@
 ^.*\.Rproj$
 ^\.Rproj\.user$
+^\.travis\.yml$
+^inst/extdata/Kashyap2013/.git$
+^docs$
+^_pkgdown\.yml$
+^README.md$
+^src/Makevars$

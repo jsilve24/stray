@@ -70,7 +70,7 @@ documentation" />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">stray</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.11</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.13</span>
       </span>
     </div>
 
@@ -91,6 +91,9 @@ documentation" />
     </li>
     <li>
       <a href="../articles/non-linear-models.html">Non-Linear Modeling with stray::basset</a>
+    </li>
+    <li>
+      <a href="../articles/orthus.html">Joint Modeling  (e.g., Multiomics) with Stray::Orthus</a>
     </li>
     <li>
       <a href="../articles/picking_priors.html">Tips on Specifying Priors</a>
@@ -163,11 +166,11 @@ documentation</p>
     
     </div>
 
-    <pre class="usage"><span class='fu'>loglikPibbleCollapsed</span>(<span class='no'>Y</span>, <span class='no'>upsilon</span>, <span class='no'>ThetaX</span>, <span class='no'>K</span>, <span class='no'>A</span>, <span class='no'>eta</span>, <span class='kw'>sylv</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)
+    <pre class="usage"><span class='fu'>loglikPibbleCollapsed</span>(<span class='no'>Y</span>, <span class='no'>upsilon</span>, <span class='no'>ThetaX</span>, <span class='no'>KInv</span>, <span class='no'>AInv</span>, <span class='no'>eta</span>, <span class='kw'>sylv</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)
 
-<span class='fu'>gradPibbleCollapsed</span>(<span class='no'>Y</span>, <span class='no'>upsilon</span>, <span class='no'>ThetaX</span>, <span class='no'>K</span>, <span class='no'>A</span>, <span class='no'>eta</span>, <span class='kw'>sylv</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)
+<span class='fu'>gradPibbleCollapsed</span>(<span class='no'>Y</span>, <span class='no'>upsilon</span>, <span class='no'>ThetaX</span>, <span class='no'>KInv</span>, <span class='no'>AInv</span>, <span class='no'>eta</span>, <span class='kw'>sylv</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)
 
-<span class='fu'>hessPibbleCollapsed</span>(<span class='no'>Y</span>, <span class='no'>upsilon</span>, <span class='no'>ThetaX</span>, <span class='no'>K</span>, <span class='no'>A</span>, <span class='no'>eta</span>, <span class='kw'>sylv</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)</pre>
+<span class='fu'>hessPibbleCollapsed</span>(<span class='no'>Y</span>, <span class='no'>upsilon</span>, <span class='no'>ThetaX</span>, <span class='no'>KInv</span>, <span class='no'>AInv</span>, <span class='no'>eta</span>, <span class='kw'>sylv</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -184,6 +187,15 @@ documentation</p>
       <th>ThetaX</th>
       <td><p>D-1 x N matrix formed by Theta*X (Theta is Prior mean
 for regression coefficients)</p></td>
+    </tr>
+    <tr>
+      <th>KInv</th>
+      <td><p>Inverse of K for LTP (for Pibble defined as KInv = solve(Xi))</p></td>
+    </tr>
+    <tr>
+      <th>AInv</th>
+      <td><p>Inverse of A for LTP (for Pibble defined as
+AInv = solve(diag(N)+ t(X)%<em>%Gamma%</em>%X) )</p></td>
     </tr>
     <tr>
       <th>eta</th>
@@ -229,17 +241,17 @@ identity to speed computation</p></td>
 <span class='no'>Xi</span> <span class='kw'>&lt;-</span> <span class='no'>Sigma</span>*(<span class='no'>upsilon</span>-<span class='no'>D</span>)
 
 <span class='co'># Precompute</span>
-<span class='no'>K</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/solve'>solve</a></span>(<span class='no'>Xi</span>)
-<span class='no'>A</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/solve'>solve</a></span>(<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/diag'>diag</a></span>(<span class='no'>N</span>)+ <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/t'>t</a></span>(<span class='no'>X</span>)<span class='kw'>%*%</span><span class='no'>Gamma</span><span class='kw'>%*%</span><span class='no'>X</span>)
+<span class='no'>KInv</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/solve'>solve</a></span>(<span class='no'>Xi</span>)
+<span class='no'>AInv</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/solve'>solve</a></span>(<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/diag'>diag</a></span>(<span class='no'>N</span>)+ <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/t'>t</a></span>(<span class='no'>X</span>)<span class='kw'>%*%</span><span class='no'>Gamma</span><span class='kw'>%*%</span><span class='no'>X</span>)
 <span class='no'>ThetaX</span> <span class='kw'>&lt;-</span> <span class='no'>Theta</span><span class='kw'>%*%</span><span class='no'>X</span>
 
 
-<span class='fu'>loglikPibbleCollapsed</span>(<span class='no'>Y</span>, <span class='no'>upsilon</span>, <span class='no'>ThetaX</span>, <span class='no'>K</span>, <span class='no'>A</span>, <span class='no'>Eta</span>)</div><div class='output co'>#&gt; [1] -120985</div><div class='input'><span class='fu'>gradPibbleCollapsed</span>(<span class='no'>Y</span>, <span class='no'>upsilon</span>, <span class='no'>ThetaX</span>, <span class='no'>K</span>, <span class='no'>A</span>, <span class='no'>Eta</span>)[<span class='fl'>1</span>:<span class='fl'>5</span>]</div><div class='output co'>#&gt; [1] -0.2919848 -0.1266784  1.1792351 13.6813417 -3.7704904</div><div class='input'><span class='fu'>hessPibbleCollapsed</span>(<span class='no'>Y</span>, <span class='no'>upsilon</span>, <span class='no'>ThetaX</span>, <span class='no'>K</span>, <span class='no'>A</span>, <span class='no'>Eta</span>)[<span class='fl'>1</span>:<span class='fl'>5</span>,<span class='fl'>1</span>:<span class='fl'>5</span>]</div><div class='output co'>#&gt;             [,1]        [,2]        [,3]          [,4]         [,5]
-#&gt; [1,] -0.57310877 -0.04991180  0.03243245     0.2647870  -0.01069384
-#&gt; [2,] -0.04991180 -0.66136243 -0.07135975     0.2429493  -0.02165481
-#&gt; [3,]  0.03243245 -0.07135975 -1.13581834     0.8367218  -0.02528917
-#&gt; [4,]  0.26478698  0.24294926  0.83672183 -1157.3227611  17.52554779
-#&gt; [5,] -0.01069384 -0.02165481 -0.02528917    17.5255478 -21.25162872</div></pre>
+<span class='fu'>loglikPibbleCollapsed</span>(<span class='no'>Y</span>, <span class='no'>upsilon</span>, <span class='no'>ThetaX</span>, <span class='no'>KInv</span>, <span class='no'>AInv</span>, <span class='no'>Eta</span>)</div><div class='output co'>#&gt; [1] -265780.7</div><div class='input'><span class='fu'>gradPibbleCollapsed</span>(<span class='no'>Y</span>, <span class='no'>upsilon</span>, <span class='no'>ThetaX</span>, <span class='no'>KInv</span>, <span class='no'>AInv</span>, <span class='no'>Eta</span>)[<span class='fl'>1</span>:<span class='fl'>5</span>]</div><div class='output co'>#&gt; [1] -7.4295802 20.2831751  3.7921896 16.3822762 -0.3263402</div><div class='input'><span class='fu'>hessPibbleCollapsed</span>(<span class='no'>Y</span>, <span class='no'>upsilon</span>, <span class='no'>ThetaX</span>, <span class='no'>KInv</span>, <span class='no'>AInv</span>, <span class='no'>Eta</span>)[<span class='fl'>1</span>:<span class='fl'>5</span>,<span class='fl'>1</span>:<span class='fl'>5</span>]</div><div class='output co'>#&gt;              [,1]        [,2]         [,3]        [,4]        [,5]
+#&gt; [1,] -1582.792544  348.907224   9.62004840  470.315553  3.70555607
+#&gt; [2,]   348.907224 -740.061893   3.06111859  149.002555  1.16962431
+#&gt; [3,]     9.620048    3.061119 -23.62999408    4.099814 -0.03456346
+#&gt; [4,]   470.315553  149.002555   4.09981354 -945.340429  1.54734770
+#&gt; [5,]     3.705556    1.169624  -0.03456346    1.547348 -9.25685611</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>

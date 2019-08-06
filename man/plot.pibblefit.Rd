@@ -4,29 +4,30 @@
 \alias{plot.pibblefit}
 \title{Plot Summaries of Posterior Distribution of pibblefit Parameters}
 \usage{
-\method{plot}{pibblefit}(m, par = "Lambda", focus.cov = NULL,
-  focus.coord = NULL, focus.sample = NULL, use_names = TRUE)
+\method{plot}{pibblefit}(x, ...)
 }
 \arguments{
-\item{m}{an object of class pibblefit}
+\item{x}{an object of class pibblefit}
 
-\item{par}{parameter to plot (options: Lambda, Eta, and Sigma) 
-(default="Lambda")}
-
-\item{focus.cov}{vector of covariates to include in plot (plots all if NULL)}
-
-\item{focus.coord}{vector of coordinates to include in plot (plots all if NULL)}
-
-\item{focus.sample}{vector of samples to include in plot (plots all if NULL)}
-
-\item{use_names}{if TRUE, uses dimension names found in data as plot labels
-rather than using dimension integer indices.}
+\item{...}{other arguments passed to plot.pibblefit (see details)}
 }
 \value{
 ggplot object
 }
 \description{
 Plot Summaries of Posterior Distribution of pibblefit Parameters
+}
+\details{
+Other arguments:
+\itemize{
+\item `par` parameter to plot (options: Lambda, Eta, and Sigma) 
+  (default="Lambda")
+\item `focus.cov` vector of covariates to include in plot (plots all if NULL)
+\item `focus.coord` vector of coordinates to include in plot (plots all if NULL)
+\item `focus.sample` vector of samples to include in plot (plots all if NULL)
+\item `use_names` if TRUE, uses dimension names found in data as plot labels
+  rather than using dimension integer indices. 
+}
 }
 \examples{
 sim <- pibble_sim(N=10, D=4, Q=3)

@@ -3,8 +3,11 @@
 #' These are a collection of convenience functions for transforming
 #' stray fit objects to a number of different representations including
 #' ILR bases, CLR coordinates, ALR coordinates, and proportions. 
-#'
-#' @param m object of class pibblefit (e.g., output of \code{\link{pibble}})
+#' 
+#' For orthus, transforms only appleid to log-ratio parameters
+#' 
+#' @param m object of class pibblefit or orthusfit (e.g., output of \code{\link{pibble}}
+#'   or \code{\link{orthus}})
 #' @param d (integer) multinomial category to take as new alr reference
 #' @param V (matrix) contrast matrix for ILR basis to transform into to (defaults to 
 #'   \code{driver::create_default_ilr_base(D)})
@@ -14,7 +17,7 @@
 #' \code{to_proportions} does not attempt to transform parameters Sigma
 #' or prior Xi and instead just removes them from the pibblefit object returned. 
 #' 
-#' @return pibblefit object
+#' @return object
 #' @name stray_transforms
 #' @import driver 
 #' @examples
@@ -33,6 +36,30 @@ NULL
 #' @rdname stray_transforms
 #' @export
 to_proportions <- function(m){
+  UseMethod("to_proportions",m)
+}
+
+#' @rdname stray_transforms
+#' @export
+to_alr <- function(m, d){
+  UseMethod("to_alr",m)
+}
+
+#' @rdname stray_transforms
+#' @export
+to_ilr <- function(m, V=NULL){
+  UseMethod("to_ilr", m)
+}
+
+#' @rdname stray_transforms
+#' @export
+to_clr <- function(m){
+  UseMethod("to_clr",m)
+}
+
+#' @rdname stray_transforms
+#' @export
+to_proportions.pibblefit <- function(m){
   if (m$coord_system == "alr"){
     if (!is.null(m$Eta)) m$Eta <- alrInv_array(m$Eta, m$alr_base, 1)
     if (!is.null(m$Lambda)) m$Lambda <- alrInv_array(m$Lambda, m$alr_base, 1)
@@ -112,11 +139,71 @@ to_proportions <- function(m){
 }
 
 
-
+#' @rdname stray_transforms
+#' @export
+to_proportions.orthusfit <- function(m){
+  if (m$coord_system == "alr"){
+    if (!is.null(m$Eta)) m$Eta <- alrInv_array(m$Eta, m$alr_base, 1) 
+    if (!is.null(m$Lambda)) m$Lambda <- oalrInv(m$Lambda, m$D-1, m$alr_base)
+    
+    if (!is.null(m$Sigma)){
+      if (m$alr_base != m$D) m$Sigma <- oalrvar2alrvar(m$Sigma, m$D-1, m$alr_base, m$D) 
+      m$Sigma_default <- m$Sigma
+      m$Sigma <- NULL
+    }
+    # Transform Priors as well  
+    if (!is.null(m$Xi)){
+      if (m$alr_base != m$D) m$Xi <- oalrvar2alrvar(m$Xi, m$D-1, m$alr_base, m$D)
+      m$Xi_default <- m$Xi
+      m$Xi <- NULL
+    }
+    if (!is.null(m$Theta)) m$Theta <- oalrInv(m$Theta, m$D-1, m$alr_base)
+    if (!is.null(m$init)) m$init <- alrInv_array(m$init, m$alr_base, 1) 
+  }
+  if (m$coord_system == "ilr"){
+    if (!is.null(m$Eta)) m$Eta <- ilrInv_array(m$Eta, m$ilr_base, 1)
+    if (!is.null(m$Lambda)) m$Lambda <- oilrInv(m$Lambda, m$D-1, m$ilr_base)
+    if (!is.null(m$Sigma)) {
+      m$Sigma_default <- oilrvar2alrvar(m$Sigma, m$D-1, m$ilr_base, m$D) 
+      m$Sigma <- NULL
+    }
+    
+    # Transform priors as well 
+    if (!is.null(m$Xi)){
+      m$Xi_default <- oilrvar2alrvar(add_array_dim(m$Xi,3), m$D-1, m$ilr_base, m$D)[,,1]
+      m$Xi <- NULL  
+    }
+    if (!is.null(m$Theta)) m$Theta <- oilrInv(m$Theta, m$D-1, m$ilr_base)
+    if (!is.null(m$init)) m$init <- ilrInv_array(m$init, m$ilr_base, 1)
+  }
+  if (m$coord_system == "clr"){
+    if (!is.null(m$Eta)) m$Eta <- clrInv_array(m$Eta, 1)
+    if (!is.null(m$Lambda)) m$Lambda <- oclrInv(m$Lambda, m$D)
+    if (!is.null(m$Sigma)){
+      m$Sigma_default <- oclrvar2alrvar(m$Sigma, m$D, m$D)
+      m$Sigma <- NULL
+    }
+    # Transform priors as well
+    if (!is.null(m$Xi)){
+      m$Xi_default <- oclrvar2alrvar(m$Xi, m$D, m$D)
+      m$Xi <- NULL      
+    }
+    if (!is.null(m$Theta)) m$Theta <- oclrInv(m$Theta, m$D)  
+    if (!is.null(m$init)) m$init <- clrInv_array(m$init,1)
+  }
+  if (m$coord_system=="proportions"){
+    return(m)
+  }
+  m$summary <- NULL
+  m$coord_system <- "proportions"
+  m$ilr_base <- NULL
+  m$alr_base <- NULL
+  return(m)
+}
 
 #' @rdname stray_transforms
 #' @export
-to_alr <- function(m, d){
+to_alr.pibblefit <- function(m, d){
   if (m$coord_system=="alr"){
     if (m$alr_base == d) return(m)
   }
@@ -149,7 +236,35 @@ to_alr <- function(m, d){
 
 #' @rdname stray_transforms
 #' @export
-to_ilr <- function(m, V=NULL){
+to_alr.orthusfit <- function(m, d){
+  if (m$coord_system=="alr"){
+    if (m$alr_base == d) return(m)
+  }
+  m <- to_proportions.orthusfit(m)
+  
+  if (!is.null(m$Eta)) m$Eta <- alr_array(m$Eta, d, 1)
+  if (!is.null(m$Lambda)) m$Lambda <- oalr(m$Lambda, m$D, d)
+  if (!is.null(m$Sigma)){
+    m$Sigma <- oalrvar2alrvar(m$Sigma_default, m$D-1, m$D, d)
+    m$Sigma_default <- NULL
+  }
+  # Transform priors as well 
+  if (!is.null(m$Xi)){
+    m$Xi <- oalrvar2alrvar(m$Xi_default, m$D-1, m$D, d)
+    m$Xi_default <- NULL  
+  }
+  if (!is.null(m$Theta)) m$Theta <- oalr(m$Theta, m$D, d)  
+  if (!is.null(m$init)) m$init <- alr_array(m$init, d, 1)
+  
+  m$summary <- NULL
+  m$coord_system <- "alr"
+  m$alr_base <- d
+  return(m)
+}
+
+#' @rdname stray_transforms
+#' @export
+to_ilr.pibblefit <- function(m, V=NULL){
   if (m$coord_system=="ilr"){
     if (all.equal(m$ilr_base, V)) return(m)
   }
@@ -183,7 +298,36 @@ to_ilr <- function(m, V=NULL){
 
 #' @rdname stray_transforms
 #' @export
-to_clr <- function(m){
+to_ilr.orthusfit <- function(m, V=NULL){
+  if (m$coord_system=="ilr"){
+    if (all.equal(m$ilr_base, V)) return(m)
+  }
+  if (is.null(V)) V <- driver::create_default_ilr_base(m$D)
+  m <- to_proportions(m)
+  
+  if (!is.null(m$Eta)) m$Eta <- ilr_array(m$Eta, V, 1)
+  if (!is.null(m$Lambda)) m$Lambda <- oilr(m$Lambda, m$D, V)
+  if (!is.null(m$Sigma)){
+    m$Sigma <- oalrvar2ilrvar(m$Sigma_default, m$D-1, m$D, V)
+    m$Sigma_default <- NULL
+  }
+  # Transform priors as well 
+  if (!is.null(m$Xi)){
+    m$Xi <- oalrvar2ilrvar(m$Xi_default, m$D-1, m$D, V)
+    m$Xi_default <- NULL  
+  }
+  if (!is.null(m$Theta)) m$Theta <- oilr(m$Theta, m$D, V)  
+  if (!is.null(m$init)) m$init <- ilr_array(m$init, V, 1)
+  
+  m$summary <- NULL
+  m$coord_system <- "ilr"
+  m$ilr_base <- V
+  return(m)
+}
+
+#' @rdname stray_transforms
+#' @export
+to_clr.pibblefit <- function(m){
   if (m$coord_system=="clr") return(m)
   m <- to_proportions(m)
 
@@ -210,6 +354,33 @@ to_clr <- function(m){
   m$coord_system <- "clr"
   return(m)
 }
+
+
+#' @rdname stray_transforms
+#' @export
+to_clr.orthusfit <- function(m){
+  if (m$coord_system=="clr") return(m)
+  m <- to_proportions(m)
+  
+  if (!is.null(m$Eta)) m$Eta <- clr_array(m$Eta, 1)
+  if (!is.null(m$Lambda)) m$Lambda <- oclr(m$Lambda, m$D-1)
+  if (!is.null(m$Sigma)){
+    m$Sigma <- oalrvar2clrvar(m$Sigma_default, m$D-1, m$D)
+    m$Sigma_default <- NULL
+  }
+  # Transform priors as well 
+  if (!is.null(m$Xi)){
+    m$Xi <- oalrvar2clrvar(m$Xi_default, m$D-1, m$D)
+    m$Xi_default <- NULL  
+  }
+  if (!is.null(m$Theta)) m$Theta <- oclr(m$Theta, m$D-1)  
+  if (!is.null(m$init)) m$init <- clr_array(m$init, 1)
+  
+  m$summary <- NULL
+  m$coord_system <- "clr"
+  return(m)
+}
+
 
 #' Holds information on coordinates system to later be reapplied
 #' 

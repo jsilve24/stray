@@ -11,12 +11,12 @@ maltipoofit <- function(D, N, Q, P, coord_system, iter=NULL,
                         Eta=NULL, Lambda=NULL, Sigma=NULL, Sigma_default=NULL, 
                         Y=NULL, X=NULL, upsilon=NULL, 
                         Theta=NULL, Xi=NULL,Xi_default=NULL, Gamma=NULL, 
-                        init=NULL, deltainit=NULL, names_categories=NULL, names_samples=NULL, 
+                        init=NULL, ellinit=NULL, names_categories=NULL, names_samples=NULL, 
                         names_covariates=NULL, VCScale=NULL, U=NULL){
   m <- new_maltipoo(D, N, Q, coord_system, iter, alr_base, ilr_base,
                     Eta, Lambda, Sigma, Sigma_default, 
                     Y, X, upsilon, Theta, Xi,Xi_default, Gamma, 
-                    init, deltainit, names_categories, names_samples, 
+                    init, ellinit, names_categories, names_samples, 
                     names_covariates, VCScale, U)
   verify(m)
   return(m)
@@ -28,16 +28,16 @@ new_maltipoofit <- function(D, N, Q, P, coord_system, iter=NULL,
                             Eta=NULL, Lambda=NULL,Sigma=NULL, Sigma_default=NULL, 
                             Y=NULL, X=NULL, upsilon=NULL, 
                             Theta=NULL, Xi=NULL,Xi_default=NULL, Gamma=NULL, 
-                            init=NULL, deltainit=NULL, names_categories=NULL, names_samples=NULL, 
+                            init=NULL, ellinit=NULL, names_categories=NULL, names_samples=NULL, 
                             names_covariates=NULL, VCScale=NULL, U=NULL){
   m <- new_pibblefit(D, N, Q, coord_system, iter, alr_base, ilr_base,
                       Eta, Lambda, Sigma, Sigma_default, 
                       Y, X, upsilon, Theta, Xi,Xi_default, Gamma, 
-                      init, deltainit, names_categories, names_samples, 
+                      init, ellinit, names_categories, names_samples, 
                       names_covariates)
   m$VCScale <- VCScale
   m$U <- U
-  m$deltainit <- deltainit
+  m$ellinit <- ellinit
   m$P <- P
   class(m) <- c("maltipoofit", "pibblefit")
 }
@@ -50,10 +50,9 @@ new_maltipoofit <- function(D, N, Q, P, coord_system, iter=NULL,
 verify.maltipoofit <- function(m,...){
   verify.pibblefit(m)
   stopifnot(is.integer(m$P))
-  P <- m$P
-  ifnotnull(m$VCScale, check_dims(m$VCScale, P, "VCScale"))
-  ifnotnull(m$U, check_dims(m$U, c(P*m$Q, m$Q), "U"))
-  ifnotnull(m$ellinit, check_dims(m$P, P, "ellinit"))
+  ifnotnull(m$VCScale, check_dims(m$VCScale, m$P, "VCScale"))
+  ifnotnull(m$U, check_dims(m$U, c(m$P*m$Q, m$Q), "U"))
+  ifnotnull(m$ellinit, check_dims(m$ellinit, m$P, "ellinit"))
 }
 
 #' require elements to be non-null in pibblefit or throw error

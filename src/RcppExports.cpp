@@ -24,6 +24,63 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// loglikMaltipooCollapsed
+double loglikMaltipooCollapsed(const Eigen::ArrayXXd Y, const double upsilon, const Eigen::MatrixXd Theta, const Eigen::MatrixXd X, const Eigen::MatrixXd K, const Eigen::MatrixXd U, Eigen::MatrixXd eta, Eigen::VectorXd ell, bool sylv);
+RcppExport SEXP _stray_loglikMaltipooCollapsed(SEXP YSEXP, SEXP upsilonSEXP, SEXP ThetaSEXP, SEXP XSEXP, SEXP KSEXP, SEXP USEXP, SEXP etaSEXP, SEXP ellSEXP, SEXP sylvSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const Eigen::ArrayXXd >::type Y(YSEXP);
+    Rcpp::traits::input_parameter< const double >::type upsilon(upsilonSEXP);
+    Rcpp::traits::input_parameter< const Eigen::MatrixXd >::type Theta(ThetaSEXP);
+    Rcpp::traits::input_parameter< const Eigen::MatrixXd >::type X(XSEXP);
+    Rcpp::traits::input_parameter< const Eigen::MatrixXd >::type K(KSEXP);
+    Rcpp::traits::input_parameter< const Eigen::MatrixXd >::type U(USEXP);
+    Rcpp::traits::input_parameter< Eigen::MatrixXd >::type eta(etaSEXP);
+    Rcpp::traits::input_parameter< Eigen::VectorXd >::type ell(ellSEXP);
+    Rcpp::traits::input_parameter< bool >::type sylv(sylvSEXP);
+    rcpp_result_gen = Rcpp::wrap(loglikMaltipooCollapsed(Y, upsilon, Theta, X, K, U, eta, ell, sylv));
+    return rcpp_result_gen;
+END_RCPP
+}
+// gradMaltipooCollapsed
+Eigen::VectorXd gradMaltipooCollapsed(const Eigen::ArrayXXd Y, const double upsilon, const Eigen::MatrixXd Theta, const Eigen::MatrixXd X, const Eigen::MatrixXd K, const Eigen::MatrixXd U, Eigen::MatrixXd eta, Eigen::VectorXd ell, bool sylv);
+RcppExport SEXP _stray_gradMaltipooCollapsed(SEXP YSEXP, SEXP upsilonSEXP, SEXP ThetaSEXP, SEXP XSEXP, SEXP KSEXP, SEXP USEXP, SEXP etaSEXP, SEXP ellSEXP, SEXP sylvSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const Eigen::ArrayXXd >::type Y(YSEXP);
+    Rcpp::traits::input_parameter< const double >::type upsilon(upsilonSEXP);
+    Rcpp::traits::input_parameter< const Eigen::MatrixXd >::type Theta(ThetaSEXP);
+    Rcpp::traits::input_parameter< const Eigen::MatrixXd >::type X(XSEXP);
+    Rcpp::traits::input_parameter< const Eigen::MatrixXd >::type K(KSEXP);
+    Rcpp::traits::input_parameter< const Eigen::MatrixXd >::type U(USEXP);
+    Rcpp::traits::input_parameter< Eigen::MatrixXd >::type eta(etaSEXP);
+    Rcpp::traits::input_parameter< Eigen::VectorXd >::type ell(ellSEXP);
+    Rcpp::traits::input_parameter< bool >::type sylv(sylvSEXP);
+    rcpp_result_gen = Rcpp::wrap(gradMaltipooCollapsed(Y, upsilon, Theta, X, K, U, eta, ell, sylv));
+    return rcpp_result_gen;
+END_RCPP
+}
+// hessMaltipooCollapsed
+Eigen::MatrixXd hessMaltipooCollapsed(const Eigen::ArrayXXd Y, const double upsilon, const Eigen::MatrixXd Theta, const Eigen::MatrixXd X, const Eigen::MatrixXd K, const Eigen::MatrixXd U, Eigen::MatrixXd eta, Eigen::VectorXd ell, bool sylv);
+RcppExport SEXP _stray_hessMaltipooCollapsed(SEXP YSEXP, SEXP upsilonSEXP, SEXP ThetaSEXP, SEXP XSEXP, SEXP KSEXP, SEXP USEXP, SEXP etaSEXP, SEXP ellSEXP, SEXP sylvSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const Eigen::ArrayXXd >::type Y(YSEXP);
+    Rcpp::traits::input_parameter< const double >::type upsilon(upsilonSEXP);
+    Rcpp::traits::input_parameter< const Eigen::MatrixXd >::type Theta(ThetaSEXP);
+    Rcpp::traits::input_parameter< const Eigen::MatrixXd >::type X(XSEXP);
+    Rcpp::traits::input_parameter< const Eigen::MatrixXd >::type K(KSEXP);
+    Rcpp::traits::input_parameter< const Eigen::MatrixXd >::type U(USEXP);
+    Rcpp::traits::input_parameter< Eigen::MatrixXd >::type eta(etaSEXP);
+    Rcpp::traits::input_parameter< Eigen::VectorXd >::type ell(ellSEXP);
+    Rcpp::traits::input_parameter< bool >::type sylv(sylvSEXP);
+    rcpp_result_gen = Rcpp::wrap(hessMaltipooCollapsed(Y, upsilon, Theta, X, K, U, eta, ell, sylv));
+    return rcpp_result_gen;
+END_RCPP
+}
 // optimMaltipooCollapsed
 List optimMaltipooCollapsed(const Eigen::ArrayXXd Y, const double upsilon, const Eigen::MatrixXd Theta, const Eigen::MatrixXd X, const Eigen::MatrixXd KInv, const Eigen::MatrixXd U, Eigen::MatrixXd init, Eigen::VectorXd ellinit, int n_samples, bool calcGradHess, double b1, double b2, double step_size, double epsilon, double eps_f, double eps_g, int max_iter, bool verbose, int verbose_rate, String decomp_method, double eigvalthresh, double jitter);
 RcppExport SEXP _stray_optimMaltipooCollapsed(SEXP YSEXP, SEXP upsilonSEXP, SEXP ThetaSEXP, SEXP XSEXP, SEXP KInvSEXP, SEXP USEXP, SEXP initSEXP, SEXP ellinitSEXP, SEXP n_samplesSEXP, SEXP calcGradHessSEXP, SEXP b1SEXP, SEXP b2SEXP, SEXP step_sizeSEXP, SEXP epsilonSEXP, SEXP eps_fSEXP, SEXP eps_gSEXP, SEXP max_iterSEXP, SEXP verboseSEXP, SEXP verbose_rateSEXP, SEXP decomp_methodSEXP, SEXP eigvalthreshSEXP, SEXP jitterSEXP) {
@@ -382,6 +439,9 @@ END_RCPP
 
 static const R_CallMethodDef CallEntries[] = {
     {"_stray_conjugateLinearModel", (DL_FUNC) &_stray_conjugateLinearModel, 7},
+    {"_stray_loglikMaltipooCollapsed", (DL_FUNC) &_stray_loglikMaltipooCollapsed, 9},
+    {"_stray_gradMaltipooCollapsed", (DL_FUNC) &_stray_gradMaltipooCollapsed, 9},
+    {"_stray_hessMaltipooCollapsed", (DL_FUNC) &_stray_hessMaltipooCollapsed, 9},
     {"_stray_optimMaltipooCollapsed", (DL_FUNC) &_stray_optimMaltipooCollapsed, 22},
     {"_stray_loglikPibbleCollapsed", (DL_FUNC) &_stray_loglikPibbleCollapsed, 7},
     {"_stray_gradPibbleCollapsed", (DL_FUNC) &_stray_gradPibbleCollapsed, 7},

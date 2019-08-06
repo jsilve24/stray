@@ -147,7 +147,7 @@ List optimMaltipooCollapsed(const Eigen::ArrayXXd Y,
     VectorXd grad(N*(D-1));
     if (verbose) Rcout << "Calculating Hessian" << std::endl;
     grad = cm.calcGrad(ell); // should have eta at optima already
-    hess = -cm.calcHess(); // should have eta at optima already
+    hess = -cm.calcHess(ell); // should have eta at optima already
     out[1] = grad;
     if ((N * (D-1)) > 44750){
       Rcpp::warning("Hessian is to large to return to R");

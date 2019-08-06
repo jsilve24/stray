@@ -17,3 +17,8 @@ bio_packages:
 r_github_packages:
   - jsilve24/driver
   - twbattaglia/MicrobeDS
+  
+  
+# Linus System dependencies:
+apt_packages:
+  - libgsl0-dev

@@ -165,8 +165,8 @@ BEGIN_RCPP
 END_RCPP
 }
 // optimPibbleCollapsed
-List optimPibbleCollapsed(const Eigen::ArrayXXd Y, const double upsilon, const Eigen::MatrixXd ThetaX, const Eigen::MatrixXd KInv, const Eigen::MatrixXd AInv, Eigen::MatrixXd init, int n_samples, bool calcGradHess, double b1, double b2, double step_size, double epsilon, double eps_f, double eps_g, int max_iter, bool verbose, int verbose_rate, String decomp_method, String optim_method, double eigvalthresh, double jitter, double multDirichletBoot, bool useSylv, int ncores);
-RcppExport SEXP _stray_optimPibbleCollapsed(SEXP YSEXP, SEXP upsilonSEXP, SEXP ThetaXSEXP, SEXP KInvSEXP, SEXP AInvSEXP, SEXP initSEXP, SEXP n_samplesSEXP, SEXP calcGradHessSEXP, SEXP b1SEXP, SEXP b2SEXP, SEXP step_sizeSEXP, SEXP epsilonSEXP, SEXP eps_fSEXP, SEXP eps_gSEXP, SEXP max_iterSEXP, SEXP verboseSEXP, SEXP verbose_rateSEXP, SEXP decomp_methodSEXP, SEXP optim_methodSEXP, SEXP eigvalthreshSEXP, SEXP jitterSEXP, SEXP multDirichletBootSEXP, SEXP useSylvSEXP, SEXP ncoresSEXP) {
+List optimPibbleCollapsed(const Eigen::ArrayXXd Y, const double upsilon, const Eigen::MatrixXd ThetaX, const Eigen::MatrixXd KInv, const Eigen::MatrixXd AInv, Eigen::MatrixXd init, int n_samples, bool calcGradHess, double b1, double b2, double step_size, double epsilon, double eps_f, double eps_g, int max_iter, bool verbose, int verbose_rate, String decomp_method, String optim_method, double eigvalthresh, double jitter, double multDirichletBoot, bool useSylv, int ncores, long seed);
+RcppExport SEXP _stray_optimPibbleCollapsed(SEXP YSEXP, SEXP upsilonSEXP, SEXP ThetaXSEXP, SEXP KInvSEXP, SEXP AInvSEXP, SEXP initSEXP, SEXP n_samplesSEXP, SEXP calcGradHessSEXP, SEXP b1SEXP, SEXP b2SEXP, SEXP step_sizeSEXP, SEXP epsilonSEXP, SEXP eps_fSEXP, SEXP eps_gSEXP, SEXP max_iterSEXP, SEXP verboseSEXP, SEXP verbose_rateSEXP, SEXP decomp_methodSEXP, SEXP optim_methodSEXP, SEXP eigvalthreshSEXP, SEXP jitterSEXP, SEXP multDirichletBootSEXP, SEXP useSylvSEXP, SEXP ncoresSEXP, SEXP seedSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -194,7 +194,8 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< double >::type multDirichletBoot(multDirichletBootSEXP);
     Rcpp::traits::input_parameter< bool >::type useSylv(useSylvSEXP);
     Rcpp::traits::input_parameter< int >::type ncores(ncoresSEXP);
-    rcpp_result_gen = Rcpp::wrap(optimPibbleCollapsed(Y, upsilon, ThetaX, KInv, AInv, init, n_samples, calcGradHess, b1, b2, step_size, epsilon, eps_f, eps_g, max_iter, verbose, verbose_rate, decomp_method, optim_method, eigvalthresh, jitter, multDirichletBoot, useSylv, ncores));
+    Rcpp::traits::input_parameter< long >::type seed(seedSEXP);
+    rcpp_result_gen = Rcpp::wrap(optimPibbleCollapsed(Y, upsilon, ThetaX, KInv, AInv, init, n_samples, calcGradHess, b1, b2, step_size, epsilon, eps_f, eps_g, max_iter, verbose, verbose_rate, decomp_method, optim_method, eigvalthresh, jitter, multDirichletBoot, useSylv, ncores, seed));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -427,7 +428,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_stray_loglikPibbleCollapsed", (DL_FUNC) &_stray_loglikPibbleCollapsed, 7},
     {"_stray_gradPibbleCollapsed", (DL_FUNC) &_stray_gradPibbleCollapsed, 7},
     {"_stray_hessPibbleCollapsed", (DL_FUNC) &_stray_hessPibbleCollapsed, 7},
-    {"_stray_optimPibbleCollapsed", (DL_FUNC) &_stray_optimPibbleCollapsed, 24},
+    {"_stray_optimPibbleCollapsed", (DL_FUNC) &_stray_optimPibbleCollapsed, 25},
     {"_stray_uncollapsePibble", (DL_FUNC) &_stray_uncollapsePibble, 9},
     {"_stray_rMatNormalCholesky_test", (DL_FUNC) &_stray_rMatNormalCholesky_test, 4},
     {"_stray_rInvWishRevCholesky_test", (DL_FUNC) &_stray_rInvWishRevCholesky_test, 2},

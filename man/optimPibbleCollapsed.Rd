@@ -10,7 +10,7 @@ optimPibbleCollapsed(Y, upsilon, ThetaX, KInv, AInv, init,
   max_iter = 10000L, verbose = FALSE, verbose_rate = 10L,
   decomp_method = "cholesky", optim_method = "adam",
   eigvalthresh = 0, jitter = 0, multDirichletBoot = -1,
-  useSylv = TRUE, ncores = -1L)
+  useSylv = TRUE, ncores = -1L, seed = -1L)
 }
 \arguments{
 \item{Y}{D x N matrix of counts}
@@ -70,6 +70,8 @@ to speed up calculation of log-likelihood and gradients.}
 
 \item{ncores}{(default:-1) number of cores to use, if ncores==-1 then
 uses default from OpenMP typically to use all available cores.}
+
+\item{seed}{(random seed for Laplace approximation -- integer)}
 }
 \value{
 List containing (all with respect to found optima)

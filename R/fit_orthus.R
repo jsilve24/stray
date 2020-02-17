@@ -152,6 +152,7 @@ orthus <- function(Y=NULL, Z=NULL, X=NULL, upsilon=NULL, Theta=NULL, Gamma=NULL,
   optim_method <- args_null("optim_method", args, "lbfgs")
   useSylv <- args_null("useSylv", args, TRUE)
   ncores <- args_null("ncores", args, -1)
+  seed <- args_null("seed", args, sample(1:2^15, 1))
   
   
   ## precomputation ## 
@@ -184,7 +185,7 @@ orthus <- function(Y=NULL, Z=NULL, X=NULL, upsilon=NULL, Theta=NULL, Gamma=NULL,
                                eps_g, max_iter, verbose, verbose_rate, 
                                decomp_method, optim_method, eigvalthresh, 
                                jitter, multDirichletBoot, 
-                               useSylv, ncores)
+                               useSylv, ncores, seed)
   timerc <- parse_timer_seconds(fitc$Timer)
   
   
@@ -209,7 +210,7 @@ orthus <- function(Y=NULL, Z=NULL, X=NULL, upsilon=NULL, Theta=NULL, Gamma=NULL,
     ret_mean <- args_null("ret_mean", args, FALSE)
   }
   
-  seed <- args_null("seed", args, sample(1:2^15, 1))
+  seed <- seed + sample(1:2^15, 1)
   ## uncollapse collapsed model ##
   samples <- array(0, dim=c(D-1+P, N, dim(fitc$Samples)[3]))
   samples[one,,] <- fitc$Samples

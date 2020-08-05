@@ -137,13 +137,17 @@ namespace lapap{
   // @param jitter amount of jitter to add to diagonal
   // @parameter logInvNegHessDet if passed will return Log of Determinant of 
   //   Laplace Approximation Covariance
+  // @parameter seed (random seed) 
   // @return MatrixXd columns are samples 
   inline int LaplaceApproximation(Eigen::PlainObjectBase<T1>& z, Eigen::MatrixBase<T2>& m, 
                            Eigen::PlainObjectBase<T3>& S,
                            String decomp_method, 
                            double eigvalthresh, 
                            double jitter, 
-                           double& logInvNegHessDet){
+                           double& logInvNegHessDet, 
+                           long seed=-1){
+    if (seed != -1) zigSetSeed(seed);
+    
     lappars pars = init_lappars(eigvalthresh);
     int nr = S.rows();
     int nc = S.cols();

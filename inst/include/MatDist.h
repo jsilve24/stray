@@ -26,6 +26,10 @@ inline void fillUnitNormal(Eigen::DenseBase<Derived>& Z){
   }
 }
 
+inline void zigSetSeed(int s) {
+  ziggmt.setSeed(s);
+}
+
 
 //' The Matrix Normal Distribution (one at a time)
 //' 

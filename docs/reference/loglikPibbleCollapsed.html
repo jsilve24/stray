@@ -114,10 +114,16 @@ documentation" />
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
+      <a href="https://github.com/jsilve24/RcppCoDA">RcppCoDA</a>
+    </li>
+    <li>
       <a href="https://jsilve24.github.io/driver/">driver</a>
     </li>
     <li>
       <a href="https://bioconductor.org/packages/release/bioc/html/philr.html">philr</a>
+    </li>
+    <li>
+      <a href="https://cran.r-project.org/package=RcppHungarian">RcppHungarian</a>
     </li>
   </ul>
 </li>
@@ -246,12 +252,12 @@ identity to speed computation</p></td>
 <span class='no'>ThetaX</span> <span class='kw'>&lt;-</span> <span class='no'>Theta</span><span class='kw'>%*%</span><span class='no'>X</span>
 
 
-<span class='fu'>loglikPibbleCollapsed</span>(<span class='no'>Y</span>, <span class='no'>upsilon</span>, <span class='no'>ThetaX</span>, <span class='no'>KInv</span>, <span class='no'>AInv</span>, <span class='no'>Eta</span>)</div><div class='output co'>#&gt; [1] -265780.7</div><div class='input'><span class='fu'>gradPibbleCollapsed</span>(<span class='no'>Y</span>, <span class='no'>upsilon</span>, <span class='no'>ThetaX</span>, <span class='no'>KInv</span>, <span class='no'>AInv</span>, <span class='no'>Eta</span>)[<span class='fl'>1</span>:<span class='fl'>5</span>]</div><div class='output co'>#&gt; [1] -7.4295802 20.2831751  3.7921896 16.3822762 -0.3263402</div><div class='input'><span class='fu'>hessPibbleCollapsed</span>(<span class='no'>Y</span>, <span class='no'>upsilon</span>, <span class='no'>ThetaX</span>, <span class='no'>KInv</span>, <span class='no'>AInv</span>, <span class='no'>Eta</span>)[<span class='fl'>1</span>:<span class='fl'>5</span>,<span class='fl'>1</span>:<span class='fl'>5</span>]</div><div class='output co'>#&gt;              [,1]        [,2]         [,3]        [,4]        [,5]
-#&gt; [1,] -1582.792544  348.907224   9.62004840  470.315553  3.70555607
-#&gt; [2,]   348.907224 -740.061893   3.06111859  149.002555  1.16962431
-#&gt; [3,]     9.620048    3.061119 -23.62999408    4.099814 -0.03456346
-#&gt; [4,]   470.315553  149.002555   4.09981354 -945.340429  1.54734770
-#&gt; [5,]     3.705556    1.169624  -0.03456346    1.547348 -9.25685611</div></pre>
+<span class='fu'>loglikPibbleCollapsed</span>(<span class='no'>Y</span>, <span class='no'>upsilon</span>, <span class='no'>ThetaX</span>, <span class='no'>KInv</span>, <span class='no'>AInv</span>, <span class='no'>Eta</span>)</div><div class='output co'>#&gt; [1] -270563.4</div><div class='input'><span class='fu'>gradPibbleCollapsed</span>(<span class='no'>Y</span>, <span class='no'>upsilon</span>, <span class='no'>ThetaX</span>, <span class='no'>KInv</span>, <span class='no'>AInv</span>, <span class='no'>Eta</span>)[<span class='fl'>1</span>:<span class='fl'>5</span>]</div><div class='output co'>#&gt; [1]   1.941015   4.862026  12.997489   6.558967 -20.942907</div><div class='input'><span class='fu'>hessPibbleCollapsed</span>(<span class='no'>Y</span>, <span class='no'>upsilon</span>, <span class='no'>ThetaX</span>, <span class='no'>KInv</span>, <span class='no'>AInv</span>, <span class='no'>Eta</span>)[<span class='fl'>1</span>:<span class='fl'>5</span>,<span class='fl'>1</span>:<span class='fl'>5</span>]</div><div class='output co'>#&gt;               [,1]         [,2]         [,3]          [,4]         [,5]
+#&gt; [1,] -23.447299725 -0.004375002    1.3595441    0.43590688     4.681352
+#&gt; [2,]  -0.004375002 -6.139478074    0.2997245    0.09627549     1.179519
+#&gt; [3,]   1.359544139  0.299724528 -360.2624167    6.35450008    77.884467
+#&gt; [4,]   0.435906884  0.096275494    6.3545001 -105.77379308    21.893175
+#&gt; [5,]   4.681351597  1.179519207   77.8844671   21.89317482 -1061.657850</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>

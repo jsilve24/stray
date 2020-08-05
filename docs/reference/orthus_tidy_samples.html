@@ -109,10 +109,16 @@ summary.orthusfit." />
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
+      <a href="https://github.com/jsilve24/RcppCoDA">RcppCoDA</a>
+    </li>
+    <li>
       <a href="https://jsilve24.github.io/driver/">driver</a>
     </li>
     <li>
       <a href="https://bioconductor.org/packages/release/bioc/html/philr.html">philr</a>
+    </li>
+    <li>
+      <a href="https://cran.r-project.org/package=RcppHungarian">RcppHungarian</a>
     </li>
   </ul>
 </li>
@@ -186,12 +192,12 @@ dimension names if provided in data used to fit pibble model.</p></td>
 <span class='no'>fit</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='orthus_fit.html'>orthus</a></span>(<span class='no'>sim</span>$<span class='no'>Y</span>, <span class='no'>sim</span>$<span class='no'>Z</span>, <span class='no'>sim</span>$<span class='no'>X</span>)
 <span class='no'>fit_tidy</span> <span class='kw'>&lt;-</span> <span class='fu'>orthus_tidy_samples</span>(<span class='no'>fit</span>, <span class='kw'>use_names</span><span class='kw'>=</span><span class='fl'>TRUE</span>)
 <span class='fu'><a href='https://www.rdocumentation.org/packages/utils/topics/head'>head</a></span>(<span class='no'>fit_tidy</span>)</div><div class='output co'>#&gt;   Parameter       coord sample iter        val covariate coord2
-#&gt; 1       Eta log(c1/c10)     s1    1 -2.1886551      &lt;NA&gt;   &lt;NA&gt;
-#&gt; 2       Eta log(c2/c10)     s1    1 -2.4838845      &lt;NA&gt;   &lt;NA&gt;
-#&gt; 3       Eta log(c3/c10)     s1    1  0.2029509      &lt;NA&gt;   &lt;NA&gt;
-#&gt; 4       Eta log(c4/c10)     s1    1 -2.6074776      &lt;NA&gt;   &lt;NA&gt;
-#&gt; 5       Eta log(c5/c10)     s1    1  0.9911352      &lt;NA&gt;   &lt;NA&gt;
-#&gt; 6       Eta log(c6/c10)     s1    1 -0.8318965      &lt;NA&gt;   &lt;NA&gt;</div></pre>
+#&gt; 1       Eta log(c1/c10)     s1    1 -0.0302741      &lt;NA&gt;   &lt;NA&gt;
+#&gt; 2       Eta log(c2/c10)     s1    1  2.8397792      &lt;NA&gt;   &lt;NA&gt;
+#&gt; 3       Eta log(c3/c10)     s1    1  0.2389596      &lt;NA&gt;   &lt;NA&gt;
+#&gt; 4       Eta log(c4/c10)     s1    1  1.4714173      &lt;NA&gt;   &lt;NA&gt;
+#&gt; 5       Eta log(c5/c10)     s1    1 -1.1027360      &lt;NA&gt;   &lt;NA&gt;
+#&gt; 6       Eta log(c6/c10)     s1    1  2.0714431      &lt;NA&gt;   &lt;NA&gt;</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>

@@ -53,6 +53,7 @@ using Eigen::VectorXd;
 //'   to speed up calculation of log-likelihood and gradients. 
 //' @param ncores (default:-1) number of cores to use, if ncores==-1 then 
 //' uses default from OpenMP typically to use all available cores. 
+//' @param seed (random seed for Laplace approximation -- integer)
 //'  
 //' @details Notation: Let Z_j denote the J-th row of a matrix Z.
 //' Model:
@@ -132,7 +133,8 @@ List optimPibbleCollapsed(const Eigen::ArrayXXd Y,
                double jitter=0,
                double multDirichletBoot = -1.0, 
                bool useSylv = true, 
-               int ncores=-1){  
+               int ncores=-1, 
+               long seed=-1){  
   #ifdef STRAY_USE_PARALLEL 
     Eigen::initParallel();
     if (ncores > 0) Eigen::setNbThreads(ncores);
@@ -216,7 +218,8 @@ List optimPibbleCollapsed(const Eigen::ArrayXXd Y,
       status = lapap::LaplaceApproximation(samp, eta, hess, 
                                            decomp_method, eigvalthresh, 
                                            jitter, 
-                                           logInvNegHessDet);
+                                           logInvNegHessDet, 
+                                           seed);
       timer.step("LaplaceApproximation_stop");
       if (status != 0){
         Rcpp::warning("Decomposition of Hessian Failed, returning MAP Estimate only");

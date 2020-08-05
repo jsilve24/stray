@@ -12,7 +12,7 @@ test_that("optim and uncollapse correctnesss", {
   fit <- optimPibbleCollapsed(sim$Y, sim$upsilon, (sim$Theta%*%sim$X), sim$KInv, 
                                sim$AInv, init,
                                n_samples=3000,
-                               calcGradHess = FALSE)
+                               calcGradHess = FALSE, seed=40)
   
   # check closeness of MAP
   expect_true(abs(mean(fit$Pars - sim$Eta)) < .2)
@@ -24,7 +24,7 @@ test_that("optim and uncollapse correctnesss", {
   
   # Now check uncollapsing for Lambda
   fit2 <- uncollapsePibble(fit$Samples, sim$X, sim$Theta, sim$Gamma, 
-                                     sim$Xi, sim$upsilon, 2234)
+                                     sim$Xi, sim$upsilon, seed=203)
   
   expect_true(mean(abs(apply(fit2$Lambda, c(1,2), mean) - sim$Phi)) < 0.7)
   p0.25 <- apply(fit2$Lambda, c(1,2), function(x) quantile(x, probs=0.0025))

@@ -109,10 +109,16 @@ summary.pibblefit." />
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
+      <a href="https://github.com/jsilve24/RcppCoDA">RcppCoDA</a>
+    </li>
+    <li>
       <a href="https://jsilve24.github.io/driver/">driver</a>
     </li>
     <li>
       <a href="https://bioconductor.org/packages/release/bioc/html/philr.html">philr</a>
+    </li>
+    <li>
+      <a href="https://cran.r-project.org/package=RcppHungarian">RcppHungarian</a>
     </li>
   </ul>
 </li>
@@ -185,13 +191,13 @@ dimension names if provided in data used to fit pibble model.</p></td>
     <pre class="examples"><div class='input'><span class='no'>sim</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='pibble_sim.html'>pibble_sim</a></span>()
 <span class='no'>fit</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='pibble_fit.html'>pibble</a></span>(<span class='no'>sim</span>$<span class='no'>Y</span>, <span class='no'>sim</span>$<span class='no'>X</span>)
 <span class='no'>fit_tidy</span> <span class='kw'>&lt;-</span> <span class='fu'>pibble_tidy_samples</span>(<span class='no'>fit</span>, <span class='kw'>use_names</span><span class='kw'>=</span><span class='fl'>TRUE</span>)
-<span class='fu'><a href='https://www.rdocumentation.org/packages/utils/topics/head'>head</a></span>(<span class='no'>fit_tidy</span>)</div><div class='output co'>#&gt;   Parameter       coord sample iter         val covariate coord2
-#&gt; 1       Eta log(c1/c10)     s1    1  8.70810033      &lt;NA&gt;   &lt;NA&gt;
-#&gt; 2       Eta log(c2/c10)     s1    1  2.04613203      &lt;NA&gt;   &lt;NA&gt;
-#&gt; 3       Eta log(c3/c10)     s1    1 -0.44113256      &lt;NA&gt;   &lt;NA&gt;
-#&gt; 4       Eta log(c4/c10)     s1    1 -0.03516499      &lt;NA&gt;   &lt;NA&gt;
-#&gt; 5       Eta log(c5/c10)     s1    1  2.22595089      &lt;NA&gt;   &lt;NA&gt;
-#&gt; 6       Eta log(c6/c10)     s1    1 -0.20160398      &lt;NA&gt;   &lt;NA&gt;</div></pre>
+<span class='fu'><a href='https://www.rdocumentation.org/packages/utils/topics/head'>head</a></span>(<span class='no'>fit_tidy</span>)</div><div class='output co'>#&gt;   Parameter       coord sample iter        val covariate coord2
+#&gt; 1       Eta log(c1/c10)     s1    1  4.0024770      &lt;NA&gt;   &lt;NA&gt;
+#&gt; 2       Eta log(c2/c10)     s1    1  4.4826868      &lt;NA&gt;   &lt;NA&gt;
+#&gt; 3       Eta log(c3/c10)     s1    1 -4.5158092      &lt;NA&gt;   &lt;NA&gt;
+#&gt; 4       Eta log(c4/c10)     s1    1  5.5789443      &lt;NA&gt;   &lt;NA&gt;
+#&gt; 5       Eta log(c5/c10)     s1    1 -0.2485314      &lt;NA&gt;   &lt;NA&gt;
+#&gt; 6       Eta log(c6/c10)     s1    1  1.1810951      &lt;NA&gt;   &lt;NA&gt;</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>

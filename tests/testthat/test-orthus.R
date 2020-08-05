@@ -25,6 +25,13 @@ test_that("orthus wrapper correctness", {
 })
 
 
+test_that("Orthus works with multDirichletBoot", {
+  sim <- orthus_sim()
+  fit <- orthus(sim$Y, sim$Z, sim$X, upsilon = sim$upsilon, Theta = sim$Theta, Xi=sim$Xi, 
+                Gamma=sim$Gamma, multDirichletBoot=.5)
+  expect(TRUE)
+})
+
 # test_that("orthus identical results with fixed seed", {
 #   set.seed(3)
 #   sim <- orthus_sim()

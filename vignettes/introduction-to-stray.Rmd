@@ -137,8 +137,8 @@ Create Design Matrix and OTU Table
 ```{r}
 sample_dat <- as.data.frame(as(sample_data(dat),"matrix")) %>% 
   mutate(age = as.numeric(as.character(age)),
-         diagnosis = relevel(diagnosis, ref="no"), 
-         disease_stat = relevel(disease_stat, ref="non-inflamed"))
+         diagnosis = relevel(factor(diagnosis, ordered = FALSE), ref="no"), 
+         disease_stat = relevel(factor(disease_stat, ordered = FALSE), ref="non-inflamed"))
 X <- t(model.matrix(~diagnosis + disease_stat+age, data=sample_dat))
 Y <- otu_table(dat)
 

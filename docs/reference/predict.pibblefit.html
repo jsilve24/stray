@@ -8,21 +8,29 @@
 
 <title>Predict response from new data — predict.pibblefit • stray</title>
 
+
 <!-- jquery -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
 <!-- Bootstrap -->
 
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha256-916EbMg70RQy9LHiGkXzG8hSg9EdNy97GazNG/aiY1w=" crossorigin="anonymous" />
-<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha256-bZLfwXAP04zRMK2BjiO8iu9pf4FbLqX6zitd+tIvLhE=" crossorigin="anonymous" />
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha256-nuL8/2cJ5NDSSwnKD8VqreErSWHtnEP9E7AySL+1ev4=" crossorigin="anonymous"></script>
+
+<!-- bootstrap-toc -->
+<link rel="stylesheet" href="../bootstrap-toc.css">
+<script src="../bootstrap-toc.js"></script>
 
 <!-- Font Awesome icons -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha256-eZrrJcwDc/3uDhsdt61sL2oOBY362qM3lon1gyExkL0=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous" />
 
 <!-- clipboard.js -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.4/clipboard.min.js" integrity="sha256-FiZwavyI2V6+EXO1U+xzLG3IKldpiTFf3153ea9zikQ=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script>
 
-<!-- sticky kit -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/sticky-kit/1.1.3/sticky-kit.min.js" integrity="sha256-c4Rlo1ZozqTPE2RLuvbusY3+SU1pQaJC0TjuhygMipw=" crossorigin="anonymous"></script>
+<!-- headroom.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script>
 
 <!-- pkgdown -->
 <link href="../pkgdown.css" rel="stylesheet">
@@ -30,10 +38,10 @@
 
 
 
-<meta property="og:title" content="Predict response from new data — predict.pibblefit" />
 
+<meta property="og:title" content="Predict response from new data — predict.pibblefit" />
 <meta property="og:description" content="Predict response from new data" />
-<meta name="twitter:card" content="summary" />
+
 
 
 
@@ -47,9 +55,10 @@
 <![endif]-->
 
 
+
   </head>
 
-  <body>
+  <body data-spy="scroll" data-target="#toc">
     <div class="container template-reference-topic">
       <header>
       <div class="navbar navbar-default navbar-fixed-top" role="navigation">
@@ -121,7 +130,6 @@
   </ul>
 </li>
       </ul>
-      
       <ul class="nav navbar-nav navbar-right">
         <li>
   <a href="https://twitter.com/inschool4life">
@@ -142,6 +150,7 @@
 </div><!--/.navbar -->
 
       
+
       </header>
 
 <div class="row">
@@ -153,16 +162,14 @@
     </div>
 
     <div class="ref-description">
-    
     <p>Predict response from new data</p>
-    
     </div>
 
     <pre class="usage"><span class='co'># S3 method for pibblefit</span>
-<span class='fu'><a href='https://www.rdocumentation.org/packages/stats/topics/predict'>predict</a></span>(<span class='no'>object</span>, <span class='kw'>newdata</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+<span class='fu'><a href='https://rdrr.io/r/stats/predict.html'>predict</a></span>(<span class='no'>object</span>, <span class='kw'>newdata</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
   <span class='kw'>response</span> <span class='kw'>=</span> <span class='st'>"LambdaX"</span>, <span class='kw'>size</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>use_names</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
   <span class='kw'>summary</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>iter</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>from_scratch</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='no'>...</span>)</pre>
-    
+
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
@@ -209,162 +216,143 @@ predictions of Eta from posterior of Lambda? (default: false)</p></td>
       <td><p>other arguments passed to summarise_posterior</p></td>
     </tr>
     </table>
-    
+
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
     <p>(if summary==FALSE) array D x N x iter; (if summary==TRUE) 
 tibble with calculated posterior summaries</p>
-    
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
     <p>currently only implemented for pibblefit objects in coord_system "default"
 "alr", or "ilr".</p>
-    
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='no'>sim</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='pibble_sim.html'>pibble_sim</a></span>()
 <span class='no'>fit</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='pibble_fit.html'>pibble</a></span>(<span class='no'>sim</span>$<span class='no'>Y</span>, <span class='no'>sim</span>$<span class='no'>X</span>)
-<span class='fu'><a href='https://www.rdocumentation.org/packages/stats/topics/predict'>predict</a></span>(<span class='no'>fit</span>)[,,<span class='fl'>1</span>:<span class='fl'>2</span>] <span class='co'># just show 2 samples</span></div><div class='output co'>#&gt; , , 1
+<span class='fu'><a href='https://rdrr.io/r/stats/predict.html'>predict</a></span>(<span class='no'>fit</span>)[,,<span class='fl'>1</span>:<span class='fl'>2</span>] <span class='co'># just show 2 samples</span></div><div class='output co'>#&gt; , , 1
 #&gt; 
-#&gt;                      s1         s2         s3           s4          s5
-#&gt; log(c1/c10)  1.14618767 -0.4613550  0.1034769  1.507931991  2.94381019
-#&gt; log(c2/c10) -2.68692122 -0.2840397 -1.1283246 -3.227640141 -5.37392544
-#&gt; log(c3/c10) -1.64838164 -1.9122642 -1.8195455 -1.589000317 -1.35329697
-#&gt; log(c4/c10) -0.01454021  3.3532715  2.1699453 -0.772396784 -3.78057045
-#&gt; log(c5/c10) -0.56365603 -3.0571677 -2.1810386 -0.002542664  2.22469467
-#&gt; log(c6/c10)  0.40487999  0.8491763  0.6930668  0.304900266 -0.09195104
-#&gt; log(c7/c10)  0.30361953  0.1224224  0.1860885  0.344394200  0.50624182
-#&gt; log(c8/c10)  1.18929288  2.7776137  2.2195357  0.831874039 -0.58683496
-#&gt; log(c9/c10)  0.80208789 -0.7874318 -0.2289326  1.159776525  2.57955643
+#&gt;                      s1          s2         s3         s4          s5
+#&gt; log(c1/c10)  1.25832832 -0.06294866  0.4012999  1.5556545  2.73583640
+#&gt; log(c2/c10) -2.92115004 -0.46750385 -1.3296256 -3.4732925 -5.66492151
+#&gt; log(c3/c10) -1.91932333 -1.88860103 -1.8993957 -1.9262367 -1.95367830
+#&gt; log(c4/c10)  0.07690713  3.05433772  2.0081772 -0.5931022 -3.25258234
+#&gt; log(c5/c10) -0.63574481 -2.95825150 -2.1422074 -0.1131126  1.96138089
+#&gt; log(c6/c10)  0.39928659  0.84524937  0.6885543  0.2989319 -0.09940795
+#&gt; log(c7/c10)  0.24575595  0.20542684  0.2195970  0.2548312  0.29085366
+#&gt; log(c8/c10)  1.25046307  2.71105479  2.1978561  0.9217870 -0.38283267
+#&gt; log(c9/c10)  0.70048151 -0.87831231 -0.3235817  1.0557565  2.46595589
 #&gt;                     s6         s7         s8          s9        s10        s11
-#&gt; log(c1/c10)  3.6980966  0.4442964  2.2190942  2.75169871 -0.2429051  3.5254205
-#&gt; log(c2/c10) -6.5013983 -1.6377662 -4.2906530 -5.08676595 -0.6105687 -6.2432900
-#&gt; log(c3/c10) -1.2294788 -1.7635990 -1.4722611 -1.38483260 -1.8764050 -1.2578240
-#&gt; log(c4/c10) -5.3608051  1.4559262 -2.2622861 -3.37809572  2.8956177 -4.9990476
-#&gt; log(c5/c10)  3.3946928 -1.6523823  1.1005642  1.92670431 -2.7183229  3.1268493
-#&gt; log(c6/c10) -0.3004224  0.5988703  0.1083476 -0.03885483  0.7888006 -0.2526978
-#&gt; log(c7/c10)  0.5912626  0.2245046  0.4245541  0.48458762  0.1470454  0.5717991
-#&gt; log(c8/c10) -1.3321021  1.8827914  0.1292154 -0.39702061  2.5617759 -1.1614908
-#&gt; log(c9/c10)  3.3253862  0.1080659  1.8629656  2.38959880 -0.5714311  3.1546460
-#&gt;                    s12        s13        s14         s15         s16        s17
-#&gt; log(c1/c10)  2.0328711  1.2332860  3.8678409  2.72968436 -0.07941895  0.6697704
-#&gt; log(c2/c10) -4.0122951 -2.8171119 -6.7551245 -5.05385991 -0.85494030 -1.9747944
-#&gt; log(c3/c10) -1.5028301 -1.6340842 -1.2016148 -1.38844631 -1.84956833 -1.7265868
-#&gt; log(c4/c10) -1.8721474 -0.1970118 -5.7164205 -3.33197553  2.55311320  0.9835569
-#&gt; log(c5/c10)  0.8117074 -0.4285549  3.6579888  1.89255715 -2.46473429 -1.3026423
-#&gt; log(c6/c10)  0.1598164  0.3808075 -0.3473368 -0.03277046  0.74361596  0.5365533
-#&gt; log(c7/c10)  0.4035637  0.3134370  0.6103956  0.48210623  0.16547306  0.2499193
-#&gt; log(c8/c10)  0.3132118  1.1032360 -1.4998168 -0.37526950  2.40024457  1.6600135
-#&gt; log(c9/c10)  1.6788303  0.8882098  3.4932274  2.36783127 -0.40977789  0.3310120
-#&gt;                     s18        s19        s20        s21         s22
-#&gt; log(c1/c10)  1.56092435  0.0991655  1.3685260 -0.1657248  0.02642478
-#&gt; log(c2/c10) -3.30685071 -1.1218802 -3.0192624 -0.7259343 -1.01315067
-#&gt; log(c3/c10) -1.58030148 -1.8202532 -1.6118842 -1.8637357 -1.83219379
-#&gt; log(c4/c10) -0.88341610  2.1789777 -0.4803404  2.7339245  2.33136995
-#&gt; log(c5/c10)  0.07965551 -2.1877262 -0.2187798 -2.5986061 -2.30055664
-#&gt; log(c6/c10)  0.29025412  0.6942584  0.3434296  0.7674694  0.71436263
-#&gt; log(c7/c10)  0.35036733  0.1856025  0.3286808  0.1557449  0.17740343
-#&gt; log(c8/c10)  0.77951532  2.2237955  0.9696131  2.4855184  2.29566645
-#&gt; log(c9/c10)  1.21217476 -0.2331956  1.0219335 -0.4951161 -0.30512082
-#&gt;                     s23         s24        s25        s26         s27
-#&gt; log(c1/c10) -0.09000412  2.46208437  2.0100137  0.9123498  2.44854596
-#&gt; log(c2/c10) -0.83911806 -4.65386364 -3.9781290 -2.3373910 -4.63362704
-#&gt; log(c3/c10) -1.85130591 -1.43237359 -1.5065822 -1.6867668 -1.43459595
-#&gt; log(c4/c10)  2.57528920 -2.77135189 -1.8242610  0.4753517 -2.74298884
-#&gt; log(c5/c10) -2.48115329  1.47747410  0.7762525 -0.9263696  1.45647423
-#&gt; log(c6/c10)  0.74654151  0.04118944  0.1661338  0.4695087  0.04493122
-#&gt; log(c7/c10)  0.16427993  0.45194322  0.4009872  0.2772621  0.45041721
-#&gt; log(c8/c10)  2.41070318 -0.11086927  0.3357959  1.4203347 -0.09749275
-#&gt; log(c9/c10) -0.42024438  2.10323146  1.6562291  0.5708716  2.08984484
-#&gt;                     s28        s29        s30
-#&gt; log(c1/c10)  0.06832755  1.7124108  1.3497539
-#&gt; log(c2/c10) -1.07578502 -3.5332857 -2.9912028
-#&gt; log(c3/c10) -1.82531534 -1.5554346 -1.6149657
-#&gt; log(c4/c10)  2.24358339 -1.2007810 -0.4410128
-#&gt; log(c5/c10) -2.23555990  0.3146310 -0.2478978
-#&gt; log(c6/c10)  0.70278145  0.2483860  0.3486179
-#&gt; log(c7/c10)  0.18212657  0.3674424  0.3265649
-#&gt; log(c8/c10)  2.25426473  0.6298403  0.9881607
-#&gt; log(c9/c10) -0.26368785  1.3619628  1.0033719
+#&gt; log(c1/c10)  3.3558021  0.6814275  2.1401754  2.57793548  0.1166004  3.2138755
+#&gt; log(c2/c10) -6.8162141 -1.8498299 -4.5587633 -5.37169532 -0.8009312 -6.5526528
+#&gt; log(c3/c10) -1.9680937 -1.9059092 -1.9398280 -1.95000680 -1.8927759 -1.9647937
+#&gt; log(c4/c10) -4.6496435  1.3769239 -1.9102904 -2.89676062  2.6497330 -4.3298193
+#&gt; log(c5/c10)  3.0511406 -1.6498063  0.9143432  1.68382670 -2.6426447  2.8016658
+#&gt; log(c6/c10) -0.3086613  0.5940045  0.1016420 -0.04611259  0.7846472 -0.2607577
+#&gt; log(c7/c10)  0.3097768  0.2281473  0.2726724  0.28603408  0.2109072  0.3054448
+#&gt; log(c8/c10) -1.0681672  1.8881920  0.2756345 -0.20828275  2.5125741 -0.9112760
+#&gt; log(c9/c10)  3.2067528  0.0111427  1.7542005  2.27728007 -0.6637691  3.0371648
+#&gt;                    s12         s13        s14         s15        s16        s17
+#&gt; log(c1/c10)  1.9871142  1.32991652  3.4953189  2.55984137  0.2509735  0.8667498
+#&gt; log(c2/c10) -4.2745246 -3.05409121 -7.0753006 -5.33809409 -1.0504656 -2.1939784
+#&gt; log(c3/c10) -1.9362690 -1.92098789 -1.9713378 -1.94958607 -1.8959003 -1.9102184
+#&gt; log(c4/c10) -1.5653748 -0.08441324 -4.9640377 -2.85598647  2.3469301  0.9593094
+#&gt; log(c5/c10)  0.6452962 -0.50990892  3.2963797  1.65202135 -2.4064472 -1.3240514
+#&gt; log(c6/c10)  0.1533038  0.37512385 -0.3557516 -0.04000539  0.7392931  0.5314538
+#&gt; log(c7/c10)  0.2680005  0.24794102  0.3140352  0.28548180  0.2150086  0.2338039
+#&gt; log(c8/c10)  0.4448344  1.17132665 -1.2223946 -0.18828081  2.3640328  1.6833294
+#&gt; log(c9/c10)  1.5713077  0.78602225  3.3734615  2.25565943 -0.5032067  0.2325844
+#&gt;                     s18        s19        s20        s21        s22        s23
+#&gt; log(c1/c10)  1.59921012  0.3977562  1.4410734  0.1800367  0.3379689  0.2422733
+#&gt; log(c2/c10) -3.55417652 -1.3230450 -3.2605125 -0.9187341 -1.2120184 -1.0343091
+#&gt; log(c3/c10) -1.92724950 -1.8993133 -1.9235725 -1.8942509 -1.8979232 -1.8956980
+#&gt; log(c4/c10) -0.69125270  2.0161626 -0.3348996  2.5067825  2.1508902  2.3665355
+#&gt; log(c5/c10) -0.03655156 -2.1484363 -0.3145202 -2.5311380 -2.2535288 -2.4217402
+#&gt; log(c6/c10)  0.28423078  0.6897504  0.3376057  0.7632360  0.7099300  0.7422296
+#&gt; log(c7/c10)  0.25616062  0.2194889  0.2513338  0.2128434  0.2176640  0.2147431
+#&gt; log(c8/c10)  0.87363888  2.2017734  1.0484495  2.4424492  2.2678646  2.3736504
+#&gt; log(c9/c10)  1.10780117 -0.3278160  0.9188436 -0.5879691 -0.3992559 -0.5136026
+#&gt;                     s24        s25        s26         s27        s28        s29
+#&gt; log(c1/c10)  2.33989466  1.9683272  1.0661315  2.32876713  0.3724098  1.7237203
+#&gt; log(c2/c10) -4.92964726 -4.2396366 -2.5642354 -4.90898313 -1.2759760 -3.7853953
+#&gt; log(c3/c10) -1.94447188 -1.9358322 -1.9148544 -1.94421314 -1.8987240 -1.9301446
+#&gt; log(c4/c10) -2.36034773 -1.5230392  0.5100130 -2.33527239  2.0732795 -0.9718302
+#&gt; log(c5/c10)  1.26540468  0.6122729 -0.9735835  1.24584499 -2.1929896  0.1823093
+#&gt; log(c6/c10)  0.03423192  0.1596449  0.4641577  0.03798773  0.6983054  0.2422056
+#&gt; log(c7/c10)  0.27876840  0.2674271  0.2398896  0.27842876  0.2187152  0.2599610
+#&gt; log(c8/c10)  0.05485696  0.4656023  1.4629251  0.06715777  2.2297923  0.7360004
+#&gt; log(c9/c10)  1.99284511  1.5488591  0.4708255  1.97954882 -0.3581025  1.2565784
+#&gt;                    s30
+#&gt; log(c1/c10)  1.4256442
+#&gt; log(c2/c10) -3.2318600
+#&gt; log(c3/c10) -1.9232138
+#&gt; log(c4/c10) -0.3001307
+#&gt; log(c5/c10) -0.3416413
+#&gt; log(c6/c10)  0.3428135
+#&gt; log(c7/c10)  0.2508629
+#&gt; log(c8/c10)  1.0655055
+#&gt; log(c9/c10)  0.9004073
 #&gt; 
 #&gt; , , 2
 #&gt; 
-#&gt;                     s1          s2         s3         s4         s5         s6
-#&gt; log(c1/c10)  1.3449985  0.17771469  0.5878557  1.6076717  2.6503049  3.1980144
-#&gt; log(c2/c10) -2.7038983 -1.25154013 -1.7618458 -3.0307216 -4.3279869 -5.0094581
-#&gt; log(c3/c10) -1.8730038 -0.69918214 -1.1116203 -2.1371482 -3.1856211 -3.7363982
-#&gt; log(c4/c10) -0.7148461  2.92666635  1.6471717 -1.5342934 -4.7869402 -6.4955998
-#&gt; log(c5/c10) -0.9158204 -2.20580761 -1.7525532 -0.6255354  0.5266981  1.1319820
-#&gt; log(c6/c10)  0.5988256  2.06675253  1.5509765  0.2684989 -1.0426728 -1.7314491
-#&gt; log(c7/c10)  0.2994293  0.08156718  0.1581160  0.3484546  0.5430519  0.6452765
-#&gt; log(c8/c10)  1.2196871  3.05679799  2.4113042  0.8062832 -0.8346483 -1.6966520
-#&gt; log(c9/c10)  0.3073840 -0.61759258 -0.2925895  0.5155309  1.3417322  1.7757470
-#&gt;                      s7           s8         s9        s10        s11
-#&gt; log(c1/c10)  0.83533473  2.124067432  2.5108072  0.3363376  3.0726292
-#&gt; log(c2/c10) -2.06976429 -3.673231595 -4.1544210 -1.4489019 -4.8534514
-#&gt; log(c3/c10) -1.36048544 -2.656436194 -3.0453420 -0.8586934 -3.6103108
-#&gt; log(c4/c10)  0.87512457 -3.145265376 -4.3517565  2.4318191 -6.1044425
-#&gt; log(c5/c10) -1.47905942 -0.054856816  0.3725365 -2.0305105  0.9934165
-#&gt; log(c6/c10)  1.23975728 -0.380898657 -0.8672462  1.8672751 -1.5737700
-#&gt; log(c7/c10)  0.20430552  0.444834853  0.5170160  0.1111726  0.6218746
-#&gt; log(c8/c10)  2.02181329 -0.006437908 -0.6151020  2.8071519 -1.4993166
-#&gt; log(c9/c10) -0.09648269  0.924732181  1.2311917 -0.4918970  1.6763895
-#&gt;                    s12        s13        s14        s15        s16         s17
-#&gt; log(c1/c10)  1.9888453  1.4082432  3.3212707  2.4948219  0.4550496  0.99905799
-#&gt; log(c2/c10) -3.5049855 -2.7825886 -5.1628162 -4.1345318 -1.5966059 -2.27347209
-#&gt; log(c3/c10) -2.5204567 -1.9366027 -3.8603449 -3.0292672 -0.9780704 -1.52512570
-#&gt; log(c4/c10) -2.7234203 -0.9121471 -6.8801160 -4.3018881  2.0614795  0.36436592
-#&gt; log(c5/c10) -0.2042933 -0.8459275  1.2681949  0.3548709 -1.8993196 -1.29812577
-#&gt; log(c6/c10) -0.2108490  0.5192917 -1.8864511 -0.8471438  1.7179878  1.03386580
-#&gt; log(c7/c10)  0.4195970  0.3112333  0.6682811  0.5140325  0.1333290  0.23486286
-#&gt; log(c8/c10)  0.2063792  1.1201505 -1.8906370 -0.5899439  2.6203189  1.76414007
-#&gt; log(c9/c10)  0.8175798  0.3575003  1.8734175  1.2185247 -0.3978274  0.03325456
-#&gt;                    s18        s19        s20        s21        s22        s23
-#&gt; log(c1/c10)  1.6461510  0.5847250  1.5064449  0.3923804  0.5319059  0.4473634
-#&gt; log(c2/c10) -3.0785983 -1.7579506 -2.9047731 -1.5186316 -1.6922320 -1.5870425
-#&gt; log(c3/c10) -2.1758430 -1.1084721 -2.0353544 -0.9150502 -1.0553571 -0.9703412
-#&gt; log(c4/c10) -1.6543352  1.6569381 -1.2185017  2.2569852  1.8217152  2.0854577
-#&gt; log(c5/c10) -0.5830112 -1.7560129 -0.7374030 -1.9685765 -1.8143843 -1.9078137
-#&gt; log(c6/c10)  0.2201089  1.5549135  0.3957974  1.7967979  1.6213366  1.7276536
-#&gt; log(c7/c10)  0.3556364  0.1575317  0.3295617  0.1216324  0.1476735  0.1318945
-#&gt; log(c8/c10)  0.7457232  2.4162313  0.9655974  2.7189498  2.4993599  2.6324157
-#&gt; log(c9/c10)  0.5460226 -0.2950703  0.4353170 -0.4474876 -0.3369252 -0.4039181
-#&gt;                    s24        s25        s26        s27        s28         s29
-#&gt; log(c1/c10)  2.3005097  1.9722479  1.1752020  2.2906791  0.5623327  1.75614970
-#&gt; log(c2/c10) -3.8927646 -3.4843347 -2.4926340 -3.8805332 -1.7300896 -3.21546091
-#&gt; log(c3/c10) -2.8338667 -2.5037663 -1.7022562 -2.8239810 -1.0859543 -2.28645780
-#&gt; log(c4/c10) -3.6957028 -2.6716422 -0.1851409 -3.6650347  1.7267943 -1.99749227
-#&gt; log(c5/c10)  0.1401328 -0.2226354 -1.1034658  0.1292688 -1.7807591 -0.46144957
-#&gt; log(c6/c10) -0.6027850 -0.1899768  0.8123546 -0.5904224  1.5830731  0.08177917
-#&gt; log(c7/c10)  0.4777661  0.4164992  0.2677384  0.4759313  0.1533524  0.37616661
-#&gt; log(c8/c10) -0.2841287  0.2325008  1.4869187 -0.2686569  2.4514731  0.57260348
-#&gt; log(c9/c10)  1.0645482  0.8044277  0.1728342  1.0567582 -0.3128144  0.63318759
-#&gt;                    s30
-#&gt; log(c1/c10)  1.4928140
-#&gt; log(c2/c10) -2.8878132
-#&gt; log(c3/c10) -2.0216471
-#&gt; log(c4/c10) -1.1759779
-#&gt; log(c5/c10) -0.7524668
-#&gt; log(c6/c10)  0.4129391
-#&gt; log(c7/c10)  0.3270176
-#&gt; log(c8/c10)  0.9870502
-#&gt; log(c9/c10)  0.4245156
+#&gt;                     s1         s2         s3         s4         s5         s6
+#&gt; log(c1/c10)  1.4162138  0.2403800  0.6535251  1.6808110  2.7310812  3.2828025
+#&gt; log(c2/c10) -2.8446286 -1.3447964 -1.8717827 -3.1821350 -4.5218049 -5.2255517
+#&gt; log(c3/c10) -2.0208209 -0.6023850 -1.1007717 -2.3400107 -3.6069763 -4.2725306
+#&gt; log(c4/c10) -0.6341545  2.7362831  1.5520342 -1.3926020 -4.4031210 -5.9845877
+#&gt; log(c5/c10) -0.9147972 -2.0299849 -1.6381486 -0.6638472  0.3322531  0.8555182
+#&gt; log(c6/c10)  0.6315266  2.1210940  1.5977143  0.2963301 -1.0341710 -1.7331014
+#&gt; log(c7/c10)  0.3598887  0.1071546  0.1959562  0.4167613  0.6425067  0.7610939
+#&gt; log(c8/c10)  1.1664654  3.1256196  2.4372443  0.7255982 -1.0243441 -1.9436126
+#&gt; log(c9/c10)  0.3103315 -0.6572391 -0.3172701  0.5280633  1.3923101  1.8463108
+#&gt;                     s7         s8         s9        s10        s11         s12
+#&gt; log(c1/c10)  0.9028169  2.2009892  2.5905617  0.4001647  3.1564989  2.06477660
+#&gt; log(c2/c10) -2.1897663 -3.8456471 -4.3425655 -1.5486094 -5.0644455 -3.67190149
+#&gt; log(c3/c10) -1.4014982 -2.9675138 -3.4374643 -0.7951371 -4.1201676 -2.80319743
+#&gt; log(c4/c10)  0.8374585 -2.8836529 -4.0003325  2.2782724 -5.6225482 -2.49320998
+#&gt; log(c5/c10) -1.4017146 -0.1704983  0.1989811 -1.8784414  0.7357290 -0.29968543
+#&gt; log(c6/c10)  1.2819070 -0.3626409 -0.8561583  1.9186758 -1.5730978 -0.19008440
+#&gt; log(c7/c10)  0.2495390  0.5285686  0.6123034  0.1414988  0.7339461  0.49929101
+#&gt; log(c8/c10)  2.0218786 -0.1411138 -0.7902128  2.8593890 -1.7331678  0.08584121
+#&gt; log(c9/c10) -0.1121328  0.9561078  1.2766793 -0.5257554  1.7423780  0.84402113
+#&gt;                    s13        s14        s15        s16         s17        s18
+#&gt; log(c1/c10)  1.4799217  3.4069617  2.5744593  0.5197463  1.06773936  1.7195721
+#&gt; log(c2/c10) -2.9258912 -5.3839227 -4.3220261 -1.7011415 -2.40013283 -3.2315767
+#&gt; log(c3/c10) -2.0976733 -4.4223067 -3.4180396 -0.9393912 -1.60044806 -2.3867692
+#&gt; log(c4/c10) -0.8167684 -6.3404805 -3.9541764  1.9355009  0.36472079 -1.5037078
+#&gt; log(c5/c10) -0.8543752  0.9732736  0.1837093 -1.7650275 -1.24529835 -0.6270852
+#&gt; log(c6/c10)  0.5508202 -1.8903885 -0.8357596  1.7671877  1.07298024  0.2472268
+#&gt; log(c7/c10)  0.3735821  0.7877807  0.6088424  0.1672017  0.28498751  0.4250927
+#&gt; log(c8/c10)  1.0603163 -2.1504845 -0.7633834  2.6601442  1.74708757  0.6610150
+#&gt; log(c9/c10)  0.3627555  1.9484789  1.2634290 -0.4273540  0.02357872  0.5599591
+#&gt;                    s19        s20        s21        s22        s23          s24
+#&gt; log(c1/c10)  0.6503715  1.5788427  0.4566181  0.5971655  0.5120038  2.378723831
+#&gt; log(c2/c10) -1.8677602 -3.0520696 -1.6206184 -1.7998933 -1.6912655 -4.072356186
+#&gt; log(c3/c10) -1.0969675 -2.2170040 -0.8632381 -1.0327838 -0.9300512 -3.181919320
+#&gt; log(c4/c10)  1.5610737 -1.1003178  2.1164531  1.7135847  1.9576942 -3.393115620
+#&gt; log(c5/c10) -1.6411395 -0.7605562 -1.8248998 -1.6916014 -1.7723707 -0.001930706
+#&gt; log(c6/c10)  1.6017093  0.4255053  1.8471597  1.6691117  1.7769960 -0.587798372
+#&gt; log(c7/c10)  0.1952783  0.3948442  0.1536329  0.1838422  0.1655375  0.566770923
+#&gt; log(c8/c10)  2.4424987  0.8954959  2.7653274  2.5311497  2.6730447 -0.437252280
+#&gt; log(c9/c10) -0.3198651  0.4441557 -0.4793010 -0.3636473 -0.4337252  1.102362149
+#&gt;                    s25        s26        s27        s28        s29        s30
+#&gt; log(c1/c10)  2.0480576  1.2451735  2.3688212  0.6278152  1.8303766  1.5651119
+#&gt; log(c2/c10) -3.6505756 -2.6264586 -4.0597249 -1.8389885 -3.3729130 -3.0345553
+#&gt; log(c3/c10) -2.7830289 -1.8144911 -3.1699735 -1.0697572 -2.5204352 -2.2004403
+#&gt; log(c4/c10) -2.4452863 -0.1438806 -3.3647305  1.6257297 -1.8213202 -1.0609596
+#&gt; log(c5/c10) -0.3155421 -1.0770157 -0.0113226 -1.6625325 -0.5219958 -0.7735788
+#&gt; log(c6/c10) -0.1689045  0.8482035 -0.5752535  1.6302841  0.1068578  0.4428997
+#&gt; log(c7/c10)  0.4956974  0.3231253  0.5646424  0.1904301  0.4489090  0.3918929
+#&gt; log(c8/c10)  0.1136981  1.4514498 -0.4207527  2.4800817  0.4763946  0.9183739
+#&gt; log(c9/c10)  0.8302634  0.1695858  1.0942135 -0.3384263  0.6511379  0.4328569
 #&gt; </div></pre>
   </div>
-  <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
-    <h2>Contents</h2>
-    <ul class="nav nav-pills nav-stacked">
-      <li><a href="#arguments">Arguments</a></li>
-      
-      <li><a href="#value">Value</a></li>
-
-      <li><a href="#details">Details</a></li>
-      
-      <li><a href="#examples">Examples</a></li>
-    </ul>
-
+  <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
+    <nav id="toc" data-toggle="toc" class="sticky-top">
+      <h2 data-toc-skip>Contents</h2>
+    </nav>
   </div>
 </div>
+
 
       <footer>
       <div class="copyright">
@@ -372,13 +360,16 @@ tibble with calculated posterior summaries</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.3.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
 </div>
+
       </footer>
    </div>
 
   
 
+
   </body>
 </html>
+
 

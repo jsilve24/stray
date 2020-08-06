@@ -6,18 +6,19 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Non-linear models with stray::basset • stray</title>
-<!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script><!-- Bootstrap --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha256-916EbMg70RQy9LHiGkXzG8hSg9EdNy97GazNG/aiY1w=" crossorigin="anonymous">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha256-eZrrJcwDc/3uDhsdt61sL2oOBY362qM3lon1gyExkL0=" crossorigin="anonymous">
-<!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.4/clipboard.min.js" integrity="sha256-FiZwavyI2V6+EXO1U+xzLG3IKldpiTFf3153ea9zikQ=" crossorigin="anonymous"></script><!-- sticky kit --><script src="https://cdnjs.cloudflare.com/ajax/libs/sticky-kit/1.1.3/sticky-kit.min.js" integrity="sha256-c4Rlo1ZozqTPE2RLuvbusY3+SU1pQaJC0TjuhygMipw=" crossorigin="anonymous"></script><!-- pkgdown --><link href="../pkgdown.css" rel="stylesheet">
+<!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script><!-- Bootstrap --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha256-bZLfwXAP04zRMK2BjiO8iu9pf4FbLqX6zitd+tIvLhE=" crossorigin="anonymous">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha256-nuL8/2cJ5NDSSwnKD8VqreErSWHtnEP9E7AySL+1ev4=" crossorigin="anonymous"></script><!-- bootstrap-toc --><link rel="stylesheet" href="../bootstrap-toc.css">
+<script src="../bootstrap-toc.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
+<!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- pkgdown --><link href="../pkgdown.css" rel="stylesheet">
 <script src="../pkgdown.js"></script><meta property="og:title" content="Non-linear models with stray::basset">
-<meta property="og:description" content="">
-<meta name="twitter:card" content="summary">
+<meta property="og:description" content="stray">
 <!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
 <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
 <![endif]-->
 </head>
-<body>
+<body data-spy="scroll" data-target="#toc">
     <div class="container template-article">
       <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
@@ -74,10 +75,16 @@
   </a>
   <ul class="dropdown-menu" role="menu">
 <li>
+      <a href="https://github.com/jsilve24/RcppCoDA">RcppCoDA</a>
+    </li>
+    <li>
       <a href="https://jsilve24.github.io/driver/">driver</a>
     </li>
     <li>
       <a href="https://bioconductor.org/packages/release/bioc/html/philr.html">philr</a>
+    </li>
+    <li>
+      <a href="https://cran.r-project.org/package=RcppHungarian">RcppHungarian</a>
     </li>
   </ul>
 </li>
@@ -104,10 +111,11 @@
 <!--/.navbar -->
 
       
-      </header><div class="row">
+
+      </header><script src="non-linear-models_files/header-attrs-2.2/header-attrs.js"></script><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
-      <h1>Non-linear models with stray::basset</h1>
+      <h1 data-toc-skip>Non-linear models with stray::basset</h1>
                         <h4 class="author">Justin Silverman</h4>
             
       
@@ -136,115 +144,110 @@ Y_j &amp; \sim \text{Multinomial}\left(\pi_j \right)  \\
 <h1 class="hasAnchor">
 <a href="#non-linear-time-series-modeling" class="anchor"></a>Non-linear time-series modeling</h1>
 <p>To demonstrate <em>basset</em> I am going to reanalyze the mallard<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a> dataset from <span class="citation">Silverman et al. (2018)</span> which is provided as a phyloseq object in <em>stray</em>. This dataset features 4 artificial gut vessels sampled both daily and hourly for 1 month with many technical replicates.</p>
-<p>To accord with prior analyses (and to make it easy to visualize results) I am going to just analyze those bacterial families that are frequently observed. Note: the full dataset (at the sequence variant level without preprocessing) is available if you run <code><a href="https://www.rdocumentation.org/packages/utils/topics/data">data(mallard)</a></code>. For simplicity we will just look at samples from vessel 1<a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a>.</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(stray)</a>
-<a class="sourceLine" id="cb1-2" data-line-number="2"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(phyloseq)</a>
-<a class="sourceLine" id="cb1-3" data-line-number="3"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(dplyr)</a>
-<a class="sourceLine" id="cb1-4" data-line-number="4"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(driver)</a>
-<a class="sourceLine" id="cb1-5" data-line-number="5"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(ggplot2)</a>
-<a class="sourceLine" id="cb1-6" data-line-number="6"><span class="kw"><a href="https://www.rdocumentation.org/packages/utils/topics/data">data</a></span>(mallard_family)</a>
-<a class="sourceLine" id="cb1-7" data-line-number="7"></a>
-<a class="sourceLine" id="cb1-8" data-line-number="8"><span class="co"># Just take vessel 1</span></a>
-<a class="sourceLine" id="cb1-9" data-line-number="9">mallard_family &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/phyloseq/topics/prune_samples-methods">prune_samples</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/phyloseq/topics/sample_data-methods">sample_data</a></span>(mallard_family)<span class="op">$</span>Vessel<span class="op">==</span><span class="dv">1</span>, mallard_family)</a>
-<a class="sourceLine" id="cb1-10" data-line-number="10"></a>
-<a class="sourceLine" id="cb1-11" data-line-number="11"><span class="co"># Just take hourly samples</span></a>
-<a class="sourceLine" id="cb1-12" data-line-number="12">mallard_family &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/phyloseq/topics/prune_samples-methods">prune_samples</a></span>((<span class="kw"><a href="https://www.rdocumentation.org/packages/phyloseq/topics/sample_data-methods">sample_data</a></span>(mallard_family)<span class="op">$</span>time <span class="op">&gt;</span><span class="st"> "2015-11-20 15:00:00 UTC"</span>) <span class="op">&amp;</span></a>
-<a class="sourceLine" id="cb1-13" data-line-number="13"><span class="st">                      </span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/phyloseq/topics/sample_data-methods">sample_data</a></span>(mallard_family)<span class="op">$</span>time <span class="op">&lt;</span><span class="st"> "2015-11-25 16:00:00 UTC"</span>), mallard_family)</a>
-<a class="sourceLine" id="cb1-14" data-line-number="14"></a>
-<a class="sourceLine" id="cb1-15" data-line-number="15"><span class="co"># Order samples - to make plotting easy later</span></a>
-<a class="sourceLine" id="cb1-16" data-line-number="16">o &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/order">order</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/phyloseq/topics/sample_data-methods">sample_data</a></span>(mallard_family)<span class="op">$</span>time)</a>
-<a class="sourceLine" id="cb1-17" data-line-number="17"><span class="kw"><a href="https://www.rdocumentation.org/packages/phyloseq/topics/otu_table-methods">otu_table</a></span>(mallard_family) &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/phyloseq/topics/otu_table-methods">otu_table</a></span>(mallard_family)[o,]</a>
-<a class="sourceLine" id="cb1-18" data-line-number="18"><span class="kw"><a href="https://www.rdocumentation.org/packages/phyloseq/topics/sample_data-methods">sample_data</a></span>(mallard_family) &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/phyloseq/topics/sample_data-methods">sample_data</a></span>(mallard_family)[o,]</a>
-<a class="sourceLine" id="cb1-19" data-line-number="19"></a>
-<a class="sourceLine" id="cb1-20" data-line-number="20"><span class="co"># Extract Data / dimensions from Phyloseq object</span></a>
-<a class="sourceLine" id="cb1-21" data-line-number="21">Y &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/phyloseq/topics/transpose-methods">t</a></span>(<span class="kw">as</span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/phyloseq/topics/otu_table-methods">otu_table</a></span>(mallard_family), <span class="st">"matrix"</span>))</a>
-<a class="sourceLine" id="cb1-22" data-line-number="22"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/colnames">rownames</a></span>(Y) &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/phyloseq/topics/taxa_names-methods">taxa_names</a></span>(mallard_family)</a>
-<a class="sourceLine" id="cb1-23" data-line-number="23">D &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/phyloseq/topics/ntaxa-methods">ntaxa</a></span>(mallard_family)</a>
-<a class="sourceLine" id="cb1-24" data-line-number="24">N &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/nrow">nrow</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/phyloseq/topics/sample_data-methods">sample_data</a></span>(mallard_family))</a>
-<a class="sourceLine" id="cb1-25" data-line-number="25"></a>
-<a class="sourceLine" id="cb1-26" data-line-number="26"><span class="co"># X in hours</span></a>
-<a class="sourceLine" id="cb1-27" data-line-number="27">X &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/numeric">as.numeric</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/phyloseq/topics/sample_data-methods">sample_data</a></span>(mallard_family)<span class="op">$</span>time)</a>
-<a class="sourceLine" id="cb1-28" data-line-number="28">X &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/phyloseq/topics/transpose-methods">t</a></span>((X<span class="op">-</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/Extremes">min</a></span>(X)) <span class="op">/</span><span class="st"> </span><span class="dv">3600</span>)</a></code></pre></div>
+<p>To accord with prior analyses (and to make it easy to visualize results) I am going to just analyze those bacterial families that are frequently observed. Note: the full dataset (at the sequence variant level without preprocessing) is available if you run <code><a href="https://rdrr.io/r/utils/data.html">data(mallard)</a></code>. For simplicity we will just look at samples from vessel 1<a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a>.</p>
+<div class="sourceCode" id="cb1"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">stray</span>)
+<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">phyloseq</span>)
+<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">dplyr</span>)
+<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">driver</span>)
+<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">ggplot2</span>)
+<span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span>(<span class="no">mallard_family</span>)
+
+<span class="co"># Just take vessel 1</span>
+<span class="no">mallard_family</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/phyloseq/man/prune_samples-methods.html">prune_samples</a></span>(<span class="fu"><a href="https://rdrr.io/pkg/phyloseq/man/sample_data-methods.html">sample_data</a></span>(<span class="no">mallard_family</span>)$<span class="no">Vessel</span><span class="kw">==</span><span class="fl">1</span>, <span class="no">mallard_family</span>)
+
+<span class="co"># Just take hourly samples</span>
+<span class="no">mallard_family</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/phyloseq/man/prune_samples-methods.html">prune_samples</a></span>((<span class="fu"><a href="https://rdrr.io/pkg/phyloseq/man/sample_data-methods.html">sample_data</a></span>(<span class="no">mallard_family</span>)$<span class="no">time</span> <span class="kw">&gt;</span> <span class="st">"2015-11-20 15:00:00 UTC"</span>) <span class="kw">&amp;</span>
+                      (<span class="fu"><a href="https://rdrr.io/pkg/phyloseq/man/sample_data-methods.html">sample_data</a></span>(<span class="no">mallard_family</span>)$<span class="no">time</span> <span class="kw">&lt;</span> <span class="st">"2015-11-25 16:00:00 UTC"</span>), <span class="no">mallard_family</span>)
+
+<span class="co"># Order samples - to make plotting easy later</span>
+<span class="no">o</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/order.html">order</a></span>(<span class="fu"><a href="https://rdrr.io/pkg/phyloseq/man/sample_data-methods.html">sample_data</a></span>(<span class="no">mallard_family</span>)$<span class="no">time</span>)
+<span class="fu"><a href="https://rdrr.io/pkg/phyloseq/man/otu_table-methods.html">otu_table</a></span>(<span class="no">mallard_family</span>) <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/phyloseq/man/otu_table-methods.html">otu_table</a></span>(<span class="no">mallard_family</span>)[<span class="no">o</span>,]
+<span class="fu"><a href="https://rdrr.io/pkg/phyloseq/man/sample_data-methods.html">sample_data</a></span>(<span class="no">mallard_family</span>) <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/phyloseq/man/sample_data-methods.html">sample_data</a></span>(<span class="no">mallard_family</span>)[<span class="no">o</span>,]
+
+<span class="co"># Extract Data / dimensions from Phyloseq object</span>
+<span class="no">Y</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/phyloseq/man/transpose-methods.html">t</a></span>(<span class="fu">as</span>(<span class="fu"><a href="https://rdrr.io/pkg/phyloseq/man/otu_table-methods.html">otu_table</a></span>(<span class="no">mallard_family</span>), <span class="st">"matrix"</span>))
+<span class="fu"><a href="https://rdrr.io/r/base/colnames.html">rownames</a></span>(<span class="no">Y</span>) <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/phyloseq/man/taxa_names-methods.html">taxa_names</a></span>(<span class="no">mallard_family</span>)
+<span class="no">D</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/phyloseq/man/ntaxa-methods.html">ntaxa</a></span>(<span class="no">mallard_family</span>)
+<span class="no">N</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span>(<span class="fu"><a href="https://rdrr.io/pkg/phyloseq/man/sample_data-methods.html">sample_data</a></span>(<span class="no">mallard_family</span>))
+
+<span class="co"># X in hours</span>
+<span class="no">X</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html">as.numeric</a></span>(<span class="fu"><a href="https://rdrr.io/pkg/phyloseq/man/sample_data-methods.html">sample_data</a></span>(<span class="no">mallard_family</span>)$<span class="no">time</span>)
+<span class="no">X</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/phyloseq/man/transpose-methods.html">t</a></span>((<span class="no">X</span>-<span class="fu"><a href="https://rdrr.io/r/base/Extremes.html">min</a></span>(<span class="no">X</span>)) / <span class="fl">3600</span>)</pre></body></html></div>
 <p>The function <em>basset</em> is a wrapper around some <em>stray</em> internals that make fitting the above model easy. <em>basset</em> is patterned after the function <em>pibble</em> but requires that <code>Theta</code> and <code>Gamma</code> be given as matrix functions rather than as matrices. That is <code>Theta</code> must be a function that given <code>X</code> outputs a <span class="math inline">\(D-1 \times N\)</span> matrix (just like you would give to <em>pibble</em>) and <code>Gamma</code> must be a function that given <code>X</code> outputs a <span class="math inline">\(N \times N\)</span> covariance matrix (e.g., covariance over the samples). There are a few kernel functions that meet the requirements for <code>Gamma</code> in <em>stray</em> already. Here we will use a Squared Exponential (SE) kernel for <code>Gamma</code> and will set <code>Theta</code> to be the zero function. The SE kernel will give us non-linear smoothing of the observed time-series.</p>
 <p><em>Important Note:</em> Currently, <code>Theta</code> must output a matrix represented in the default coordinate system (<span class="math inline">\(ALR_D\)</span>). This may be generalized in the future.</p>
 <p>Here we will just specify the Kernel parameters manually, more generally these parameters can be chosen by cross-validation.</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" data-line-number="1"><span class="co"># Specify Priors</span></a>
-<a class="sourceLine" id="cb2-2" data-line-number="2">Gamma &lt;-<span class="st"> </span><span class="cf">function</span>(X) <span class="kw"><a href="../reference/kernels.html">SE</a></span>(X, <span class="dt">sigma=</span><span class="dv">5</span>, <span class="dt">rho=</span><span class="dv">10</span>) <span class="co"># Create partial function </span></a>
-<a class="sourceLine" id="cb2-3" data-line-number="3">Theta &lt;-<span class="st"> </span><span class="cf">function</span>(X) <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/matrix">matrix</a></span>(<span class="dv">0</span>, D<span class="dv">-1</span>, <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/nrow">ncol</a></span>(X))</a>
-<a class="sourceLine" id="cb2-4" data-line-number="4">upsilon &lt;-<span class="st"> </span>D<span class="dv">-1</span><span class="op">+</span><span class="dv">3</span></a>
-<a class="sourceLine" id="cb2-5" data-line-number="5">Xi &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/matrix">matrix</a></span>(.<span class="dv">4</span>, D<span class="dv">-1</span>, D<span class="dv">-1</span>)</a>
-<a class="sourceLine" id="cb2-6" data-line-number="6"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/diag">diag</a></span>(Xi) &lt;-<span class="st"> </span><span class="dv">1</span></a>
-<a class="sourceLine" id="cb2-7" data-line-number="7"></a>
-<a class="sourceLine" id="cb2-8" data-line-number="8"><span class="co"># Now fit the model</span></a>
-<a class="sourceLine" id="cb2-9" data-line-number="9">fit &lt;-<span class="st"> </span>stray<span class="op">::</span><span class="kw"><a href="https://www.rdocumentation.org/packages/stray/topics/basset_fit">basset</a></span>(Y, X, upsilon, Theta, Gamma, Xi)</a></code></pre></div>
+<div class="sourceCode" id="cb2"><html><body><pre class="r"><span class="co"># Specify Priors</span>
+<span class="no">Gamma</span> <span class="kw">&lt;-</span> <span class="kw">function</span>(<span class="no">X</span>) <span class="fu"><a href="../reference/kernels.html">SE</a></span>(<span class="no">X</span>, <span class="kw">sigma</span><span class="kw">=</span><span class="fl">5</span>, <span class="kw">rho</span><span class="kw">=</span><span class="fl">10</span>) <span class="co"># Create partial function </span>
+<span class="no">Theta</span> <span class="kw">&lt;-</span> <span class="kw">function</span>(<span class="no">X</span>) <span class="fu"><a href="https://rdrr.io/r/base/matrix.html">matrix</a></span>(<span class="fl">0</span>, <span class="no">D</span>-<span class="fl">1</span>, <span class="fu"><a href="https://rdrr.io/r/base/nrow.html">ncol</a></span>(<span class="no">X</span>))
+<span class="no">upsilon</span> <span class="kw">&lt;-</span> <span class="no">D</span>-<span class="fl">1</span>+<span class="fl">3</span>
+<span class="no">Xi</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html">matrix</a></span>(<span class="fl">.4</span>, <span class="no">D</span>-<span class="fl">1</span>, <span class="no">D</span>-<span class="fl">1</span>)
+<span class="fu"><a href="https://rdrr.io/r/base/diag.html">diag</a></span>(<span class="no">Xi</span>) <span class="kw">&lt;-</span> <span class="fl">1</span>
+
+<span class="co"># Now fit the model</span>
+<span class="no">fit</span> <span class="kw">&lt;-</span> <span class="kw pkg">stray</span><span class="kw ns">::</span><span class="fu"><a href="../reference/basset_fit.html">basset</a></span>(<span class="no">Y</span>, <span class="no">X</span>, <span class="no">upsilon</span>, <span class="no">Theta</span>, <span class="no">Gamma</span>, <span class="no">Xi</span>)</pre></body></html></div>
 <p>It turns out that <em>basset</em> is really just creating a <em>pibblefit</em> object that is a little special because it represents a posterior over non-linear functions. The benefit of this is that many of the methods available for <em>pibblefit</em> objects work for <em>bassetfit</em> objects. For example, we can use the same transformation methods:</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" data-line-number="1">fit.clr &lt;-<span class="st"> </span><span class="kw"><a href="../reference/stray_transforms.html">to_clr</a></span>(fit)</a>
-<a class="sourceLine" id="cb3-2" data-line-number="2"></a>
-<a class="sourceLine" id="cb3-3" data-line-number="3"><span class="co"># Plot Sigma in CLR</span></a>
-<a class="sourceLine" id="cb3-4" data-line-number="4"><span class="kw"><a href="https://www.rdocumentation.org/packages/graphics/topics/plot">plot</a></span>(fit.clr, <span class="dt">par=</span><span class="st">"Sigma"</span>, <span class="dt">focus.coord=</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="st">"clr_seq_6"</span>, <span class="st">"clr_seq_5"</span>, <span class="st">"clr_seq_2"</span>))</a></code></pre></div>
+<div class="sourceCode" id="cb3"><html><body><pre class="r"><span class="no">fit.clr</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/stray_transforms.html">to_clr</a></span>(<span class="no">fit</span>)
+
+<span class="co"># Plot Sigma in CLR</span>
+<span class="fu"><a href="https://rdrr.io/r/base/plot.html">plot</a></span>(<span class="no">fit.clr</span>, <span class="kw">par</span><span class="kw">=</span><span class="st">"Sigma"</span>, <span class="kw">focus.coord</span><span class="kw">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"clr_seq_6"</span>, <span class="st">"clr_seq_5"</span>, <span class="st">"clr_seq_2"</span>))</pre></body></html></div>
 <p><img src="non-linear-models_files/figure-html/unnamed-chunk-3-1.png" width="576"></p>
 <p>Really <em>basset</em> shows its power when you use it to smooth.</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" data-line-number="1"><span class="co"># predict not just missing days but also forecast into future</span></a>
-<a class="sourceLine" id="cb4-2" data-line-number="2">X_predict &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/phyloseq/topics/transpose-methods">t</a></span>(<span class="dv">1</span><span class="op">:</span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/Extremes">max</a></span>(X)))</a>
-<a class="sourceLine" id="cb4-3" data-line-number="3">predicted &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/stats/topics/predict">predict</a></span>(fit.clr, X_predict, <span class="dt">jitter=</span><span class="dv">1</span>) </a></code></pre></div>
+<div class="sourceCode" id="cb4"><html><body><pre class="r"><span class="co"># predict not just missing days but also forecast into future</span>
+<span class="no">X_predict</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/phyloseq/man/transpose-methods.html">t</a></span>(<span class="fl">1</span>:(<span class="fu"><a href="https://rdrr.io/r/base/Extremes.html">max</a></span>(<span class="no">X</span>)))
+<span class="no">predicted</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/predict.html">predict</a></span>(<span class="no">fit.clr</span>, <span class="no">X_predict</span>, <span class="kw">jitter</span><span class="kw">=</span><span class="fl">1</span>)</pre></body></html></div>
 <p>Now I am going to create a visual that shows the observed data in CLR coordinates (to do that I will need to add a pseudo-count) along with the smoothed estimates.</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" data-line-number="1">family_names &lt;-<span class="st"> </span><span class="kw">as</span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/phyloseq/topics/tax_table-methods">tax_table</a></span>(mallard_family)[,<span class="st">"Family"</span>], <span class="st">"vector"</span>)</a>
-<a class="sourceLine" id="cb5-2" data-line-number="2">Y_clr_tidy &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/driver/topics/array_lr_transforms">clr_array</a></span>(Y<span class="fl">+0.65</span>, <span class="dt">parts =</span> <span class="dv">1</span>) <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb5-3" data-line-number="3"><span class="st">  </span><span class="kw"><a href="https://www.rdocumentation.org/packages/driver/topics/gather_array">gather_array</a></span>(mean, coord, sample) <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb5-4" data-line-number="4"><span class="st">  </span><span class="kw"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span>(<span class="dt">time =</span> X[<span class="dv">1</span>,sample], </a>
-<a class="sourceLine" id="cb5-5" data-line-number="5">         <span class="dt">coord =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/paste">paste0</a></span>(<span class="st">"CLR("</span>, family_names[coord],<span class="st">")"</span>))</a>
-<a class="sourceLine" id="cb5-6" data-line-number="6"></a>
-<a class="sourceLine" id="cb5-7" data-line-number="7">predicted_tidy &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/driver/topics/gather_array">gather_array</a></span>(predicted, val, coord, sample, iter) <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb5-8" data-line-number="8"><span class="st">  </span><span class="kw"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span>(<span class="dt">time =</span> X_predict[<span class="dv">1</span>,sample]) <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb5-9" data-line-number="9"><span class="st">  </span><span class="kw"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span>(<span class="op">!</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/NA">is.na</a></span>(val)) <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb5-10" data-line-number="10"><span class="st">  </span><span class="kw"><a href="https://dplyr.tidyverse.org/reference/group_by.html">group_by</a></span>(time, coord) <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb5-11" data-line-number="11"><span class="st">  </span><span class="kw"><a href="https://www.rdocumentation.org/packages/driver/topics/summarise_posterior">summarise_posterior</a></span>(val, <span class="dt">na.rm=</span><span class="ot">TRUE</span>) <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb5-12" data-line-number="12"><span class="st">  </span><span class="kw"><a href="https://dplyr.tidyverse.org/reference/group_by.html">ungroup</a></span>() <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb5-13" data-line-number="13"><span class="st">  </span><span class="kw"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span>(<span class="dt">coord =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/paste">paste0</a></span>(<span class="st">"CLR("</span>, family_names[coord],<span class="st">")"</span>))</a>
-<a class="sourceLine" id="cb5-14" data-line-number="14"></a>
-<a class="sourceLine" id="cb5-15" data-line-number="15"><span class="kw"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span>(predicted_tidy, <span class="kw"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span>(<span class="dt">x =</span> time, <span class="dt">y=</span>mean)) <span class="op">+</span></a>
-<a class="sourceLine" id="cb5-16" data-line-number="16"><span class="st">  </span><span class="kw"><a href="https://ggplot2.tidyverse.org/reference/geom_ribbon.html">geom_ribbon</a></span>(<span class="kw"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span>(<span class="dt">ymin=</span>p2<span class="fl">.5</span>, <span class="dt">ymax=</span>p97<span class="fl">.5</span>), <span class="dt">fill=</span><span class="st">"darkgrey"</span>, <span class="dt">alpha=</span><span class="fl">0.5</span>) <span class="op">+</span></a>
-<a class="sourceLine" id="cb5-17" data-line-number="17"><span class="st">  </span><span class="kw"><a href="https://ggplot2.tidyverse.org/reference/geom_ribbon.html">geom_ribbon</a></span>(<span class="kw"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span>(<span class="dt">ymin=</span>p25, <span class="dt">ymax=</span>p75), <span class="dt">fill=</span><span class="st">"darkgrey"</span>, <span class="dt">alpha=</span><span class="fl">0.9</span>)<span class="op">+</span></a>
-<a class="sourceLine" id="cb5-18" data-line-number="18"><span class="st">  </span><span class="kw"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html">geom_line</a></span>(<span class="dt">color=</span><span class="st">"blue"</span>) <span class="op">+</span></a>
-<a class="sourceLine" id="cb5-19" data-line-number="19"><span class="st">  </span><span class="kw"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span>(<span class="dt">data =</span> Y_clr_tidy, <span class="dt">alpha=</span><span class="fl">0.5</span>) <span class="op">+</span></a>
-<a class="sourceLine" id="cb5-20" data-line-number="20"><span class="st">  </span><span class="kw"><a href="https://ggplot2.tidyverse.org/reference/facet_wrap.html">facet_wrap</a></span>(<span class="op">~</span>coord, <span class="dt">scales=</span><span class="st">"free_y"</span>) <span class="op">+</span></a>
-<a class="sourceLine" id="cb5-21" data-line-number="21"><span class="st">  </span><span class="kw"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_minimal</a></span>()<span class="op">+</span></a>
-<a class="sourceLine" id="cb5-22" data-line-number="22"><span class="st">  </span><span class="kw"><a href="https://ggplot2.tidyverse.org/reference/theme.html">theme</a></span>(<span class="dt">axis.title.y =</span> <span class="kw"><a href="https://ggplot2.tidyverse.org/reference/element.html">element_blank</a></span>(), </a>
-<a class="sourceLine" id="cb5-23" data-line-number="23">        <span class="dt">axis.title.x =</span> <span class="kw"><a href="https://ggplot2.tidyverse.org/reference/element.html">element_blank</a></span>(), </a>
-<a class="sourceLine" id="cb5-24" data-line-number="24">        <span class="dt">axis.text.x =</span> <span class="kw"><a href="https://ggplot2.tidyverse.org/reference/element.html">element_text</a></span>(<span class="dt">angle=</span><span class="dv">45</span>))</a></code></pre></div>
+<div class="sourceCode" id="cb5"><html><body><pre class="r"><span class="no">family_names</span> <span class="kw">&lt;-</span> <span class="fu">as</span>(<span class="fu"><a href="https://rdrr.io/pkg/phyloseq/man/tax_table-methods.html">tax_table</a></span>(<span class="no">mallard_family</span>)[,<span class="st">"Family"</span>], <span class="st">"vector"</span>)
+<span class="no">Y_clr_tidy</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/driver/man/array_lr_transforms.html">clr_array</a></span>(<span class="no">Y</span>+<span class="fl">0.65</span>, <span class="kw">parts</span> <span class="kw">=</span> <span class="fl">1</span>) <span class="kw">%&gt;%</span>
+  <span class="fu"><a href="https://rdrr.io/pkg/driver/man/gather_array.html">gather_array</a></span>(<span class="no">mean</span>, <span class="no">coord</span>, <span class="no">sample</span>) <span class="kw">%&gt;%</span>
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span>(<span class="kw">time</span> <span class="kw">=</span> <span class="no">X</span>[<span class="fl">1</span>,<span class="no">sample</span>],
+         <span class="kw">coord</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span>(<span class="st">"CLR("</span>, <span class="no">family_names</span>[<span class="no">coord</span>],<span class="st">")"</span>))
+
+<span class="no">predicted_tidy</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/driver/man/gather_array.html">gather_array</a></span>(<span class="no">predicted</span>, <span class="no">val</span>, <span class="no">coord</span>, <span class="no">sample</span>, <span class="no">iter</span>) <span class="kw">%&gt;%</span>
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span>(<span class="kw">time</span> <span class="kw">=</span> <span class="no">X_predict</span>[<span class="fl">1</span>,<span class="no">sample</span>]) <span class="kw">%&gt;%</span>
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span>(!<span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span>(<span class="no">val</span>)) <span class="kw">%&gt;%</span>
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html">group_by</a></span>(<span class="no">time</span>, <span class="no">coord</span>) <span class="kw">%&gt;%</span>
+  <span class="fu"><a href="https://rdrr.io/pkg/driver/man/summarise_posterior.html">summarise_posterior</a></span>(<span class="no">val</span>, <span class="kw">na.rm</span><span class="kw">=</span><span class="fl">TRUE</span>) <span class="kw">%&gt;%</span>
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html">ungroup</a></span>() <span class="kw">%&gt;%</span>
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span>(<span class="kw">coord</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span>(<span class="st">"CLR("</span>, <span class="no">family_names</span>[<span class="no">coord</span>],<span class="st">")"</span>))
+
+<span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span>(<span class="no">predicted_tidy</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span>(<span class="kw">x</span> <span class="kw">=</span> <span class="no">time</span>, <span class="kw">y</span><span class="kw">=</span><span class="no">mean</span>)) +
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_ribbon.html">geom_ribbon</a></span>(<span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span>(<span class="kw">ymin</span><span class="kw">=</span><span class="no">p2.5</span>, <span class="kw">ymax</span><span class="kw">=</span><span class="no">p97.5</span>), <span class="kw">fill</span><span class="kw">=</span><span class="st">"darkgrey"</span>, <span class="kw">alpha</span><span class="kw">=</span><span class="fl">0.5</span>) +
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_ribbon.html">geom_ribbon</a></span>(<span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span>(<span class="kw">ymin</span><span class="kw">=</span><span class="no">p25</span>, <span class="kw">ymax</span><span class="kw">=</span><span class="no">p75</span>), <span class="kw">fill</span><span class="kw">=</span><span class="st">"darkgrey"</span>, <span class="kw">alpha</span><span class="kw">=</span><span class="fl">0.9</span>)+
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html">geom_line</a></span>(<span class="kw">color</span><span class="kw">=</span><span class="st">"blue"</span>) +
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span>(<span class="kw">data</span> <span class="kw">=</span> <span class="no">Y_clr_tidy</span>, <span class="kw">alpha</span><span class="kw">=</span><span class="fl">0.5</span>) +
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/facet_wrap.html">facet_wrap</a></span>(~<span class="no">coord</span>, <span class="kw">scales</span><span class="kw">=</span><span class="st">"free_y"</span>) +
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_minimal</a></span>()+
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html">theme</a></span>(<span class="kw">axis.title.y</span> <span class="kw">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html">element_blank</a></span>(),
+        <span class="kw">axis.title.x</span> <span class="kw">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html">element_blank</a></span>(),
+        <span class="kw">axis.text.x</span> <span class="kw">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html">element_text</a></span>(<span class="kw">angle</span><span class="kw">=</span><span class="fl">45</span>))</pre></body></html></div>
 <p><img src="non-linear-models_files/figure-html/unnamed-chunk-5-1.png" width="672"></p>
 </div>
 <div id="references" class="section level1 unnumbered">
 <h1 class="hasAnchor">
 <a href="#references" class="anchor"></a>References</h1>
-<div id="refs" class="references">
+<div id="refs" class="references hanging-indent">
 <div id="ref-silverman2018">
-<p>Silverman, Justin D, Heather Durand, Rachael J Bloom, Sayan Mukherjee, and Lawrence A David. 2018. “Dynamic Linear Models Guide Design and Analysis of Microbiota Studies Within Artificial Human Guts.” <em>bioRxiv</em>. Cold Spring Harbor Laboratory. <a href="https://doi.org/10.1101/306597">https://doi.org/10.1101/306597</a>.</p>
+<p>Silverman, Justin D, Heather Durand, Rachael J Bloom, Sayan Mukherjee, and Lawrence A David. 2018. “Dynamic Linear Models Guide Design and Analysis of Microbiota Studies Within Artificial Human Guts.” <em>bioRxiv</em>. <a href="https://doi.org/10.1101/306597">https://doi.org/10.1101/306597</a>.</p>
 </div>
 </div>
 </div>
 <div class="footnotes">
 <hr>
 <ol>
-<li id="fn1"><p>I have a long history of coming up with ridiculous names for statistical models and software.<a href="#fnref1" class="footnote-back">↩</a></p></li>
-<li id="fn2"><p>In the future I may make a vignette discussing how we can model all the vessels jointly using <em>basset</em>. Note: it’s just a different kernel function that also relates the covariance between samples as a function of which vessel they were taken from.<a href="#fnref2" class="footnote-back">↩</a></p></li>
+<li id="fn1"><p>I have a long history of coming up with ridiculous names for statistical models and software.<a href="#fnref1" class="footnote-back">↩︎</a></p></li>
+<li id="fn2"><p>In the future I may make a vignette discussing how we can model all the vessels jointly using <em>basset</em>. Note: it’s just a different kernel function that also relates the covariance between samples as a function of which vessel they were taken from.<a href="#fnref2" class="footnote-back">↩︎</a></p></li>
 </ol>
 </div>
   </div>
 
-  <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
-        <div id="tocnav">
-      <h2 class="hasAnchor">
-<a href="#tocnav" class="anchor"></a>Contents</h2>
-      <ul class="nav nav-pills nav-stacked">
-<li><a href="#straybasset-the-model">stray::basset, the model</a></li>
-      <li><a href="#non-linear-time-series-modeling">Non-linear time-series modeling</a></li>
-      <li><a href="#references">References</a></li>
-      </ul>
+  <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
+
+        <nav id="toc" data-toggle="toc"><h2 data-toc-skip>Contents</h2>
+    </nav>
 </div>
-      </div>
 
 </div>
+
 
 
       <footer><div class="copyright">
@@ -252,12 +255,14 @@ Y_j &amp; \sim \text{Multinomial}\left(\pi_j \right)  \\
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.3.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
 </div>
+
       </footer>
 </div>
 
   
+
 
   </body>
 </html>

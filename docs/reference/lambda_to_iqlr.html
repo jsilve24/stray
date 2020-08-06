@@ -8,21 +8,29 @@
 
 <title>Transform Lambda into IQLR (Inter-Quantile Log-Ratio) — lambda_to_iqlr • stray</title>
 
+
 <!-- jquery -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
 <!-- Bootstrap -->
 
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha256-916EbMg70RQy9LHiGkXzG8hSg9EdNy97GazNG/aiY1w=" crossorigin="anonymous" />
-<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha256-bZLfwXAP04zRMK2BjiO8iu9pf4FbLqX6zitd+tIvLhE=" crossorigin="anonymous" />
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha256-nuL8/2cJ5NDSSwnKD8VqreErSWHtnEP9E7AySL+1ev4=" crossorigin="anonymous"></script>
+
+<!-- bootstrap-toc -->
+<link rel="stylesheet" href="../bootstrap-toc.css">
+<script src="../bootstrap-toc.js"></script>
 
 <!-- Font Awesome icons -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha256-eZrrJcwDc/3uDhsdt61sL2oOBY362qM3lon1gyExkL0=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous" />
 
 <!-- clipboard.js -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.4/clipboard.min.js" integrity="sha256-FiZwavyI2V6+EXO1U+xzLG3IKldpiTFf3153ea9zikQ=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script>
 
-<!-- sticky kit -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/sticky-kit/1.1.3/sticky-kit.min.js" integrity="sha256-c4Rlo1ZozqTPE2RLuvbusY3+SU1pQaJC0TjuhygMipw=" crossorigin="anonymous"></script>
+<!-- headroom.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script>
 
 <!-- pkgdown -->
 <link href="../pkgdown.css" rel="stylesheet">
@@ -30,8 +38,8 @@
 
 
 
-<meta property="og:title" content="Transform Lambda into IQLR (Inter-Quantile Log-Ratio) — lambda_to_iqlr" />
 
+<meta property="og:title" content="Transform Lambda into IQLR (Inter-Quantile Log-Ratio) — lambda_to_iqlr" />
 <meta property="og:description" content="Takes idea from Wu et al. (citation below) and calculates IQLR for 
   Lambda, potentially useful if you believe there is an invariant group of 
   categories (e.g., taxa / genes) that are not changing (in absolute abundance) 
@@ -46,7 +54,7 @@
   the covariation in Eta, explained by those covariates). This definition of 
   variance allows uses to exclude variation from technical / trivial sources
   in calculation of IQVF/IQLR." />
-<meta name="twitter:card" content="summary" />
+
 
 
 
@@ -60,9 +68,10 @@
 <![endif]-->
 
 
+
   </head>
 
-  <body>
+  <body data-spy="scroll" data-target="#toc">
     <div class="container template-reference-topic">
       <header>
       <div class="navbar navbar-default navbar-fixed-top" role="navigation">
@@ -134,7 +143,6 @@
   </ul>
 </li>
       </ul>
-      
       <ul class="nav navbar-nav navbar-right">
         <li>
   <a href="https://twitter.com/inschool4life">
@@ -155,6 +163,7 @@
 </div><!--/.navbar -->
 
       
+
       </header>
 
 <div class="row">
@@ -166,7 +175,6 @@
     </div>
 
     <div class="ref-description">
-    
     <p>Takes idea from Wu et al. (citation below) and calculates IQLR for 
   Lambda, potentially useful if you believe there is an invariant group of 
   categories (e.g., taxa / genes) that are not changing (in absolute abundance) 
@@ -181,11 +189,10 @@
   the covariation in Eta, explained by those covariates). This definition of 
   variance allows uses to exclude variation from technical / trivial sources
   in calculation of IQVF/IQLR.</p>
-    
     </div>
 
-    <pre class="usage"><span class='fu'>lambda_to_iqlr</span>(<span class='no'>m</span>, <span class='kw'>focus.cov</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>probs</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='fl'>0.25</span>, <span class='fl'>0.75</span>))</pre>
-    
+    <pre class="usage"><span class='fu'>lambda_to_iqlr</span>(<span class='no'>m</span>, <span class='kw'>focus.cov</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>probs</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>0.25</span>, <span class='fl'>0.75</span>))</pre>
+
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
@@ -204,23 +211,20 @@ of Lambda to include in calculating IQLR (if NULL, default, then uses all covari
 calculation of iqlr (smaller bounds means more stringent inclusion criteria)</p></td>
     </tr>
     </table>
-    
+
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
     <p>array of dimension (D, Q, iter) where D is number of taxa, Q is number
 of covariates, and iter is number of posterior samples.</p>
-    
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
     <p>Primarily intended for doing differential expression analysis under 
 assumption that only small group of categories (e.g., taxa / genes) are changing</p>
-    
     <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
 
     <p>Jia R. Wu, Jean M. Macklaim, Briana L. Genge, Gregory B. Gloor (2017)
   Finding the center: corrections for asymmetry in high-throughput sequencing
   datasets. arxiv:1704.01841v1</p>
-    
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='no'>sim</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='pibble_sim.html'>pibble_sim</a></span>()
@@ -228,92 +232,83 @@ assumption that only small group of categories (e.g., taxa / genes) are changing
 <span class='co'># Use first two covariates to define iqlr, just show first 5 samples</span>
 <span class='fu'>lambda_to_iqlr</span>(<span class='no'>fit</span>, <span class='fl'>1</span>:<span class='fl'>2</span>)[,,<span class='fl'>1</span>:<span class='fl'>5</span>]</div><div class='output co'>#&gt; , , 1
 #&gt; 
-#&gt;              [,1]       [,2]
-#&gt;  [1,] -0.06224673  0.8439713
-#&gt;  [2,] -0.07637984  0.4078730
-#&gt;  [3,] -1.25008984 -0.6954819
-#&gt;  [4,]  1.05303770  0.5514368
-#&gt;  [5,] -0.23176053 -3.5124358
-#&gt;  [6,]  0.77836146 -2.0128520
-#&gt;  [7,]  4.16585802 -2.0794613
-#&gt;  [8,]  0.53397511  1.8643626
-#&gt;  [9,]  4.26519052  0.1645184
-#&gt; [10,]  0.72154547  0.6787563
+#&gt;             [,1]        [,2]
+#&gt;  [1,] -0.2526887  0.84941052
+#&gt;  [2,]  0.1570506  0.10193949
+#&gt;  [3,] -1.3225847 -0.33077657
+#&gt;  [4,]  1.3135026  0.19422006
+#&gt;  [5,] -0.5293598 -3.81722177
+#&gt;  [6,]  0.8657115 -2.12506239
+#&gt;  [7,]  4.1831440 -2.32160396
+#&gt;  [8,]  0.7095619  1.60642844
+#&gt;  [9,]  4.3464215 -0.05735936
+#&gt; [10,]  0.7521329  0.47710897
 #&gt; 
 #&gt; , , 2
 #&gt; 
-#&gt;             [,1]       [,2]
-#&gt;  [1,] -0.5570042  1.0957465
-#&gt;  [2,]  0.3934984 -0.1674829
-#&gt;  [3,] -1.5313460 -0.1001843
-#&gt;  [4,]  0.8991757  0.4311342
-#&gt;  [5,] -0.3809849 -4.2037538
-#&gt;  [6,]  1.3412281 -2.8153397
-#&gt;  [7,]  3.7613728 -2.7487915
-#&gt;  [8,]  0.7471222  1.8197776
-#&gt;  [9,]  3.5949943 -0.5345317
-#&gt; [10,]  0.5730456  0.3645199
+#&gt;             [,1]        [,2]
+#&gt;  [1,] -0.5000054  1.00349797
+#&gt;  [2,]  0.2389852  0.04772608
+#&gt;  [3,] -1.4078139 -0.36376323
+#&gt;  [4,]  1.0251298  0.38489201
+#&gt;  [5,] -0.4478589 -3.65131617
+#&gt;  [6,]  1.2380459 -2.64434333
+#&gt;  [7,]  3.6272734 -2.31129903
+#&gt;  [8,]  0.6697734  2.00460859
+#&gt;  [9,]  3.4097164 -0.18219492
+#&gt; [10,]  0.4886820  0.54518310
 #&gt; 
 #&gt; , , 3
 #&gt; 
 #&gt;              [,1]       [,2]
-#&gt;  [1,] -1.70212719  1.2983521
-#&gt;  [2,] -1.01384486 -0.6080816
-#&gt;  [3,] -3.01412204 -0.1575911
-#&gt;  [4,]  0.03208851  0.4853764
-#&gt;  [5,] -2.06489407 -3.6874071
-#&gt;  [6,] -0.07879418 -2.8945575
-#&gt;  [7,]  2.44823892 -2.7493017
-#&gt;  [8,] -0.43432514  1.9762339
-#&gt;  [9,]  2.21524651 -0.3800285
-#&gt; [10,] -0.37989966  0.4697339
+#&gt;  [1,] -1.59322254  1.2179391
+#&gt;  [2,] -1.03674904 -0.7499800
+#&gt;  [3,] -3.40508042 -0.1777187
+#&gt;  [4,]  0.03126697  0.4362373
+#&gt;  [5,] -1.98667669 -3.3456400
+#&gt;  [6,] -0.09101151 -2.6954376
+#&gt;  [7,]  2.32382958 -2.6800450
+#&gt;  [8,] -0.43170344  1.8492513
+#&gt;  [9,]  2.11593749 -0.3717528
+#&gt; [10,] -0.41981484  0.4842555
 #&gt; 
 #&gt; , , 4
 #&gt; 
-#&gt;              [,1]       [,2]
-#&gt;  [1,] -0.99667717  2.0276765
-#&gt;  [2,] -0.03577628  0.9505134
-#&gt;  [3,] -3.00116622  0.3467306
-#&gt;  [4,]  0.61448649  1.1973211
-#&gt;  [5,] -1.03825561 -2.9165890
-#&gt;  [6,]  1.64443918 -1.4437731
-#&gt;  [7,]  3.62033610 -2.6702395
-#&gt;  [8,]  0.39049360  2.3326857
-#&gt;  [9,]  4.00066951  0.5137596
-#&gt; [10,]  0.27647562  1.3028273
+#&gt;             [,1]       [,2]
+#&gt;  [1,] -0.5744831  1.1374964
+#&gt;  [2,]  0.2507041  0.1768505
+#&gt;  [3,] -1.8809453 -0.4790111
+#&gt;  [4,]  0.9608933  0.4004779
+#&gt;  [5,] -0.3855418 -3.8521214
+#&gt;  [6,]  1.9280636 -2.4630285
+#&gt;  [7,]  4.0903699 -3.5096548
+#&gt;  [8,]  0.5273648  1.8045431
+#&gt;  [9,]  4.4543177 -0.4928108
+#&gt; [10,]  0.6348771  0.5033782
 #&gt; 
 #&gt; , , 5
 #&gt; 
-#&gt;               [,1]        [,2]
-#&gt;  [1,] -0.533093880  1.12530972
-#&gt;  [2,] -0.004259179 -0.08984179
-#&gt;  [3,] -1.622579315 -0.73425772
-#&gt;  [4,]  0.991495793  0.37435032
-#&gt;  [5,]  0.466286425 -3.43009414
-#&gt;  [6,]  1.635972203 -1.76185856
-#&gt;  [7,]  3.286015248 -2.28632547
-#&gt;  [8,]  0.519700993  1.37080656
-#&gt;  [9,]  3.893733084 -0.12948914
-#&gt; [10,]  0.610070478  0.36019857
+#&gt;             [,1]       [,2]
+#&gt;  [1,] -0.4632286  1.0055531
+#&gt;  [2,] -0.0858738 -0.1675544
+#&gt;  [3,] -1.7240460 -0.6227919
+#&gt;  [4,]  0.8415315  0.5287829
+#&gt;  [5,]  0.1167117 -3.8940895
+#&gt;  [6,]  1.6638791 -1.6645270
+#&gt;  [7,]  3.2183105 -2.4073352
+#&gt;  [8,]  0.5233956  1.2817658
+#&gt;  [9,]  3.8430561 -0.2137107
+#&gt; [10,]  0.7013047  0.1757229
 #&gt; </div><div class='input'>
 </div></pre>
   </div>
-  <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
-    <h2>Contents</h2>
-    <ul class="nav nav-pills nav-stacked">
-      <li><a href="#arguments">Arguments</a></li>
-      
-      <li><a href="#value">Value</a></li>
-
-      <li><a href="#details">Details</a></li>
-
-      <li><a href="#references">References</a></li>
-      
-      <li><a href="#examples">Examples</a></li>
-    </ul>
-
+  <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
+    <nav id="toc" data-toggle="toc" class="sticky-top">
+      <h2 data-toc-skip>Contents</h2>
+    </nav>
   </div>
 </div>
+
 
       <footer>
       <div class="copyright">
@@ -321,13 +316,16 @@ assumption that only small group of categories (e.g., taxa / genes) are changing
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.3.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
 </div>
+
       </footer>
    </div>
 
   
 
+
   </body>
 </html>
+
 

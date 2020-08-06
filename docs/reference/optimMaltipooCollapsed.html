@@ -8,21 +8,29 @@
 
 <title>Function to Optimize the Collapsed Maltipoo Model — optimMaltipooCollapsed • stray</title>
 
+
 <!-- jquery -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
 <!-- Bootstrap -->
 
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha256-916EbMg70RQy9LHiGkXzG8hSg9EdNy97GazNG/aiY1w=" crossorigin="anonymous" />
-<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha256-bZLfwXAP04zRMK2BjiO8iu9pf4FbLqX6zitd+tIvLhE=" crossorigin="anonymous" />
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha256-nuL8/2cJ5NDSSwnKD8VqreErSWHtnEP9E7AySL+1ev4=" crossorigin="anonymous"></script>
+
+<!-- bootstrap-toc -->
+<link rel="stylesheet" href="../bootstrap-toc.css">
+<script src="../bootstrap-toc.js"></script>
 
 <!-- Font Awesome icons -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha256-eZrrJcwDc/3uDhsdt61sL2oOBY362qM3lon1gyExkL0=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous" />
 
 <!-- clipboard.js -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.4/clipboard.min.js" integrity="sha256-FiZwavyI2V6+EXO1U+xzLG3IKldpiTFf3153ea9zikQ=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script>
 
-<!-- sticky kit -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/sticky-kit/1.1.3/sticky-kit.min.js" integrity="sha256-c4Rlo1ZozqTPE2RLuvbusY3+SU1pQaJC0TjuhygMipw=" crossorigin="anonymous"></script>
+<!-- headroom.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script>
 
 <!-- pkgdown -->
 <link href="../pkgdown.css" rel="stylesheet">
@@ -30,13 +38,13 @@
 
 
 
-<meta property="og:title" content="Function to Optimize the Collapsed Maltipoo Model — optimMaltipooCollapsed" />
 
+<meta property="og:title" content="Function to Optimize the Collapsed Maltipoo Model — optimMaltipooCollapsed" />
 <meta property="og:description" content="See details for model. Should likely be followed by function
 uncollapsePibble. Notation: N is number of samples,
 D is number of multinomial categories, and Q is number
 of covariates." />
-<meta name="twitter:card" content="summary" />
+
 
 
 
@@ -50,9 +58,10 @@ of covariates." />
 <![endif]-->
 
 
+
   </head>
 
-  <body>
+  <body data-spy="scroll" data-target="#toc">
     <div class="container template-reference-topic">
       <header>
       <div class="navbar navbar-default navbar-fixed-top" role="navigation">
@@ -124,7 +133,6 @@ of covariates." />
   </ul>
 </li>
       </ul>
-      
       <ul class="nav navbar-nav navbar-right">
         <li>
   <a href="https://twitter.com/inschool4life">
@@ -145,6 +153,7 @@ of covariates." />
 </div><!--/.navbar -->
 
       
+
       </header>
 
 <div class="row">
@@ -156,20 +165,37 @@ of covariates." />
     </div>
 
     <div class="ref-description">
-    
     <p>See details for model. Should likely be followed by function
 <code><a href='uncollapsePibble.html'>uncollapsePibble</a></code>. Notation: <code>N</code> is number of samples,
 <code>D</code> is number of multinomial categories, and <code>Q</code> is number
 of covariates.</p>
-    
     </div>
 
-    <pre class="usage"><span class='fu'>optimMaltipooCollapsed</span>(<span class='no'>Y</span>, <span class='no'>upsilon</span>, <span class='no'>Theta</span>, <span class='no'>X</span>, <span class='no'>KInv</span>, <span class='no'>U</span>, <span class='no'>init</span>, <span class='no'>ellinit</span>,
-  <span class='kw'>n_samples</span> <span class='kw'>=</span> <span class='fl'>2000L</span>, <span class='kw'>calcGradHess</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>b1</span> <span class='kw'>=</span> <span class='fl'>0.9</span>, <span class='kw'>b2</span> <span class='kw'>=</span> <span class='fl'>0.99</span>,
-  <span class='kw'>step_size</span> <span class='kw'>=</span> <span class='fl'>0.003</span>, <span class='kw'>epsilon</span> <span class='kw'>=</span> <span class='fl'>1e-06</span>, <span class='kw'>eps_f</span> <span class='kw'>=</span> <span class='fl'>1e-10</span>, <span class='kw'>eps_g</span> <span class='kw'>=</span> <span class='fl'>1e-04</span>,
-  <span class='kw'>max_iter</span> <span class='kw'>=</span> <span class='fl'>10000L</span>, <span class='kw'>verbose</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>verbose_rate</span> <span class='kw'>=</span> <span class='fl'>10L</span>,
-  <span class='kw'>decomp_method</span> <span class='kw'>=</span> <span class='st'>"cholesky"</span>, <span class='kw'>eigvalthresh</span> <span class='kw'>=</span> <span class='fl'>0</span>, <span class='kw'>jitter</span> <span class='kw'>=</span> <span class='fl'>0</span>)</pre>
-    
+    <pre class="usage"><span class='fu'>optimMaltipooCollapsed</span>(
+  <span class='no'>Y</span>,
+  <span class='no'>upsilon</span>,
+  <span class='no'>Theta</span>,
+  <span class='no'>X</span>,
+  <span class='no'>KInv</span>,
+  <span class='no'>U</span>,
+  <span class='no'>init</span>,
+  <span class='no'>ellinit</span>,
+  <span class='kw'>n_samples</span> <span class='kw'>=</span> <span class='fl'>2000L</span>,
+  <span class='kw'>calcGradHess</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+  <span class='kw'>b1</span> <span class='kw'>=</span> <span class='fl'>0.9</span>,
+  <span class='kw'>b2</span> <span class='kw'>=</span> <span class='fl'>0.99</span>,
+  <span class='kw'>step_size</span> <span class='kw'>=</span> <span class='fl'>0.003</span>,
+  <span class='kw'>epsilon</span> <span class='kw'>=</span> <span class='fl'>1e-06</span>,
+  <span class='kw'>eps_f</span> <span class='kw'>=</span> <span class='fl'>1e-10</span>,
+  <span class='kw'>eps_g</span> <span class='kw'>=</span> <span class='fl'>1e-04</span>,
+  <span class='kw'>max_iter</span> <span class='kw'>=</span> <span class='fl'>10000L</span>,
+  <span class='kw'>verbose</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
+  <span class='kw'>verbose_rate</span> <span class='kw'>=</span> <span class='fl'>10L</span>,
+  <span class='kw'>decomp_method</span> <span class='kw'>=</span> <span class='st'>"cholesky"</span>,
+  <span class='kw'>eigvalthresh</span> <span class='kw'>=</span> <span class='fl'>0</span>,
+  <span class='kw'>jitter</span> <span class='kw'>=</span> <span class='fl'>0</span>
+)</pre>
+
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
@@ -268,7 +294,7 @@ decomposition of negative inverse hessian (should be &lt;=0)</p></td>
 before decomposition (to improve matrix conditioning)</p></td>
     </tr>
     </table>
-    
+
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
     <p>List containing (all with respect to found optima)</p><ol>
@@ -283,7 +309,6 @@ based on Laplace approximation (if n_samples&gt;0)</p></li>
 approximation, useful for calculating marginal likelihood</p></li>
 </ol>
 
-    
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
     <p>Notation: Let Z_j denote the J-th row of a matrix Z.
@@ -312,34 +337,23 @@ D)</p></li>
 <li><p>Try adding small amount of jitter (e.g., set <code>jitter=1e-5</code>) to address
 potential floating point errors.</p></li>
 </ol>
-    
+
     <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
 
     <p>S. Ruder (2016) <em>An overview of gradient descent
 optimization algorithms</em>. arXiv 1609.04747</p>
-    
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
     <div class='dont-index'><p><code><a href='uncollapsePibble.html'>uncollapsePibble</a></code></p></div>
-    
 
   </div>
-  <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
-    <h2>Contents</h2>
-    <ul class="nav nav-pills nav-stacked">
-      <li><a href="#arguments">Arguments</a></li>
-      
-      <li><a href="#value">Value</a></li>
-
-      <li><a href="#details">Details</a></li>
-
-      <li><a href="#references">References</a></li>
-
-      <li><a href="#see-also">See also</a></li>
-          </ul>
-
+  <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
+    <nav id="toc" data-toggle="toc" class="sticky-top">
+      <h2 data-toc-skip>Contents</h2>
+    </nav>
   </div>
 </div>
+
 
       <footer>
       <div class="copyright">
@@ -347,13 +361,16 @@ optimization algorithms</em>. arXiv 1609.04747</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.3.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
 </div>
+
       </footer>
    </div>
 
   
 
+
   </body>
 </html>
+
 

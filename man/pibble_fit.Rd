@@ -6,9 +6,17 @@
 \alias{refit.pibblefit}
 \title{Interface to fit pibble models}
 \usage{
-pibble(Y = NULL, X = NULL, upsilon = NULL, Theta = NULL,
-  Gamma = NULL, Xi = NULL, init = NULL, pars = c("Eta", "Lambda",
-  "Sigma"), ...)
+pibble(
+  Y = NULL,
+  X = NULL,
+  upsilon = NULL,
+  Theta = NULL,
+  Gamma = NULL,
+  Xi = NULL,
+  init = NULL,
+  pars = c("Eta", "Lambda", "Sigma"),
+  ...
+)
 
 \method{refit}{pibblefit}(m, pars = c("Eta", "Lambda", "Sigma"), ...)
 }

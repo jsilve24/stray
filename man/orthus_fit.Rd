@@ -5,9 +5,18 @@
 \alias{orthus}
 \title{Interface to fit orthus models}
 \usage{
-orthus(Y = NULL, Z = NULL, X = NULL, upsilon = NULL,
-  Theta = NULL, Gamma = NULL, Xi = NULL, init = NULL,
-  pars = c("Eta", "Lambda", "Sigma"), ...)
+orthus(
+  Y = NULL,
+  Z = NULL,
+  X = NULL,
+  upsilon = NULL,
+  Theta = NULL,
+  Gamma = NULL,
+  Xi = NULL,
+  init = NULL,
+  pars = c("Eta", "Lambda", "Sigma"),
+  ...
+)
 }
 \arguments{
 \item{Y}{D x N matrix of counts (if NULL uses priors only)}

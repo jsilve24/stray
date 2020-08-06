@@ -6,18 +6,19 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Tips for Specifying Priors • stray</title>
-<!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script><!-- Bootstrap --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha256-916EbMg70RQy9LHiGkXzG8hSg9EdNy97GazNG/aiY1w=" crossorigin="anonymous">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha256-eZrrJcwDc/3uDhsdt61sL2oOBY362qM3lon1gyExkL0=" crossorigin="anonymous">
-<!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.4/clipboard.min.js" integrity="sha256-FiZwavyI2V6+EXO1U+xzLG3IKldpiTFf3153ea9zikQ=" crossorigin="anonymous"></script><!-- sticky kit --><script src="https://cdnjs.cloudflare.com/ajax/libs/sticky-kit/1.1.3/sticky-kit.min.js" integrity="sha256-c4Rlo1ZozqTPE2RLuvbusY3+SU1pQaJC0TjuhygMipw=" crossorigin="anonymous"></script><!-- pkgdown --><link href="../pkgdown.css" rel="stylesheet">
+<!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script><!-- Bootstrap --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha256-bZLfwXAP04zRMK2BjiO8iu9pf4FbLqX6zitd+tIvLhE=" crossorigin="anonymous">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha256-nuL8/2cJ5NDSSwnKD8VqreErSWHtnEP9E7AySL+1ev4=" crossorigin="anonymous"></script><!-- bootstrap-toc --><link rel="stylesheet" href="../bootstrap-toc.css">
+<script src="../bootstrap-toc.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
+<!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- pkgdown --><link href="../pkgdown.css" rel="stylesheet">
 <script src="../pkgdown.js"></script><meta property="og:title" content="Tips for Specifying Priors">
-<meta property="og:description" content="">
-<meta name="twitter:card" content="summary">
+<meta property="og:description" content="stray">
 <!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
 <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
 <![endif]-->
 </head>
-<body>
+<body data-spy="scroll" data-target="#toc">
     <div class="container template-article">
       <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
@@ -74,10 +75,16 @@
   </a>
   <ul class="dropdown-menu" role="menu">
 <li>
+      <a href="https://github.com/jsilve24/RcppCoDA">RcppCoDA</a>
+    </li>
+    <li>
       <a href="https://jsilve24.github.io/driver/">driver</a>
     </li>
     <li>
       <a href="https://bioconductor.org/packages/release/bioc/html/philr.html">philr</a>
+    </li>
+    <li>
+      <a href="https://cran.r-project.org/package=RcppHungarian">RcppHungarian</a>
     </li>
   </ul>
 </li>
@@ -104,10 +111,11 @@
 <!--/.navbar -->
 
       
-      </header><div class="row">
+
+      </header><script src="picking_priors_files/header-attrs-2.2/header-attrs.js"></script><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
-      <h1>Tips for Specifying Priors</h1>
+      <h1 data-toc-skip>Tips for Specifying Priors</h1>
             
       
       
@@ -196,15 +204,15 @@ x_{21}y_{21} &amp; x_{21}y_{22} &amp; x_{22}y_{21} &amp; x_{22}y_{22} \\
 <p><em>An example:</em> Lets say that for a given microbiome dataset, I have weak prior belief that, on average, all the taxa are independent with variance 1. I want to come up with values <span class="math inline">\(\gamma\)</span> and <span class="math inline">\(S\)</span> for my prior on <span class="math inline">\(\Omega\)</span> that reflect this. Lets start by specifying the mean for <span class="math inline">\(\Omega\)</span>. <span class="math display">\[E[\Omega] =I_D.\]</span> Next we say we have little certainty about this mean (want high variance) so we set <span class="math inline">\(\gamma\)</span> to be close to the lower bound of <span class="math inline">\(D\)</span> (I often like <span class="math inline">\(\gamma=D+3\)</span>). Now we have <span class="math inline">\(\gamma\)</span> we need to calculate <span class="math inline">\(S\)</span> which we do by solving for <span class="math inline">\(S\)</span> in the equation for the Inverse-Wishart mean<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a>: <span class="math display">\[S = E[\Omega](\gamma -D-1).\]</span> There you go that’s a prior on the log-absolute-abundances. Next we need to transform this into a prior on log-ratios. Well the above allows us to do this by simplifying taking the contrast matrix <span class="math inline">\(\Psi\)</span> from the log-ratio transform we want and transforming our prior for <span class="math inline">\(\Omega\)</span> as <span class="math inline">\(\Sigma \sim W^{-1}(\gamma, \Psi S \Psi^T)\)</span>. That’s it there the prior on log-ratios built form a prior on log-absolute-abundances.</p>
 <p><em>A Note on Phylogenetic priors:</em> As in phylogenetic linear models, you can make <span class="math inline">\(S\)</span> (as defined above) a covariance derived from the phylogenetic differences between taxa. This allows you to fit phylogenetic linear models in <em>stray</em>.</p>
 <p><strong>Making It Even Simpler</strong> Say that you have a prior <span class="math inline">\(\Omega \sim W^{-1}(\gamma, S)\)</span> for covariance between log-absolute-abundances (created as in our example above). You want to transform this into a prior <span class="math inline">\(\Sigma \sim W^{-1}(\upsilon, \Xi)\)</span>. You do this by simply taking <span class="math inline">\(\upsilon=\gamma\)</span>. To calculate <span class="math inline">\(\Xi\)</span>, rather than worrying about <span class="math inline">\(\Psi\)</span>, functions in the <a href="https://jsilve24.github.io/driver/"><em>driver</em> package I wrote</a> will do this for you, here are recipes:</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1"><span class="co"># To put prior on ALR_j coordinates for some j in (1,...,D-1)</span></a>
-<a class="sourceLine" id="cb1-2" data-line-number="2">Xi &lt;-<span class="st"> </span><span class="kw">clrvar2alrvar</span>(S, j)</a>
-<a class="sourceLine" id="cb1-3" data-line-number="3"></a>
-<a class="sourceLine" id="cb1-4" data-line-number="4"><span class="co"># To put prior in a particular ILR coordinate defined by contrast matrix V</span></a>
-<a class="sourceLine" id="cb1-5" data-line-number="5">Xi &lt;-<span class="st"> </span><span class="kw">clrvar2ilrvar</span>(S, V)</a>
-<a class="sourceLine" id="cb1-6" data-line-number="6"></a>
-<a class="sourceLine" id="cb1-7" data-line-number="7"><span class="co"># To put prior in CLR coordinates (this one needs two transforms)</span></a>
-<a class="sourceLine" id="cb1-8" data-line-number="8">foo &lt;-<span class="st"> </span><span class="kw">clrvar2alrvar</span>(S, D)</a>
-<a class="sourceLine" id="cb1-9" data-line-number="9">Xi &lt;-<span class="st"> </span><span class="kw">alrvar2clrvar</span>(foo, D)</a></code></pre></div>
+<div class="sourceCode" id="cb1"><html><body><pre class="r"><span class="co"># To put prior on ALR_j coordinates for some j in (1,...,D-1)</span>
+<span class="no">Xi</span> <span class="kw">&lt;-</span> <span class="fu">clrvar2alrvar</span>(<span class="no">S</span>, <span class="no">j</span>)
+
+<span class="co"># To put prior in a particular ILR coordinate defined by contrast matrix V</span>
+<span class="no">Xi</span> <span class="kw">&lt;-</span> <span class="fu">clrvar2ilrvar</span>(<span class="no">S</span>, <span class="no">V</span>)
+
+<span class="co"># To put prior in CLR coordinates (this one needs two transforms)</span>
+<span class="no">foo</span> <span class="kw">&lt;-</span> <span class="fu">clrvar2alrvar</span>(<span class="no">S</span>, <span class="no">D</span>)
+<span class="no">Xi</span> <span class="kw">&lt;-</span> <span class="fu">alrvar2clrvar</span>(<span class="no">foo</span>, <span class="no">D</span>)</pre></body></html></div>
 <p>Hopefully that is simple enough to be useful for folks.</p>
 </div>
 </div>
@@ -219,17 +227,17 @@ x_{21}y_{21} &amp; x_{21}y_{22} &amp; x_{22}y_{21} &amp; x_{22}y_{22} \\
 </h2>
 <p>This is really easy, in most situations this will simply be a matrix of zeros. This implies that you expect that on average, the covariates of interest are not associated with composition.<a href="#fn3" class="footnote-ref" id="fnref3"><sup>3</sup></a>. This helps prevent you from inferrign an effect if there isn’t one.</p>
 <p>Outside of this simple case lets say you actually have prior knowledge about the effects of the covariates. Perhaps you have some knowledge about the mean effect of covariates on log-absolute-abundances which you describe in a <span class="math inline">\(D\times Q\)</span> matrix <span class="math inline">\(A\)</span>. Well you can just transform that prior into the log-ratio coordinates you want as follows:</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" data-line-number="1"><span class="co"># Transform from log-absolute-abundance effects to effects on absolute-abundances</span></a>
-<a class="sourceLine" id="cb2-2" data-line-number="2">foo &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/Log">exp</a></span>(A)</a>
-<a class="sourceLine" id="cb2-3" data-line-number="3"></a>
-<a class="sourceLine" id="cb2-4" data-line-number="4"><span class="co"># To put prior on ALR_j coordinates for some j in (1,...,D-1)</span></a>
-<a class="sourceLine" id="cb2-5" data-line-number="5">Theta &lt;-<span class="st"> </span>driver<span class="op">::</span><span class="kw"><a href="https://www.rdocumentation.org/packages/driver/topics/array_lr_transforms">alr_array</a></span>(foo, j, <span class="dt">parts=</span><span class="dv">1</span>)</a>
-<a class="sourceLine" id="cb2-6" data-line-number="6"></a>
-<a class="sourceLine" id="cb2-7" data-line-number="7"><span class="co"># To put prior in a particular ILR coordinate defined by contrast matrix V</span></a>
-<a class="sourceLine" id="cb2-8" data-line-number="8">Theta &lt;-<span class="st"> </span>driver<span class="op">::</span><span class="kw"><a href="https://www.rdocumentation.org/packages/driver/topics/array_lr_transforms">ilr_array</a></span>(foo, V, <span class="dt">parts=</span><span class="dv">1</span>)</a>
-<a class="sourceLine" id="cb2-9" data-line-number="9"></a>
-<a class="sourceLine" id="cb2-10" data-line-number="10"><span class="co"># To put prior in CLR coordinates</span></a>
-<a class="sourceLine" id="cb2-11" data-line-number="11">Theta &lt;-<span class="st"> </span>driver<span class="op">::</span><span class="kw"><a href="https://www.rdocumentation.org/packages/driver/topics/array_lr_transforms">clr_array</a></span>(foo, <span class="dt">parts=</span><span class="dv">1</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb2"><html><body><pre class="r"><span class="co"># Transform from log-absolute-abundance effects to effects on absolute-abundances</span>
+<span class="no">foo</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html">exp</a></span>(<span class="no">A</span>)
+
+<span class="co"># To put prior on ALR_j coordinates for some j in (1,...,D-1)</span>
+<span class="no">Theta</span> <span class="kw">&lt;-</span> <span class="kw pkg">driver</span><span class="kw ns">::</span><span class="fu"><a href="https://rdrr.io/pkg/driver/man/array_lr_transforms.html">alr_array</a></span>(<span class="no">foo</span>, <span class="no">j</span>, <span class="kw">parts</span><span class="kw">=</span><span class="fl">1</span>)
+
+<span class="co"># To put prior in a particular ILR coordinate defined by contrast matrix V</span>
+<span class="no">Theta</span> <span class="kw">&lt;-</span> <span class="kw pkg">driver</span><span class="kw ns">::</span><span class="fu"><a href="https://rdrr.io/pkg/driver/man/array_lr_transforms.html">ilr_array</a></span>(<span class="no">foo</span>, <span class="no">V</span>, <span class="kw">parts</span><span class="kw">=</span><span class="fl">1</span>)
+
+<span class="co"># To put prior in CLR coordinates</span>
+<span class="no">Theta</span> <span class="kw">&lt;-</span> <span class="kw pkg">driver</span><span class="kw ns">::</span><span class="fu"><a href="https://rdrr.io/pkg/driver/man/array_lr_transforms.html">clr_array</a></span>(<span class="no">foo</span>, <span class="kw">parts</span><span class="kw">=</span><span class="fl">1</span>)</pre></body></html></div>
 </div>
 <div id="choosing-gamma" class="section level2">
 <h2 class="hasAnchor">
@@ -267,45 +275,21 @@ vec(\Lambda) &amp;\sim N(vec(\Theta), \alpha(\bar{\Gamma}\otimes \Sigma)).
 <div class="footnotes">
 <hr>
 <ol>
-<li id="fn1"><p>Note its <span class="math inline">\(D-1\)</span> here because <span class="math inline">\(\Omega\)</span> is <span class="math inline">\(D\times D\)</span> rather than <span class="math inline">\(D-1 \times D-1\)</span><a href="#fnref1" class="footnote-back">↩</a></p></li>
-<li id="fn2"><p>Where <span class="math inline">\(Q\)</span> is the number of regression covaraites<a href="#fnref2" class="footnote-back">↩</a></p></li>
-<li id="fn3"><p>This is the same assumption as used in Ridge Regression<a href="#fnref3" class="footnote-back">↩</a></p></li>
+<li id="fn1"><p>Note its <span class="math inline">\(D-1\)</span> here because <span class="math inline">\(\Omega\)</span> is <span class="math inline">\(D\times D\)</span> rather than <span class="math inline">\(D-1 \times D-1\)</span><a href="#fnref1" class="footnote-back">↩︎</a></p></li>
+<li id="fn2"><p>Where <span class="math inline">\(Q\)</span> is the number of regression covaraites<a href="#fnref2" class="footnote-back">↩︎</a></p></li>
+<li id="fn3"><p>This is the same assumption as used in Ridge Regression<a href="#fnref3" class="footnote-back">↩︎</a></p></li>
 </ol>
 </div>
   </div>
 
-  <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
-        <div id="tocnav">
-      <h2 class="hasAnchor">
-<a href="#tocnav" class="anchor"></a>Contents</h2>
-      <ul class="nav nav-pills nav-stacked">
-<li><a href="#overview">Overview</a></li>
-      <li>
-<a href="#background-on-the-matrix-normal">Background on the Matrix Normal</a><ul class="nav nav-pills nav-stacked">
-<li><a href="#the-vec-operation">The Vec Operation</a></li>
-      <li><a href="#kronker-products">Kronker Products</a></li>
-      <li><a href="#the-matrix-normal">The Matrix Normal</a></li>
-      </ul>
-</li>
-      <li>
-<a href="#the-prior-for-sigma">The prior for <span class="math inline">\(\Sigma\)</span></a><ul class="nav nav-pills nav-stacked">
-<li><a href="#background-on-the-prior">Background on the Prior</a></li>
-      <li><a href="#choosing-upsilon-and-xi-">Choosing <span class="math inline">\(\upsilon\)</span> and <span class="math inline">\(\Xi\)</span>.</a></li>
-      </ul>
-</li>
-      <li>
-<a href="#the-prior-for-lambda">The prior for <span class="math inline">\(\Lambda\)</span></a><ul class="nav nav-pills nav-stacked">
-<li><a href="#choosing-theta">Choosing <span class="math inline">\(\Theta\)</span></a></li>
-      <li><a href="#choosing-gamma">Choosing <span class="math inline">\(\Gamma\)</span></a></li>
-      </ul>
-</li>
-      <li><a href="#the-prior-for-eta">The Prior for <span class="math inline">\(\eta\)</span></a></li>
-      <li><a href="#how-the-choice-of-upsilon-and-xi-interacts-with-the-choice-of-gamma">How the Choice of <span class="math inline">\(\upsilon\)</span> and <span class="math inline">\(\Xi\)</span> Interacts With the Choice of <span class="math inline">\(\Gamma\)</span></a></li>
-      </ul>
+  <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
+
+        <nav id="toc" data-toggle="toc"><h2 data-toc-skip>Contents</h2>
+    </nav>
 </div>
-      </div>
 
 </div>
+
 
 
       <footer><div class="copyright">
@@ -313,12 +297,14 @@ vec(\Lambda) &amp;\sim N(vec(\Theta), \alpha(\bar{\Gamma}\otimes \Sigma)).
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.3.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
 </div>
+
       </footer>
 </div>
 
   
+
 
   </body>
 </html>

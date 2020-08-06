@@ -4,9 +4,17 @@
 \alias{predict.pibblefit}
 \title{Predict response from new data}
 \usage{
-\method{predict}{pibblefit}(object, newdata = NULL,
-  response = "LambdaX", size = NULL, use_names = TRUE,
-  summary = FALSE, iter = NULL, from_scratch = FALSE, ...)
+\method{predict}{pibblefit}(
+  object,
+  newdata = NULL,
+  response = "LambdaX",
+  size = NULL,
+  use_names = TRUE,
+  summary = FALSE,
+  iter = NULL,
+  from_scratch = FALSE,
+  ...
+)
 }
 \arguments{
 \item{object}{An object of class pibblefit}

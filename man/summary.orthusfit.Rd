@@ -4,8 +4,14 @@
 \alias{summary.orthusfit}
 \title{Summarise orthusfit object and print posterior quantiles}
 \usage{
-\method{summary}{orthusfit}(object, pars = NULL, use_names = TRUE,
-  as_factor = FALSE, gather_prob = FALSE, ...)
+\method{summary}{orthusfit}(
+  object,
+  pars = NULL,
+  use_names = TRUE,
+  as_factor = FALSE,
+  gather_prob = FALSE,
+  ...
+)
 }
 \arguments{
 \item{object}{an object of class orthusfit}

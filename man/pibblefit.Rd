@@ -4,12 +4,30 @@
 \alias{pibblefit}
 \title{Create pibblefit object}
 \usage{
-pibblefit(D, N, Q, coord_system, iter = NULL, alr_base = NULL,
-  ilr_base = NULL, Eta = NULL, Lambda = NULL, Sigma = NULL,
-  Sigma_default = NULL, Y = NULL, X = NULL, upsilon = NULL,
-  Theta = NULL, Xi = NULL, Xi_default = NULL, Gamma = NULL,
-  init = NULL, names_categories = NULL, names_samples = NULL,
-  names_covariates = NULL)
+pibblefit(
+  D,
+  N,
+  Q,
+  coord_system,
+  iter = NULL,
+  alr_base = NULL,
+  ilr_base = NULL,
+  Eta = NULL,
+  Lambda = NULL,
+  Sigma = NULL,
+  Sigma_default = NULL,
+  Y = NULL,
+  X = NULL,
+  upsilon = NULL,
+  Theta = NULL,
+  Xi = NULL,
+  Xi_default = NULL,
+  Gamma = NULL,
+  init = NULL,
+  names_categories = NULL,
+  names_samples = NULL,
+  names_covariates = NULL
+)
 }
 \arguments{
 \item{D}{number of multinomial categories}

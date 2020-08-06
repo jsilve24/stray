@@ -4,8 +4,13 @@
 \alias{sample_prior.pibblefit}
 \title{Sample from the prior distribution of pibblefit object}
 \usage{
-\method{sample_prior}{pibblefit}(m, n_samples = 2000L, pars = c("Eta",
-  "Lambda", "Sigma"), use_names = TRUE, ...)
+\method{sample_prior}{pibblefit}(
+  m,
+  n_samples = 2000L,
+  pars = c("Eta", "Lambda", "Sigma"),
+  use_names = TRUE,
+  ...
+)
 }
 \arguments{
 \item{m}{object of class pibblefit}

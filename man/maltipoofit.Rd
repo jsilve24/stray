@@ -4,13 +4,34 @@
 \alias{maltipoofit}
 \title{Create maltipoofit object}
 \usage{
-maltipoofit(D, N, Q, P, coord_system, iter = NULL, alr_base = NULL,
-  ilr_base = NULL, Eta = NULL, Lambda = NULL, Sigma = NULL,
-  Sigma_default = NULL, Y = NULL, X = NULL, upsilon = NULL,
-  Theta = NULL, Xi = NULL, Xi_default = NULL, Gamma = NULL,
-  init = NULL, ellinit = NULL, names_categories = NULL,
-  names_samples = NULL, names_covariates = NULL, VCScale = NULL,
-  U = NULL)
+maltipoofit(
+  D,
+  N,
+  Q,
+  P,
+  coord_system,
+  iter = NULL,
+  alr_base = NULL,
+  ilr_base = NULL,
+  Eta = NULL,
+  Lambda = NULL,
+  Sigma = NULL,
+  Sigma_default = NULL,
+  Y = NULL,
+  X = NULL,
+  upsilon = NULL,
+  Theta = NULL,
+  Xi = NULL,
+  Xi_default = NULL,
+  Gamma = NULL,
+  init = NULL,
+  ellinit = NULL,
+  names_categories = NULL,
+  names_samples = NULL,
+  names_covariates = NULL,
+  VCScale = NULL,
+  U = NULL
+)
 }
 \arguments{
 \item{D}{number of multinomial categories}

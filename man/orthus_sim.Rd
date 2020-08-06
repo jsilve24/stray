@@ -4,8 +4,14 @@
 \alias{orthus_sim}
 \title{Simulate simple orthus dataset and priors (for testing)}
 \usage{
-orthus_sim(D = 10, P = 10, N = 30, Q = 2, use_names = TRUE,
-  true_priors = FALSE)
+orthus_sim(
+  D = 10,
+  P = 10,
+  N = 30,
+  Q = 2,
+  use_names = TRUE,
+  true_priors = FALSE
+)
 }
 \arguments{
 \item{D}{number of multinomial categories}

@@ -6,14 +6,11 @@
 \alias{hessMaltipooCollapsed}
 \title{Calculations for the Collapsed Maltipoo Model}
 \usage{
-loglikMaltipooCollapsed(Y, upsilon, Theta, X, KInv, U, eta, ell,
-  sylv = FALSE)
+loglikMaltipooCollapsed(Y, upsilon, Theta, X, KInv, U, eta, ell, sylv = FALSE)
 
-gradMaltipooCollapsed(Y, upsilon, Theta, X, KInv, U, eta, ell,
-  sylv = FALSE)
+gradMaltipooCollapsed(Y, upsilon, Theta, X, KInv, U, eta, ell, sylv = FALSE)
 
-hessMaltipooCollapsed(Y, upsilon, Theta, X, KInv, U, eta, ell,
-  sylv = FALSE)
+hessMaltipooCollapsed(Y, upsilon, Theta, X, KInv, U, eta, ell, sylv = FALSE)
 }
 \arguments{
 \item{Y}{D x N matrix of counts}

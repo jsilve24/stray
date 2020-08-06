@@ -4,8 +4,17 @@
 \alias{uncollapsePibble}
 \title{Uncollapse output from optimPibbleCollapsed to full pibble Model}
 \usage{
-uncollapsePibble(eta, X, Theta, Gamma, Xi, upsilon, seed,
-  ret_mean = FALSE, ncores = -1L)
+uncollapsePibble(
+  eta,
+  X,
+  Theta,
+  Gamma,
+  Xi,
+  upsilon,
+  seed,
+  ret_mean = FALSE,
+  ncores = -1L
+)
 }
 \arguments{
 \item{eta}{array of dimension (D-1) x N x iter (e.g., \code{Pars} output of

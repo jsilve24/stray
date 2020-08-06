@@ -4,13 +4,33 @@
 \alias{orthusfit}
 \title{Create orthusfit object}
 \usage{
-orthusfit(D, N, Q, P, coord_system, iter = NULL, alr_base = NULL,
-  ilr_base = NULL, Eta = NULL, Lambda = NULL, Sigma = NULL,
-  Sigma_default = NULL, Z = NULL, Y = NULL, X = NULL,
-  upsilon = NULL, Theta = NULL, Xi = NULL, Xi_default = NULL,
-  Gamma = NULL, init = NULL, names_categories = NULL,
-  names_samples = NULL, names_Zdimensions = NULL,
-  names_covariates = NULL)
+orthusfit(
+  D,
+  N,
+  Q,
+  P,
+  coord_system,
+  iter = NULL,
+  alr_base = NULL,
+  ilr_base = NULL,
+  Eta = NULL,
+  Lambda = NULL,
+  Sigma = NULL,
+  Sigma_default = NULL,
+  Z = NULL,
+  Y = NULL,
+  X = NULL,
+  upsilon = NULL,
+  Theta = NULL,
+  Xi = NULL,
+  Xi_default = NULL,
+  Gamma = NULL,
+  init = NULL,
+  names_categories = NULL,
+  names_samples = NULL,
+  names_Zdimensions = NULL,
+  names_covariates = NULL
+)
 }
 \arguments{
 \item{D}{number of multinomial categories}

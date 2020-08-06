@@ -4,7 +4,9 @@
 \name{mallard_family}
 \alias{mallard_family}
 \title{Data from Silverman et al. (2018) Microbiome}
-\format{An object of class \code{\link[phyloseq]{phyloseq-class}}}
+\format{
+An object of class \code{\link[phyloseq]{phyloseq-class}}
+}
 \usage{
 data(mallard_family)
 }

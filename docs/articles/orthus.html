@@ -5,19 +5,20 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Joint Modeling (e.g., Multiomics) with Stray::Orthus • stray</title>
-<!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script><!-- Bootstrap --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha256-916EbMg70RQy9LHiGkXzG8hSg9EdNy97GazNG/aiY1w=" crossorigin="anonymous">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha256-eZrrJcwDc/3uDhsdt61sL2oOBY362qM3lon1gyExkL0=" crossorigin="anonymous">
-<!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.4/clipboard.min.js" integrity="sha256-FiZwavyI2V6+EXO1U+xzLG3IKldpiTFf3153ea9zikQ=" crossorigin="anonymous"></script><!-- sticky kit --><script src="https://cdnjs.cloudflare.com/ajax/libs/sticky-kit/1.1.3/sticky-kit.min.js" integrity="sha256-c4Rlo1ZozqTPE2RLuvbusY3+SU1pQaJC0TjuhygMipw=" crossorigin="anonymous"></script><!-- pkgdown --><link href="../pkgdown.css" rel="stylesheet">
-<script src="../pkgdown.js"></script><meta property="og:title" content="Joint Modeling (e.g., Multiomics) with Stray::Orthus">
-<meta property="og:description" content="">
-<meta name="twitter:card" content="summary">
+<title>Joint Modeling  (e.g., Multiomics) with Stray::Orthus • stray</title>
+<!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script><!-- Bootstrap --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha256-bZLfwXAP04zRMK2BjiO8iu9pf4FbLqX6zitd+tIvLhE=" crossorigin="anonymous">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha256-nuL8/2cJ5NDSSwnKD8VqreErSWHtnEP9E7AySL+1ev4=" crossorigin="anonymous"></script><!-- bootstrap-toc --><link rel="stylesheet" href="../bootstrap-toc.css">
+<script src="../bootstrap-toc.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
+<!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- pkgdown --><link href="../pkgdown.css" rel="stylesheet">
+<script src="../pkgdown.js"></script><meta property="og:title" content="Joint Modeling  (e.g., Multiomics) with Stray::Orthus">
+<meta property="og:description" content="stray">
 <!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
 <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
 <![endif]-->
 </head>
-<body>
+<body data-spy="scroll" data-target="#toc">
     <div class="container template-article">
       <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
@@ -74,10 +75,16 @@
   </a>
   <ul class="dropdown-menu" role="menu">
 <li>
+      <a href="https://github.com/jsilve24/RcppCoDA">RcppCoDA</a>
+    </li>
+    <li>
       <a href="https://jsilve24.github.io/driver/">driver</a>
     </li>
     <li>
       <a href="https://bioconductor.org/packages/release/bioc/html/philr.html">philr</a>
+    </li>
+    <li>
+      <a href="https://cran.r-project.org/package=RcppHungarian">RcppHungarian</a>
     </li>
   </ul>
 </li>
@@ -104,10 +111,11 @@
 <!--/.navbar -->
 
       
-      </header><div class="row">
+
+      </header><script src="orthus_files/header-attrs-2.2/header-attrs.js"></script><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
-      <h1>Joint Modeling (e.g., Multiomics) with Stray::Orthus</h1>
+      <h1 data-toc-skip>Joint Modeling (e.g., Multiomics) with Stray::Orthus</h1>
                         <h4 class="author">Justin Silverman</h4>
             
       
@@ -118,12 +126,12 @@
 
     
     
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(stray)</a>
-<a class="sourceLine" id="cb1-2" data-line-number="2"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(phyloseq)</a>
-<a class="sourceLine" id="cb1-3" data-line-number="3"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(dplyr)</a>
-<a class="sourceLine" id="cb1-4" data-line-number="4"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(driver)</a>
-<a class="sourceLine" id="cb1-5" data-line-number="5"></a>
-<a class="sourceLine" id="cb1-6" data-line-number="6"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/Random">set.seed</a></span>(<span class="dv">48482</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb1"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">stray</span>)
+<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">phyloseq</span>)
+<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">dplyr</span>)
+<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">driver</span>)
+
+<span class="fu"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span>(<span class="fl">48482</span>)</pre></body></html></div>
 <p>If you have not already done so, I would read through the <em>pibble</em> vignette before this one.</p>
 <div id="strayorthus-the-model" class="section level1">
 <h1 class="hasAnchor">
@@ -147,116 +155,116 @@ Y_j &amp; \sim \text{Multinomial}\left(\pi_j \right)  \\
 <h1 class="hasAnchor">
 <a href="#joint-modeling-of-microbial-16s-data-and-metabolomics" class="anchor"></a>Joint modeling of Microbial 16S data and Metabolomics</h1>
 <p>To demonstrate <em>orthus</em> I will perform a toy analysis on data from <span class="citation">Kashyap et al. (2013)</span> and made available by <span class="citation">Callahan et al. (2016)</span> as part of their recently published microbiome data analysis workflow <span class="citation">(Callahan et al. 2016)</span>. I follow the data preprocessing of <span class="citation">Callahan et al. (2016)</span> we just don’t drop taxa but instead amalgamate those that don’t pass filtering to a category called “other”. I do this to maintain the proper variance in the multinomial model.</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" data-line-number="1">metab_path &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/system.file">system.file</a></span>(<span class="st">"extdata/Kashyap2013"</span>, <span class="st">"metabolites.csv"</span>, <span class="dt">package=</span><span class="st">"stray"</span>)</a>
-<a class="sourceLine" id="cb2-2" data-line-number="2">microbe_path &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/system.file">system.file</a></span>(<span class="st">"extdata/Kashyap2013"</span>, <span class="st">"microbe.rda"</span>, <span class="dt">package=</span><span class="st">"stray"</span>)</a>
-<a class="sourceLine" id="cb2-3" data-line-number="3">metab &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/utils/topics/read.table">read.csv</a></span>(metab_path, <span class="dt">row.names =</span> <span class="dv">1</span>)</a>
-<a class="sourceLine" id="cb2-4" data-line-number="4">metab &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/matrix">as.matrix</a></span>(metab)</a>
-<a class="sourceLine" id="cb2-5" data-line-number="5">microbe &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/get">get</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/load">load</a></span>(microbe_path))</a>
-<a class="sourceLine" id="cb2-6" data-line-number="6"></a>
-<a class="sourceLine" id="cb2-7" data-line-number="7"><span class="co">## Preprocessing ##</span></a>
-<a class="sourceLine" id="cb2-8" data-line-number="8"><span class="co"># Metabolite Preprocessing</span></a>
-<a class="sourceLine" id="cb2-9" data-line-number="9">keep_ix &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/colSums">rowSums</a></span>(metab <span class="op">==</span><span class="st"> </span><span class="dv">0</span>) <span class="op">&lt;=</span><span class="st"> </span><span class="dv">3</span></a>
-<a class="sourceLine" id="cb2-10" data-line-number="10">metab &lt;-<span class="st"> </span>metab[keep_ix, ]</a>
-<a class="sourceLine" id="cb2-11" data-line-number="11"></a>
-<a class="sourceLine" id="cb2-12" data-line-number="12"><span class="co"># 16S Preprocesing - plus some weirdness to rename amalgamated category to "other"</span></a>
-<a class="sourceLine" id="cb2-13" data-line-number="13">keep_ix &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/phyloseq/topics/taxa_sums">taxa_sums</a></span>(microbe) <span class="op">&gt;</span><span class="st"> </span><span class="dv">4</span></a>
-<a class="sourceLine" id="cb2-14" data-line-number="14">keep_ix &lt;-<span class="st"> </span>keep_ix <span class="op">&amp;</span><span class="st"> </span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/colSums">rowSums</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/phyloseq/topics/otu_table-methods">otu_table</a></span>(microbe)<span class="op">&gt;</span><span class="dv">2</span>)<span class="op">&gt;</span><span class="dv">3</span>)</a>
-<a class="sourceLine" id="cb2-15" data-line-number="15">microbe &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/phyloseq/topics/merge_taxa-methods">merge_taxa</a></span>(microbe, <span class="kw"><a href="https://www.rdocumentation.org/packages/phyloseq/topics/taxa_names-methods">taxa_names</a></span>(microbe)[<span class="op">!</span>keep_ix])</a>
-<a class="sourceLine" id="cb2-16" data-line-number="16">nms &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/phyloseq/topics/taxa_names-methods">taxa_names</a></span>(microbe)</a>
-<a class="sourceLine" id="cb2-17" data-line-number="17">rnm &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/which">which</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/phyloseq/topics/taxa_names-methods">taxa_names</a></span>(microbe)<span class="op">==</span><span class="kw"><a href="https://www.rdocumentation.org/packages/phyloseq/topics/taxa_names-methods">taxa_names</a></span>(microbe)[<span class="op">!</span>keep_ix][<span class="dv">1</span>])</a>
-<a class="sourceLine" id="cb2-18" data-line-number="18">nms[rnm] &lt;-<span class="st"> "other"</span></a>
-<a class="sourceLine" id="cb2-19" data-line-number="19"><span class="kw"><a href="https://www.rdocumentation.org/packages/phyloseq/topics/taxa_names-methods">taxa_names</a></span>(microbe) &lt;-<span class="st"> </span>nms</a>
-<a class="sourceLine" id="cb2-20" data-line-number="20"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/rm">rm</a></span>(nms, rnm)</a>
-<a class="sourceLine" id="cb2-21" data-line-number="21"></a>
-<a class="sourceLine" id="cb2-22" data-line-number="22"><span class="co"># bit of preprocessing </span></a>
-<a class="sourceLine" id="cb2-23" data-line-number="23">metab &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/Log">log10</a></span>(<span class="dv">1</span> <span class="op">+</span><span class="st"> </span>metab)</a></code></pre></div>
+<div class="sourceCode" id="cb2"><html><body><pre class="r"><span class="no">metab_path</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html">system.file</a></span>(<span class="st">"extdata/Kashyap2013"</span>, <span class="st">"metabolites.csv"</span>, <span class="kw">package</span><span class="kw">=</span><span class="st">"stray"</span>)
+<span class="no">microbe_path</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html">system.file</a></span>(<span class="st">"extdata/Kashyap2013"</span>, <span class="st">"microbe.rda"</span>, <span class="kw">package</span><span class="kw">=</span><span class="st">"stray"</span>)
+<span class="no">metab</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/read.table.html">read.csv</a></span>(<span class="no">metab_path</span>, <span class="kw">row.names</span> <span class="kw">=</span> <span class="fl">1</span>)
+<span class="no">metab</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html">as.matrix</a></span>(<span class="no">metab</span>)
+<span class="no">microbe</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/get.html">get</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/load.html">load</a></span>(<span class="no">microbe_path</span>))
+
+<span class="co">## Preprocessing ##</span>
+<span class="co"># Metabolite Preprocessing</span>
+<span class="no">keep_ix</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/colSums.html">rowSums</a></span>(<span class="no">metab</span> <span class="kw">==</span> <span class="fl">0</span>) <span class="kw">&lt;=</span> <span class="fl">3</span>
+<span class="no">metab</span> <span class="kw">&lt;-</span> <span class="no">metab</span>[<span class="no">keep_ix</span>, ]
+
+<span class="co"># 16S Preprocesing - plus some weirdness to rename amalgamated category to "other"</span>
+<span class="no">keep_ix</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/phyloseq/man/taxa_sums.html">taxa_sums</a></span>(<span class="no">microbe</span>) <span class="kw">&gt;</span> <span class="fl">4</span>
+<span class="no">keep_ix</span> <span class="kw">&lt;-</span> <span class="no">keep_ix</span> <span class="kw">&amp;</span> (<span class="fu"><a href="https://rdrr.io/r/base/colSums.html">rowSums</a></span>(<span class="fu"><a href="https://rdrr.io/pkg/phyloseq/man/otu_table-methods.html">otu_table</a></span>(<span class="no">microbe</span>)<span class="kw">&gt;</span><span class="fl">2</span>)<span class="kw">&gt;</span><span class="fl">3</span>)
+<span class="no">microbe</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/phyloseq/man/merge_taxa-methods.html">merge_taxa</a></span>(<span class="no">microbe</span>, <span class="fu"><a href="https://rdrr.io/pkg/phyloseq/man/taxa_names-methods.html">taxa_names</a></span>(<span class="no">microbe</span>)[!<span class="no">keep_ix</span>])
+<span class="no">nms</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/phyloseq/man/taxa_names-methods.html">taxa_names</a></span>(<span class="no">microbe</span>)
+<span class="no">rnm</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/which.html">which</a></span>(<span class="fu"><a href="https://rdrr.io/pkg/phyloseq/man/taxa_names-methods.html">taxa_names</a></span>(<span class="no">microbe</span>)<span class="kw">==</span><span class="fu"><a href="https://rdrr.io/pkg/phyloseq/man/taxa_names-methods.html">taxa_names</a></span>(<span class="no">microbe</span>)[!<span class="no">keep_ix</span>][<span class="fl">1</span>])
+<span class="no">nms</span>[<span class="no">rnm</span>] <span class="kw">&lt;-</span> <span class="st">"other"</span>
+<span class="fu"><a href="https://rdrr.io/pkg/phyloseq/man/taxa_names-methods.html">taxa_names</a></span>(<span class="no">microbe</span>) <span class="kw">&lt;-</span> <span class="no">nms</span>
+<span class="fu"><a href="https://rdrr.io/r/base/rm.html">rm</a></span>(<span class="no">nms</span>, <span class="no">rnm</span>)
+
+<span class="co"># bit of preprocessing </span>
+<span class="no">metab</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html">log10</a></span>(<span class="fl">1</span> + <span class="no">metab</span>)</pre></body></html></div>
 <p>Now I am going to do just a bit of processing to get data into a format for orthus. Note I have no extra metadata so we are just going to use an intercept in our model at this time.</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" data-line-number="1">Y &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/phyloseq/topics/otu_table-methods">otu_table</a></span>(microbe, <span class="dt">taxa_are_rows=</span><span class="ot">TRUE</span>)</a>
-<a class="sourceLine" id="cb3-2" data-line-number="2">Z &lt;-<span class="st"> </span>metab <span class="co">#(metabolites are rows)</span></a>
-<a class="sourceLine" id="cb3-3" data-line-number="3">X &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/matrix">matrix</a></span>(<span class="dv">1</span>, <span class="dv">1</span>, phyloseq<span class="op">::</span><span class="kw"><a href="https://www.rdocumentation.org/packages/phyloseq/topics/nsamples-methods">nsamples</a></span>(microbe))</a>
-<a class="sourceLine" id="cb3-4" data-line-number="4"></a>
-<a class="sourceLine" id="cb3-5" data-line-number="5"><span class="co"># save dims for easy reference</span></a>
-<a class="sourceLine" id="cb3-6" data-line-number="6">N &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/nrow">ncol</a></span>(Y)</a>
-<a class="sourceLine" id="cb3-7" data-line-number="7">P &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/nrow">nrow</a></span>(Z)</a>
-<a class="sourceLine" id="cb3-8" data-line-number="8">Q &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/nrow">nrow</a></span>(X)</a>
-<a class="sourceLine" id="cb3-9" data-line-number="9">D &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/nrow">nrow</a></span>(Y)</a></code></pre></div>
+<div class="sourceCode" id="cb3"><html><body><pre class="r"><span class="no">Y</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/phyloseq/man/otu_table-methods.html">otu_table</a></span>(<span class="no">microbe</span>, <span class="kw">taxa_are_rows</span><span class="kw">=</span><span class="fl">TRUE</span>)
+<span class="no">Z</span> <span class="kw">&lt;-</span> <span class="no">metab</span> <span class="co">#(metabolites are rows)</span>
+<span class="no">X</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html">matrix</a></span>(<span class="fl">1</span>, <span class="fl">1</span>, <span class="kw pkg">phyloseq</span><span class="kw ns">::</span><span class="fu"><a href="https://rdrr.io/pkg/phyloseq/man/nsamples-methods.html">nsamples</a></span>(<span class="no">microbe</span>))
+
+<span class="co"># save dims for easy reference</span>
+<span class="no">N</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html">ncol</a></span>(<span class="no">Y</span>)
+<span class="no">P</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span>(<span class="no">Z</span>)
+<span class="no">Q</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span>(<span class="no">X</span>)
+<span class="no">D</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span>(<span class="no">Y</span>)</pre></body></html></div>
 <p>Now I am going to set up the priors. My priors are going to be similar to that of <em>pibble</em> but now we need to think about a prior for the covariance among the metabolites and between the metabolites and the log-ratios of the taxa. Remember, that priors must be defined in the <span class="math inline">\(ALR_D\)</span> (e.g., ALR with the reference being the D-th taxa; this may be changed in the future to make specifying priors more user friendly).</p>
 <p>I am going to form our prior for <span class="math inline">\(\Sigma\)</span> by specifying <span class="math inline">\(\upsilon\)</span> and <span class="math inline">\(\Xi\)</span>. I will specify that I have weak prior belief that the taxa are independent in terms of their log absolute abundance. We can translate this statement about covariance of log absolute abundance into a statement about log-ratio covariance by pre- and post-multiplying by the <span class="math inline">\(ALR_D\)</span> contrast matrix (which I refer to as <span class="math inline">\(GG\)</span> below). Additionally, I believe that there is likely no substantial covariance between the taxa and the metabolites and I assume the metabolites are likely independent.</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" data-line-number="1">upsilon &lt;-<span class="st"> </span>(D<span class="dv">-1</span><span class="op">+</span>P)<span class="op">+</span><span class="dv">10</span> <span class="co"># weak-ish prior on covariance over joint taxa and metabolites</span></a>
-<a class="sourceLine" id="cb4-2" data-line-number="2">Xi &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/diag">diag</a></span>(D<span class="dv">-1</span><span class="op">+</span>P)</a>
-<a class="sourceLine" id="cb4-3" data-line-number="3">GG &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/cbind">cbind</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/diag">diag</a></span>(D<span class="dv">-1</span>), <span class="dv">-1</span>)</a>
-<a class="sourceLine" id="cb4-4" data-line-number="4">Xi[<span class="dv">1</span><span class="op">:</span>(D<span class="dv">-1</span>), <span class="dv">1</span><span class="op">:</span>(D<span class="dv">-1</span>)] &lt;-<span class="st"> </span>GG<span class="op">%*%</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/diag">diag</a></span>(D) <span class="op">%*%</span><span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/phyloseq/topics/transpose-methods">t</a></span>(GG)</a>
-<a class="sourceLine" id="cb4-5" data-line-number="5">Xi &lt;-<span class="st"> </span>Xi <span class="op">*</span><span class="st"> </span>(upsilon<span class="op">-</span>D<span class="op">-</span>P) <span class="co"># this scales Xi to have the proper mean we wanted</span></a>
-<a class="sourceLine" id="cb4-6" data-line-number="6"><span class="kw"><a href="https://www.rdocumentation.org/packages/graphics/topics/image">image</a></span>(Xi)</a></code></pre></div>
+<div class="sourceCode" id="cb4"><html><body><pre class="r"><span class="no">upsilon</span> <span class="kw">&lt;-</span> (<span class="no">D</span>-<span class="fl">1</span>+<span class="no">P</span>)+<span class="fl">10</span> <span class="co"># weak-ish prior on covariance over joint taxa and metabolites</span>
+<span class="no">Xi</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/diag.html">diag</a></span>(<span class="no">D</span>-<span class="fl">1</span>+<span class="no">P</span>)
+<span class="no">GG</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html">cbind</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/diag.html">diag</a></span>(<span class="no">D</span>-<span class="fl">1</span>), -<span class="fl">1</span>)
+<span class="no">Xi</span>[<span class="fl">1</span>:(<span class="no">D</span>-<span class="fl">1</span>), <span class="fl">1</span>:(<span class="no">D</span>-<span class="fl">1</span>)] <span class="kw">&lt;-</span> <span class="no">GG</span><span class="kw">%*%</span><span class="fu"><a href="https://rdrr.io/r/base/diag.html">diag</a></span>(<span class="no">D</span>) <span class="kw">%*%</span> <span class="fu"><a href="https://rdrr.io/pkg/phyloseq/man/transpose-methods.html">t</a></span>(<span class="no">GG</span>)
+<span class="no">Xi</span> <span class="kw">&lt;-</span> <span class="no">Xi</span> * (<span class="no">upsilon</span>-<span class="no">D</span>-<span class="no">P</span>) <span class="co"># this scales Xi to have the proper mean we wanted</span>
+<span class="fu"><a href="https://rdrr.io/r/graphics/image.html">image</a></span>(<span class="no">Xi</span>)</pre></body></html></div>
 <p><img src="orthus_files/figure-html/unnamed-chunk-5-1.png" width="480"></p>
 <p>Note the structure of this prior, everything is independent but there is a moderate positive covariance between the log-ratios based on their shared definition in terms of the <span class="math inline">\(D\)</span>-th taxa.</p>
 <p>The other parts of the prior are less interesting. We are going to state that our mean for <span class="math inline">\(\Lambda\)</span> is centered about <span class="math inline">\(\mathbf{0}\)</span> and that the signal-to-noise ratio in the data is approximately 1 (this later part is specified by <span class="math inline">\(\Gamma=I\)</span>).</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" data-line-number="1">Gamma &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/diag">diag</a></span>(Q)</a>
-<a class="sourceLine" id="cb5-2" data-line-number="2">Theta &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/matrix">matrix</a></span>(<span class="dv">0</span>, D<span class="dv">-1</span><span class="op">+</span>P, <span class="dv">1</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb5"><html><body><pre class="r"><span class="no">Gamma</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/diag.html">diag</a></span>(<span class="no">Q</span>)
+<span class="no">Theta</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html">matrix</a></span>(<span class="fl">0</span>, <span class="no">D</span>-<span class="fl">1</span>+<span class="no">P</span>, <span class="fl">1</span>)</pre></body></html></div>
 <p>Finally I fit the model.</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" data-line-number="1">fit &lt;-<span class="st"> </span><span class="kw"><a href="../reference/orthus_fit.html">orthus</a></span>(Y, Z, X, <span class="dt">Theta=</span>Theta, <span class="dt">Gamma=</span>Gamma, <span class="dt">Xi=</span>Xi, <span class="dt">upsilon=</span>upsilon, <span class="dt">n_samples=</span><span class="dv">1000</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb6"><html><body><pre class="r"><span class="no">fit</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/orthus_fit.html">orthus</a></span>(<span class="no">Y</span>, <span class="no">Z</span>, <span class="no">X</span>, <span class="kw">Theta</span><span class="kw">=</span><span class="no">Theta</span>, <span class="kw">Gamma</span><span class="kw">=</span><span class="no">Gamma</span>, <span class="kw">Xi</span><span class="kw">=</span><span class="no">Xi</span>, <span class="kw">upsilon</span><span class="kw">=</span><span class="no">upsilon</span>, <span class="kw">n_samples</span><span class="kw">=</span><span class="fl">1000</span>)</pre></body></html></div>
 <p>Next we are going to transform the log-ratios from <span class="math inline">\(ALR_D\)</span> to the <span class="math inline">\(CLR\)</span>. I have written all the transformation functions, <em>e.g.</em>, <code>to_clr</code> etc… to work on <code>orthusfit</code> objects in a similar manner to how they work on <code>pibblefit</code> objects. For <code>orthusfit</code> objects they only transform the log-ratio components of parameters leaving the other parts of inferred model parameters (<em>i.e.</em>, the parts associated with the metabolites) untouched.</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" data-line-number="1">fit &lt;-<span class="st"> </span><span class="kw"><a href="../reference/stray_transforms.html">to_clr</a></span>(fit)</a>
-<a class="sourceLine" id="cb7-2" data-line-number="2"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/print">print</a></span>(fit)</a>
-<a class="sourceLine" id="cb7-3" data-line-number="3"><span class="co">#&gt; orthusfit Object: </span></a>
-<a class="sourceLine" id="cb7-4" data-line-number="4"><span class="co">#&gt;   Number of Samples:      12 </span></a>
-<a class="sourceLine" id="cb7-5" data-line-number="5"><span class="co">#&gt;   Number of Categories:       114 </span></a>
-<a class="sourceLine" id="cb7-6" data-line-number="6"><span class="co">#&gt;   Number of Zdimensions:  405 </span></a>
-<a class="sourceLine" id="cb7-7" data-line-number="7"><span class="co">#&gt;   Number of Covariates:       1 </span></a>
-<a class="sourceLine" id="cb7-8" data-line-number="8"><span class="co">#&gt;   Number of Posterior Samples:    1000 </span></a>
-<a class="sourceLine" id="cb7-9" data-line-number="9"><span class="co">#&gt;   Contains Samples of Parameters:Eta  Lambda  Sigma</span></a>
-<a class="sourceLine" id="cb7-10" data-line-number="10"><span class="co">#&gt;   Coordinate System:      clr</span></a></code></pre></div>
+<div class="sourceCode" id="cb7"><html><body><pre class="r"><span class="no">fit</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/stray_transforms.html">to_clr</a></span>(<span class="no">fit</span>)
+<span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span>(<span class="no">fit</span>)
+<span class="co">#&gt; orthusfit Object: </span>
+<span class="co">#&gt;   Number of Samples:      12 </span>
+<span class="co">#&gt;   Number of Categories:       114 </span>
+<span class="co">#&gt;   Number of Zdimensions:  405 </span>
+<span class="co">#&gt;   Number of Covariates:       1 </span>
+<span class="co">#&gt;   Number of Posterior Samples:    1000 </span>
+<span class="co">#&gt;   Contains Samples of Parameters:Eta  Lambda  Sigma</span>
+<span class="co">#&gt;   Coordinate System:      clr</span></pre></body></html></div>
 </div>
 <div id="investigate-model-results" class="section level1">
 <h1 class="hasAnchor">
 <a href="#investigate-model-results" class="anchor"></a>Investigate Model Results</h1>
 <p>There are a ton of ways to visualize the inferred model. I could make network diagrams relating taxa to taxa, taxa to metabolites and metabolites to metabolites. I could look at a low dimensional representation of joint covariance to create something very much akin to canonical correlation analysis (CCA). I could look at how well the metabolites predict the taxa and vice-versa. But for the sake of simplicity I will do something much simpler. Here I am just going to find a list of taxa metabolite covariances that the model is very confident about.</p>
-<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" data-line-number="1"><span class="co"># First just look ath the cross-covariances fit by the model</span></a>
-<a class="sourceLine" id="cb8-2" data-line-number="2"><span class="co"># (covariance between taxa in CLR coordinates and metabolites)</span></a>
-<a class="sourceLine" id="cb8-3" data-line-number="3"><span class="co"># This requires that we extract the corner of Sigma. </span></a>
-<a class="sourceLine" id="cb8-4" data-line-number="4">xcor &lt;-<span class="st"> </span>fit<span class="op">$</span>Sigma[<span class="dv">1</span><span class="op">:</span>D, D<span class="op">:</span>(D<span class="dv">-1</span><span class="op">+</span>P),]</a>
-<a class="sourceLine" id="cb8-5" data-line-number="5"></a>
-<a class="sourceLine" id="cb8-6" data-line-number="6"><span class="co"># Initial preprocessing to speed up computation of posterior intervals</span></a>
-<a class="sourceLine" id="cb8-7" data-line-number="7"><span class="co"># As there are alot of cross-covariance terms we are going to first </span></a>
-<a class="sourceLine" id="cb8-8" data-line-number="8"><span class="co"># weed down the list of things we have to look at by first pass </span></a>
-<a class="sourceLine" id="cb8-9" data-line-number="9"><span class="co"># selecting only those taxa that have a large posterior mean for the covariance</span></a>
-<a class="sourceLine" id="cb8-10" data-line-number="10">xcor.mean &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/apply">apply</a></span>(xcor, <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="dv">1</span>,<span class="dv">2</span>), mean)</a>
-<a class="sourceLine" id="cb8-11" data-line-number="11">to.analyze &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/driver/topics/gather_array">gather_array</a></span>(xcor.mean, cov, taxa, metabolite) <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb8-12" data-line-number="12"><span class="st">  </span><span class="kw"><a href="https://dplyr.tidyverse.org/reference/arrange.html">arrange</a></span>(<span class="op">-</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/MathFun">abs</a></span>(cov)) <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb8-13" data-line-number="13"><span class="st">  </span>.[<span class="dv">1</span><span class="op">:</span><span class="dv">1000</span>,] <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb8-14" data-line-number="14"><span class="st">  </span><span class="kw"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span>(<span class="dt">tm =</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/paste">paste0</a></span>(taxa, <span class="st">"_"</span>, metabolite))</a>
-<a class="sourceLine" id="cb8-15" data-line-number="15"></a>
-<a class="sourceLine" id="cb8-16" data-line-number="16"><span class="co"># Subset Covariance to those we are interested in and calculate posterior </span></a>
-<a class="sourceLine" id="cb8-17" data-line-number="17"><span class="co"># confidence intervals. </span></a>
-<a class="sourceLine" id="cb8-18" data-line-number="18">xcor.summary &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/driver/topics/gather_array">gather_array</a></span>(xcor, cov, taxa, metabolite, iter) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb8-19" data-line-number="19"><span class="st">  </span><span class="kw"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span>(<span class="dt">tm=</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/paste">paste0</a></span>(taxa, <span class="st">"_"</span>, metabolite)) <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb8-20" data-line-number="20"><span class="st">  </span><span class="kw"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span>(tm <span class="op">%in%</span><span class="st"> </span>to.analyze<span class="op">$</span>tm) <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb8-21" data-line-number="21"><span class="st">  </span><span class="kw"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span>(<span class="dt">taxa =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/colnames">rownames</a></span>(Y)[taxa], <span class="dt">metabolite =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/colnames">rownames</a></span>(Z)[metabolite]) <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb8-22" data-line-number="22"><span class="st">  </span><span class="kw"><a href="https://dplyr.tidyverse.org/reference/group_by.html">group_by</a></span>(taxa, metabolite) <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb8-23" data-line-number="23"><span class="st">  </span><span class="kw"><a href="https://www.rdocumentation.org/packages/driver/topics/summarise_posterior">summarise_posterior</a></span>(cov) <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb8-24" data-line-number="24"><span class="st">  </span><span class="kw"><a href="https://dplyr.tidyverse.org/reference/arrange.html">arrange</a></span>(mean) <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb8-25" data-line-number="25"><span class="st">  </span><span class="kw"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span>(taxa <span class="op">!=</span><span class="st"> 'other'</span>) <span class="co"># we don't care about these</span></a>
-<a class="sourceLine" id="cb8-26" data-line-number="26"></a>
-<a class="sourceLine" id="cb8-27" data-line-number="27"><span class="co"># Select those covariances where the model has high certainty (95%) that</span></a>
-<a class="sourceLine" id="cb8-28" data-line-number="28"><span class="co"># the true covariance is not zero. </span></a>
-<a class="sourceLine" id="cb8-29" data-line-number="29">xcor.summary <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb8-30" data-line-number="30"><span class="st">  </span><span class="kw"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/sign">sign</a></span>(p2<span class="fl">.5</span>)<span class="op">==</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/sign">sign</a></span>(p97<span class="fl">.5</span>)) <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb8-31" data-line-number="31"><span class="st">  </span><span class="kw"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/MathFun">abs</a></span>(mean) <span class="op">&gt;</span><span class="st"> </span><span class="dv">2</span>)</a>
-<a class="sourceLine" id="cb8-32" data-line-number="32"><span class="co">#&gt; # A tibble: 228 x 8</span></a>
-<a class="sourceLine" id="cb8-33" data-line-number="33"><span class="co">#&gt; # Groups:   taxa [17]</span></a>
-<a class="sourceLine" id="cb8-34" data-line-number="34"><span class="co">#&gt;    taxa  metabolite   p2.5   p25   p50  mean   p75  p97.5</span></a>
-<a class="sourceLine" id="cb8-35" data-line-number="35"><span class="co">#&gt;    &lt;chr&gt; &lt;chr&gt;       &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt;</span></a>
-<a class="sourceLine" id="cb8-36" data-line-number="36"><span class="co">#&gt;  1 722   206.0445922 -6.71 -4.05 -3.04 -3.33 -2.37 -1.44 </span></a>
-<a class="sourceLine" id="cb8-37" data-line-number="37"><span class="co">#&gt;  2 7816  206.0445922 -5.43 -3.27 -2.48 -2.68 -1.85 -1.07 </span></a>
-<a class="sourceLine" id="cb8-38" data-line-number="38"><span class="co">#&gt;  3 722   290.9298419 -5.50 -3.15 -2.43 -2.62 -1.87 -1.11 </span></a>
-<a class="sourceLine" id="cb8-39" data-line-number="39"><span class="co">#&gt;  4 18182 380.1846197 -5.08 -3.07 -2.34 -2.55 -1.79 -1.09 </span></a>
-<a class="sourceLine" id="cb8-40" data-line-number="40"><span class="co">#&gt;  5 722   181.4504354 -5.07 -3.02 -2.33 -2.52 -1.83 -1.11 </span></a>
-<a class="sourceLine" id="cb8-41" data-line-number="41"><span class="co">#&gt;  6 722   177.0565368 -5.29 -3.01 -2.31 -2.49 -1.79 -0.990</span></a>
-<a class="sourceLine" id="cb8-42" data-line-number="42"><span class="co">#&gt;  7 19517 380.1846197 -4.88 -3.05 -2.29 -2.48 -1.71 -0.952</span></a>
-<a class="sourceLine" id="cb8-43" data-line-number="43"><span class="co">#&gt;  8 722   176.0343919 -5.00 -2.97 -2.29 -2.48 -1.74 -1.10 </span></a>
-<a class="sourceLine" id="cb8-44" data-line-number="44"><span class="co">#&gt;  9 2943  380.1846197 -4.95 -2.98 -2.30 -2.47 -1.78 -1.04 </span></a>
-<a class="sourceLine" id="cb8-45" data-line-number="45"><span class="co">#&gt; 10 722   180.072273  -5.03 -2.96 -2.28 -2.46 -1.72 -0.983</span></a>
-<a class="sourceLine" id="cb8-46" data-line-number="46"><span class="co">#&gt; # … with 218 more rows</span></a></code></pre></div>
+<div class="sourceCode" id="cb8"><html><body><pre class="r"><span class="co"># First just look ath the cross-covariances fit by the model</span>
+<span class="co"># (covariance between taxa in CLR coordinates and metabolites)</span>
+<span class="co"># This requires that we extract the corner of Sigma. </span>
+<span class="no">xcor</span> <span class="kw">&lt;-</span> <span class="no">fit</span>$<span class="no">Sigma</span>[<span class="fl">1</span>:<span class="no">D</span>, <span class="no">D</span>:(<span class="no">D</span>-<span class="fl">1</span>+<span class="no">P</span>),]
+
+<span class="co"># Initial preprocessing to speed up computation of posterior intervals</span>
+<span class="co"># As there are alot of cross-covariance terms we are going to first </span>
+<span class="co"># weed down the list of things we have to look at by first pass </span>
+<span class="co"># selecting only those taxa that have a large posterior mean for the covariance</span>
+<span class="no">xcor.mean</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/apply.html">apply</a></span>(<span class="no">xcor</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">1</span>,<span class="fl">2</span>), <span class="no">mean</span>)
+<span class="no">to.analyze</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/driver/man/gather_array.html">gather_array</a></span>(<span class="no">xcor.mean</span>, <span class="no">cov</span>, <span class="no">taxa</span>, <span class="no">metabolite</span>) <span class="kw">%&gt;%</span>
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html">arrange</a></span>(-<span class="fu"><a href="https://rdrr.io/r/base/MathFun.html">abs</a></span>(<span class="no">cov</span>)) <span class="kw">%&gt;%</span>
+  <span class="no">.</span>[<span class="fl">1</span>:<span class="fl">1000</span>,] <span class="kw">%&gt;%</span>
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span>(<span class="kw">tm</span> <span class="kw">=</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span>(<span class="no">taxa</span>, <span class="st">"_"</span>, <span class="no">metabolite</span>))
+
+<span class="co"># Subset Covariance to those we are interested in and calculate posterior </span>
+<span class="co"># confidence intervals. </span>
+<span class="no">xcor.summary</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/driver/man/gather_array.html">gather_array</a></span>(<span class="no">xcor</span>, <span class="no">cov</span>, <span class="no">taxa</span>, <span class="no">metabolite</span>, <span class="no">iter</span>) <span class="kw">%&gt;%</span>
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span>(<span class="kw">tm</span><span class="kw">=</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span>(<span class="no">taxa</span>, <span class="st">"_"</span>, <span class="no">metabolite</span>)) <span class="kw">%&gt;%</span>
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span>(<span class="no">tm</span> <span class="kw">%in%</span> <span class="no">to.analyze</span>$<span class="no">tm</span>) <span class="kw">%&gt;%</span>
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span>(<span class="kw">taxa</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">rownames</a></span>(<span class="no">Y</span>)[<span class="no">taxa</span>], <span class="kw">metabolite</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">rownames</a></span>(<span class="no">Z</span>)[<span class="no">metabolite</span>]) <span class="kw">%&gt;%</span>
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html">group_by</a></span>(<span class="no">taxa</span>, <span class="no">metabolite</span>) <span class="kw">%&gt;%</span>
+  <span class="fu"><a href="https://rdrr.io/pkg/driver/man/summarise_posterior.html">summarise_posterior</a></span>(<span class="no">cov</span>) <span class="kw">%&gt;%</span>
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html">arrange</a></span>(<span class="no">mean</span>) <span class="kw">%&gt;%</span>
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span>(<span class="no">taxa</span> <span class="kw">!=</span> <span class="st">'other'</span>) <span class="co"># we don't care about these</span>
+
+<span class="co"># Select those covariances where the model has high certainty (95%) that</span>
+<span class="co"># the true covariance is not zero. </span>
+<span class="no">xcor.summary</span> <span class="kw">%&gt;%</span>
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/sign.html">sign</a></span>(<span class="no">p2.5</span>)<span class="kw">==</span><span class="fu"><a href="https://rdrr.io/r/base/sign.html">sign</a></span>(<span class="no">p97.5</span>)) <span class="kw">%&gt;%</span>
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/MathFun.html">abs</a></span>(<span class="no">mean</span>) <span class="kw">&gt;</span> <span class="fl">2</span>)
+<span class="co">#&gt; # A tibble: 214 x 8</span>
+<span class="co">#&gt; # Groups:   taxa [17]</span>
+<span class="co">#&gt;    taxa  metabolite   p2.5   p25   p50  mean   p75  p97.5</span>
+<span class="co">#&gt;    &lt;chr&gt; &lt;chr&gt;       &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt;</span>
+<span class="co">#&gt;  1 722   206.0445922 -6.54 -3.92 -3.09 -3.30 -2.39 -1.45 </span>
+<span class="co">#&gt;  2 7816  206.0445922 -5.38 -3.19 -2.42 -2.66 -1.85 -1.06 </span>
+<span class="co">#&gt;  3 722   290.9298419 -4.89 -3.09 -2.45 -2.60 -1.88 -1.16 </span>
+<span class="co">#&gt;  4 18182 380.1846197 -4.87 -3.11 -2.36 -2.52 -1.83 -1.03 </span>
+<span class="co">#&gt;  5 722   181.4504354 -4.77 -3.03 -2.36 -2.51 -1.83 -1.18 </span>
+<span class="co">#&gt;  6 722   177.0565368 -4.90 -2.98 -2.34 -2.49 -1.81 -1.10 </span>
+<span class="co">#&gt;  7 19517 380.1846197 -4.82 -3.02 -2.31 -2.47 -1.74 -0.920</span>
+<span class="co">#&gt;  8 2943  380.1846197 -4.69 -2.99 -2.31 -2.46 -1.79 -0.994</span>
+<span class="co">#&gt;  9 722   176.0343919 -4.80 -2.97 -2.28 -2.46 -1.80 -1.10 </span>
+<span class="co">#&gt; 10 722   180.072273  -4.74 -3.00 -2.26 -2.45 -1.70 -1.00 </span>
+<span class="co">#&gt; # … with 204 more rows</span></pre></body></html></div>
 <p>So it looks there there are a few hundred covariances that we can be fairly confident about.</p>
 </div>
 <div id="qualifications-and-caution" class="section level1">
@@ -270,32 +278,25 @@ Y_j &amp; \sim \text{Multinomial}\left(\pi_j \right)  \\
 <div id="references" class="section level1 unnumbered">
 <h1 class="hasAnchor">
 <a href="#references" class="anchor"></a>References</h1>
-<div id="refs" class="references">
+<div id="refs" class="references hanging-indent">
 <div id="ref-callahan2016">
-<p>Callahan, Ben J, Kris Sankaran, Julia A Fukuyama, Paul J McMurdie, and Susan P Holmes. 2016. “Bioconductor Workflow for Microbiome Data Analysis: From Raw Reads to Community Analyses.” <em>F1000Research</em> 5. Faculty of 1000 Ltd.</p>
+<p>Callahan, Ben J, Kris Sankaran, Julia A Fukuyama, Paul J McMurdie, and Susan P Holmes. 2016. “Bioconductor Workflow for Microbiome Data Analysis: From Raw Reads to Community Analyses.” <em>F1000Research</em> 5.</p>
 </div>
 <div id="ref-kashyap2013">
-<p>Kashyap, Purna C, Angela Marcobal, Luke K Ursell, Samuel A Smits, Erica D Sonnenburg, Elizabeth K Costello, Steven K Higginbottom, et al. 2013. “Genetically Dictated Change in Host Mucus Carbohydrate Landscape Exerts a Diet-Dependent Effect on the Gut Microbiota.” <em>Proceedings of the National Academy of Sciences</em> 110 (42). National Acad Sciences: 17059–64.</p>
+<p>Kashyap, Purna C, Angela Marcobal, Luke K Ursell, Samuel A Smits, Erica D Sonnenburg, Elizabeth K Costello, Steven K Higginbottom, et al. 2013. “Genetically Dictated Change in Host Mucus Carbohydrate Landscape Exerts a Diet-Dependent Effect on the Gut Microbiota.” <em>Proceedings of the National Academy of Sciences</em> 110 (42): 17059–64.</p>
 </div>
 </div>
 </div>
   </div>
 
-  <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
-        <div id="tocnav">
-      <h2 class="hasAnchor">
-<a href="#tocnav" class="anchor"></a>Contents</h2>
-      <ul class="nav nav-pills nav-stacked">
-<li><a href="#strayorthus-the-model">stray::orthus, the model</a></li>
-      <li><a href="#joint-modeling-of-microbial-16s-data-and-metabolomics">Joint modeling of Microbial 16S data and Metabolomics</a></li>
-      <li><a href="#investigate-model-results">Investigate Model Results</a></li>
-      <li><a href="#qualifications-and-caution">Qualifications and Caution</a></li>
-      <li><a href="#references">References</a></li>
-      </ul>
+  <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
+
+        <nav id="toc" data-toggle="toc"><h2 data-toc-skip>Contents</h2>
+    </nav>
 </div>
-      </div>
 
 </div>
+
 
 
       <footer><div class="copyright">
@@ -303,12 +304,14 @@ Y_j &amp; \sim \text{Multinomial}\left(\pi_j \right)  \\
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.3.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
 </div>
+
       </footer>
 </div>
 
   
+
 
   </body>
 </html>

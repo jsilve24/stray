@@ -4,8 +4,7 @@
 \alias{pibble_sim}
 \title{Simulate simple pibble dataset and priors (for testing)}
 \usage{
-pibble_sim(D = 10, N = 30, Q = 2, use_names = TRUE,
-  true_priors = FALSE)
+pibble_sim(D = 10, N = 30, Q = 2, use_names = TRUE, true_priors = FALSE)
 }
 \arguments{
 \item{D}{number of multinomial categories}

@@ -5,9 +5,17 @@
 \alias{mongrel}
 \title{mongrel}
 \usage{
-mongrel(Y = NULL, X = NULL, upsilon = NULL, Theta = NULL,
-  Gamma = NULL, Xi = NULL, init = NULL, pars = c("Eta", "Lambda",
-  "Sigma"), ...)
+mongrel(
+  Y = NULL,
+  X = NULL,
+  upsilon = NULL,
+  Theta = NULL,
+  Gamma = NULL,
+  Xi = NULL,
+  init = NULL,
+  pars = c("Eta", "Lambda", "Sigma"),
+  ...
+)
 }
 \arguments{
 \item{Y}{D x N matrix of counts (if NULL uses priors only)}

@@ -4,8 +4,14 @@
 \alias{summary.pibblefit}
 \title{Summarise pibblefit object and print posterior quantiles}
 \usage{
-\method{summary}{pibblefit}(object, pars = NULL, use_names = TRUE,
-  as_factor = FALSE, gather_prob = FALSE, ...)
+\method{summary}{pibblefit}(
+  object,
+  pars = NULL,
+  use_names = TRUE,
+  as_factor = FALSE,
+  gather_prob = FALSE,
+  ...
+)
 }
 \arguments{
 \item{object}{an object of class pibblefit}

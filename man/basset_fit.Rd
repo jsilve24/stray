@@ -6,8 +6,17 @@
 \alias{refit.bassetfit}
 \title{Interface to fit basset models}
 \usage{
-basset(Y = NULL, X, upsilon = NULL, Theta = NULL, Gamma = NULL,
-  Xi = NULL, init = NULL, pars = c("Eta", "Lambda", "Sigma"), ...)
+basset(
+  Y = NULL,
+  X,
+  upsilon = NULL,
+  Theta = NULL,
+  Gamma = NULL,
+  Xi = NULL,
+  init = NULL,
+  pars = c("Eta", "Lambda", "Sigma"),
+  ...
+)
 
 \method{refit}{bassetfit}(m, pars = c("Eta", "Lambda", "Sigma"), ...)
 }

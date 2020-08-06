@@ -4,9 +4,17 @@
 \alias{predict.bassetfit}
 \title{Predict using basset}
 \usage{
-\method{predict}{bassetfit}(object, newdata, response = "Lambda",
-  size = NULL, use_names = TRUE, summary = FALSE, iter = NULL,
-  from_scratch = FALSE, ...)
+\method{predict}{bassetfit}(
+  object,
+  newdata,
+  response = "Lambda",
+  size = NULL,
+  use_names = TRUE,
+  summary = FALSE,
+  iter = NULL,
+  from_scratch = FALSE,
+  ...
+)
 }
 \arguments{
 \item{object}{An object of class pibblefit}

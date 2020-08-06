@@ -4,13 +4,33 @@
 \alias{optimPibbleCollapsed}
 \title{Function to Optimize the Collapsed Pibble Model}
 \usage{
-optimPibbleCollapsed(Y, upsilon, ThetaX, KInv, AInv, init,
-  n_samples = 2000L, calcGradHess = TRUE, b1 = 0.9, b2 = 0.99,
-  step_size = 0.003, epsilon = 1e-06, eps_f = 1e-10, eps_g = 1e-04,
-  max_iter = 10000L, verbose = FALSE, verbose_rate = 10L,
-  decomp_method = "cholesky", optim_method = "adam",
-  eigvalthresh = 0, jitter = 0, multDirichletBoot = -1,
-  useSylv = TRUE, ncores = -1L, seed = -1L)
+optimPibbleCollapsed(
+  Y,
+  upsilon,
+  ThetaX,
+  KInv,
+  AInv,
+  init,
+  n_samples = 2000L,
+  calcGradHess = TRUE,
+  b1 = 0.9,
+  b2 = 0.99,
+  step_size = 0.003,
+  epsilon = 1e-06,
+  eps_f = 1e-10,
+  eps_g = 1e-04,
+  max_iter = 10000L,
+  verbose = FALSE,
+  verbose_rate = 10L,
+  decomp_method = "cholesky",
+  optim_method = "adam",
+  eigvalthresh = 0,
+  jitter = 0,
+  multDirichletBoot = -1,
+  useSylv = TRUE,
+  ncores = -1L,
+  seed = -1L
+)
 }
 \arguments{
 \item{Y}{D x N matrix of counts}

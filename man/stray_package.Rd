@@ -3,7 +3,6 @@
 \docType{package}
 \name{stray_package}
 \alias{stray_package}
-\alias{stray_package-package}
 \title{stray: Fitting and Analysis of Multinomial Logistic Normal  Models}
 \description{
 Provides methods for fitting and inspection of Bayesian Multinomial 

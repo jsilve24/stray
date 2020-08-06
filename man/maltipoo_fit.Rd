@@ -5,9 +5,18 @@
 \alias{maltipoo}
 \title{Interface to fit maltipoo models}
 \usage{
-maltipoo(Y = NULL, X = NULL, upsilon = NULL, Theta = NULL,
-  U = NULL, Xi = NULL, init = NULL, ellinit = NULL,
-  pars = c("Eta", "Lambda", "Sigma"), ...)
+maltipoo(
+  Y = NULL,
+  X = NULL,
+  upsilon = NULL,
+  Theta = NULL,
+  U = NULL,
+  Xi = NULL,
+  init = NULL,
+  ellinit = NULL,
+  pars = c("Eta", "Lambda", "Sigma"),
+  ...
+)
 }
 \arguments{
 \item{Y}{D x N matrix of counts (if NULL uses priors only)}

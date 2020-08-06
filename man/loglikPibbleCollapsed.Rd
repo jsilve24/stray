@@ -23,7 +23,7 @@ for regression coefficients)}
 \item{KInv}{Inverse of K for LTP (for Pibble defined as KInv = solve(Xi))}
 
 \item{AInv}{Inverse of A for LTP (for Pibble defined as
-AInv = solve(diag(N)+ t(X)\%\emph{\%Gamma\%}\%X) )}
+AInv = solve(diag(N)+ t(X)\\%\emph{\\%Gamma\\%}\\%X) )}
 
 \item{eta}{matrix (D-1)xN of parameter values at which to calculate quantities}
 

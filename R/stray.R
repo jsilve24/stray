@@ -13,3 +13,11 @@
 NULL
 
 globalVariables(".")
+
+
+
+.onAttach <- function(libname, pkgname) {
+  packageStartupMessage("The stray package has been renamed fido due to name collision with another package on CRAN.", "\n", "\n",
+                        "At this time please switch to the fido package (devtools::install_github('jsilve24/fido')) where the project is now being actively developed.", "\n\n", 
+                        "I appologize for the inconvenience - Justin Silverman")
+}
